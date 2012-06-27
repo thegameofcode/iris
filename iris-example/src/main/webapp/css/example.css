@@ -1,0 +1,24 @@
+
+* {
+	font-family: arial;
+}
+
+.btn {
+	display: inline-block;
+	border: 1px solid #026EA3;
+	background: #009ADF;
+	border-radius: 3px;
+	-ms-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	align: center;	
+	padding: 8px 6px;
+}
+
+.btnLabel {
+	font-size: 0.8em;
+	font-weight: bold;
+	color: #FFFFFF;
+	white-space:nowrap;
+}
