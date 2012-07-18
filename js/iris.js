@@ -28,64 +28,15 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *	
- * Download:
- * 
- *  Previous version can be found at: https://iris-js.googlecode.com/svn/tags/
- *  e.g.:
- *  	https://iris-js.googlecode.com/svn/tags/0.3.2/iris.js
+ * Download: http://intelygenz.github.com/iris/
  * 
  * Creation date: 2012-01-12
  * 
-* 
  * [version] date -> authors
  * 		upd|fix|new|dep|rmv - description
  *
- * [0.4.0] 2012-xx-xx -> angel.sanchez@intelygenz.com
- * 		[new] iris.Goto(), iris.GotoUrlHash()
- * 		[rmv] iris.screen.Goto(), iris.screen.Back(), iris.screen.Forward()
- * 
- * [0.3.6] 2012-06-27 -> angel.sanchez@intelygenz.com, victor.gutierrez@intelygenz.com
- * 		[new] Added parameter p_settings={"success":function, "error":function} to iris.lang.LoadFrom(p_locale, p_uri, p_settings)
- * 		[upd] Small Code Refactoring
- * 		[upd] iris.lang.LoadFrom -> The callbacks "success" and "error" return the locale as parameter.
- * 		[new] iris.lang.Locale -> set or get the current locale code
- * 		[upd] Now self.Template() can be called without parameters
- *		[new] iris.util.DateFormat()
- *
- * [0.3.5] 2012-04-23 -> jonas.dacruz@intelygenz.com, angel.sanchez@intelygenz.com, fco.gamiz@intelygenz.com
- * 		[new] Added template parameters formatting: date and currency
- *		[upd] iris.Include() can load external resources
- * 
- * [0.3.4] 2012-04-11 -> jonas.dacruz@intelygenz.com, angel.sanchez@intelygenz.com
- * 		[new] self.Template() added p_params parameter
- * 		[new] Added ##Id## notation to write parameters values into templates
- * 		[upd] self.InstanceUI() change p_uiId to p_idOrJq, now you can do self.InstanceUI($obj, ...) or self.InstanceUI("id", ...)
- * 		[new] Added new template modes: self.TEMPLATE_AFTER and self.TEMPLATE_BEFORE
- * 		[rmv] self.Template() removed p_cssUrl parameter
- * 		[new] Created iris.net.Ajax() function
- *
- * [0.3.3] 2012-04-02 -> fco.gamiz@intelygenz.com, javier.lazaro@intelygenz.com, angel.sanchez@intelygenz.com
- *		[new] Config setting: "environments-nocache"
- * 		[new] iris.Include : Load *.css and *.js files synchronously
- * 		[fix] template.$Get() templates need a dom root node
- * 		[upd] When screen awakes with null paramater, automatically receive {}
- * 		[fix] Bug in the _AbstractComponent.__UIComponents__ array
- *  	[upd] Added p_$tmpl paramater to self.$Get() and self.InstanceUI(). If p_$tmpl is undefined, p_$tmpl = this.__$Tmpl__
- *		[new] UI.TEMPLATE_APPEND, UI.TEMPLATE_REPLACE, UI.$Container(), UI.TemplateMode() and Screen.$Container()
- *		[rmv] UI.Replace and UI.Append. Now Screen.Template() does append, and UI.Template() does replace by default (use UI.TemplateMode() to change it)
- *
- * [0.3.2] 2012-03-14 -> jonas.dacruz@intelygenz.com, angel.sanchez@intelygenz.com
- * 		[upd] functions inherited into iris.UI always receive "self" parameter and must be used by all members instead of "this"
- * 		[new] (iris.UI) self.$Container() provide access to the jQuery component container
- * 
- * [0.3.1] 2012-03-13 -> jonas.dacruz@intelygenz.com, angel.sanchez@intelygenz.com
- * 		[new] Screens and UI components inheritance
- * 		[new] AbstractComponent.InstanceUI()
- * 		[new] Automated dependency load
- * 		[new] Adoption Resource-View-Presenter pattern
- * 		[upd] Complete code refactor
- * 		[rmv] iris.screen.transition
- * 		
+ * [0.4.0] 2012-07-18 -> angel.sanchez@intelygenz.com, alejandro.gonzalez@intelygenz.com
+ * 		Previous project: http://code.google.com/p/iris-js/
  * 		WARNING: No backward with previous versions
  * 
  */
@@ -98,7 +49,7 @@
  * */
 var iris = new function() {
 	
-	var _APP_VERSION = "0.4.0-SNAPSHOT"
+	var _APP_VERSION = "0.4.0"
 	,	_APP_NAME = "iris"
 	,	_JQ_MIN_VER = 1.5
 	;
@@ -148,38 +99,59 @@ var iris = new function() {
 		,	curr = document.location.hash.split("/")
 		,	prevPath = ""
 		,	currPath = ""
-		,	currPathWithoutParams
-		,	showRemainingScreens = false
+		,	pathWithoutParams
+		,	hasRemainingChilds = false
 		;
 		
-		for ( var f=0, F=curr.length; f<F; f++ ) {
-			currPath += curr[f] + "/";
-			prevPath += prev[f] + "/";
+		// Hide screens and its childs that are not showed
+		if ( prev.length > curr.length ) {
 			
-			currPathWithoutParams = _RemoveURLParams(currPath).replace(/\/$/, "");
-			
-			if ( showRemainingScreens || currPath != prevPath ) {
-				showRemainingScreens = true;
-				_PrevHashUrl = currPath;
-				_ShowScreen(currPathWithoutParams, _NavGetParams(curr[f]) );
+			for ( var f=0, F=prev.length; f<F; f++ ) {
+				prevPath += prev[f] + "/";
+				
+				if ( curr[f] ) {
+					currPath += curr[f] + "/";
+				}
+				
+				if ( hasRemainingChilds || currPath != prevPath ) {
+					hasRemainingChilds = true;
+					
+					pathWithoutParams = _RemoveURLParams(prevPath);
+					_Screen[pathWithoutParams].__Sleep__();
+					_Screen[pathWithoutParams].Hide();
+				}
 			}
-			
 		}
 		
-		if ( !showRemainingScreens ) {
-			var regex = new RegExp( document.location.hash.replace(/([\/\?])/g, "\\$1") + "\/[^\/]*" ); // Escape regExp special chars
+		// Show child screens
+		prevPath = "";
+		currPath = "";
+		hasRemainingChilds = false;
+		for ( var f=0, F=curr.length; f<F; f++ ) {
+			currPath += curr[f] + "/";
 			
-			if( regex.test(_PrevHashUrl) ) {
-				currPathWithoutParams = _RemoveURLParams( regex.exec(_PrevHashUrl)[0] );
-				_PrevHashUrl = document.location.hash;
-				_Screen[currPathWithoutParams].__Sleep__();
-				_Screen[currPathWithoutParams].Hide();
+			if ( prev[f] ) {
+				prevPath += prev[f] + "/";
+			}
+			
+			if ( hasRemainingChilds || currPath != prevPath ) {
+				hasRemainingChilds = true;
+				
+				pathWithoutParams = _RemoveURLParams(currPath);
+				_ShowScreen(pathWithoutParams, _NavGetParams(curr[f]) );
+				
 			}
 		}
+		
+		_PrevHashUrl = _RemoveLastSlash(currPath);
 	}
 	
 	function _RemoveURLParams (p_url) {
-		return p_url.replace(/\?[^\/]*/, "");
+		return _RemoveLastSlash(p_url.replace(/\?[^\/]*/, ""));
+	}
+	
+	function _RemoveLastSlash (p_url) {
+		return p_url.replace(/\/$/, "");
 	}
 	
 	function _ShowScreen (p_screenPath, p_params) {
@@ -193,7 +165,7 @@ var iris = new function() {
 			}
 
 			var currentScreen = _Screen[p_screenPath];
-			var contextId = currentScreen.$Get().parent().attr("_id");
+			var contextId = currentScreen.$Get().parent().attr("data-id");
 
 			if ( _LastScreen.hasOwnProperty(contextId) ) {
 				var lastScreen = _LastScreen[contextId];
@@ -574,8 +546,8 @@ var iris = new function() {
 		var label;
 		for( var f=0, F=attrs.length; f<F; f++ ) {
 			label = attrs[f].name;
-			if ( label.indexOf("_")==0 ){
-				label = label.substr(1);
+			if ( label.indexOf("data-")==0 ){
+				label = label.substr(5);
 			}
 			hash[label] = attrs[f].value;
 		}
@@ -586,11 +558,12 @@ var iris = new function() {
 		_Include(p_jsUrl);
 		
 		var uiInstance = new _AbstractUI();
-		uiInstance.prototype = new _Components[p_jsUrl](uiInstance);
-
 		uiInstance.__Id__ = p_uiId;
 		uiInstance.__$Container__ = p_$container;
 		uiInstance.__UIComponents__ = [];
+		uiInstance.__Setting__ = {};
+		uiInstance.prototype = new _Components[p_jsUrl](uiInstance);
+
 		
 		p_uiSettings = p_uiSettings === undefined ? {} : p_uiSettings;
 		var jqToHash = _JqToHash(p_$container);
@@ -614,7 +587,7 @@ var iris = new function() {
 	function _ScreenAdd (p_$context, p_screenPath, p_jsUrl) {
 		
 		if ( p_$context.get(0) === document.body ) {
-			p_$context.attr("_id", "document_body");
+			p_$context.attr("data-id", "document_body");
 		}
 		
 		_ScreenUrl[p_screenPath] = p_jsUrl;
@@ -819,14 +792,12 @@ var iris = new function() {
 	function _AbstractComponent () {
 		this.TEMPLATE_APPEND = "append";
 		this.TEMPLATE_REPLACE = "replace";
-		this.TEMPLATE_AFTER = "after";
-		this.TEMPLATE_BEFORE = "before";
 		
 		this.__$Tmpl__ = null;
 		this.__Id__ = null;
 		this.__UIComponents__ = null;
 		this.__$Container__ = null;
-		this.__Setting__ = {};
+		this.__Setting__ = null;
 		
 		this.__Sleep__ = function () {
 			var $ui = this.__UIComponents__;
@@ -909,7 +880,7 @@ var iris = new function() {
 			
 			if ( p_id ) {
 				var
-				  	id = "[_id=" + p_id + "]"
+				  	id = "[data-id=" + p_id + "]"
 				  , filter = $tmpl.filter(id)
 				;
 				return filter.length > 0 ? filter : $tmpl.find(id);
@@ -922,12 +893,15 @@ var iris = new function() {
 			var $container = typeof p_idOrJq === "string" ? this.$Get(p_idOrJq, p_$tmpl) : p_idOrJq;
 			
 			if ( $container.size() == 1 ) {
-				var uiInstance = _InstanceUI($container, $container.attr("_id"), p_jsUrl, p_uiSettings);
+				var uiInstance = _InstanceUI($container, $container.attr("data-id"), p_jsUrl, p_uiSettings);
 				this.__UIComponents__.push(uiInstance);
 				return uiInstance;
 			}
+			else if( $container.size() > 1 ) {
+				iris.E("InstanceUI: Container [data-id=" + p_idOrJq + "] must be unique");
+			}
 			else {
-				iris.E("InstanceUI: Container [_id=" + p_idOrJq + "] not found");
+				iris.E("InstanceUI: Container [data-id=" + p_idOrJq + "] not found");
 			}
 			
 		};
@@ -942,38 +916,77 @@ var iris = new function() {
 		this.Sleep = function () {};
 	};
 	
-	/** @namespace Gestión de pantallas: Añadir nueva pantalla, navegación entre pantallas, etc. */
+	function _Deserialize (p_$form, p_data) {
+		var element, tag, value;
+		for ( name in p_data ) {
+			element = p_$form.find('[name="' + name + '"]');
+			if ( element.length > 0 ) {
+				tag = element[0].tagName.toLowerCase();
+				value = p_data[name];
+				switch (tag) {
+				case "select":
+				case"textarea":
+					$(element).val(value);
+					break;
+				case "input":
+					switch (tag) {
+					case "checkbox":
+						if (value) {
+							element.attr("checked", "checked"); 
+						}
+						break;
+					case "radio":
+						element.filter('[value="'+value+'"]').attr("checked", "checked");
+						break;
+					default:
+						element.val(value);
+					}
+				}
+			}
+		};
+	}
+	
+	function _Serialize (p_$form) {
+		var json = {};
+		$.map(p_$form.serializeArray(), function(p_obj, p_index){
+			json[ p_obj['name'] ] = p_obj['value'];
+		});
+		return json;
+	} 
+	
+	
+	/** @namespace Screen management: Add a new screen, ... */
 	this.screen = {};
 	
-	/** @namespace Gestión de eventos: Añadir/eliminar listeners y disparar eventos. */
+	/** @namespace Event management: Add/remove listeners and trigger events. */
 	this.event = {};
 	
-	/** @namespace Configuración de la aplicación: Cargar datos de configuración y entorno. */
+	/** @namespace Application configuration: Load configuration data and environments. */
 	this.config = {};
 	
-	/** @namespace Interfaz de usuario: Interactuación con elementos HTML. */	
+	/** @namespace User interface: Work with HTML elements. */
 	this.ui = {};
 	
-	/** @namespace Peticiones HTTP asíncronas y URL Base. */
+	/** @namespace Asynchronous HTTP request and URL base. */
 	this.net = {};
 	
-	/** @namespace Obtención de datos de configuración globales */
+	/** @namespace Global configurations management */
 	this.global = {};
 	
-	/** @namespace Obtención de datos de configuración según entorno */
+	/** @namespace Environment configurations management */
 	this.local = {};
 	
-	/** @namespace Gestión del multiidioma: Carga de ficheros de idoma, obtención de textos traducidos, etc. */
+	/** @namespace Multilanguage : Load translation files, get translated text, ...*/
 	this.lang = {};
 
-	/** @namespace Utilidades varias: Formateo de fechas. */
+	/** @namespace Various utilities: Date formatting, serialization, ... */
 	this.util = {};
 	
 	/**
-	 * Carga el JSON de configuración.
-	 * Se puede usar iris sin necesidad de cargar este fichero.
+	 * Load the configuration JSON.
+	 * You can use iris without load this file.
 	 * @function
-	 * @param {JSON} config Contiene información sobre los entornos, valores de configuración globales y por entorno, nivel de registro de logs,..
+	 * @param {JSON} config Contains information about environments, global and environment settings, loglevel logs ...
 	 * @example
 	 * iris.config.Load({
 	 * "environment-default" : "pro"
@@ -1001,15 +1014,16 @@ var iris = new function() {
 	this.config.Load = _ConfigLoad;
 	
 	/**
-	 * Establece o devuelve el entorno actual.
-	 * Si se carga un fichero de configuración este valor viene se determina por "environment",
-	 * si no se encuentra ninguno que coincida toma el valor por defecto "environment-default".
-	 * Las variables "local" puestas en el fichero de configuración dependerán de este valor.
+	 * Set or get the current environment.
+	 * If a configuration file is loaded, iris try set this value using 
+	 * the current URL and the defined environments.
+	 * If not match anything use "environment-default"
+	 * The local variables depends of this value.
 	 * @function
-	 * @param {String} [p_env] Nombre de entorno es opcional
+	 * @param {String} [p_env] Environment name (optional)
 	 * @example
-	 * Ejemplo: URL=http://localhost:8080/admin
-	 * Fichero configuración:
+	 * Example: URL=http://localhost:8080/admin
+	 * Configuration file:
 	 * ...
 	 *  "environment": {
 	 *        "localhost" : "dev"
@@ -1017,55 +1031,55 @@ var iris = new function() {
 	 *  }
 	 * ...
 	 *   
-	 * iris.config.Env(); // devuelve "dev"
+	 * iris.config.Env(); // return "dev"
 	 * 
-	 * iris.config.Env("pro"); // establece el entorno a "pro"
+	 * iris.config.Env("pro"); // set environment to "pro"
 	 */
 	this.config.Env = _GetEnv;
 	
 	/**
-	 * Añade valores globales de configuración.
-	 * Si se carga un fichero de configuración se carga el objeto "global".
-	 * Vea {@link iris.global.Data} para más información.
+	 * Add global configuration values​​.
+	 * If you load a configuration file, automatically load the object "global" ({@link iris.config.Load}).
+	 * See {@link iris.global.Data} for more details.
 	 * @function
-	 * @param {Object} p_hash Objeto de tipo: { "name" : value, ... }
+	 * @param {Object} p_hash Object like: { "name" : value, ... }
 	 * @example
 	 * iris.global.Load({"global-variable" : "value"});
-	 * iris.global.Data("global-variable"); // devuelve "value"
+	 * iris.global.Data("global-variable"); // return "value"
 	 */
 	this.global.Load = _GlobalLoad;
 	
 	/**
-	 * Obtiene/Configura el valor de una variable de configuración global.
-	 * Si no especifica nombre, ni valor, se obtiene un Object con todos los valores.
-	 * Vea {@link iris.global.Load} para más información.
+	 * Get or set the value of a global configuration variable.
+	 * If label and value are not specified then return an object with all values.
+	 * See {@link iris.global.Load} for more details.
 	 * @function
-	 * @param {String} [p_label] Nombre de la variable es opcional
-	 * @param {String} [p_value] Valor de la variable es opcional
+	 * @param {String} [p_label] Variable label (optional)
+	 * @param {String} [p_value] Variable value (optional)
 	 * @example
 	 * iris.global.Data("global-variable");
 	 */
 	this.global.Data = _GlobalData;
 	
 	/**
-	 * Añade valores de configuración que dependen del entorno.
-	 * Si se carga un fichero de configuración se carga el objeto "local".
-	 * Vea {@link iris.local.Data} para más información.
+	 * Add configuration values that depends on current environment.
+	 * If you load a configuration file, automatically load the object "local" ({@link iris.config.Load}).
+	 * See {@link iris.local.Data} for more details.
 	 * @function
-	 * @param {Object} p_hash Objeto de tipo: { "name" : {"environment" : value, ... }, ... }
+	 * @param {Object} p_hash Object like: { "name" : {"environment" : value, ... }, ... }
 	 * @example
 	 * iris.global.Load({"global-variable" : "value"});
-	 * iris.global.Data("global-variable"); // devuelve "value"
+	 * iris.global.Data("global-variable"); // return "value"
 	 */
 	this.local.Load = _LocalLoad;
 	
 	/**
-	 * Obtiene/Configura el valor de una variable de configuración que depende del entorno actual.
-	 * Si no especifica nombre, ni valor, se obtiene un Object con todos los valores.
-	 * Vea {@link iris.local.Load} para más información.
+	 * Get or set the value of a configuration variable that depends on current environment.
+	 * If label and value are not specified then return an object with all values.
+	 * See {@link iris.local.Load} for more details.
 	 * @function
-	 * @param {String} [p_label] Nombre de la variable es opcional
-	 * @param {String} [p_value] Valor de la variable es opcional
+	 * @param {String} [p_label] Variable label (optional)
+	 * @param {String} [p_value] Variable value (optional)
 	 * @example
 	 * iris.local.Data({
 	 *  "local-variable" : {
@@ -1074,26 +1088,26 @@ var iris = new function() {
      *	}
      * });
      *  
-     * // Si entorno="dev" devuelve "example-dev"
+     * // If environemnt="dev" then return "example-dev"
      * iris.local.Data("local-variable");
 	 */
 	this.local.Data = _LocalData;
 	
 	/**
-	 * Carga las traducciones del locale indicado.
+	 * Add translation texts to a locale.
 	 * @function
 	 * @param {String} p_locale Locale
-	 * @param {Object} p_data Objeto de tipo { "LABEL" : "value", ... }
+	 * @param {Object} p_data Object like { "LABEL" : "value", ... }
 	 * @example
 	 * iris.lang.Load("es-ES", {"LABEL":"etiqueta"});
 	 */
 	this.lang.Load = _LocaleLoad;
 	
 	/**
-	 * Carga remotamente las traducciones del locale indicado.
+	 * Load remote translation texts into a locale.
 	 * @function
 	 * @param {String} p_locale Locale
-	 * @param {String} p_uri URL a cargar
+	 * @param {String} p_uri URL to load
 	 * @param {Object} p_settings {@code {"success" : function (p_locale) {}, "error" : function (p_locale) {}} }
 	 * @example
 	 * iris.lang.LoadFrom(
@@ -1105,81 +1119,84 @@ var iris = new function() {
 	this.lang.LoadFrom = _LangLoadFrom;
 	
 	/**
-	 * Obtiene el texto deseado según el Locale establecido o deseado.
-	 * Vea {@link iris.local.Locale} para más información.
+	 * Get a translation text according to the Locale.
+	 * See {@link iris.local.Locale} for more details.
 	 * @function
-	 * @param {String} p_label Etiqueta
-	 * @param {String} [p_locale] Locale es opcional
+	 * @param {String} p_label Label
+	 * @param {String} [p_locale] Locale (optional)
 	 * @example
 	 * iris.lang.Get("LABEL");
+	 * 
+	 * iris.lang.Get("LABEL", "en-US");
 	 */
 	this.lang.Get = _LangGet;
 	
 	/**
-	 * Establece o devuelve el locale actual.
+	 * Set or get the current locale.
 	 * @function
-	 * @param {String} [p_locale] Locale es opcional
+	 * @param {String} [p_locale] Locale (optional)
 	 * @example
+	 * var locale = iris.lang.Locale();
 	 * iris.lang.Locale("es-ES");
 	 */
 	this.lang.Locale = _LocaleGet;
 	
 	/**
-	 * Muestra por consola el texto deseado.
+	 * Safe debug traces.
 	 * @function 
 	 * @param {arguments} 
 	 * @example
-	 * iris.L("texto", variable);
+	 * iris.L("text", variable);
 	 */
 	this.L = _L;
 	
 	/**
-	 * Muestra por consola el texto deseado. Solo lo muestra si esta el modo debug activado para el entorno actual.
-	 * Vea {@link iris.config.Load} para más información.
+	 * Safe debug traces. If debug-level is active for the current environment then print traces.
+	 * See {@link iris.config.Load} for more details.
 	 * @function
 	 * @param {arguments} 
 	 * @example
-	 * iris.D("texto", variable);
+	 * iris.D("text", variable);
 	 */
 	this.D = _D;
 	
 	/**
-	 * Muestra por consola el texto deseado. Solo lo muestra si esta el modo warning activado para el entorno actual.
+	 * Safe warning traces. If warning-level is active for the current environment then print traces.
 	 * @function
 	 * @see {@link iris.config.Load}
 	 * @param {arguments} 
 	 * @example
-	 * iris.W("texto", variable);
+	 * iris.W("text", variable);
 	 */
 	this.W = _W;
 	
 	/**
-	 * Muestra pot consola el texto deseado. Solo lo muestra si esta el modo error activado para el entorno actual.
-	 * Vea {@link iris.config.Load} para más información.
+	 * Safe error traces. If error-level is active for the current environment then print traces.
+	 * See {@link iris.config.Load} for more details.
 	 * @function
 	 * @param {arguments} 
 	 * @example
-	 * iris.E("texto", variable);
+	 * iris.E("text", variable);
 	 */
 	this.E = _E;
 	
 	/**
-	 * Añade un manejador de evento.
-	 * Vea {@link iris.event.Notify} y {@link iris.event.Remove} para más información.
+	 * Add an event listener.
+	 * See {@link iris.event.Notify} and {@link iris.event.Remove} for more details.
 	 * @function
-	 * @param {String} p_eventName Identificador de evento
-	 * @param {Function} f_func Función a ejecutar cuando se dispare el evento
+	 * @param {String} p_eventName Event identifier
+	 * @param {Function} f_func Event listener
 	 * @example
 	 * iris.event.Subscribe("user_select", _OnUserSelect);
 	 */
 	this.event.Subscribe = _EventSubscribe;
 	
 	/**
-	 * Lanza el evento deseado.
-	 * Vea {@link iris.event.Subscribe} y {@link iris.event.Remove} para más información.
+	 * Trigger an event.
+	 * See {@link iris.event.Subscribe} and {@link iris.event.Remove} for more details.
 	 * @function
-	 * @param {String} p_eventName Identificador de evento
-	 * @param {Object} p_data Objeto de cualquier tipo con los parámetros que le van a llegar al/los listeners
+	 * @param {String} p_eventName Event identifier
+	 * @param {Object} p_data Event paramater
 	 * @example
 	 * iris.event.Notify(
 	 *    "user_select"
@@ -1189,27 +1206,30 @@ var iris = new function() {
 	this.event.Notify = _EventNotify;
 	
 	/**
-	 * Elimina el evento deseado.
-	 * Vea {@link iris.event.Subscribe} y {@link iris.event.Notify} para más información.
+	 * Remove an event listener.
+	 * See {@link iris.event.Subscribe} and {@link iris.event.Notify} for more details.
 	 * @function
-	 * @param {String} p_eventName Identificador de evento
-	 * @param {String}  f_func Función que dejará de ejecutarse
+	 * @param {String} p_eventName Event identifier
+	 * @param {String}  f_func Event listener
 	 * @example
 	 * iris.event.Remove("user_select", _OnUserSelect);
 	 */
 	this.event.Remove = _EventRemove;
 	
 	/**
-	 * Devuelve o establece la URL base de la aplicación. Si se define el tag HTML &lt;base &gt; lo concatena al final de URL.
+	 * Get or set the application base URL.
+	 * Use the &lt;base &gt; HTML tag if are defined.
 	 * @function
-	 * @param {String} [p_baseUri] URL base es opcional
+	 * @param {String} [p_baseUri] URL base (optional)
 	 * @example
-	 * iris.net.BaseUri(); // devuelve http://www.example.com/
+	 * // Current URL = http://www.example.com/admin/example/path?a=1
+	 * iris.net.BaseUri(); // return http://www.example.com/
 	 */
 	this.net.BaseUri = _BaseUri;
 	
 	/**
-	 * Realiza una petición Ajax. Acepta los mismo parámetros que jQuery.ajax()
+	 * Do an Ajax request.
+	 * Accepts the same parameters as jQuery.ajax()
 	 * @function
 	 * @see <a href="http://api.jquery.com/jQuery.ajax/">JQuery Ajax</a>.
 	 * @example
@@ -1222,9 +1242,10 @@ var iris = new function() {
 	this.net.Ajax = _Ajax;
 	
 	/**
-	 * Registra un objeto Screen. Debe aparecer al principio de los ficheros de pantallas.
+	 * Register a Screen object.
+	 * It must appear at the beginning of the screen file.
 	 * @function
-	 * @param {Function} f_screen La clase de la pantalla
+	 * @param {Function} f_screen Screen class
 	 * @example
 	 * iris.Screen(
 	 *   function (self) {
@@ -1236,17 +1257,16 @@ var iris = new function() {
 	 *   
 	 *   	self.Sleep = function () {
 	 *   	}
-	 *   
-	 *   	...
 	 *   }
 	 * );
 	 */
 	this.Screen = _ScreenCreate;
 	
 	/**
-	 * Registra un objeto UI. Debe aparecer al principio de los ficheros (*.js) UI.
+	 * Register an UI object.
+	 * It must appear at the beginning of the screen file.
 	 * @function
-	 * @param {Function} f_ui La clase del objeto UI
+	 * @param {Function} f_ui UI class
 	 * @example
 	 * iris.UI(
 	 *   function (self) {
@@ -1258,20 +1278,19 @@ var iris = new function() {
 	 *   
 	 *   	self.Sleep = function () {
 	 *   	}
-	 *   
-	 *   	...
 	 *   }
 	 * );
 	 */
 	this.UI =  _UICreate;
 	
 	/**
-	 * Añade una ventana nueva.
-	 * Se puede navegar hacia ella usando <code>iris.Goto</code>.
+	 * Add a new screen.
+	 * You can navigate to this using <code>iris.Goto</code>.
+	 * See {@link iris.Goto} for more details.
 	 * @function
-	 * @param {JQuery} p_$context Contenedor de la pantalla
-	 * @param {String} p_screenPath Ruta de la pantalla
-	 * @param {String} p_jsUrl Controlador de la pantalla
+	 * @param {JQuery} p_$context Screen container
+	 * @param {String} p_screenPath Screen URL path
+	 * @param {String} p_jsUrl Screen controller
 	 * @example
 	 * var $screens = self.$Get("screens");
 	 * iris.screen.Add(
@@ -1284,44 +1303,45 @@ var iris = new function() {
 	this.screen.Add = _ScreenAdd;
 	
 	/**
-	 * Copia los atributos del objecto JQuery a un objeto deseado.
+	 * Copy all data-* attributes to an object.
+	 * Remove the "data-" prefix from attribute names.
 	 * @function
-	 * @param {JQuery} p_$obj Objeto vacío o con contenido
+	 * @param {JQuery} p_$obj Object to merge
 	 * @example
-	 * var $obj = $("&lt;div _id='test' _class='myclass'&gt;&lt;/div&gt;")
-	 * var params = iris.ui.JqToHash($obj); 
-	 * // devuelve: {"id" : "test", "class" : "myclass"}
+	 * var $obj = $("&lt;div data-id='test' data-class='myclass'&gt;&lt;/div&gt;")
+	 * var params = iris.ui.JqToHash($obj);
+	 * // return: {"id" : "test", "class" : "myclass"}
 	 */
 	this.ui.JqToHash = _JqToHash;
 	
 	/**
-	 * Pasa los valores del Object al objeto JQuery elegido.
+	 * Set the object values to a JQuery object.
 	 * @function
-	 * @param {Object} p_hash Objeto con los valores a copiar
-	 * @param {JQuery} p_$obj Copiará los valores como atributos
-	 * @param {String[]} [p_filter] Indica que valores se deben copiar únicamente (opcional)
+	 * @param {Object} p_hash Object with source values
+	 * @param {JQuery} p_$obj JQuery object target
+	 * @param {String[]} [p_filter] Indicates that values ​​should be copied (optional)
 	 * @example
 	 * iris.ui.HashToJq(
 	 *   { "class":"myclass", "other":"other_value" }
 	 *  , $obj
 	 *  , ["class"]
-	 * ); // Solo crea el atributo class en $obj
+	 * ); // Set the $obj attribute "class"
 	 */
 	this.ui.HashToJq = _HashToJq;
 	
 	/**
-	 * Carga los archivos JS o CSS especificados.
-	 * La carga de estos ficheros se realiza de manera <b>síncrona</b>.
+	 * Load JS or CSS files.
+	 * The load is <b>synchronous</b>.
 	 * @function
-	 * @param {arguments} Strings con las rutas de los ficheros a cargar.
+	 * @param {arguments} File paths
 	 * @example
 	 * iris.Include("app/service/myservice.js", "app/css/mycss.css");
 	 */
 	this.Include = _IncludeFiles;
 	
 	/**
-	 * Formatea un objeto Date o timestamp al formato especificado y según el locale actual.<br>
-	 * Para elaborar el formato se pueden utilizar los siguientes caractares especiales:<br><br>
+	 * Formats a Date object or timestamp to the specified format and according to the current locale. <br>
+	 * You can use the following special characters:<br><br>
 	 *   <b>a</b>	'a.m.' or 'p.m.'<br>
 	 *   <b>A</b>	'AM' or 'PM'<br>
 	 *   <b>b</b>	Month, textual, 3 letters, lowercase.	'jan'<br>
@@ -1340,10 +1360,8 @@ var iris = new function() {
 	 *   <b>y</b> 	Year, 2 digits.	'99'<br>
 	 *   <b>Y</b>	Year, 4 digits.	'1999'<br>
 	 * @function
-	 * @param {Date|Timestamp} p_date Objeto Date o valor en milisegundos (UNIX timestamp)
-	 * @param {String} [p_format] Cadena de texto que especifica el formato de la fecha deseado,
-	 * 							si no se especifica se toma el formato definido por defecto
-	 * 							para el locale actual
+	 * @param {Date|Timestamp} p_date Date object or timestamp (UNIX timestamp)
+	 * @param {String} [p_format] Format string (optional)
 	 * @example
 	 * iris.util.DateFormat(new Date(),"ymd");
 	 * iris.util.DateFormat("1331954654564","d/m/y h:i:s"); // 17/03/12 04:24:14
@@ -1352,23 +1370,41 @@ var iris = new function() {
 	this.util.DateFormat = _DateFormat;
 	
 	/**
-	 * Realiza la navegación hacia la pantalla indicada.
-	 * La pantalla debe añadirse anteriormente usando <code>iris.screen.Add</code>.
-	 * 
+	 * Fill all form component with data.
+	 * @function
+	 * @param p_$form {JQuery Object} Form target
+	 * @param p_data {Object} Object data source
+	 * @example
+	 * var data = {"name":"Jonh", "surname": "Doe"};
+	 * iris.util.Deserialize($form, data);
+	 */
+	this.util.Deserialize = _Deserialize;
+	
+	/**
+	 * Serialize a form data to Object.
+	 * @function
+	 * @param p_$form
+	 * @example
+	 * var data = iris.util.Serialize($form);
+	 */
+	this.util.Serialize = _Serialize;
+	
+	/**
+	 * Navigate to a screen.
+	 * The screen must be previously added using <code>iris.screen.Add</code>.
+	 * See {@link iris.screen.Add}
+	 * @function
 	 * @param p_hashUri {String} Hash URL
-	 * 
 	 * @example
 	 * iris.Goto("#profile/my-contacts")
 	 */
 	this.Goto = _Goto;
 	
 	/**
-	 * Inicia la navegación usando el Hash que tenga la URL actual.
-	 * Si no existe ningún Hash en la URL actual inicia la navegación 
-	 * hacia la pantalla indicada en <code>p_defaultHashUrl</code>.
-	 * 
+	 * Start navigation using the current URL-hash.
+	 * If the current URL has not hash, navigate to <code>p_defaultHashUrl</code>.
+	 * @function
 	 * @param p_defaultUrlHash {String} Default URL Hash
-	 * 
 	 * @example
 	 * iris.GotoUrlHash("#home/games")
 	 */

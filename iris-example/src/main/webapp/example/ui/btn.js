@@ -1,5 +1,5 @@
 /**
- * <div _id='ui_btn_example' _label='@@EXAMPLE@@'></div>
+ * <div data-id='ui_btn_example' data-label='@@EXAMPLE@@'></div>
  */
 iris.UI(
 	function (self) {
