@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Iris : Client-side optimization techniques for easily building fast and scalable web applications" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Iris</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/intelygenz/iris">View on GitHub</a>
+
+          <h1 id="project_title">Iris</h1>
+          <h2 id="project_tagline">Client-side optimization techniques for easily building fast and scalable web applications</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/intelygenz/iris/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/intelygenz/iris/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2>About Iris</h2>
+
+<p>Iris is not only another framework. It is a methodology that will help you to build structured and organized Web applications:</p>
+
+<ul>
+<li>Simple, minimalist and easy to use</li>
+<li>Designed to create complex and big applications</li>
+<li>Crossbrowser: Chrome, Firefox e Internet Explorer</li>
+<li>Light and fast: 7 KB</li>
+<li>Open source: New BSD License</li>
+</ul><p>Conventions used in this guide:</p>
+
+<ul>
+<li>
+<code>$var</code> is a variable that refers to an JQuery object.</li>
+<li>
+<code>$function</code> is a variable that refers to an JQuery function.</li>
+<li>
+<code>self</code> refers to the instance of the screen or UI component.</li>
+</ul><h2>Links</h2>
+
+<p>API: 
+<a href="http://intelygenz.github.com/iris/api/v0.4.0/">http://intelygenz.github.com/iris/api/v0.4.0/</a></p>
+
+<p>Project: 
+<a href="https://github.com/intelygenz/iris/">https://github.com/intelygenz/iris/</a></p>
+
+<h2>Screens</h2>
+
+<p>Your application will consist of a screens set.</p>
+
+<p>A screen is a <em>browsable component</em> and acts as a container for User Interface elements:</p>
+
+<h3>Create a screen</h3>
+
+<div class="highlight">
+<pre><span class="nx">iris</span><span class="p">.</span><span class="nx">screen</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span>
+      <span class="nx">$container</span>
+    <span class="p">,</span> <span class="s2">"#example-screen"</span>
+    <span class="p">,</span> <span class="s2">"example-screen.js"</span>
+<span class="p">);</span>
+</pre>
+</div>
+
+
+<p><code>$container</code> is the screen container.</p>
+
+<p><code>"#example-screen"</code> is the URL Hash through which you can access to the screen.</p>
+
+<p><code>"example-screen.js"</code> is the JS file that is responsible for controlling all the screen functionality.</p>
+
+<h3>Controller</h3>
+
+<p>Basic screen controller example (<em>"example-screen.js"</em>):</p>
+
+<div class="highlight">
+<pre><span class="nx">iris</span><span class="p">.</span><span class="nx">Screen</span><span class="p">(</span>
+    <span class="kd">function</span> <span class="p">(</span><span class="nx">self</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">Create</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"Create"</span><span class="p">);</span>
+            <span class="nx">self</span><span class="p">.</span><span class="nx">Template</span><span class="p">(</span><span class="s2">"example-screen.html"</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">self</span><span class="p">.</span><span class="nx">Awake</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"Awake"</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">self</span><span class="p">.</span><span class="nx">Sleep</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"Sleep"</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">);</span>
+</pre>
+</div>
+
+
+<p><code>self.Template()</code> indicates which is the HTML file that uses the screen as template.</p>
+
+<h3>Template</h3>
+
+<p>Basic screen template example (<em>"example-screen.html"</em>):</p>
+
+<div class="highlight">
+<pre><span class="nt">&lt;div&gt;</span>
+    <span class="nt">&lt;h1&gt;</span>Hello world!<span class="nt">&lt;/h1&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</pre>
+</div>
+
+
+<h3>Life cycle</h3>
+
+<p><code>self.Create()</code> is the screen constructor, only runs once at the component creation phase.</p>
+
+<p><code>self.Sleep()</code> and <code>self.Awake()</code> are automatically invoked when navigating to a screen and when you leave it.</p>
+
+<h3>Navigation</h3>
+
+<p>Navigation is done without page refresh:</p>
+
+<div class="highlight">
+<pre><span class="nx">iris</span><span class="p">.</span><span class="nx">Goto</span><span class="p">(</span><span class="s2">"#example-screen"</span><span class="p">);</span>
+</pre>
+</div>
+
+
+<h2>UI Component</h2>
+
+<p>They are <strong>reusable</strong> elements that make up the user interface.</p>
+
+<h3>Creation</h3>
+
+<p>You can create UI components inside screens and within themselves:</p>
+
+<div class="highlight">
+<pre><span class="kd">var</span> <span class="nx">settings</span> <span class="o">=</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s2">"Jonh Doe"</span><span class="p">};</span>
+<span class="kd">var</span> <span class="nx">example</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">InstanceUI</span><span class="p">(</span><span class="s2">"container"</span><span class="p">,</span> <span class="s2">"example-ui.js"</span><span class="p">,</span> <span class="nx">settings</span><span class="p">);</span>
+</pre>
+</div>
+
+
+<p><code>"container"</code> is the JQuery object to be added or replace by the component.</p>
+
+<p><code>"example.js"</code> is the JS file that is responsible for controlling all the component functionality.</p>
+
+<p><code>settings</code> is an object with settings that will receive the component.</p>
+
+<h3>Container</h3>
+
+<p>All UI components are added or replaced to the container specified in <code>self.InstanceUI()</code>:</p>
+
+<div class="highlight">
+<pre><span class="nt">&lt;div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">data-id=</span><span class="s">'container'</span> <span class="na">data-name=</span><span class="s">'Jonh Doe'</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</pre>
+</div>
+
+
+<p>These containers are referenced by the <code>data-id</code> attribute.</p>
+
+<p>You can access to the data-* attributes values using <code>self.Setting()</code></p>
+
+<h3>Controller</h3>
+
+<p>Basic component UI controller example (<em>"example-ui.js"</em>):</p>
+
+<div class="highlight">
+<pre><span class="nx">iris</span><span class="p">.</span><span class="nx">UI</span><span class="p">(</span>
+    <span class="kd">function</span> <span class="p">(</span><span class="nx">self</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">Create</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"Create"</span><span class="p">);</span>
+            <span class="nx">self</span><span class="p">.</span><span class="nx">Template</span><span class="p">(</span><span class="s2">"example-ui.html"</span><span class="p">);</span>
+            <span class="nx">self</span><span class="p">.</span><span class="nx">$Get</span><span class="p">(</span><span class="s2">"button"</span><span class="p">).</span><span class="nx">mousedown</span><span class="p">(</span><span class="nx">_Greet</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="kd">function</span> <span class="nx">_Greet</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span>
+                <span class="s2">"Hi "</span> <span class="o">+</span> <span class="nx">self</span><span class="p">.</span><span class="nx">Setting</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"!"</span>
+            <span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">self</span><span class="p">.</span><span class="nx">Awake</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"Awake"</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">self</span><span class="p">.</span><span class="nx">Sleep</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"Sleep"</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">);</span>
+</pre>
+</div>
+
+
+<p><code>self.Template()</code> indicates which is the HTML file that uses the component as template.</p>
+
+<p><code>self.$Get()</code> JQuery elements can be selected through the attribute <code>data-id</code></p>
+
+<p><code>self.Setting()</code> you can access the setting parameter that you want.</p>
+
+<h3>Template</h3>
+
+<p>Basic component UI template example (<em>"example-ui.html"</em>):</p>
+
+<div class="highlight">
+<pre><span class="nt">&lt;button</span> <span class="na">data-id=</span><span class="s">'button'</span><span class="nt">&gt;</span>Greet!<span class="nt">&lt;/button&gt;</span>
+</pre>
+</div>
+
+
+<h3>Life cycle</h3>
+
+<p><code>self.Create()</code> is the screen constructor, only runs once at the component creation phase.</p>
+
+<p><code>self.Sleep()</code> and <code>self.Awake()</code> are automatically invoked when navigating to a screen and when you leave it.</p>
+
+<h2>Events</h2>
+
+<p>Iris lets you create your own events totally detached from the GUI objects.</p>
+
+<h3>Add an event handler</h3>
+
+<div class="highlight">
+<pre><span class="nx">iris</span><span class="p">.</span><span class="nx">event</span><span class="p">.</span><span class="nx">Subscribe</span><span class="p">(</span><span class="s2">"example_event"</span><span class="p">,</span> <span class="nx">_Listener</span><span class="p">);</span>
+</pre>
+</div>
+
+
+<p><code>_Listener</code> is the function to be executed when <code>"example_event"</code> is triggered.</p>
+
+<h3>Remove an event handler</h3>
+
+<div class="highlight">
+<pre><span class="nx">iris</span><span class="p">.</span><span class="nx">event</span><span class="p">.</span><span class="nx">Remove</span><span class="p">(</span><span class="s2">"example_event"</span><span class="p">,</span> <span class="nx">_Listener</span><span class="p">);</span>
+</pre>
+</div>
+
+
+<p><code>_Listener</code> will no longer be executed when <code>"example_event"</code> is triggered.</p>
+
+<h3>Trigger an event</h3>
+
+<div class="highlight">
+<pre><span class="kd">var</span> <span class="nx">eventParams</span> <span class="o">=</span> <span class="p">{</span><span class="nx">number</span> <span class="o">:</span> <span class="mi">123</span><span class="p">};</span>
+
+<span class="nx">iris</span><span class="p">.</span><span class="nx">event</span><span class="p">.</span><span class="nx">Notify</span><span class="p">(</span>
+    <span class="s2">"example_event"</span>
+  <span class="p">,</span> <span class="nx">eventParams</span>
+<span class="p">);</span>
+</pre>
+</div>
+
+
+<p>Triggers an <code>"example_event"</code> event and all listeners receive <code>eventParams</code> as parameter:</p>
+
+<div class="highlight">
+<pre><span class="kd">function</span> <span class="nx">_Listener</span> <span class="p">(</span><span class="nx">eventParams</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"The number is "</span> <span class="o">+</span> <span class="nx">eventParams</span><span class="p">.</span><span class="nx">number</span><span class="p">)</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+
+<h2>Multilanguage</h2>
+
+<h3>Load the translation texts</h3>
+
+<div class="highlight">
+<pre><span class="nx">iris</span><span class="p">.</span><span class="nx">lang</span><span class="p">.</span><span class="nx">Load</span><span class="p">(</span><span class="s2">"es-ES"</span><span class="p">,</span> <span class="p">{</span><span class="s2">"GREETING"</span><span class="o">:</span><span class="s2">"¡Hola!"</span><span class="p">});</span>
+
+<span class="nx">iris</span><span class="p">.</span><span class="nx">lang</span><span class="p">.</span><span class="nx">Load</span><span class="p">(</span><span class="s2">"en-US"</span><span class="p">,</span> <span class="p">{</span><span class="s2">"GREETING"</span><span class="o">:</span><span class="s2">"Hi!"</span><span class="p">});</span>
+
+<span class="nx">iris</span><span class="p">.</span><span class="nx">lang</span><span class="p">.</span><span class="nx">LoadFrom</span><span class="p">(</span>
+      <span class="s2">"fr-FR"</span>
+    <span class="p">,</span> <span class="s2">"http://example.com/lang-fr-fr.json"</span>
+<span class="p">);</span>
+</pre>
+</div>
+
+
+<h3>Translation text</h3>
+
+<div class="highlight">
+<pre><span class="c1">// set default locale</span>
+<span class="nx">iris</span><span class="p">.</span><span class="nx">lang</span><span class="p">.</span><span class="nx">Locale</span><span class="p">(</span><span class="s2">"es-ES"</span><span class="p">);</span> 
+
+<span class="nx">iris</span><span class="p">.</span><span class="nx">lang</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="s2">"GREETING"</span><span class="p">);</span> <span class="c1">// return "¡Hola!"</span>
+
+
+<span class="c1">// specified locale</span>
+<span class="nx">iris</span><span class="p">.</span><span class="nx">lang</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="s2">"GREETING"</span><span class="p">,</span> <span class="s2">"en-US"</span><span class="p">);</span> <span class="c1">// return "Hi!"</span>
+</pre>
+</div>
+
+
+<h3>Template translations</h3>
+
+<p>Is performed automatically using the <code>@@</code> notation:</p>
+
+<div class="highlight">
+<pre><span class="nt">&lt;div&gt;</span>
+    <span class="nt">&lt;p&gt;</span>@@GRETTING@@<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</pre>
+</div>
+
+
+<h2>Configuration settings</h2>
+
+<p>If you wish to declare global or environment settings use the <em><code>iris.config.*</code></em> package.</p>
+
+<h3>Load configuration settings</h3>
+
+<div class="highlight">
+<pre><span class="nx">iris</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">Load</span><span class="p">({</span>
+    <span class="s2">"environment-default"</span> <span class="o">:</span> <span class="s2">"pro"</span>
+   <span class="p">,</span><span class="s2">"environment"</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">"localhost"</span> <span class="o">:</span> <span class="s2">"dev"</span>
+       <span class="p">,</span><span class="s2">"www.example.com"</span> <span class="o">:</span> <span class="s2">"pro"</span>
+   <span class="p">}</span>
+   <span class="p">,</span><span class="s2">"global"</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">"global-variable"</span> <span class="o">:</span> <span class="s2">"example"</span>
+<span class="p">}</span>
+   <span class="p">,</span><span class="s2">"local"</span><span class="o">:</span> <span class="p">{</span>
+       <span class="s2">"local-variable"</span> <span class="o">:</span> <span class="p">{</span>
+             <span class="s2">"dev"</span> <span class="o">:</span> <span class="s2">"local-dev"</span>
+            <span class="p">,</span><span class="s2">"pro"</span> <span class="o">:</span> <span class="s2">"local-pro"</span>
+        <span class="p">}</span>
+   <span class="p">}</span>
+<span class="p">});</span>
+</pre>
+</div>
+
+
+<h3>Global values</h3>
+
+<div class="highlight">
+<pre><span class="c1">// add/override a global value</span>
+<span class="nx">iris</span><span class="p">.</span><span class="nx">global</span><span class="p">.</span><span class="nx">Load</span><span class="p">({</span><span class="s2">"global-variable"</span> <span class="o">:</span> <span class="s2">"value"</span><span class="p">});</span>
+
+<span class="c1">// return "value"</span>
+<span class="nx">iris</span><span class="p">.</span><span class="nx">global</span><span class="p">.</span><span class="nx">Data</span><span class="p">(</span><span class="s2">"global-variable"</span><span class="p">);</span>
+</pre>
+</div>
+
+
+<h3>Establishing the current environment</h3>
+
+<p>The environment depends of the page URL.</p>
+
+<p>For example, if the URL is: <code>http://localhost:8080/</code> the environment will be <code>"dev"</code>.</p>
+
+<ul>
+<li>
+<code>http://localhost:8080/</code> -&gt; <code>"dev"</code>
+</li>
+<li>
+<code>http://www.example.com/</code> -&gt; <code>"pro"</code>
+</li>
+<li>
+<code>http://www.other.com/</code> -&gt; <code>"pro"</code>
+</li>
+</ul><p>You can also set manually the environment:</p>
+
+<div class="highlight">
+<pre><span class="c1">// return current environment</span>
+<span class="nx">iris</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">Env</span><span class="p">();</span>
+
+<span class="c1">// set environment</span>
+<span class="nx">iris</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">Env</span><span class="p">(</span><span class="s2">"pro"</span><span class="p">);</span>
+</pre>
+</div>
+
+
+<h3>Environment values</h3>
+
+<div class="highlight">
+<pre><span class="c1">// add/override a environment variable</span>
+<span class="nx">iris</span><span class="p">.</span><span class="nx">local</span><span class="p">.</span><span class="nx">Load</span><span class="p">({</span>
+    <span class="s2">"local-variable"</span> <span class="o">:</span> <span class="p">{</span>
+     <span class="s2">"dev"</span> <span class="o">:</span> <span class="s2">"example-dev"</span>
+    <span class="p">,</span><span class="s2">"pro"</span> <span class="o">:</span> <span class="s2">"example-pro"</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="c1">// If environment="dev" then return "example-dev"</span>
+<span class="nx">iris</span><span class="p">.</span><span class="nx">local</span><span class="p">.</span><span class="nx">Data</span><span class="p">(</span><span class="s2">"local-variable"</span><span class="p">);</span>
+</pre>
+</div>
+
+
+<h2>Installation</h2>
+
+<p>Download the lastest version from <a href="https://github.com/intelygenz/iris/zipball/master">https://github.com/intelygenz/iris/zipball/master</a></p>
+
+<div class="highlight">
+<pre><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">'text/javascript'</span> <span class="na">src=</span><span class="s">"iris-0.4.0.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</pre>
+</div>
+
+
+<p>Iris requires <em>JQuery 1.5+</em>:
+<a href="http://jquery.com/">http://jquery.com/</a></p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Iris maintained by <a href="https://github.com/intelygenz">intelygenz</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
