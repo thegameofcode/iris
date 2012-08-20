@@ -1,2 +1,10 @@
 
 .DS_Store
+
+iris-example/.classpath
+
+iris-example/.project
+
+iris-example/.settings/org.eclipse.jdt.core.prefs
+
+*.prefs
