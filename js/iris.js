@@ -1401,8 +1401,7 @@ var iris = new function() {
 	this.Goto = _Goto;
 	
 	/**
-	 * Start navigation using the current URL-hash.
-	 * If the current URL has not hash, navigate to <code>p_defaultHashUrl</code>.
+	 * Navigates to current URL hash or to <code>p_defaultHashUrl</code> if unknown.
 	 * @function
 	 * @param p_defaultUrlHash {String} Default URL Hash
 	 * @example
