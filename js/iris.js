@@ -1402,6 +1402,7 @@ var iris = new function() {
 	
 	/**
 	 * Navigates to current URL hash or to <code>p_defaultHashUrl</code> if unknown.
+	 * The screen must be previously added using <code>iris.screen.Add</code>.
 	 * @function
 	 * @param p_defaultUrlHash {String} Default URL Hash
 	 * @example
