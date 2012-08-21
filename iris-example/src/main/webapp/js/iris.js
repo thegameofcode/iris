@@ -35,6 +35,16 @@
  * [version] date -> authors
  * 		upd|fix|new|dep|rmv - description
  *
+ * [0.4.2-SNAPSHOT] 2012-08-21 -> alejandro.gonzalez@intelygenz.com, angel.sanchez@intelygenz.com
+ *		[upd] _LocaleParse -> Now can finds variables with dot notation, eg: @@COMMON.HELLO@@. This mean that you can have nested objects in lang json files.
+ *		[upd] iris.ApplyBE -> Now return the current BE object. This mean you can have no public BE methods.
+ *		[new] screen.CanSleep -> All screens can define a CanSleep public method that returns a boolean indicating when the screen can be leaved or not. If only one screen can't sleep, sleep action is cancelled.
+ * 		[new] iris.BE -> Define a new Behaviour.
+ * 		[new] iris.ApplyBE -> Applies a already loaded BE to a set of uis/DOM elements iris.ApplyBE("be_controle.js", [ui1, ui2, $dom1, $dom2]);
+ * 		[upd] iris.InstanceUi -> Now displays in console when data-id is not unique.
+ * 		[new] self.DestroyUI() -> Remove a UI from the DOM tree and all its references.
+ * 		[new] self.Destroy() -> new Lifecycle function is called when a UI is destroyed.
+ *
  * [0.4.0] 2012-07-18 -> angel.sanchez@intelygenz.com, alejandro.gonzalez@intelygenz.com
  * 		Previous project: http://code.google.com/p/iris-js/
  * 		WARNING: No backward with previous versions
@@ -49,7 +59,7 @@
  * */
 var iris = new function() {
 	
-	var _APP_VERSION = "0.4.0"
+	var _APP_VERSION = "0.4.2-SNAPSHOT"
 	,	_APP_NAME = "iris"
 	,	_JQ_MIN_VER = 1.5
 	;
@@ -70,11 +80,13 @@ var iris = new function() {
 	,	_Event = {}
 	,	_Includes = {}
 	,	_Components = {}
+	,	_Behaviours = {}
 	,	_AppBaseUri = ""
 	,	_LastIncludePath
 	,	_Head = $("head").get(0)
 	,	_Cache = true
 	,	_HasConsole
+	,	_GotoCancelled = false
 	;
 
 	function _Init () {
@@ -91,10 +103,15 @@ var iris = new function() {
 		if ( !_HasConsole && window.console && window.console.log ) {
 			window.console.log("advanced console debugging is not supported in this browser");
 		}
-		
 	}
 	
 	function _Window_OnHashChange () {
+		
+		if ( _GotoCancelled ) {
+			_GotoCancelled = false;
+			return false;
+		}
+		
 		var prev = _PrevHashUrl.split("/")
 		,	curr = document.location.hash.split("/")
 		,	prevPath = ""
@@ -102,6 +119,24 @@ var iris = new function() {
 		,	pathWithoutParams
 		,	hasRemainingChilds = false
 		;
+		
+		// Check if all screen.canSleep() are true
+		if ( _PrevHashUrl != "" ) {
+			for ( var f=0, F=prev.length; f<F; f++ ) {
+				
+				if ( prev[f] != "" ) {
+					prevPath += prev[f] + "/";
+					pathWithoutParams = _RemoveURLParams(prevPath);
+					
+					if (_Screen[pathWithoutParams].CanSleep() === false ) {
+						_GotoCancelled = true;
+						document.location.hash = _PrevHashUrl;
+						return false;
+					}
+				}
+			}			
+		}
+		prevPath = "";
 		
 		// Hide screens and its childs that are not showed
 		if ( prev.length > curr.length ) {
@@ -115,8 +150,8 @@ var iris = new function() {
 				
 				if ( hasRemainingChilds || currPath != prevPath ) {
 					hasRemainingChilds = true;
-					
 					pathWithoutParams = _RemoveURLParams(prevPath);
+
 					_Screen[pathWithoutParams].__Sleep__();
 					_Screen[pathWithoutParams].Hide();
 				}
@@ -471,7 +506,19 @@ var iris = new function() {
 
 	function _LangGet (p_label, p_locale) {
 		var locale = ( p_locale ) ? p_locale : _Locale;
-		var value  = _Lang[locale][p_label];
+		var value = null;
+		if ( p_label.indexOf(".") > -1 ){
+			var labels = p_label.split(".");
+			var f,F=labels.length;
+			var obj = _Lang[locale];
+			for(f = 0; f<F; f++){
+				obj = obj[labels[f]];
+			}
+			value = obj;
+		} else {
+			value  = _Lang[locale][p_label];
+		}
+		
 		if ( !value ) value = "??" + p_label + "??";
 		return value;
 	};
@@ -488,6 +535,7 @@ var iris = new function() {
 	function _LocaleParse(p_html){
 		var html = p_html;
 		var matches = html.match(/@@[A-Z_\.]+@@/g);
+		
 		if ( matches ) {
 			var f, F = matches.length;
 			for ( f=0; f<F; f++ ) {
@@ -580,6 +628,18 @@ var iris = new function() {
 		_Components[_LastIncludePath] = f_screen;
 	};
 	
+	//TODO: BE pass settings
+	function _ApplyBE( p_beId, p_uis ){
+		var be = new _AbstractBE();
+		be.prototype = new _Behaviours[p_beId]( be );
+		be.Apply( p_uis );
+		return be;
+	}
+
+	function _BECreate( f_be  ){
+		_Behaviours[ _LastIncludePath ] = f_be;
+	}
+	
 	function _UICreate (f_ui) {
 		_Components[_LastIncludePath] = f_ui;
 	};
@@ -605,7 +665,6 @@ var iris = new function() {
 		screenInstance.__Id__ = p_screenPath;
 		screenInstance.__UIComponents__ = [];
 		screenInstance.__$Container__ = _Context[p_screenPath];
-		
 		screenInstance.Create();
 		screenInstance.Hide();
 		
@@ -762,6 +821,14 @@ var iris = new function() {
 	 * @class
 	 * @ignore 
 	 */
+	function _AbstractBE () {
+
+	}
+	
+	/**
+	 * @class
+	 * @ignore 
+	 */
 	function _AbstractUI () {
 		this.__TemplateMode__ = this.TEMPLATE_REPLACE;
 		
@@ -814,6 +881,16 @@ var iris = new function() {
 			}
 			this.Awake(p_params);
 		};
+		
+		this.__Destroy__ = function () {
+			var $ui = this.__UIComponents__;
+			for ( var f=0, F=$ui.length; f < F; f++ ) {
+				$ui[f].__Destroy__();
+				$ui[f] = null;
+			}
+			this.__UIComponents__ = null;
+			this.Destroy();
+		}
 
 		this.__Template__ = function (p_htmlUrl, p_params, p_mode) {
 			
@@ -906,6 +983,18 @@ var iris = new function() {
 			
 		};
 		
+		this.DestroyUI = function (p_ui) {
+			var uis = this.__UIComponents__;
+			for (var f=0, F=uis.length; f < F; f++) {
+				if (uis[f] == p_ui) {
+					uis.splice(f, 1);
+					p_ui.__Destroy__();
+					p_ui.$Get().remove();
+					break;
+				}
+			}
+		};
+		
 		this.$Container = function () {
 			return this.__$Container__;
 		};
@@ -913,7 +1002,11 @@ var iris = new function() {
 		// To override functions
 		this.Create = function () {};
 		this.Awake = function () {};
+		this.CanSleep = function () {
+			return true;
+		};
 		this.Sleep = function () {};
+		this.Destroy = function () {};
 	};
 	
 	function _Deserialize (p_$form, p_data) {
@@ -1095,11 +1188,20 @@ var iris = new function() {
 	
 	/**
 	 * Add translation texts to a locale.
+	 * See {@link iris.lang.Get} for more details.
 	 * @function
 	 * @param {String} p_locale Locale
-	 * @param {Object} p_data Object like { "LABEL" : "value", ... }
+	 * @param {Object} p_data Object like { "LABEL" : "value", GROUP : { "LABEL" : "value", ... }, ... }
 	 * @example
-	 * iris.lang.Load("es-ES", {"LABEL":"etiqueta"});
+	 * iris.lang.Load( "es-ES"
+	 *               ,{ "LABEL":"etiqueta"
+	 *                 ,{"GROUP":{
+	 *                      "NESTED_VALUE" : "valor anidado"
+	 *                  }
+	 *                });
+	 *
+	 * iris.lang.Get("LABEL");
+	 * iris.lang.Get("GROUP.NESTED_VALUE");
 	 */
 	this.lang.Load = _LocaleLoad;
 	
@@ -1120,6 +1222,7 @@ var iris = new function() {
 	
 	/**
 	 * Get a translation text according to the Locale.
+	 * You can access to nested values using dot notation.
 	 * See {@link iris.local.Locale} for more details.
 	 * @function
 	 * @param {String} p_label Label
@@ -1128,6 +1231,8 @@ var iris = new function() {
 	 * iris.lang.Get("LABEL");
 	 * 
 	 * iris.lang.Get("LABEL", "en-US");
+	 *
+	 * iris.lang.Get("GROUP.LABEL");
 	 */
 	this.lang.Get = _LangGet;
 	
@@ -1396,7 +1501,9 @@ var iris = new function() {
 	 * @function
 	 * @param p_hashUri {String} Hash URL
 	 * @example
-	 * iris.Goto("#profile/my-contacts")
+	 * iris.Goto("#profile/my-contacts");
+	 *
+	 * iris.Goto("#home/section?id=5");
 	 */
 	this.Goto = _Goto;
 	
@@ -1408,6 +1515,22 @@ var iris = new function() {
 	 * iris.GotoUrlHash("#home/games")
 	 */
 	this.GotoUrlHash = _GotoUrlHash;
+	
+	/**
+	 * Registra un objeto BE. Debe aparecer al principio de los ficheros (*.js) BE.
+	 * @function
+	 * @param {Function} f_be La clase del objeto BE
+	 * @example
+	 * iris.UI(
+	 *   function (self) {
+	 *   	self.Apply = function ( p_uis ) {
+	 *   	}
+	 *   	...
+	 *   }
+	 * );
+	 */
+	this.BE = _BECreate;
+	this.ApplyBE = _ApplyBE;
 	
 	_Init();
 	
