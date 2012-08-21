@@ -1392,11 +1392,16 @@ var iris = new function() {
 	/**
 	 * Navigate to a screen.
 	 * The screen must be previously added using <code>iris.screen.Add</code>.
+	 * If you want to send parameters to the screen, use URL encoded format.
 	 * See {@link iris.screen.Add}
 	 * @function
 	 * @param p_hashUri {String} Hash URL
 	 * @example
-	 * iris.Goto("#profile/my-contacts")
+	 * iris.Goto("#profile/my-contacts");
+	 *
+	 * iris.Goto("#home/screen?param1=value1&param2=value2")
+	 *
+	 * iris.Goto("#home/screen?param1=value1&param2=value2/other-screen/final-screen?param1=value1")
 	 */
 	this.Goto = _Goto;
 	
