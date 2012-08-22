@@ -12,6 +12,9 @@ Iris is not only another framework. It is a methodology that will help you to bu
 ## API
 http://intelygenz.github.com/iris/api/v0.4.0/
 
+## Getting Started
+https://github.com/intelygenz/iris/wiki
+
 ## Installation
 
 Download the lastest version from http://intelygenz.github.com/iris/

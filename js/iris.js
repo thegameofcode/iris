@@ -35,15 +35,17 @@
  * [version] date -> authors
  * 		upd|fix|new|dep|rmv - description
  *
- * [0.4.2-SNAPSHOT] 2012-08-14 -> alejandro.gonzalez@intelygenz.com, angel.sanchez@intelygenz.com
+ * [0.4.2-SNAPSHOT] 2012-08-22 -> alejandro.gonzalez@intelygenz.com, angel.sanchez@intelygenz.com
  *		[upd] _LocaleParse -> Now can finds variables with dot notation, eg: @@COMMON.HELLO@@. This mean that you can have nested objects in lang json files.
  *		[upd] iris.ApplyBE -> Now return the current BE object. This mean you can have no public BE methods.
- *		[new] screen.CanSleep -> All screens can define a CanSleep public method that returns a boolean indicating when the screen can be leaved or not. If only one screen can't sleep, sleep action is cancelled.
+ *		[new] screen.CanSleep -> All screens can define a CanSleep public method that returns a boolean indicating when the screen can be leaved or not.
+ *                               If only one screen can't sleep, sleep action is cancelled.
  * 		[new] iris.BE -> Define a new Behaviour.
  * 		[new] iris.ApplyBE -> Applies a already loaded BE to a set of uis/DOM elements iris.ApplyBE("be_controle.js", [ui1, ui2, $dom1, $dom2]);
  * 		[upd] iris.InstanceUi -> Now displays in console when data-id is not unique.
  * 		[new] self.DestroyUI() -> Remove a UI from the DOM tree and all its references.
  * 		[new] self.Destroy() -> new Lifecycle function is called when a UI is destroyed.
+ * 		[doc] Documentation completed.
  *
  * [0.4.0] 2012-07-18 -> angel.sanchez@intelygenz.com, alejandro.gonzalez@intelygenz.com
  * 		Previous project: http://code.google.com/p/iris-js/
@@ -817,44 +819,11 @@ var iris = new function() {
 		}
 	};
 	
-	/**
-	 * @class
-	 * @ignore 
-	 */
-	function _AbstractBE () {
-
-	}
-	
-	/**
-	 * @class
-	 * @ignore 
-	 */
-	function _AbstractUI () {
-		this.__TemplateMode__ = this.TEMPLATE_REPLACE;
-		
-		this.TemplateMode = function (p_mode) {
-			this.__TemplateMode__ = p_mode;
-		};
-		this.Template = function (p_htmlUrl, p_params) {
-			this.__Template__(p_htmlUrl, p_params, this.__TemplateMode__);
-		};
-	};
-	_AbstractUI.prototype = new _AbstractComponent();
 
 	/**
 	 * @class
-	 * @ignore 
-	 */
-	function _AbstractScreen () {
-		this.Template = function (p_htmlUrl, p_params) {
-			this.__Template__(p_htmlUrl, p_params, this.TEMPLATE_APPEND);
-		};
-	};
-	_AbstractScreen.prototype = new _AbstractComponent();
-
-	/**
-	 * @class
-	 * @ignore 
+	 * Abstract component for UIs / Screens extending.
+	 * Common properties and functions.
 	 */
 	function _AbstractComponent () {
 		this.TEMPLATE_APPEND = "append";
@@ -890,7 +859,7 @@ var iris = new function() {
 			}
 			this.__UIComponents__ = null;
 			this.Destroy();
-		}
+		};
 
 		this.__Template__ = function (p_htmlUrl, p_params, p_mode) {
 			
@@ -916,30 +885,61 @@ var iris = new function() {
 				case this.TEMPLATE_REPLACE:
 					this.__$Container__.replaceWith($tmpl);
 					break;
-				case this.TEMPLATE_BEFORE:
-					this.__$Container__.before($tmpl);
-					break;
-				case this.TEMPLATE_AFTER:
-					this.__$Container__.after($tmpl);
-					break;
 				default:
 					iris.E("Unknown template mode", p_mode);
 			}
 			
 		};
 
+		/**
+		 * Show the template object.
+		 * If the component is a screen, this is called automatically 
+		 * after self.Awake() when iris navigates.
+		 * 
+		 * See {@link iris.Goto} for more details.
+		 * @function
+		 */
 		this.Show = function () {
 			this.__$Tmpl__.show();
 		};
 
+		/**
+		 * Hide the template object.
+		 * If the component is the current screen, this is called automatically 
+		 * after self.Sleep() when iris navigates to other screen. Is called too 
+		 * when a new screen is created.
+		 * 
+		 * See {@link iris.Goto} for more details.
+		 * @function
+		 */
 		this.Hide = function () {
 			this.__$Tmpl__.hide();
 		};
 		
+		/**
+		 * Set multiple component settings.
+		 * You can access to this values using {@link iris-_AbstractComponent#Setting}.
+		 * @function
+		 * @example
+		 * 
+		 * self.Settings({
+		 *      "min" : 0
+		 *     ,"label" : "example" 
+		 * });
+		 */
 		this.Settings = function (p_settings) {
 			$.extend(this.__Setting__, p_settings);
 		};
 		
+		/**
+		 * Set or get a single component setting.
+		 * @function
+		 * @example
+		 * 
+		 * var label = self.Setting("label"); // Get setting value
+		 * 
+		 * self.Setting("label", "example"); // Set setting value
+		 */
 		this.Setting = function (p_label, p_value) {
 			if ( p_value === undefined ) {
 				if ( !this.__Setting__.hasOwnProperty(p_label) ) {
@@ -952,6 +952,13 @@ var iris = new function() {
 			}
 		};
 		
+		/**
+		 * Find a JQuery object in the template using its <code>data-id</code> attribute.
+		 * @function
+		 * @example
+		 * 
+		 * var $label = self.$Get("span_label");
+		 */
 		this.$Get = function (p_id, p_$tmpl) {
 			var $tmpl = p_$tmpl === undefined ? this.__$Tmpl__ : p_$tmpl;
 			
@@ -966,6 +973,25 @@ var iris = new function() {
 			return $tmpl;
 		};
 		
+		/**
+		 * Create a new UI component instance.
+		 * 
+		 * The created component is registered into the parent screen or UI,
+		 * so you must use {@link iris-_AbstractComponent#DestroyUI} in order to remove it.
+		 * 
+		 * The component is added to <code>p_idOrJq</code> container or replace it.
+		 * 
+		 * The container <code>p_idOrJq</code> looks in the main template or you can
+		 * looks in <code>p_$tmpl</code> object.
+		 * @function
+		 * @example
+		 * 
+		 * self.InstanceUI("custom_ui", "custom_ui.js");
+		 * 
+		 * self.InstanceUI($btnOk, "button.js", {"label":"OK","ico":"accept"});
+		 * 
+		 * self.InstanceUI("btn_ok", "button.js", {"label":"OK","ico":"accept"}, $other_container);
+		 */
 		this.InstanceUI = function (p_idOrJq, p_jsUrl, p_uiSettings, p_$tmpl) {
 			var $container = typeof p_idOrJq === "string" ? this.$Get(p_idOrJq, p_$tmpl) : p_idOrJq;
 			
@@ -974,7 +1000,7 @@ var iris = new function() {
 				this.__UIComponents__.push(uiInstance);
 				return uiInstance;
 			}
-			else if( $container.size() > 1 ) {
+			else if ( $container.size() > 1 ) {
 				iris.E("InstanceUI: Container [data-id=" + p_idOrJq + "] must be unique");
 			}
 			else {
@@ -983,6 +1009,15 @@ var iris = new function() {
 			
 		};
 		
+		/**
+		 * Remove a child UI component completely previously created using {@link self.InstanceUI}.
+		 * Remove all its parent references.
+		 * @function
+		 * @example
+		 * 
+		 * var customUI = self.InstanceUI("custom_ui", "custom_ui.js");
+		 * self.DestroyUI(customUI);
+		 */
 		this.DestroyUI = function (p_ui) {
 			var uis = this.__UIComponents__;
 			for (var f=0, F=uis.length; f < F; f++) {
@@ -995,19 +1030,128 @@ var iris = new function() {
 			}
 		};
 		
+		/**
+		 * Get the component container.
+		 * If the component is a screen, the container is
+		 * set using {@link iris.screen.Add} function.
+		 * Otherwise if the component is a UI, the container is
+		 * set using {@link iris-_AbstractComponent#InstanceUI} function.
+		 * @function
+		 * @example
+		 * 
+		 * var screenContainer = self.$Container();
+		 */
 		this.$Container = function () {
 			return this.__$Container__;
 		};
 		
 		// To override functions
+		
+		/**
+		 * Called automatically only once at the creation phase.
+		 * Function to override.
+		 * @function
+		 */
 		this.Create = function () {};
+		
+		/**
+		 * Called automatically when a screen is showed.
+		 * Function to override.
+		 * @function 
+		 */
 		this.Awake = function () {};
+		
+		/**
+		 * Called automatically when a screen is going to sleep, before {@link iris-_AbstractComponent#Sleep}.
+		 * If return false, the <code>self.Sleep()</code> function is not called.
+		 * @function 
+		 */
 		this.CanSleep = function () {
 			return true;
 		};
+		
+		/**
+		 * Called automatically when a screen is hidden.
+		 * Function to override.
+		 * @function
+		 */
 		this.Sleep = function () {};
+		
+		/**
+		 * Called automatically by {@link iris-_AbstractComponent#DestroyUI}.
+		 * Function to override.
+		 */
 		this.Destroy = function () {};
 	};
+	
+	/**
+	 * @class
+	 * @ignore 
+	 */
+	function _AbstractBE () {
+
+	}
+	
+	/**
+	 * @class
+	 * Abstract class for UI extending.
+	 * Common UI functions and properties.
+	 */
+	function _AbstractUI () {
+		this.__TemplateMode__ = this.TEMPLATE_REPLACE;
+		
+		/**
+		 * Set the template behaviour.
+		 * The template can be added to the container
+		 * or can replace it. The default mode is <code>self.TEMPLATE_REPLACE</code>.
+		 * Use this function before call {@link iris-_AbstractUI.Template}.
+		 * @function
+		 * @example
+		 * self.TemplateMode(self.TEMPLATE_APPEND);
+		 * self.Template("tmpl.html");
+		 */
+		this.TemplateMode = function (p_mode) {
+			this.__TemplateMode__ = p_mode;
+		};
+		
+		/**
+		 * Create the component template.
+		 * Translate multilanguage values, draw parameters, 
+		 * create DOM elements and insert into container or replace it.
+		 * 
+		 * See {@link iris-_AbstractUI.TemplateMode}.
+		 * @function
+		 * @example
+		 * self.TemplateMode(self.TEMPLATE_APPEND);
+		 * self.Template("tmpl.html", {"age":23});
+		 */
+		this.Template = function (p_htmlUrl, p_params) {
+			this.__Template__(p_htmlUrl, p_params, this.__TemplateMode__);
+		};
+	};
+	_AbstractUI.prototype = new _AbstractComponent();
+
+	/**
+	 * @class
+	 * Abstract class for screen extending.
+	 * Common screen functions and properties.
+	 */
+	function _AbstractScreen () {
+		
+		/**
+		 * Create the screen template.
+		 * Translate multilanguage values, draw parameters, 
+		 * create DOM elements and it is insert into the screen container.
+		 * @function
+		 * @example
+		 * self.Template("tmpl.html", {"name":"Jonh"});
+		 */
+		this.Template = function (p_htmlUrl, p_params) {
+			this.__Template__(p_htmlUrl, p_params, this.TEMPLATE_APPEND);
+		};
+		
+	};
+	_AbstractScreen.prototype = new _AbstractComponent();
 	
 	function _Deserialize (p_$form, p_data) {
 		var element, tag, value;
@@ -1517,11 +1661,12 @@ var iris = new function() {
 	this.GotoUrlHash = _GotoUrlHash;
 	
 	/**
-	 * Registra un objeto BE. Debe aparecer al principio de los ficheros (*.js) BE.
+	 * Register a BE object.
+	 * It must appear at the beginning of the BE file.
 	 * @function
-	 * @param {Function} f_be La clase del objeto BE
+	 * @param {Function} f_be Behaviour Class
 	 * @example
-	 * iris.UI(
+	 * iris.BE(
 	 *   function (self) {
 	 *   	self.Apply = function ( p_uis ) {
 	 *   	}
@@ -1530,6 +1675,21 @@ var iris = new function() {
 	 * );
 	 */
 	this.BE = _BECreate;
+	
+	/**
+	 * Apply a behaviour to a group of UI components or single UI.
+	 * @function
+	 * @param p_beId {String} Behaviour identifier
+	 * @param p_uis {Object|Array} UI Component/s
+	 * @example
+	 * var customUI = self.InstanceUI("input", "input.js");
+	 * iris.ApplyBE("be_validator.js", customUI);
+	 *
+	 * var otherCustomUI = self.InstanceUI("input", "input.js");
+	 * iris.ApplyBE("be_validator.js", [customUI, otherCustomUI]);
+	 *
+	 * iris.ApplyBE("be_validator.js", [{"label":"valueA", "ui":customUI}, {"label":"valueB", "ui":customUI}]);
+	 */
 	this.ApplyBE = _ApplyBE;
 	
 	_Init();
