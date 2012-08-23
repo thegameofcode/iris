@@ -11,6 +11,7 @@ iris.Screen(
 			self.$Get("btn_create").click(_Create);
 			self.$Get("btn_debug_uis").click(_DebugUIs); 
 			self.$Get("btn_destroy").click(_Destroy); 
+			self.$Get("btn_destroy_all").click(_DestroyAllUIs); 
 			
 		}
 		
@@ -20,6 +21,10 @@ iris.Screen(
 		
 		function _DebugUIs () {
 			iris.D("UIs", self.__UIComponents__)
+		}
+		
+		function _DestroyAllUIs () {
+			self.DestroyAllUIs();
 		}
 		
 		function _Destroy () {

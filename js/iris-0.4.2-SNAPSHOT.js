@@ -227,7 +227,7 @@ var iris = new function() {
 	
 	function _NavGetParams(p_hashPart) {
 		var params = {}
-		,	regex = /(\w*)=([\w% ]*)/g
+		,	regex = /(\w*)=([\w%]*)/g
 		;
 		
 		while ( matches = regex.exec(p_hashPart) ) {
@@ -839,7 +839,7 @@ var iris = new function() {
 		this.__Sleep__ = function () {
 			var $ui = this.__UIComponents__;
 			for ( var f=0, F=$ui.length; f < F; f++ ) {
-				$ui[f].Sleep();
+				$ui[f].__Sleep__();
 			}
 			this.__IsSleeping__ = true;
 			this.Sleep();
@@ -848,7 +848,7 @@ var iris = new function() {
 		this.__Awake__ = function (p_params) {
 			var $ui = this.__UIComponents__;
 			for ( var f=0, F=$ui.length; f < F; f++ ) {
-				$ui[f].Awake();
+				$ui[f].__Awake__();
 			}
 			this.__IsSleeping__ = false;
 			this.Awake(p_params);
@@ -962,6 +962,8 @@ var iris = new function() {
 		/**
 		 * Find a JQuery object in the template using its <code>data-id</code> attribute.
 		 * @function
+		 * @param {String} p_id Element <code>data-id</code> value
+		 * @param {JQuery} [p_$tmpl] Template that contains the element, if it is undefined search into the UI template (optional)
 		 * @example
 		 * 
 		 * var $label = self.$Get("span_label");
@@ -991,6 +993,10 @@ var iris = new function() {
 		 * The container <code>p_idOrJq</code> looks in the main template or you can
 		 * looks in <code>p_$tmpl</code> object.
 		 * @function
+		 * @param {String|JQuery} p_idOrJq Container <code>data-id</code> or JQuery object 
+		 * @param {String} p_jsUrl UI file path
+		 * @param {Object} p_uiSettings UI Settings
+		 * @param {JQuery} [p_$tmpl] Template that contains the container, if it is undefined search into the UI template (optional)
 		 * @example
 		 * 
 		 * self.InstanceUI("custom_ui", "custom_ui.js");
@@ -1020,21 +1026,36 @@ var iris = new function() {
 		 * Remove a child UI component completely previously created using {@link self.InstanceUI}.
 		 * Remove parent references.
 		 * @function
+		 * @param {UI} p_ui UI to be removed
 		 * @example
 		 * 
 		 * var customUI = self.InstanceUI("custom_ui", "custom_ui.js");
 		 * self.DestroyUI(customUI);
 		 */
 		this.DestroyUI = function (p_ui) {
-			var uis = this.__UIComponents__;
-			for (var f=0, F=uis.length; f < F; f++) {
-				if (uis[f] == p_ui) {
-					uis.splice(f, 1);
+			for (var f=0, F=this.__UIComponents__.length; f < F; f++) {
+				if (this.__UIComponents__[f] == p_ui) {
+					this.__UIComponents__.splice(f, 1);
 					p_ui.__Destroy__();
 					p_ui.$Get().remove();
 					break;
 				}
 			}
+		};
+		
+		/**
+		 * Remove all child UI components completely previously created using {@link self.InstanceUI}.
+		 * Remove parent references.
+		 * @function
+		 * @example
+		 * self.DestroyAllUIs();
+		 */
+		this.DestroyAllUIs = function () {
+			for (var f=0, F=this.__UIComponents__.length; f < F; f++) {
+				this.__UIComponents__[f].__Destroy__();
+				this.__UIComponents__[f].$Get().remove();
+			}
+			this.__UIComponents__ = [];
 		};
 		
 		/**
