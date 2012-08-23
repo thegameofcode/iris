@@ -231,7 +231,7 @@ var iris = new function() {
 		;
 		
 		while ( matches = regex.exec(p_hashPart) ) {
-			params[matches[1]] = unescape(matches[2]);
+			params[matches[1]] = decodeURI(matches[2]);
 		}
 
 		return params;
@@ -1675,14 +1675,21 @@ var iris = new function() {
 	
 	/**
 	 * Navigate to a screen.
-	 * The screen must be previously added using <code>iris.screen.Add</code>.
-	 * See {@link iris.screen.Add}
+	 * The screen must be previously added using {@link iris.screen.Add}.<br>
+	 * You can send parameters to the target screen as <code>... /screen?param1=value1&param2=value2/ ...</code>,
+	 * remember apply <code>encodeURI()</code> to the parameter values.
 	 * @function
 	 * @param p_hashUri {String} Hash URL
 	 * @example
-	 * iris.Goto("#profile/my-contacts");
+	 * 
+	 * iris.Goto("#home/section/subsection");
 	 *
-	 * iris.Goto("#home/section?id=5");
+	 * // Call with screen parameters
+	 * iris.Goto("#home/section?id=5&name=example%20name/subsection");
+	 * 
+	 * // Remember encode param values
+	 * var title = encodeURI("Title Example");
+	 * iris.Goto("#home/section?title=" + title);
 	 */
 	this.Goto = _Goto;
 	
