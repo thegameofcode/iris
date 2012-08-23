@@ -49,9 +49,15 @@ $(document).ready(
 		iris.E("test error");
 		
 		var $body = $(document.body);
-		iris.screen.Add($body, "#library", "example/screen/library.js");
+		/*iris.screen.Add($body, "#library", "example/screen/library.js");
 		
 		iris.GotoUrlHash("#library");
+		*/
+		iris.screen.Add($body, "#example_destroy", "example/screen/example_destroy.js");
+		iris.screen.Add($body, "#example_instance", "example/screen/example_instance.js");
+		iris.screen.Add($body, "#example_list", "example/screen/example_list.js");
+		
+		iris.GotoUrlHash("#example_destroy");
 	}
 );
 
