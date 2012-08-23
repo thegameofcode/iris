@@ -9,9 +9,11 @@ iris.Screen(
 			iris.screen.Add($library, "#library/authors", "example/screen/authors.js");
 			
 			self.$Get("btn_create").click(_Create);
-			self.$Get("btn_debug_uis").click(_DebugUIs); 
+			
 			self.$Get("btn_destroy").click(_Destroy); 
-			self.$Get("btn_destroy_all").click(_DestroyAllUIs); 
+			self.$Get("btn_destroy_all").click(_DestroyAllUIs);
+			
+			self.InstanceUI("btn_debug_uis", "example/ui/btn.js", {"onClick":_DebugUIs,"label":"Debug UI elements"});
 			
 		}
 		
@@ -24,12 +26,12 @@ iris.Screen(
 		}
 		
 		function _DestroyAllUIs () {
-			self.DestroyAllUIs();
+			self.DestroyAllUIs("uis");
 		}
 		
 		function _Destroy () {
 			
-			var idx = self.$Get("destroy_index").val();
+			var idx = Number(self.$Get("destroy_index").val()) + 1; // Skip debug button
 			var ui = self.__UIComponents__[idx];
 			self.DestroyUI(ui);
 			

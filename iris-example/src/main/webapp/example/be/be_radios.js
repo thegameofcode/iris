@@ -30,7 +30,7 @@ iris.BE(
 			;
 			
 			self.InitBE = function(){
-				_$ = self.$Get();
+				_$ = self;
 				_$.off("click");
 				_$.on("click", function( p_event ){
 					_OnClick( p_event );
@@ -41,10 +41,10 @@ iris.BE(
 				if ( p_press === true ){
 					_DePressAll();
 					_IsPressed = true;
-					_$.addClass("k-state-selected");
+					_$.addClass("selected");
 				} else if( p_press === false) {
 					_IsPressed = false;
-					_$.removeClass("k-state-selected");
+					_$.removeClass("selected");
 				}
 				return _IsPressed;
 			}
@@ -54,7 +54,7 @@ iris.BE(
 				
 				if( _IsPressed ){
 					_IsPressed = false;
-					_$.removeClass("k-state-selected");
+					_$.removeClass("selected");
 				} else {
 					_DePressAll();
 					_Press( true );

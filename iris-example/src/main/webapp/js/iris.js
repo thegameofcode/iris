@@ -632,6 +632,8 @@ var iris = new function() {
 	
 	//TODO: BE pass settings
 	function _ApplyBE( p_beId, p_uis ){
+		_Include(p_beId);
+		
 		var be = new _AbstractBE();
 		be.prototype = new _Behaviours[p_beId]( be );
 		be.Apply( p_uis );
@@ -1044,18 +1046,30 @@ var iris = new function() {
 		};
 		
 		/**
-		 * Remove all child UI components completely previously created using {@link self.InstanceUI}.
+		 * Remove all UI components from a container.
+		 * The UIs must be previously created using {@link self.InstanceUI}.<br>
 		 * Remove parent references.
 		 * @function
+		 * @param {String|JQuery} p_container UI Container <code>data-id</code>
 		 * @example
-		 * self.DestroyAllUIs();
+		 * self.DestroyAllUIs("container");
+		 * 
+		 * self.DestroyAllUIs($container);
 		 */
-		this.DestroyAllUIs = function () {
+		this.DestroyAllUIs = function (p_idOrJq) {
+			var contSelector = typeof p_idOrJq === "string" ? "[data-id=" + p_idOrJq + "]" : p_idOrJq.selector;
+			var ui;
 			for (var f=0, F=this.__UIComponents__.length; f < F; f++) {
-				this.__UIComponents__[f].__Destroy__();
-				this.__UIComponents__[f].$Get().remove();
+				ui = this.__UIComponents__[f];
+				
+				if (ui.__$Container__.selector == contSelector) {
+					this.__UIComponents__.splice(f--, 1);
+					F--;
+					
+					ui.__Destroy__();
+					ui.$Get().remove();
+				}
 			}
-			this.__UIComponents__ = [];
 		};
 		
 		/**

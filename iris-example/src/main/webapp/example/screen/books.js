@@ -7,7 +7,7 @@ iris.Screen(
 			var $btnEdit = self.$Get("btn_edit");
 			$btnEdit.click(_GotoEdit)
 			
-			var btnEdit = self.InstanceUI("btn_edit", "example/ui/btn.js", {"onClick" : _GotoEdit});
+			var btnEdit = self.InstanceUI("btn_edit", "example/ui/button.js", {"onClick" : _GotoEdit});
 			
 			iris.screen.Add(self.$Get("edit"), "#library/books/edit", "example/screen/book_edit.js");
 		}
