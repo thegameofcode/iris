@@ -227,7 +227,7 @@ var iris = new function() {
 	
 	function _NavGetParams(p_hashPart) {
 		var params = {}
-		,	regex = /(\w*)=([\w%]*)/g
+		,	regex = /(\w*)=([\w% ]*)/g
 		;
 		
 		while ( matches = regex.exec(p_hashPart) ) {
