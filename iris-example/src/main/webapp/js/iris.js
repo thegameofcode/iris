@@ -227,11 +227,11 @@ var iris = new function() {
 	
 	function _NavGetParams(p_hashPart) {
 		var params = {}
-		,	regex = /(\w*)=(\w*)/g
+		,	regex = /(\w*)=([\w% ]*)/g
 		;
 		
 		while ( matches = regex.exec(p_hashPart) ) {
-			params[matches[1]] = matches[2];
+			params[matches[1]] = unescape(matches[2]);
 		}
 
 		return params;
@@ -834,12 +834,14 @@ var iris = new function() {
 		this.__UIComponents__ = null;
 		this.__$Container__ = null;
 		this.__Setting__ = null;
+		this.__IsSleeping__;
 		
 		this.__Sleep__ = function () {
 			var $ui = this.__UIComponents__;
 			for ( var f=0, F=$ui.length; f < F; f++ ) {
 				$ui[f].Sleep();
 			}
+			this.__IsSleeping__ = true;
 			this.Sleep();
 		};
 		
@@ -848,10 +850,15 @@ var iris = new function() {
 			for ( var f=0, F=$ui.length; f < F; f++ ) {
 				$ui[f].Awake();
 			}
+			this.__IsSleeping__ = false;
 			this.Awake(p_params);
 		};
 		
 		this.__Destroy__ = function () {
+			if ( !this.__IsSleeping__ ) {
+				this.__Sleep__();
+			}
+			
 			var $ui = this.__UIComponents__;
 			for ( var f=0, F=$ui.length; f < F; f++ ) {
 				$ui[f].__Destroy__();
@@ -1011,7 +1018,7 @@ var iris = new function() {
 		
 		/**
 		 * Remove a child UI component completely previously created using {@link self.InstanceUI}.
-		 * Remove all its parent references.
+		 * Remove parent references.
 		 * @function
 		 * @example
 		 * 
@@ -1579,8 +1586,15 @@ var iris = new function() {
 	this.ui.HashToJq = _HashToJq;
 	
 	/**
-	 * Load JS or CSS files.
-	 * The load is <b>synchronous</b>.
+	 * Include static resources dynamically.
+	 * The load is <b>synchronous</b> and tracks all the files included to prevent them to be included twice.<br>
+	 * You can include:<br>
+	 * <ul>
+	 * <li>CSS files: style files are included by creating a link dynamically in the header of the index page.</li>
+	 * <li>JS files: script files are included by creating a script object dynamically in the header of the index page 
+	 *  	and append the loaded content to it. When including javascript files you must take care of the syntax 
+	 *  	as including javascript file with some syntax error would produce an error when adding it to a script element.</li>
+	 *  </ul>
 	 * @function
 	 * @param {arguments} File paths
 	 * @example
