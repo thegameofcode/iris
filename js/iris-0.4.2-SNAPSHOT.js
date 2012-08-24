@@ -44,7 +44,9 @@
  * 		[new] iris.ApplyBE -> Applies a already loaded BE to a set of uis/DOM elements iris.ApplyBE("be_controle.js", [ui1, ui2, $dom1, $dom2]);
  * 		[upd] iris.InstanceUi -> Now displays in console when data-id is not unique.
  * 		[new] self.DestroyUI() -> Remove a UI from the DOM tree and all its references.
+ *		[new] self.DestroyAllUIs() -> Remove all UIs from a container.
  * 		[new] self.Destroy() -> new Lifecycle function is called when a UI is destroyed.
+ * 		[new] self.$Get() -> shows error message when element isn't found
  * 		[doc] Documentation completed.
  *
  * [0.4.0] 2012-07-18 -> angel.sanchez@intelygenz.com, alejandro.gonzalez@intelygenz.com
@@ -964,11 +966,13 @@ var iris = new function() {
 		/**
 		 * Find a JQuery object in the template using its <code>data-id</code> attribute.
 		 * @function
-		 * @param {String} p_id Element <code>data-id</code> value
+		 * @param {String} [p_id] Element <code>data-id</code> value, if no set return root element (optional)
 		 * @param {JQuery} [p_$tmpl] Template that contains the element, if it is undefined search into the UI template (optional)
 		 * @example
 		 * 
 		 * var $label = self.$Get("span_label");
+		 * 
+		 * var rootElement = self.$Get();
 		 */
 		this.$Get = function (p_id, p_$tmpl) {
 			var $tmpl = p_$tmpl === undefined ? this.__$Tmpl__ : p_$tmpl;
@@ -978,7 +982,20 @@ var iris = new function() {
 				  	id = "[data-id=" + p_id + "]"
 				  , filter = $tmpl.filter(id)
 				;
-				return filter.length > 0 ? filter : $tmpl.find(id);
+				
+				if ( filter.length > 0 ) {
+					return filter;
+				}
+				else {
+					var find = $tmpl.find(id);
+					if ( find.size() > 0 ) {
+						return find;
+					}
+					else {
+						iris.E("[$Get] Element not found", p_id, $tmpl);
+						return undefined;
+					}
+				}
 			}
 			
 			return $tmpl;

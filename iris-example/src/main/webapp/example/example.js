@@ -53,11 +53,9 @@ $(document).ready(
 		
 		iris.GotoUrlHash("#library");
 		*/
-		iris.screen.Add($body, "#example_destroy", "example/screen/example_destroy.js");
-		iris.screen.Add($body, "#example_instance", "example/screen/example_instance.js");
-		iris.screen.Add($body, "#example_list", "example/screen/example_list.js");
+		iris.screen.Add($body, "#example", "example/screen/main.js");
 		
-		iris.GotoUrlHash("#example_destroy");
+		iris.GotoUrlHash("#example");
 	}
 );
 
