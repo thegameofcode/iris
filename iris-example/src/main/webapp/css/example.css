@@ -16,9 +16,36 @@
 	padding: 8px 6px;
 }
 
-.btnLabel {
+.btn span {
 	font-size: 0.8em;
 	font-weight: bold;
 	color: #FFFFFF;
 	white-space:nowrap;
+}
+
+.selected {
+	border: 4px solid #026EA3;
+}
+
+.validation-error {
+	border: 1px solid #f00;
+}
+
+.checkbox {
+	
+}
+
+.checkbox-icon {
+	width:24px;
+	height:24px;
+	background: url("../pix/checkbox.png") 0 0;
+	display: inline-block;
+}
+
+.checkbox-on {
+	background-position: 24px 0;
+}
+
+.checkbox-off {
+	background-position: 0 0;
 }

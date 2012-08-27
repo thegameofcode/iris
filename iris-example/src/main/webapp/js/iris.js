@@ -638,7 +638,8 @@ var iris = new function() {
 		
 		var be = new _AbstractBE();
 		be.prototype = new _Behaviours[p_beId]( be );
-		be.Apply( p_uis );
+		be.__Components__ = [];
+		be.__Apply__( p_uis );
 		return be;
 	}
 
@@ -1148,7 +1149,40 @@ var iris = new function() {
 	 * @ignore 
 	 */
 	function _AbstractBE () {
+		this.__Components__;
+//		this.BE = function () { this.InitBE = function (){} };
+		
+		this.__Apply__ = function (p_uis) {
+			for (var f=0, F=p_uis.length; f<F; f++) {
+				this.Add( p_uis[f] );
+			}
+		}
+		
+		this.Add = function (p_ui) {
+			if ( this.hasOwnProperty("BE") ) {
+				p_ui.proptotype = new this.BE( p_ui );
+				p_ui.InitBE();				
+			}
+			this.__Components__.push(p_ui);
+		}
+		
+		this.Remove = function (p_ui) {
+			var ui;
+			for (var f=0, F=this.__Components__.length; f<F; f++) {
+				ui = this.__Components__[f];
+				if ( ui === p_ui ) {
+					this.__Components__.splice(f, 1);
+				}
+			}
+		}
 
+		this.Get = function (p_idx) {
+			return this.__Components__[p_idx];
+		}
+
+		this.Size = function () {
+			return this.__Components__.length;
+		}
 	}
 	
 	/**

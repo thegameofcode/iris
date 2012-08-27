@@ -1,5 +1,5 @@
 /**
- * Makes a set of buttons act as a radio buttons allowing only one of them to be pressed
+ * Makes a set of buttons act as a radio buttons allowing only one of them to be pressed.
  *  
  * @AppliesTo button.js
  * @Example iris.ApplyBE("ffa/ui/be_radios.js", [_ButtonOpt1, _ButtonOpt2, _ButtonOpt3]);
@@ -9,28 +9,21 @@
 iris.BE(
 
 	function( self ) {
-		
-		var 
-			_Radios = []
-		;
 				
-		var _DePressAll = function(){
-			var i,I = _Radios.length;
-			for( i = 0; i<I; i++){
-				var ui = _Radios[i];
-				ui.Press( false );
+		var _DePressAll = function() {
+			for ( var f=0, F=self.Size(); f<F; f++ ) {
+				self.Get(f).Press( false );
 			}
 		}
 		
-		var BE = function( self ){
+		self.BE = function( self ){
 			
-			var
-				 _$
+			var  _$
 				,_IsPressed = false
 			;
 			
 			self.InitBE = function(){
-				_$ = self;
+				_$ = self.$Get();
 				_$.off("click");
 				_$.on("click", function( p_event ){
 					_OnClick( p_event );
@@ -69,14 +62,8 @@ iris.BE(
 		}
 		
 		// LyfeCycle
-		self.Apply = function( p_uis ) {
-			var i,I = p_uis.length;
-			for( i = 0; i<I; i++){
-				var ui = p_uis[i];
-				_Radios[_Radios.length] = ui;
-				ui.proptotype = new BE( ui );
-				ui.InitBE();
-			}
+		self.Apply = function() {
+			iris.D("Behaviour Radios Applied");
 		};
 		
 	}
