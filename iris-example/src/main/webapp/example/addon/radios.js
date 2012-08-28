@@ -1,9 +1,9 @@
 /**
  * Makes a set of buttons act as a radio buttons allowing only one of them to be pressed.
  *  
- * @AppliesTo button.js
- * @Example iris.ApplyBE("ffa/ui/be_radios.js", [_ButtonOpt1, _ButtonOpt2, _ButtonOpt3]);
- * @Adds
+ * @appliesTo button.js
+ * @example iris.ApplyAddOn("radios.js", [_ButtonOpt1, _ButtonOpt2, _ButtonOpt3]);
+ * @adds
  * - Press( state ) -> Set
  */
 iris.AddOn(

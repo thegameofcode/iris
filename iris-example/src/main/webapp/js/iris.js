@@ -680,6 +680,16 @@ var iris = new function() {
 		
 		_Screen[p_screenPath] = screenInstance;
 	}
+	
+	function _ScreenDestroy (p_screenPath) {
+		if ( _Screen.hasOwnProperty(p_screenPath) ) {
+			_Screen[p_screenPath].__Destroy__();
+			_Screen[p_screenPath] = null;
+		}
+		else {
+			iris.W("Error removing the screen \"" + p_screenPath + "\", path not found.");
+		}
+	}
 
 	function _TemplateParse (p_html, p_data) {
 		var result = p_html
@@ -1691,6 +1701,17 @@ var iris = new function() {
 	 * iris.Goto("#library/books/edit/details");
 	 */
 	this.screen.Add = _ScreenAdd;
+	
+	/**
+	 * Destroy a created screen.
+	 * Free screen and its UIs memory.
+	 * Call in cascade all Sleep() and Destroy() functions for its UI childs.
+	 * @function
+	 * @param {String} p_screenPath Screen URL path
+	 * @example
+	 * iris.screen.Destroy("#library/books/edit/details");
+	 */
+	this.screen.Destroy = _ScreenDestroy;
 	
 	/**
 	 * Copy all data-* attributes to an object.
