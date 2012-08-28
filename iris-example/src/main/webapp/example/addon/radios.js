@@ -6,9 +6,13 @@
  * @Adds
  * - Press( state ) -> Set
  */
-iris.BE(
+iris.AddOn(
 
 	function( self ) {
+		
+		self.Settings({
+			"name" : "default"
+		});
 				
 		var _DePressAll = function() {
 			for ( var f=0, F=self.Size(); f<F; f++ ) {
@@ -16,13 +20,13 @@ iris.BE(
 			}
 		}
 		
-		self.BE = function( self ){
+		self.UIAddOn = function(self) {
 			
 			var  _$
 				,_IsPressed = false
 			;
 			
-			self.InitBE = function(){
+			function _Init () {
 				_$ = self.$Get();
 				_$.off("click");
 				_$.on("click", function( p_event ){
@@ -59,11 +63,13 @@ iris.BE(
 			}
 			
 			self.Press = _Press;
+			
+			_Init();
 		}
 		
 		// LyfeCycle
-		self.Apply = function() {
-			iris.D("Behaviour Radios Applied");
+		self.Create = function() {
+			iris.D("AddOn Radios Applied, name=", self.Setting("name"));
 		};
 		
 	}

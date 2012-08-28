@@ -84,7 +84,7 @@ var iris = new function() {
 	,	_Event = {}
 	,	_Includes = {}
 	,	_Components = {}
-	,	_Behaviours = {}
+	,	_AddOns = {}
 	,	_AppBaseUri = ""
 	,	_LastIncludePath
 	,	_Head = $("head").get(0)
@@ -632,19 +632,22 @@ var iris = new function() {
 		_Components[_LastIncludePath] = f_screen;
 	};
 	
-	//TODO: BE pass settings
-	function _ApplyBE( p_beId, p_uis ){
-		_Include(p_beId);
+	function _ApplyAddOn( p_id, p_uis, p_settings ){
+		_Include(p_id);
 		
-		var be = new _AbstractBE();
-		be.prototype = new _Behaviours[p_beId]( be );
-		be.__Components__ = [];
-		be.__Apply__( p_uis );
-		return be;
+		var addOn = new _AbstractAddOn();
+		addOn.__Components__ = [];
+		addOn.__Setting__ =  {};
+		
+		addOn.prototype = new _AddOns[p_id]( addOn );
+		addOn.Settings(p_settings);
+		addOn.AddAll(p_uis);
+		addOn.Create();
+		return addOn;
 	}
 
-	function _BECreate( f_be  ){
-		_Behaviours[ _LastIncludePath ] = f_be;
+	function _AddOn( f_addOn  ){
+		_AddOns[ _LastIncludePath ] = f_addOn;
 	}
 	
 	function _UICreate (f_ui) {
@@ -824,6 +827,50 @@ var iris = new function() {
 		}
 	};
 	
+	/**
+	 * @class
+	 * Provide mechanism to store and retrieve settings values.
+	 */
+	function _Settable () {
+
+		this.__Setting__ = null;
+		
+		/**
+		 * Set multiple component settings.
+		 * You can access to this values using {@link iris-_Settable#Setting}.
+		 * @function
+		 * @example
+		 * 
+		 * self.Settings({
+		 *      "min" : 0
+		 *     ,"label" : "example" 
+		 * });
+		 */
+		this.Settings = function (p_settings) {
+			$.extend(this.__Setting__, p_settings);
+		};
+		
+		/**
+		 * Set or get a single component setting.
+		 * @function
+		 * @example
+		 * 
+		 * var label = self.Setting("label"); // Get setting value
+		 * 
+		 * self.Setting("label", "example"); // Set setting value
+		 */
+		this.Setting = function (p_label, p_value) {
+			if ( p_value === undefined ) {
+				if ( !this.__Setting__.hasOwnProperty(p_label) ) {
+					iris.W("The setting ", p_label, " is not in ", this.__Setting__, this);
+				}
+				return this.__Setting__[p_label];
+			}
+			else {
+				this.__Setting__[p_label] = p_value;
+			}
+		};
+	};
 
 	/**
 	 * @class
@@ -838,7 +885,7 @@ var iris = new function() {
 		this.__Id__ = null;
 		this.__UIComponents__ = null;
 		this.__$Container__ = null;
-		this.__Setting__ = null;
+		
 		this.__IsSleeping__;
 		
 		this.__Sleep__ = function () {
@@ -926,42 +973,6 @@ var iris = new function() {
 		 */
 		this.Hide = function () {
 			this.__$Tmpl__.hide();
-		};
-		
-		/**
-		 * Set multiple component settings.
-		 * You can access to this values using {@link iris-_AbstractComponent#Setting}.
-		 * @function
-		 * @example
-		 * 
-		 * self.Settings({
-		 *      "min" : 0
-		 *     ,"label" : "example" 
-		 * });
-		 */
-		this.Settings = function (p_settings) {
-			$.extend(this.__Setting__, p_settings);
-		};
-		
-		/**
-		 * Set or get a single component setting.
-		 * @function
-		 * @example
-		 * 
-		 * var label = self.Setting("label"); // Get setting value
-		 * 
-		 * self.Setting("label", "example"); // Set setting value
-		 */
-		this.Setting = function (p_label, p_value) {
-			if ( p_value === undefined ) {
-				if ( !this.__Setting__.hasOwnProperty(p_label) ) {
-					iris.W("The setting ", p_label, " is not in ", this.__Setting__, this);
-				}
-				return this.__Setting__[p_label];
-			}
-			else {
-				this.__Setting__[p_label] = p_value;
-			}
 		};
 		
 		/**
@@ -1143,29 +1154,45 @@ var iris = new function() {
 		 */
 		this.Destroy = function () {};
 	};
+	_AbstractComponent.prototype = new _Settable();
 	
 	/**
 	 * @class
-	 * @ignore 
+	 * Abstract class for AddOn extending.
+	 * Common AddOn functions and properties.
 	 */
-	function _AbstractBE () {
+	function _AbstractAddOn () {
 		this.__Components__;
-//		this.BE = function () { this.InitBE = function (){} };
 		
-		this.__Apply__ = function (p_uis) {
+		/**
+		 * Add a array of UIs to the AddOn.
+		 * It is called automatically from {@link iris.ApplyAddOn}.
+		 * @param p_uis {Array} Array of UIs
+		 * @function
+		 */
+		this.AddAll = function (p_uis) {
 			for (var f=0, F=p_uis.length; f<F; f++) {
 				this.Add( p_uis[f] );
 			}
 		}
 		
+		/**
+		 * Add a UI to the AddOn.
+		 * @param p_uis {UI} UI instance
+		 * @function
+		 */
 		this.Add = function (p_ui) {
-			if ( this.hasOwnProperty("BE") ) {
-				p_ui.proptotype = new this.BE( p_ui );
-				p_ui.InitBE();				
+			if ( this.hasOwnProperty("UIAddOn") ) {
+				p_ui.proptotype = new this.UIAddOn( p_ui );
 			}
 			this.__Components__.push(p_ui);
 		}
 		
+		/**
+		 * Remove a UI from the AddOn.
+		 * @param p_uis {UI} UI instance
+		 * @function
+		 */
 		this.Remove = function (p_ui) {
 			var ui;
 			for (var f=0, F=this.__Components__.length; f<F; f++) {
@@ -1176,14 +1203,35 @@ var iris = new function() {
 			}
 		}
 
+		/**
+		 * Get a registered UI from the AddOn.
+		 * The UI must be previosly registered using {@link iris.ApplyAddOn},
+		 * {@link iris-_AbstractAddOn#AddAll} or {@link iris-_AbstractAddOn#Add}
+		 * @param p_idx {integer} UI instance position
+		 * @function
+		 */
 		this.Get = function (p_idx) {
 			return this.__Components__[p_idx];
 		}
 
+		/**
+		 * The number of UI components registered.
+		 * @function
+		 */
 		this.Size = function () {
 			return this.__Components__.length;
 		}
+		
+		// To override
+		
+		/**
+		 * Called automatically when all UIs have been added.
+		 * Function to override.
+		 * @function
+		 */
+		this.Create = function () {}
 	}
+	_AbstractAddOn.prototype = new _Settable();
 	
 	/**
 	 * @class
@@ -1768,36 +1816,35 @@ var iris = new function() {
 	this.GotoUrlHash = _GotoUrlHash;
 	
 	/**
-	 * Register a BE object.
-	 * It must appear at the beginning of the BE file.
+	 * Register a AddOn object.
+	 * It must appear at the beginning of the AddOn file.
 	 * @function
-	 * @param {Function} f_be Behaviour Class
+	 * @param {Function} f_addOn AddOn Class
 	 * @example
-	 * iris.BE(
+	 * iris.AddOn(
 	 *   function (self) {
-	 *   	self.Apply = function ( p_uis ) {
+	 *   	self.Create = function ( p_uis ) {
 	 *   	}
 	 *   	...
 	 *   }
 	 * );
 	 */
-	this.BE = _BECreate;
+	this.AddOn = _AddOn;
 	
 	/**
-	 * Apply a behaviour to a group of UI components or single UI.
+	 * Apply a AddOn to a group of UI components or single UI.
 	 * @function
-	 * @param p_beId {String} Behaviour identifier
+	 * @param p_id {String} AddOn identifier
 	 * @param p_uis {Object|Array} UI Component/s
 	 * @example
 	 * var customUI = self.InstanceUI("input", "input.js");
-	 * iris.ApplyBE("be_validator.js", customUI);
+	 * iris.ApplyBE("validator.js", customUI);
 	 *
 	 * var otherCustomUI = self.InstanceUI("input", "input.js");
-	 * iris.ApplyBE("be_validator.js", [customUI, otherCustomUI]);
+	 * iris.ApplyAddOn("validator.js", [customUI, otherCustomUI]);
 	 *
-	 * iris.ApplyBE("be_validator.js", [{"label":"valueA", "ui":customUI}, {"label":"valueB", "ui":customUI}]);
 	 */
-	this.ApplyBE = _ApplyBE;
+	this.ApplyAddOn = _ApplyAddOn;
 	
 	_Init();
 	
