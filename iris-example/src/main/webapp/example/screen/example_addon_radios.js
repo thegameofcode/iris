@@ -9,7 +9,7 @@ iris.Screen(function(self) {
 		var btn2 = self.InstanceUI("button_two", "example/ui/button.js", {"onClick" : _Two});
 		var btn3 = self.InstanceUI("button_three", "example/ui/button.js", {"onClick" : _Three});
 		
-		var beRadios = iris.ApplyAddOn("example/be/be_radios.js", [btn1, btn2, btn3], {"name":"example_radios"});
+		var beRadios = iris.ApplyAddOn("example/addon/radios.js", [btn1, btn2, btn3], {"name":"example_radios"});
 		
 		_$Msg = self.$Get("msg");
 		
