@@ -69,7 +69,7 @@ iris.AddOn(
 		
 		// LyfeCycle
 		self.Create = function() {
-			iris.D("AddOn Radios Applied, name=", self.Setting("name"));
+			iris.D("AddOn Radios Applied, name=" + self.Setting("name"));
 		};
 		
 	}

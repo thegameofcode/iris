@@ -4,11 +4,11 @@ iris.Screen(
 		var _$CanSleep;
 		
 		self.Create = function () {
-			self.Template("example/screen/authors.html");
+			self.Template("library/screen/authors.html");
 			
-			self.InstanceUI("btn_edit", "example/ui/btn.js", {"onClick" : _GotoEdit});
+			self.InstanceUI("btn_edit", "example/ui/button.js", {"onClick" : _GotoEdit});
 			
-			iris.screen.Add(self.$Get("edit"), "#library/authors/edit", "example/screen/author_edit.js");
+			self.AddScreen("edit", "#authors/edit", "library/screen/author_edit.js");
 			
 			_$CanSleep = self.$Get("input_cansleep");
 		}
@@ -32,7 +32,7 @@ iris.Screen(
 		}
 		
 		function _GotoEdit () {
-			iris.Goto("#library/authors/edit?t=Title&a=Author")
+			iris.Goto("#authors/edit?t=Title&a=Author")
 		}
 		
 	}

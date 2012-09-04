@@ -35,18 +35,24 @@
  * [version] date -> authors
  * 		upd|fix|new|dep|rmv - description
  *
- * [0.4.2-SNAPSHOT] 2012-08-22 -> alejandro.gonzalez@intelygenz.com, angel.sanchez@intelygenz.com
+ * [0.4.2] 2012-09-04 -> alejandro.gonzalez@intelygenz.com, angel.sanchez@intelygenz.com
  *		[upd] _LocaleParse -> Now can finds variables with dot notation, eg: @@COMMON.HELLO@@. This mean that you can have nested objects in lang json files.
- *		[upd] iris.ApplyBE -> Now return the current BE object. This mean you can have no public BE methods.
+ *		[new] iris.AddOn, iris.ApplyAddOn -> Now you can define groups of UIs and extends a UI functionality
  *		[new] screen.CanSleep -> All screens can define a CanSleep public method that returns a boolean indicating when the screen can be leaved or not.
  *                               If only one screen can't sleep, sleep action is cancelled.
- * 		[new] iris.BE -> Define a new Behaviour.
- * 		[new] iris.ApplyBE -> Applies a already loaded BE to a set of uis/DOM elements iris.ApplyBE("be_controle.js", [ui1, ui2, $dom1, $dom2]);
- * 		[upd] iris.InstanceUi -> Now displays in console when data-id is not unique.
+ * 		[upd] iris.InstanceUI -> Now displays in console when data-id is not unique.
  * 		[new] self.DestroyUI() -> Remove a UI from the DOM tree and all its references.
  *		[new] self.DestroyAllUIs() -> Remove all UIs from a container.
  * 		[new] self.Destroy() -> new Lifecycle function is called when a UI is destroyed.
  * 		[new] self.$Get() -> shows error message when element isn't found
+ * 		[new] iris.screen.Destroy() -> Remove a created screen completely
+ * 		[rmv] iris.screen.Add() -> Now you can use self.AddScreen()
+ * 		[new] _AbstractScreen.AddScreen() -> Screens only can be registered inside of screens
+ * 		[new] iris.screen.WelcomeScreen() -> Now the applications must implement this entry point
+ * 		[rmv] The last parameter of self.InstanceUI(p_id,p_js,p_settings,p_$tmpl) -> you can't instance UI outside its own templates
+ * 		[rmv] The last parameter of self.$Get(p_id,p_$tmpl) -> you can't get elements outside its own templates
+ * 		[fix] Small code refactoring and fixed bugs.
+ * 		[new] Tested with JQuery 1.8
  * 		[doc] Documentation completed.
  *
  * [0.4.0] 2012-07-18 -> angel.sanchez@intelygenz.com, alejandro.gonzalez@intelygenz.com
@@ -132,7 +138,7 @@ var iris = new function() {
 					prevPath += prev[f] + "/";
 					pathWithoutParams = _RemoveURLParams(prevPath);
 					
-					if (_Screen[pathWithoutParams].CanSleep() === false ) {
+					if (_Screen.hasOwnProperty(pathWithoutParams) && _Screen[pathWithoutParams].CanSleep() === false ) {
 						_GotoCancelled = true;
 						document.location.hash = _PrevHashUrl;
 						return false;
@@ -196,7 +202,7 @@ var iris = new function() {
 	function _ShowScreen (p_screenPath, p_params) {
 
 		if ( !_Context.hasOwnProperty(p_screenPath) ) {
-			_E( "[iris.screen.Goto] iris.screen.Add() has to be previosly called", p_screenPath );
+			_E( "[iris.screen.Goto] self.AddScreen() has to be previosly called", p_screenPath );
 		}
 		else {
 			if ( !_Screen.hasOwnProperty(p_screenPath) ) {
@@ -218,7 +224,7 @@ var iris = new function() {
 		}
 	}
 	
-	function _Goto(p_hashUri) {
+	function _Goto (p_hashUri) {
 		_PrevHashUrl = document.location.hash;
 		document.location.hash = p_hashUri;
 	}
@@ -237,16 +243,6 @@ var iris = new function() {
 		}
 
 		return params;
-	}
-	
-	function _GotoUrlHash (p_defaultHashUrl) {
-		var hashUri = document.location.hash;
-		if ( hashUri ) {
-			_Window_OnHashChange();
-		}
-		else {
-			_Goto(p_defaultHashUrl);
-		}
 	}
 	
 	function _AppName () {
@@ -519,7 +515,8 @@ var iris = new function() {
 				obj = obj[labels[f]];
 			}
 			value = obj;
-		} else {
+		}
+		else  if ( _Lang.hasOwnProperty(locale) ) {
 			value  = _Lang[locale][p_label];
 		}
 		
@@ -615,7 +612,6 @@ var iris = new function() {
 		uiInstance.__UIComponents__ = [];
 		uiInstance.__Setting__ = {};
 		uiInstance.prototype = new _Components[p_jsUrl](uiInstance);
-
 		
 		p_uiSettings = p_uiSettings === undefined ? {} : p_uiSettings;
 		var jqToHash = _JqToHash(p_$container);
@@ -654,16 +650,6 @@ var iris = new function() {
 		_Components[_LastIncludePath] = f_ui;
 	};
 	
-	function _ScreenAdd (p_$context, p_screenPath, p_jsUrl) {
-		
-		if ( p_$context.get(0) === document.body ) {
-			p_$context.attr("data-id", "document_body");
-		}
-		
-		_ScreenUrl[p_screenPath] = p_jsUrl;
-		_Context[p_screenPath] = p_$context;
-	};
-	
 	function _CreateScreen (p_screenPath) {
 		
 		var jsUrl = _ScreenUrl[p_screenPath];
@@ -683,11 +669,33 @@ var iris = new function() {
 	
 	function _ScreenDestroy (p_screenPath) {
 		if ( _Screen.hasOwnProperty(p_screenPath) ) {
+			var contextId = _Screen[p_screenPath].$Get().parent().attr("data-id");
+			if ( _LastScreen[contextId] == _Screen[p_screenPath] ) {
+				delete _LastScreen[contextId];
+			}
 			_Screen[p_screenPath].__Destroy__();
-			_Screen[p_screenPath] = null;
+			_Screen[p_screenPath].$Get().remove();
+			delete _Screen[p_screenPath];
 		}
 		else {
 			iris.W("Error removing the screen \"" + p_screenPath + "\", path not found.");
+		}
+	}
+	
+	function _WelcomeScreen (p_jsUrl) {
+		var path = "#";
+		var $ctx = $(document.body);
+		
+		$ctx.attr("data-id", "document_body");
+		
+		_ScreenUrl[path] = p_jsUrl;
+		_Context[path] = $ctx;
+		
+		_CreateScreen(path)
+		_ShowScreen(path);
+
+		if ( document.location.hash ) {
+			_Window_OnHashChange();
 		}
 	}
 
@@ -899,18 +907,16 @@ var iris = new function() {
 		this.__IsSleeping__;
 		
 		this.__Sleep__ = function () {
-			var $ui = this.__UIComponents__;
-			for ( var f=0, F=$ui.length; f < F; f++ ) {
-				$ui[f].__Sleep__();
+			for ( var f=0, F=this.__UIComponents__.length; f < F; f++ ) {
+				this.__UIComponents__[f].__Sleep__();
 			}
 			this.__IsSleeping__ = true;
 			this.Sleep();
 		};
 		
 		this.__Awake__ = function (p_params) {
-			var $ui = this.__UIComponents__;
-			for ( var f=0, F=$ui.length; f < F; f++ ) {
-				$ui[f].__Awake__();
+			for ( var f=0, F=this.__UIComponents__.length; f < F; f++ ) {
+				this.__UIComponents__[f].__Awake__();
 			}
 			this.__IsSleeping__ = false;
 			this.Awake(p_params);
@@ -920,11 +926,9 @@ var iris = new function() {
 			if ( !this.__IsSleeping__ ) {
 				this.__Sleep__();
 			}
-			
-			var $ui = this.__UIComponents__;
-			for ( var f=0, F=$ui.length; f < F; f++ ) {
-				$ui[f].__Destroy__();
-				$ui[f] = null;
+
+			for ( var f=0, F=this.__UIComponents__.length; f < F; f++ ) {
+				this.__UIComponents__[f].__Destroy__();
 			}
 			this.__UIComponents__ = null;
 			this.Destroy();
@@ -986,41 +990,38 @@ var iris = new function() {
 		};
 		
 		/**
-		 * Find a JQuery object in the template using its <code>data-id</code> attribute.
+		 * Find a JQuery object using its <code>data-id</code> attribute.
 		 * @function
 		 * @param {String} [p_id] Element <code>data-id</code> value, if no set return root element (optional)
-		 * @param {JQuery} [p_$tmpl] Template that contains the element, if it is undefined search into the UI template (optional)
 		 * @example
 		 * 
 		 * var $label = self.$Get("span_label");
 		 * 
 		 * var rootElement = self.$Get();
 		 */
-		this.$Get = function (p_id, p_$tmpl) {
-			var $tmpl = p_$tmpl === undefined ? this.__$Tmpl__ : p_$tmpl;
-			
+		this.$Get = function (p_id) {
 			if ( p_id ) {
 				var
 				  	id = "[data-id=" + p_id + "]"
-				  , filter = $tmpl.filter(id)
+				  , filter = this.__$Tmpl__.filter(id)
 				;
 				
 				if ( filter.length > 0 ) {
 					return filter;
 				}
 				else {
-					var find = $tmpl.find(id);
+					var find = this.__$Tmpl__.find(id);
 					if ( find.size() > 0 ) {
 						return find;
 					}
 					else {
-						iris.E("[$Get] Element not found", p_id, $tmpl);
+						iris.E("[$Get] Element not found", p_id, this.__$Tmpl__);
 						return undefined;
 					}
 				}
 			}
 			
-			return $tmpl;
+			return this.__$Tmpl__;
 		};
 		
 		/**
@@ -1029,38 +1030,32 @@ var iris = new function() {
 		 * The created component is registered into the parent screen or UI,
 		 * so you must use {@link iris-_AbstractComponent#DestroyUI} in order to remove it.
 		 * 
-		 * The component is added to <code>p_idOrJq</code> container or replace it.
+		 * The component is added to <code>p_id</code> container or replace it.
+		 * See {@link iris-_AbstractUI#TemplateMode} for more details.
 		 * 
-		 * The container <code>p_idOrJq</code> looks in the main template or you can
-		 * looks in <code>p_$tmpl</code> object.
 		 * @function
-		 * @param {String|JQuery} p_idOrJq Container <code>data-id</code> or JQuery object 
+		 * @param {String} p_id Container <code>data-id</code>
 		 * @param {String} p_jsUrl UI file path
 		 * @param {Object} p_uiSettings UI Settings
-		 * @param {JQuery} [p_$tmpl] Template that contains the container, if it is undefined search into the UI template (optional)
 		 * @example
 		 * 
 		 * self.InstanceUI("custom_ui", "custom_ui.js");
 		 * 
-		 * self.InstanceUI($btnOk, "button.js", {"label":"OK","ico":"accept"});
-		 * 
-		 * self.InstanceUI("btn_ok", "button.js", {"label":"OK","ico":"accept"}, $other_container);
+		 * self.InstanceUI("btn_ok", "button.js", {"label":"OK","ico":"accept"});
 		 */
-		this.InstanceUI = function (p_idOrJq, p_jsUrl, p_uiSettings, p_$tmpl) {
-			var $container = typeof p_idOrJq === "string" ? this.$Get(p_idOrJq, p_$tmpl) : p_idOrJq;
-			
+		this.InstanceUI = function (p_id, p_jsUrl, p_uiSettings) {
+			var $container = this.$Get(p_id);
 			if ( $container.size() == 1 ) {
 				var uiInstance = _InstanceUI($container, $container.attr("data-id"), p_jsUrl, p_uiSettings);
-				this.__UIComponents__.push(uiInstance);
+				this.__UIComponents__[this.__UIComponents__.length] = uiInstance;
 				return uiInstance;
 			}
 			else if ( $container.size() > 1 ) {
-				iris.E("InstanceUI: Container [data-id=" + p_idOrJq + "] must be unique");
+				iris.E("InstanceUI: Container [data-id=" + p_id + "] must be unique");
 			}
 			else {
-				iris.E("InstanceUI: Container [data-id=" + p_idOrJq + "] not found");
+				iris.E("InstanceUI: Container [data-id=" + p_id + "] not found");
 			}
-			
 		};
 		
 		/**
@@ -1089,7 +1084,7 @@ var iris = new function() {
 		 * The UIs must be previously created using {@link self.InstanceUI}.<br>
 		 * Remove parent references.
 		 * @function
-		 * @param {String|JQuery} p_container UI Container <code>data-id</code>
+		 * @param {String|JQuery} p_idOrJq UI Container <code>data-id</code> or JQuery object
 		 * @example
 		 * self.DestroyAllUIs("container");
 		 * 
@@ -1114,7 +1109,7 @@ var iris = new function() {
 		/**
 		 * Get the component container.
 		 * If the component is a screen, the container is
-		 * set using {@link iris.screen.Add} function.
+		 * set using {@link iris-_AbstractScreen#AddScreen} function.
 		 * Otherwise if the component is a UI, the container is
 		 * set using {@link iris-_AbstractComponent#InstanceUI} function.
 		 * @function
@@ -1195,7 +1190,7 @@ var iris = new function() {
 			if ( this.hasOwnProperty("UIAddOn") ) {
 				p_ui.proptotype = new this.UIAddOn( p_ui );
 			}
-			this.__Components__.push(p_ui);
+			this.__Components__[this.__Components__.length] = p_ui;
 		}
 		
 		/**
@@ -1300,6 +1295,28 @@ var iris = new function() {
 		this.Template = function (p_htmlUrl, p_params) {
 			this.__Template__(p_htmlUrl, p_params, this.TEMPLATE_APPEND);
 		};
+		
+		/**
+		 * Add a new screen.
+		 * You can navigate to this using <code>iris.Goto</code>.
+		 * See {@link iris.Goto} for more details.
+		 * @function
+		 * @param {JQuery} p_containerId Screen container <code>data-id</code>
+		 * @param {String} p_screenPath Screen URL path
+		 * @param {String} p_jsUrl Screen controller
+		 * @example
+		 * self.AddScreen(
+		 *     "screens"
+		 *   , "#books/edit"
+		 *   , "screen/book_edit.js"
+		 * );
+		 * 
+		 * iris.Goto("#books/edit");
+		 */
+		this.AddScreen = function _ScreenAdd (p_containerId, p_screenPath, p_jsUrl) {
+			_ScreenUrl[p_screenPath] = p_jsUrl;
+			_Context[p_screenPath] = this.$Get(p_containerId);
+		};;
 		
 	};
 	_AbstractScreen.prototype = new _AbstractComponent();
@@ -1684,23 +1701,15 @@ var iris = new function() {
 	this.UI =  _UICreate;
 	
 	/**
-	 * Add a new screen.
-	 * You can navigate to this using <code>iris.Goto</code>.
-	 * See {@link iris.Goto} for more details.
-	 * @function
-	 * @param {JQuery} p_$context Screen container
-	 * @param {String} p_screenPath Screen URL path
+	 * Set the initial screen.
+	 * This screen is registered as the root screen 
+	 * and automatically is shown.
 	 * @param {String} p_jsUrl Screen controller
+	 * @function
 	 * @example
-	 * var $screens = self.$Get("screens");
-	 * iris.screen.Add(
-	 *     $screens
-	 *   , "#library/books/edit/details"
-	 *   , "example/screen/book_details.js"
-	 * );
-	 * iris.Goto("#library/books/edit/details");
+	 * iris.screen.WelcomeScreen("screen/main.js");
 	 */
-	this.screen.Add = _ScreenAdd;
+	this.screen.WelcomeScreen = _WelcomeScreen;
 	
 	/**
 	 * Destroy a created screen.
@@ -1709,7 +1718,7 @@ var iris = new function() {
 	 * @function
 	 * @param {String} p_screenPath Screen URL path
 	 * @example
-	 * iris.screen.Destroy("#library/books/edit/details");
+	 * iris.screen.Destroy("#books/edit");
 	 */
 	this.screen.Destroy = _ScreenDestroy;
 	
@@ -1809,7 +1818,7 @@ var iris = new function() {
 	
 	/**
 	 * Navigate to a screen.
-	 * The screen must be previously added using {@link iris.screen.Add}.<br>
+	 * The screen must be previously added using {@link iris-_AbstractScreen#AddScreen}.<br>
 	 * You can send parameters to the target screen as <code>... /screen?param1=value1&param2=value2/ ...</code>,
 	 * remember apply <code>encodeURI()</code> to the parameter values.
 	 * @function
@@ -1826,15 +1835,6 @@ var iris = new function() {
 	 * iris.Goto("#home/section?title=" + title);
 	 */
 	this.Goto = _Goto;
-	
-	/**
-	 * Navigates to current URL hash or to <code>p_defaultHashUrl</code> if unknown.
-	 * @function
-	 * @param p_defaultUrlHash {String} Default URL Hash
-	 * @example
-	 * iris.GotoUrlHash("#home/games")
-	 */
-	this.GotoUrlHash = _GotoUrlHash;
 	
 	/**
 	 * Register a AddOn object.

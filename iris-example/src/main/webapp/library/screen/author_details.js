@@ -2,7 +2,7 @@ iris.Screen(
 	 function (self) {
 		
 		self.Create = function () {
-			self.Template("example/screen/author_details.html");
+			self.Template("library/screen/author_details.html");
 		}
 		
 		self.Awake = function (p_params) {

@@ -6,23 +6,23 @@ iris.Screen(
 		;
 		
 		self.Create = function () {
-			self.Template("example/screen/author_edit.html");
+			self.Template("library/screen/book_edit.html");
 			
 			_$Title = self.$Get("title")
 			_$Author = self.$Get("author")
 			
-			iris.screen.Add(self.$Get("details"), "#library/authors/edit/details", "example/screen/author_details.js");
+			self.AddScreen("details", "#books/edit/details", "library/screen/book_details.js");
 		}
 		
 		self.Awake = function (p_params) {
-			iris.D("AWAKE AUTHOR EDIT", p_params)
+			iris.D("AWAKE BOOK EDIT", p_params)
 			
 			_$Title.val(p_params["t"])
 			_$Author.val(p_params["a"])
 		}
 		
 		self.Sleep = function () {
-			iris.D("SLEEP AUTHOR EDIT")
+			iris.D("SLEEP BOOK EDIT")
 		}
 	}
 );
