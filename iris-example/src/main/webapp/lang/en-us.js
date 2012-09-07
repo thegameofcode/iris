@@ -7,7 +7,7 @@
 	 "LIST" : "Book List"
 	,"EDIT" : "Edit book"
 	,"ADMIN" : {
-		"STORE" : "Administración de tienda de libros"
+		"STORE" : "Book Admin Store"
 	}
 }
 }

@@ -9,7 +9,11 @@ iris.Screen(
 			
 			var btnEdit = self.InstanceUI("btn_edit", "example/ui/button.js", {"onClick" : _GotoEdit});
 			
-			self.AddScreen("edit", "#books/edit", "library/screen/book_edit.js");
+			self.AddScreen("screens", "#books/edit", "library/screen/book_edit.js");
+			
+			if ( document.location.hash == "#books" ) {
+				iris.Goto("#books/edit");
+			}
 		}
 		
 		self.Awake = function () {

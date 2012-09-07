@@ -35,6 +35,11 @@
  * [version] date -> authors
  * 		upd|fix|new|dep|rmv - description
  *
+ * [0.4.3] 2012-09-06 -> angel.sanchez@intelygenz.com
+ * 		[fix] Screen Context Bug (https://github.com/intelygenz/iris/issues/10)
+ * 		[new] Nested properties value in Templates (https://github.com/intelygenz/iris/issues/8)
+ * 		[upd] More Descriptive Error Messages (https://github.com/intelygenz/iris/issues/12)
+ *
  * [0.4.2] 2012-09-04 -> alejandro.gonzalez@intelygenz.com, angel.sanchez@intelygenz.com
  *		[upd] _LocaleParse -> Now can finds variables with dot notation, eg: @@COMMON.HELLO@@. This mean that you can have nested objects in lang json files.
  *		[new] iris.AddOn, iris.ApplyAddOn -> Now you can define groups of UIs and extends a UI functionality
@@ -52,7 +57,6 @@
  * 		[rmv] The last parameter of self.InstanceUI(p_id,p_js,p_settings,p_$tmpl) -> you can't instance UI outside its own templates
  * 		[rmv] The last parameter of self.$Get(p_id,p_$tmpl) -> you can't get elements outside its own templates
  * 		[fix] Small code refactoring and fixed bugs.
- * 		[new] iris.GotoIfNoHash() -> Navigate to a screen only if current URL hash is undefined.
  * 		[new] Tested with JQuery 1.8
  * 		[doc] Documentation completed.
  *
@@ -70,7 +74,7 @@
  * */
 var iris = new function() {
 	
-	var _APP_VERSION = "0.4.2-SNAPSHOT"
+	var _APP_VERSION = "0.4.3-SNAPSHOT"
 	,	_APP_NAME = "iris"
 	,	_JQ_MIN_VER = 1.5
 	;
@@ -80,7 +84,7 @@ var iris = new function() {
 	,	_LogPrefix = ""
 	,	_Screen = {}
 	,	_ScreenUrl = {}
-	,	_Context = {}
+	,	_ScreenContainer = {}
 	,	_LastScreen = {}
 	,	_PrevHashUrl = ""
 	,	_Global = {}
@@ -202,8 +206,8 @@ var iris = new function() {
 	
 	function _ShowScreen (p_screenPath, p_params) {
 
-		if ( !_Context.hasOwnProperty(p_screenPath) ) {
-			_E( "[iris.screen.Goto] self.AddScreen() has to be previosly called", p_screenPath );
+		if ( !_ScreenContainer.hasOwnProperty(p_screenPath) ) {
+			_E( "Screen '" + p_screenPath + "' must be registered with self.AddScreen() before go to" );
 		}
 		else {
 			if ( !_Screen.hasOwnProperty(p_screenPath) ) {
@@ -211,7 +215,7 @@ var iris = new function() {
 			}
 
 			var currentScreen = _Screen[p_screenPath];
-			var contextId = currentScreen.$Get().parent().attr("data-id");
+			var contextId = currentScreen.$Get().parent().data("screen_context");
 
 			if ( _LastScreen.hasOwnProperty(contextId) ) {
 				var lastScreen = _LastScreen[contextId];
@@ -229,13 +233,6 @@ var iris = new function() {
 		_PrevHashUrl = document.location.hash;
 		document.location.hash = p_hashUri;
 	}
-	
-	function _GotoIfNoHash (p_to) {
-		if ( !document.location.hash ) {
-			_Goto(p_to);
-		}
-	}
-
 	
 	function _NavGetLabel(p_hashPart) {
 		 return p_hashPart.split("?")[0];
@@ -289,7 +286,7 @@ var iris = new function() {
 					}
 					, function (p_err) {
 						delete _Includes[fileUrl];
-						_E(p_err.status, "Error loading file", fileUrl);
+						_E(p_err.status, "Error loading file '" + fileUrl + "'");
 					}
 				);
 			}
@@ -505,11 +502,11 @@ var iris = new function() {
 			_Locale = p_locale;
 		}
 		
-		if ( !_Lang.hasOwnProperty(_Locale) ) {
-			_Lang[_Locale] = {};
+		if ( !_Lang.hasOwnProperty(p_locale) ) {
+			_Lang[p_locale] = {};
 		}
 		
-		$.extend(_Lang[_Locale], p_data);
+		$.extend(_Lang[p_locale], p_data);
 	};
 
 	function _LangGet (p_label, p_locale) {
@@ -517,15 +514,28 @@ var iris = new function() {
 		var value = null;
 		if ( p_label.indexOf(".") > -1 ){
 			var labels = p_label.split(".");
-			var f,F=labels.length;
 			var obj = _Lang[locale];
-			for(f = 0; f<F; f++){
-				obj = obj[labels[f]];
+			var f,F=labels.length;
+			for(f=0; f<F; f++){
+				if (obj !== undefined ) {
+					obj = obj[labels[f]];
+				}
+				else break;
+			}
+			if ( obj === undefined ) {
+				iris.W("Label '" + p_label + "' not found in Locale '" + locale + "'", _Lang[locale]);
 			}
 			value = obj;
 		}
 		else  if ( _Lang.hasOwnProperty(locale) ) {
 			value  = _Lang[locale][p_label];
+		}
+		else {
+			iris.W("Locale '" + locale + "' not loaded");
+		}
+		
+		if ( typeof value === "object" ) {
+			iris.W("Label '" + p_label + "' is an object but must be a property in Locale '" + locale + "'", _Lang[locale]);
 		}
 		
 		if ( !value ) value = "??" + p_label + "??";
@@ -543,7 +553,7 @@ var iris = new function() {
 
 	function _LocaleParse(p_html){
 		var html = p_html;
-		var matches = html.match(/@@[A-Z_\.]+@@/g);
+		var matches = html.match(/@@[A-Za-z_\.]+@@/g);
 		
 		if ( matches ) {
 			var f, F = matches.length;
@@ -614,11 +624,13 @@ var iris = new function() {
 	function _InstanceUI (p_$container, p_uiId, p_jsUrl, p_uiSettings) {
 		_Include(p_jsUrl);
 		
+		
 		var uiInstance = new _AbstractUI();
 		uiInstance.__Id__ = p_uiId;
 		uiInstance.__$Container__ = p_$container;
 		uiInstance.__UIComponents__ = [];
 		uiInstance.__Setting__ = {};
+		uiInstance.__FileJs__ = p_jsUrl;
 		uiInstance.prototype = new _Components[p_jsUrl](uiInstance);
 		
 		p_uiSettings = p_uiSettings === undefined ? {} : p_uiSettings;
@@ -668,7 +680,8 @@ var iris = new function() {
 
 		screenInstance.__Id__ = p_screenPath;
 		screenInstance.__UIComponents__ = [];
-		screenInstance.__$Container__ = _Context[p_screenPath];
+		screenInstance.__$Container__ = _ScreenContainer[p_screenPath];
+		screenInstance.__FileJs__ = jsUrl;
 		screenInstance.Create();
 		screenInstance.Hide();
 		
@@ -677,7 +690,7 @@ var iris = new function() {
 	
 	function _ScreenDestroy (p_screenPath) {
 		if ( _Screen.hasOwnProperty(p_screenPath) ) {
-			var contextId = _Screen[p_screenPath].$Get().parent().attr("data-id");
+			var contextId = _Screen[p_screenPath].$Get().parent().data("screen_context");
 			if ( _LastScreen[contextId] == _Screen[p_screenPath] ) {
 				delete _LastScreen[contextId];
 			}
@@ -697,7 +710,7 @@ var iris = new function() {
 		$ctx.attr("data-id", "document_body");
 		
 		_ScreenUrl[path] = p_jsUrl;
-		_Context[path] = $ctx;
+		_ScreenContainer[path] = $ctx;
 		
 		_CreateScreen(path)
 		_ShowScreen(path);
@@ -912,6 +925,8 @@ var iris = new function() {
 		this.__UIComponents__ = null;
 		this.__$Container__ = null;
 		this.__IsSleeping__ = null;
+		this.__FileJs__ = null;
+		this.__FileTmpl__ = null;
 		
 		this.__Sleep__ = function () {
 			for ( var f=0, F=this.__UIComponents__.length; f < F; f++ ) {
@@ -942,6 +957,7 @@ var iris = new function() {
 		};
 
 		this.__Template__ = function (p_htmlUrl, p_params, p_mode) {
+			this.__FileTmpl__ = p_htmlUrl;
 			
 			if ( typeof p_htmlUrl == "undefined" ) {
 				this.__$Tmpl__ = this.__$Container__;
@@ -955,7 +971,7 @@ var iris = new function() {
 			
 			this.__$Tmpl__ = $tmpl;
 			if ( $tmpl.size() > 1 ) {
-				iris.E("Template must have only one root node", p_htmlUrl, _Includes[p_htmlUrl], $tmpl);
+				iris.E("Template '" + p_htmlUrl + "' must have only one root node");
 			}
 			
 			switch ( p_mode ) {
@@ -966,7 +982,7 @@ var iris = new function() {
 					this.__$Container__.replaceWith($tmpl);
 					break;
 				default:
-					iris.E("Unknown template mode", p_mode);
+					iris.E("Unknown template mode '" + p_mode + "'");
 			}
 			
 		};
@@ -997,35 +1013,50 @@ var iris = new function() {
 		};
 		
 		/**
-		 * Find a JQuery object using its <code>data-id</code> attribute.
+		 * Find a JQuery object, using its <code>data-id</code> attribute, in the template.
+		 * The template must be defined using <code>self.Template()</code>.<br>
+		 * The <code>data-id</code> must be unique in the template.
+		 * 
 		 * @function
 		 * @param {String} [p_id] Element <code>data-id</code> value, if no set return root element (optional)
 		 * @example
 		 * 
 		 * var $label = self.$Get("span_label");
 		 * 
-		 * var rootElement = self.$Get();
+		 * var $root = self.$Get();
 		 */
 		this.$Get = function (p_id) {
+			if ( this.__$Tmpl__ == null ) {
+				iris.E("You must set a template using self.Template() in '" + this.__FileJs__ + "'");
+				return undefined;
+			}
+			
 			if ( p_id ) {
 				var
 				  	id = "[data-id=" + p_id + "]"
 				  , filter = this.__$Tmpl__.filter(id)
+				  , $element = null
 				;
 				
 				if ( filter.length > 0 ) {
-					return filter;
+					$element = filter;
 				}
 				else {
 					var find = this.__$Tmpl__.find(id);
 					if ( find.size() > 0 ) {
-						return find;
-					}
-					else {
-						iris.E("[$Get] Element not found", p_id, this.__$Tmpl__);
-						return undefined;
+						$element = find;
 					}
 				}
+				
+				if ( $element == null ) {
+					iris.E("[data-id=" + p_id + "] not found in '" + this.__FileTmpl__ + "' used by '" +  this.__FileJs__ + "'");
+					return undefined;
+				}
+				else if ( $element.size() > 1 ) {
+					iris.E("[data-id=" + p_id + "] must be unique in '" + this.__FileTmpl__ + "' used by '" + this.__FileJs__ + "'");
+					return undefined;
+				}
+				return $element;
 			}
 			
 			return this.__$Tmpl__;
@@ -1053,15 +1084,9 @@ var iris = new function() {
 		this.InstanceUI = function (p_id, p_jsUrl, p_uiSettings) {
 			var $container = this.$Get(p_id);
 			if ( $container.size() == 1 ) {
-				var uiInstance = _InstanceUI($container, $container.attr("data-id"), p_jsUrl, p_uiSettings);
+				var uiInstance = _InstanceUI($container, $container.data("id"), p_jsUrl, p_uiSettings);
 				this.__UIComponents__[this.__UIComponents__.length] = uiInstance;
 				return uiInstance;
-			}
-			else if ( $container.size() > 1 ) {
-				iris.E("InstanceUI: Container [data-id=" + p_id + "] must be unique");
-			}
-			else {
-				iris.E("InstanceUI: Container [data-id=" + p_id + "] not found");
 			}
 		};
 		
@@ -1321,8 +1346,17 @@ var iris = new function() {
 		 * iris.Goto("#books/edit");
 		 */
 		this.AddScreen = function _ScreenAdd (p_containerId, p_screenPath, p_jsUrl) {
+			var $cont = this.$Get(p_containerId);
+			
+			if ( $cont.data("screen_context") === undefined ) {
+				
+				// Set a unique screen context to the screen container
+				// like: #path/to/screen#containerid
+				$cont.data("screen_context", this.__Id__ + "#" + p_containerId);
+			}
+
 			_ScreenUrl[p_screenPath] = p_jsUrl;
-			_Context[p_screenPath] = this.$Get(p_containerId);
+			_ScreenContainer[p_screenPath] = $cont;
 		};;
 		
 	};
@@ -1842,15 +1876,6 @@ var iris = new function() {
 	 * iris.Goto("#home/section?title=" + title);
 	 */
 	this.Goto = _Goto;
-	
-	/**
-	 * Navigate to a screen only if current URL hash is undefined.
-	 * Useful to goto a section in the initial navigation.
-	 * @function
-	 * @example
-	 * iris.GotoIfNoHash("#books/lent");
-	 */
-	this.GotoIfNoHash = _GotoIfNoHash;
 	
 	/**
 	 * Register a AddOn object.
