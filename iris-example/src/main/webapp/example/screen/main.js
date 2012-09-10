@@ -8,7 +8,11 @@ iris.Screen(function(self) {
 		self.AddScreen("screens", "#list", "example/screen/example_list.js");
 		self.AddScreen("screens", "#addon-radios", "example/screen/example_addon_radios.js");
 		self.AddScreen("screens", "#addon-validation", "example/screen/example_addon_validation.js");
+		self.AddScreen("screens", "#template-parameters", "example/screen/example_template_params.js");
+		self.AddScreen("screens", "#screen-parameters", "example/screen/example_screen_params.js");
 
-		iris.GotoIfNoHash("#instance");
+		if ( !document.location.hash ) {
+			iris.Goto("#instance");
+		}
 	}
 });

@@ -1,6 +1,25 @@
 
 * {
-	font-family: arial;
+	font-family: "Arial", sans-serif;
+	color: #333;
+}
+
+
+a {
+	color: #15C;
+}
+
+pre {
+padding: 6px 10px;
+background-color: #FAFAFA;
+border: 1px solid #BBB;
+overflow: auto;
+font-family: Courier New, monospace;
+line-height: 1.5;
+}
+
+code {
+	font-family: Courier New, monospace;
 }
 
 .btn {
@@ -48,4 +67,37 @@
 
 .checkbox-off {
 	background-position: 0 0;
+}
+
+.menu {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	border: none;
+}
+
+.menu li {
+	border-bottom: 1px solid #90bade;
+	padding: 10px;
+}
+
+.menu li a {
+	border-left: 10px solid #5ba3e0;
+	text-decoration: none;
+	padding-left: 10px;
+}
+
+.menu li a:hover {
+	background-color: #2175bc;
+	color: #fff;
+}
+
+
+.test {
+	padding-bottom:10px;
+	border-bottom: 1px solid #ccc;
+}
+
+.test span {
+	color: green;
 }
