@@ -6,21 +6,27 @@ Iris is not only another framework. It is a methodology that will help you to bu
 * Simple, minimalist and easy to use
 * Designed to create complex and big applications
 * Crossbrowser: Chrome, Firefox e Internet Explorer
-* Light and fast: 5 KB
+* Light and fast: 14 KB
 * Open source: New BSD License
 
 ## API
-http://intelygenz.github.com/iris/api/v0.4.2/
+http://intelygenz.github.com/iris/api/v0.4.3/
 
 ## Getting Started
-https://github.com/intelygenz/iris/wiki
+https://github.com/intelygenz/iris/wiki/Getting-Started
+
+## Cookbook
+https://github.com/intelygenz/iris/wiki/Cookbook
+
+## Iris Life Cycle
+https://github.com/intelygenz/iris/wiki/Iris-Life-Cycle
 
 ## Installation
 
 Download the lastest version from http://intelygenz.github.com/iris/
 
 ```html
-<script type='text/javascript' src="iris-0.4.2.js"></script>
+<script type='text/javascript' src="iris-0.4.3.min.js"></script>
 ```
 
 Iris requires *JQuery 1.5+*:
