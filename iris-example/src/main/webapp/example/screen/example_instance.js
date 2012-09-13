@@ -1,8 +1,8 @@
 iris.Screen(function(self) {
 
 	self.Create = function() {
-		self.Template("example/screen/example_instance.html");
-		self.$Get("btn_create").click(_Create);
+		/*self.Template("example/screen/example_instance.html");
+		self.$Get("btn_create").click(_Create);*/
 	}
 
 	function _Create() {

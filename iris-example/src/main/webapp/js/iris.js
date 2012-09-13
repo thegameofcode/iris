@@ -35,6 +35,9 @@
  * [version] date -> authors
  * 		upd|fix|new|dep|rmv - description
  *
+ * [0.4.4] 2012-09-xx -> angel.sanchez@intelygenz.com
+ * 		[new] Screen error messages when template is not set (https://github.com/intelygenz/iris/issues/19)
+ *
  * [0.4.3] 2012-09-06 -> angel.sanchez@intelygenz.com
  * 		[fix] Screen Context Bug (https://github.com/intelygenz/iris/issues/10)
  * 		[fix] Load Multiple Locales Bug (https://github.com/intelygenz/iris/issues/15)
@@ -74,11 +77,11 @@
  *  This JavaScript library provides different client-side optimization techniques for front construction.
  *  It is independent and compatible with any server-side technology: JAVA, PHP, Python, GOOGLE APP ENGINE, .NET...
  * 
- * @version 0.4.3
+ * @version 0.4.4-SNAPSHOT
  * */
 var iris = new function() {
 	
-	var _APP_VERSION = "0.4.3"
+	var _APP_VERSION = "0.4.4-SNAPSHOT"
 	,	_APP_NAME = "iris"
 	,	_JQ_MIN_VER = 1.5
 	;
@@ -1041,6 +1044,14 @@ var iris = new function() {
 			}
 			
 		};
+		
+		// Check if the template is set (https://github.com/intelygenz/iris/issues/19)
+		this.__CheckTmpl__ = function () {
+			if ( this.__$Tmpl__ == null ) {
+				iris.E("You must set a template using self.Template() in '" + this.__FileJs__ + "'");
+				return undefined;
+			}
+		};
 
 		/**
 		 * Show the template object.
@@ -1051,6 +1062,8 @@ var iris = new function() {
 		 * @function
 		 */
 		this.Show = function () {
+			this.__CheckTmpl__();
+			
 			this.__$Tmpl__.show();
 		};
 
@@ -1064,8 +1077,12 @@ var iris = new function() {
 		 * @function
 		 */
 		this.Hide = function () {
+			this.__CheckTmpl__();
+			
 			this.__$Tmpl__.hide();
 		};
+		
+		
 		
 		/**
 		 * Find a JQuery object, using its <code>data-id</code> attribute, in the template.
@@ -1081,10 +1098,7 @@ var iris = new function() {
 		 * var $root = self.$Get();
 		 */
 		this.$Get = function (p_id) {
-			if ( this.__$Tmpl__ == null ) {
-				iris.E("You must set a template using self.Template() in '" + this.__FileJs__ + "'");
-				return undefined;
-			}
+			this.__CheckTmpl__();
 			
 			if ( p_id ) {
 				var
