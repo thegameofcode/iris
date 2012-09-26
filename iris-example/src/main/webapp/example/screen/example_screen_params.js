@@ -19,7 +19,7 @@ iris.Screen(function(self) {
 	function _Send () {
 		self.$Get("step1").show();
 		
-		var uri = "#screen-parameters/child-screen?parameter=" + encodeURI(_$ParamValue.val());
+		var uri = "#screen-parameters/child-screen?parameter=" + encodeURIComponent(_$ParamValue.val());
 		
 		_$CodeExample.text("iris.Goto('" + uri + "');");
 		
