@@ -35,9 +35,13 @@
  * [version] date -> authors
  * 		upd|fix|new|dep|rmv - description
  *
- * [0.4.4] 2012-09-xx
+ * [0.4.4] 2012-09-27
  * 		[new] Screen error messages when template is not set (https://github.com/intelygenz/iris/issues/19)
  * 		[new] Prepend UI (https://github.com/intelygenz/iris/issues/21)
+ * 		[rmv] Remove currency symbol of number regional format
+ * 		[upd] self.Settings returns complete __Settings__ if don't use any parameter
+ * 		[fix] Fix asynchronous load components on Firefox when hashchange event is triggered
+ * 		[fix] Screen parameter bugs (https://github.com/intelygenz/iris/issues/9)
  *
  * [0.4.3] 2012-09-06 -> angel.sanchez@intelygenz.com
  * 		[fix] Screen Context Bug (https://github.com/intelygenz/iris/issues/10)
@@ -78,11 +82,11 @@
  *  This JavaScript library provides different client-side optimization techniques for front construction.
  *  It is independent and compatible with any server-side technology: JAVA, PHP, Python, GOOGLE APP ENGINE, .NET...
  * 
- * @version 0.4.4-SNAPSHOT
+ * @version 0.4.4
  * */
 var iris = new function() {
 	
-	var _APP_VERSION = "0.4.4-SNAPSHOT"
+	var _APP_VERSION = "0.4.4"
 	,	_APP_NAME = "iris"
 	,	_JQ_MIN_VER = 1.5
 	;
@@ -102,7 +106,6 @@ var iris = new function() {
 	,	_Lang = {}
 	,	_Event = {}
 	,	_Includes = {}
-	,	_Components = {}
 	,	_AddOns = {}
 	,	_AppBaseUri = ""
 	,	_LastIncludePath
@@ -114,8 +117,8 @@ var iris = new function() {
 	;
 
 	function _Init () {
-		$(window).bind("hashchange", _Window_OnHashChange);
-		
+
+		// CHECK JQ DEPENDENCY
 		if( typeof jQuery === "undefined" ) {
 			_E( "jQuery " + _JQ_MIN_VER + "+ previous load required" );
 		}
@@ -123,12 +126,62 @@ var iris = new function() {
 			_E( "jQuery " + $().jquery + " currently loaded, jQuery " + _JQ_MIN_VER + "+ required" );
 		}
 		
+		// CHECK HASH SUPPORT
+		if ( !("onhashchange" in window) ) {
+		    _E("The browser doesn't support the hashchange event");
+		}
+		else {
+			$(window).bind("hashchange", _Window_OnHashChange);
+		}
+		
+		// CHECK CONSOLE SUPPORT
 		_HasConsole = (window.console && window.console.debug && window.console.warn && window.console.error);
 		if ( !_HasConsole && window.console && window.console.log ) {
 			window.console.log("advanced console debugging is not supported in this browser");
 		}
-	}
+	};
 	
+	
+	
+	function _AppName () {
+		return _APP_NAME + " v" + _APP_VERSION + " [" + _Env + "]";
+	};
+	
+	function _LogOf (p_type) {
+		return _Log[p_type];
+	};
+	
+	function _L(){
+		if ( _HasConsole && window.console.log) {
+			window.console.log(_LogPrefix, arguments);
+		}
+	};
+	
+	function _D(){
+		if(_HasConsole && _LogOf("debug") ){
+			window.console.debug(_LogPrefix, arguments);
+		}
+	};
+	
+	function _W(){
+		if(_HasConsole && _LogOf("warning") ){
+			window.console.warn(_LogPrefix, arguments);
+		}
+	};
+	
+	function _E(){
+		if(_HasConsole && _LogOf("error") ){
+			window.console.error(_LogPrefix, arguments);
+		}
+	};
+	
+	
+	
+	function _Goto (p_hashUri) {
+		_PrevHashUrl = document.location.hash;
+		document.location.hash = p_hashUri; // Trigger hashchange event, then execute _Window_OnHashChange()
+	};
+
 	function _Window_OnHashChange () {
 		
 		if ( !_WelcomeScreenCreated ) {
@@ -208,64 +261,63 @@ var iris = new function() {
 		}
 		
 		_PrevHashUrl = _RemoveLastSlash(currPath);
-	}
+	};
 	
 	function _RemoveURLParams (p_url) {
 		return _RemoveLastSlash(p_url.replace(/\?[^\/]*/, ""));
-	}
+	};
 	
 	function _RemoveLastSlash (p_url) {
 		return p_url.replace(/\/$/, "");
-	}
-	
-	function _ShowScreen (p_screenPath, p_params) {
-
-		if ( !_ScreenContainer.hasOwnProperty(p_screenPath) ) {
-			_E( "Screen '" + p_screenPath + "' must be registered with self.AddScreen() before go to" );
-		}
-		else {
-			if ( !_Screen.hasOwnProperty(p_screenPath) ) {
-				_CreateScreen(p_screenPath);
-			}
-
-			var currentScreen = _Screen[p_screenPath];
-			var contextId = currentScreen.$Get().parent().data("screen_context");
-			if ( _LastScreen.hasOwnProperty(contextId) ) {
-				var lastScreen = _LastScreen[contextId];
-				lastScreen.__Sleep__();
-				lastScreen.Hide();
-			}
-			currentScreen.__Awake__( p_params ? p_params : {} );
-			currentScreen.Show();
-
-			_LastScreen[contextId] = currentScreen;
-		}
-	}
-	
-	function _Goto (p_hashUri) {
-		_PrevHashUrl = document.location.hash;
-		document.location.hash = p_hashUri;
-	}
-	
-	function _NavGetLabel(p_hashPart) {
-		 return p_hashPart.split("?")[0];
-	}
+	};
 	
 	function _NavGetParams(p_hashPart) {
 		var params = {}
-		,	regex = /(\w*)=([\w%]*)/g
+		,	regex = /([\.\w_-]*)=([^&]*)/g
 		;
 		
 		while ( matches = regex.exec(p_hashPart) ) {
-			params[matches[1]] = decodeURI(matches[2]);
+			params[matches[1]] = decodeURIComponent(matches[2]);
 		}
 
 		return params;
-	}
+	};
 	
-	function _AppName () {
-		return _APP_NAME + " v" + _APP_VERSION + " [" + _Env + "]";
-	}
+	function _BaseUri(p_baseUri){
+		if ( p_baseUri !== undefined ) {
+			_AppBaseUri = p_baseUri;
+		}
+		else {
+			var base = document.getElementsByTagName("base");
+			base = base.length > 0 ? base[0].attributes["href"].value : "/";
+			_AppBaseUri = document.location.protocol + "//" + document.location.host + base;
+		}
+		return _AppBaseUri;
+	};
+
+	function _Ajax (p_settings) {
+		return $.ajax(p_settings);
+	};
+	
+	function _AjaxSync (p_uri, p_dataType, f_success, f_error) {
+		$.ajax(
+			{ url: p_uri
+			, dataType: p_dataType
+			, async: false
+			, cache: _Cache
+			, success : f_success
+			, error : f_error
+			}
+		);
+	};
+	
+	
+	
+	function _IncludeFiles () {
+		for ( var f=0,F=arguments.length; f<F; f++ ){
+			_Include( arguments[f] );
+		}
+	};
 
 	function _Include(p_uiFile) {
 		
@@ -284,17 +336,22 @@ var iris = new function() {
 				_Head.appendChild(link);
 			}
 			else {
-				_LastIncludePath = p_uiFile;
 				var isHtml = p_uiFile.lastIndexOf(".html") > -1;
 				_AjaxSync(
 					  fileUrl
 					, isHtml ? "html" : "text"
 					, function (p_data) {
+						_LastIncludePath = p_uiFile;
+						
 						if ( isHtml ) {
-							_IncludeHtml(p_data, p_uiFile);
+							_Includes[p_uiFile] = _LocaleParse(p_data);
 						}
 						else {
-							_IncludeJs(p_data);
+							var script = document.createElement("script");
+							script.language = "javascript";
+							script.type = "text/javascript";
+							script.text = p_data;
+							_Head.appendChild(script);
 						}
 					}
 					, function (p_err) {
@@ -304,53 +361,8 @@ var iris = new function() {
 				);
 			}
 		}
-	}
-	
-	function _IncludeHtml ( p_html, p_uiFile ) {
-		_Includes[p_uiFile] = _LocaleParse(p_html);
-	}
-	
-	function _IncludeJs ( p_js ) {
-		var script = document.createElement("script");
-		script.language = "javascript";
-		script.type = "text/javascript";
-		script.text = p_js;
-		_Head.appendChild(script);
-	}
-	
-	function _IncludeFiles () {
-		for ( var f=0,F=arguments.length; f<F; f++ ){
-			_Include( arguments[f] );
-		}
 	};
 	
-	function _LogOf (p_type) {
-		return _Log[p_type];
-	}
-	
-	function _L(){
-		if ( _HasConsole && window.console.log) {
-			window.console.log(_LogPrefix, arguments);
-		}
-	};
-	
-	function _D(){
-		if(_HasConsole && _LogOf("debug") ){
-			window.console.debug(_LogPrefix, arguments);
-		}
-	};
-	
-	function _W(){
-		if(_HasConsole && _LogOf("warning") ){
-			window.console.warn(_LogPrefix, arguments);
-		}
-	};
-	
-	function _E(){
-		if(_HasConsole && _LogOf("error") ){
-			window.console.error(_LogPrefix, arguments);
-		}
-	};
 	
 	function _ConfigLoad (p_json){
 		if ( p_json ) {
@@ -405,18 +417,6 @@ var iris = new function() {
 		}
 	};
 	
-	function _AjaxSync (p_uri, p_dataType, f_success, f_error) {
-		$.ajax(
-			{ url: p_uri
-			, dataType: p_dataType
-			, async: false
-			, cache: _Cache
-			, success : f_success
-			, error : f_error
-			}
-		);
-	}
-	
 	function _GlobalLoad(p_hash){
 		$.extend(_Global, p_hash);
 		return _Global;
@@ -451,7 +451,11 @@ var iris = new function() {
 		}
 	};
 	
-	function _Find(p_eventName, f_func){
+	
+	//
+	// EVENT
+	//
+	function _FindEvent(p_eventName, f_func){
 		var events = _Event[p_eventName];
 		if ( events ) {
 			for ( var f=0, F=events.length; f<F; f++ ) {
@@ -461,14 +465,14 @@ var iris = new function() {
 			}
 		}
 		return -1;
-	}
+	};
 	
 	function _EventSubscribe(p_eventName, f_func){
 		if ( !_Event[p_eventName] ) {
 			_Event[p_eventName] = [];
 		}
 
-		var index = _Find( p_eventName, f_func );
+		var index = _FindEvent( p_eventName, f_func );
 		if ( index==-1 ) {
 			index = _Event[p_eventName].length;
 		}
@@ -477,7 +481,7 @@ var iris = new function() {
 	};
 	
 	function _EventRemove(p_eventName, f_func){
-		var index = _Find(p_eventName, f_func);
+		var index = _FindEvent(p_eventName, f_func);
 		if ( index!=-1 ){
 			_Event[p_eventName].splice(index,1);
 		}
@@ -490,23 +494,10 @@ var iris = new function() {
 				funcs[f](p_data);
 			}
 		}
-	}
-	
-	function _BaseUri(p_baseUri){
-		if ( p_baseUri !== undefined ) {
-			_AppBaseUri = p_baseUri;
-		}
-		else {
-			var base = document.getElementsByTagName("base");
-			base = base.length > 0 ? base[0].attributes["href"].value : "/";
-			_AppBaseUri = document.location.protocol + "//" + document.location.host + base;
-		}
-		return _AppBaseUri;
 	};
-
-	function _Ajax (p_settings) {
-		return $.ajax(p_settings);
-	}
+	
+	
+	
 	
 	function _GetObjectValue (p_obj, p_label) {
 		var value;
@@ -525,7 +516,7 @@ var iris = new function() {
 			value  = p_obj[p_label];
 		}
 		return value;
-	}
+	};
 
 	function _LocaleLoad(p_locale, p_data){
 		_D("[iris.lang.Load]", p_locale, p_data);
@@ -604,6 +595,7 @@ var iris = new function() {
 		);
 	};
 
+
 	function _HashToJq(p_hash, p_$obj, p_filter){
 		var dom = p_$obj.get(0);
 		if ( p_filter ){
@@ -621,7 +613,7 @@ var iris = new function() {
 			}
 		}
 		return p_$obj;
-	}
+	};
 
 	function _JqToHash(p_$obj) {
 		var hash = {};
@@ -635,40 +627,12 @@ var iris = new function() {
 			hash[label] = attrs[f].value;
 		}
 		return hash;
-	}
-
-	function _InstanceUI (p_$container, p_uiId, p_jsUrl, p_uiSettings, p_templateMode) {
-		_Include(p_jsUrl);
-		
-		
-		var uiInstance = new _AbstractUI();
-		uiInstance.__Id__ = p_uiId;
-		uiInstance.__$Container__ = p_$container;
-		uiInstance.__UIComponents__ = [];
-		uiInstance.__Setting__ = {};
-		uiInstance.__FileJs__ = p_jsUrl;
-		
-		if ( p_templateMode !== undefined ) {
-			uiInstance.__TemplateMode__ = p_templateMode;
-		}
-		
-		uiInstance.prototype = new _Components[p_jsUrl](uiInstance);
-		
-		p_uiSettings = p_uiSettings === undefined ? {} : p_uiSettings;
-		var jqToHash = _JqToHash(p_$container);
-		
-		$.extend(uiInstance.__Setting__, jqToHash, p_uiSettings);
-		
-		uiInstance.Create(jqToHash, p_uiSettings);
-		
-		return uiInstance;
-	}
-	
-	function _ScreenCreate (f_screen) {
-		f_screen.prototype = new _AbstractScreen();
-		_Components[_LastIncludePath] = f_screen;
 	};
+
 	
+	//
+	// ADDON
+	//
 	function _ApplyAddOn( p_id, p_uis, p_settings ){
 		_Include(p_id);
 		
@@ -681,23 +645,62 @@ var iris = new function() {
 		addOn.AddAll(p_uis);
 		addOn.Create();
 		return addOn;
-	}
+	};
 
-	function _AddOn( f_addOn  ){
-		_AddOns[ _LastIncludePath ] = f_addOn;
-	}
 	
-	function _UICreate (f_ui) {
-		_Components[_LastIncludePath] = f_ui;
+	function _CreateAddOn( f_addOn  ){
+		_AddOns[ _LastIncludePath ] = f_addOn;
 	};
 	
-	function _CreateScreen (p_screenPath) {
+	//
+	// UI
+	//
+	function _CreateUI (f_ui) {
+		_Includes[_LastIncludePath] = f_ui;
+	};
+	
+	function _InstanceUI (p_$container, p_uiId, p_jsUrl, p_uiSettings, p_templateMode) {
+		_Include(p_jsUrl);
+		
+		var uiInstance = new _AbstractUI();
+		uiInstance.__Id__ = p_uiId;
+		uiInstance.__$Container__ = p_$container;
+		uiInstance.__UIComponents__ = [];
+		uiInstance.__Setting__ = {};
+		uiInstance.__FileJs__ = p_jsUrl;
+		
+		if ( p_templateMode !== undefined ) {
+			uiInstance.__TemplateMode__ = p_templateMode;
+		}
+		
+		uiInstance.prototype = new _Includes[p_jsUrl](uiInstance);
+		
+		p_uiSettings = p_uiSettings === undefined ? {} : p_uiSettings;
+		var jqToHash = _JqToHash(p_$container);
+		
+		$.extend(uiInstance.__Setting__, jqToHash, p_uiSettings);
+		
+		uiInstance.Create(jqToHash, p_uiSettings);
+		
+		return uiInstance;
+	};
+	
+	
+	//
+	// SCREEN
+	//
+	function _CreateScreen (f_screen) {
+		f_screen.prototype = new _AbstractScreen();
+		_Includes[_LastIncludePath] = f_screen;
+	};
+	
+	function _InstanceScreen (p_screenPath) {
 		
 		var jsUrl = _ScreenUrl[p_screenPath];
 		_Include(jsUrl);
 		
 		var screenInstance = new _AbstractScreen();
-		screenInstance.prototype = new _Components[jsUrl](screenInstance);
+		screenInstance.prototype = new _Includes[jsUrl](screenInstance);
 
 		screenInstance.__Id__ = p_screenPath;
 		screenInstance.__UIComponents__ = [];
@@ -707,9 +710,9 @@ var iris = new function() {
 		screenInstance.Hide();
 		
 		_Screen[p_screenPath] = screenInstance;
-	}
+	};
 	
-	function _ScreenDestroy (p_screenPath) {
+	function _DestroyScreen (p_screenPath) {
 		if ( _Screen.hasOwnProperty(p_screenPath) ) {
 			var contextId = _Screen[p_screenPath].$Get().parent().data("screen_context");
 			if ( _LastScreen[contextId] == _Screen[p_screenPath] ) {
@@ -722,14 +725,38 @@ var iris = new function() {
 		else {
 			iris.W("Error removing the screen \"" + p_screenPath + "\", path not found.");
 		}
-	}
+	};
+	
+	function _ShowScreen (p_screenPath, p_params) {
+
+		if ( !_ScreenContainer.hasOwnProperty(p_screenPath) ) {
+			_E( "Screen '" + p_screenPath + "' must be registered with self.AddScreen() before go to" );
+		}
+		else {
+			if ( !_Screen.hasOwnProperty(p_screenPath) ) {
+				_InstanceScreen(p_screenPath);
+			}
+
+			var currentScreen = _Screen[p_screenPath];
+			var contextId = currentScreen.$Get().parent().data("screen_context");
+			if ( _LastScreen.hasOwnProperty(contextId) ) {
+				var lastScreen = _LastScreen[contextId];
+				lastScreen.__Sleep__();
+				lastScreen.Hide();
+			}
+			currentScreen.__Awake__( p_params ? p_params : {} );
+			currentScreen.Show();
+
+			_LastScreen[contextId] = currentScreen;
+		}
+	};
 	
 	function _WelcomeScreen (p_jsUrl) {
-		
+
 		_Include(p_jsUrl);
-		
+
 		var screenInstance = new _AbstractScreen();
-		screenInstance.prototype = new _Components[p_jsUrl](screenInstance);
+		screenInstance.prototype = new _Includes[p_jsUrl](screenInstance);
 
 		screenInstance.__Id__ = "welcome-screen";
 		screenInstance.__UIComponents__ = [];
@@ -738,14 +765,14 @@ var iris = new function() {
 		screenInstance.Create();
 		screenInstance.__Awake__();
 		screenInstance.Show();
-		
+
 		_WelcomeScreenCreated = true;
-		
+
 		if ( document.location.hash ) {
 			_Window_OnHashChange();
 		}
 
-	}
+	};
 
 	function _TemplateParse (p_html, p_data, p_htmlUrl) {
 		var result = p_html
@@ -781,7 +808,7 @@ var iris = new function() {
 		}
 		
 		return result;
-	}
+	};
 	
 	function _ParseCurrency (p_value) {
 		var settings = _GetRegionalSetting("currency");
@@ -800,7 +827,7 @@ var iris = new function() {
 		}
 		
 		return format.replace("n", num + settings["decimal"] + decimal );
-	}
+	};
 	
 	function _DateFormat (p_date, p_format) {
 		if ( !p_format ) {
@@ -816,7 +843,7 @@ var iris = new function() {
 			dateFormat += _DateFormatChar(p_format[f], p_date);
 		}
 		return dateFormat;
-	}
+	};
 	
 	function _GetRegionalSetting (p_label) {
 		if ( _Regional.hasOwnProperty(_Locale) ) {
@@ -830,11 +857,11 @@ var iris = new function() {
 		else {
 			iris.E("Regional for locale '" + _Locale + "' not found");
 		}
-	}
+	};
 	
 	function _LeadingZero (p_number) {
 		return (p_number < 10) ? "0" + p_number : p_number;
-	}
+	};
 	
 	function _DateFormatChar (p_formatChar, p_date) {
 		var regional = _Regional[_Locale];
@@ -883,16 +910,16 @@ var iris = new function() {
 			default:
 				return p_formatChar;
 		}
-	}
-	
+	};
+
 	var _Regional = {
 		 "en-US" : {
 			 dayNames : ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
 			,monthNames : ["January","February","March","April","May","June","July","August","September","October","November","December"]
 			,dateFormat : "m/d/Y h:i:s"
 			,currency : {
-				 formatPos : "$ n"
-				,formatNeg : "($ n)"
+				 formatPos : "n"
+				,formatNeg : "(n)"
 				,decimal : "."
 				,thousand : ","
 				,precision : 2
@@ -903,15 +930,15 @@ var iris = new function() {
 			,monthNames : ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"]
 			,dateFormat : "d/m/Y H:i:s"
 			,currency : {
-				 formatPos : "n €"
-				,formatNeg : "-n €"
+				 formatPos : "n"
+				,formatNeg : "-n"
 				,decimal : ","
 				,thousand : "."
 				,precision : 2
 			}
 		}
 	};
-	
+
 	function _AddRegional (p_locale, p_regional) {
 		if (   !p_regional.hasOwnProperty("dayNames") 
 			|| !p_regional.hasOwnProperty("monthNames")
@@ -928,7 +955,7 @@ var iris = new function() {
 		else {
 			_Regional[p_locale] = p_regional;
 		}
-	}
+	};
 	
 	/**
 	 * @class
@@ -950,7 +977,7 @@ var iris = new function() {
 		 * });
 		 */
 		this.Settings = function (p_settings) {
-			$.extend(this.__Setting__, p_settings);
+			return $.extend(this.__Setting__, p_settings);
 		};
 		
 		/**
@@ -1293,7 +1320,7 @@ var iris = new function() {
 			for (var f=0, F=p_uis.length; f<F; f++) {
 				this.Add( p_uis[f] );
 			}
-		}
+		};
 		
 		/**
 		 * Add a UI to the AddOn.
@@ -1305,7 +1332,7 @@ var iris = new function() {
 				p_ui.proptotype = new this.UIAddOn( p_ui );
 			}
 			this.__Components__[this.__Components__.length] = p_ui;
-		}
+		};
 		
 		/**
 		 * Remove a UI from the AddOn.
@@ -1320,7 +1347,7 @@ var iris = new function() {
 					this.__Components__.splice(f, 1);
 				}
 			}
-		}
+		};
 
 		/**
 		 * Get a registered UI from the AddOn.
@@ -1331,7 +1358,7 @@ var iris = new function() {
 		 */
 		this.Get = function (p_idx) {
 			return this.__Components__[p_idx];
-		}
+		};
 
 		/**
 		 * The number of UI components registered.
@@ -1339,7 +1366,7 @@ var iris = new function() {
 		 */
 		this.Size = function () {
 			return this.__Components__.length;
-		}
+		};
 		
 		// To override
 		
@@ -1348,7 +1375,7 @@ var iris = new function() {
 		 * Function to override.
 		 * @function
 		 */
-		this.Create = function () {}
+		this.Create = function () {};
 	}
 	_AbstractAddOn.prototype = new _Settable();
 	
@@ -1472,7 +1499,7 @@ var iris = new function() {
 				}
 			}
 		};
-	}
+	};
 	
 	function _Serialize (p_$form) {
 		var json = {};
@@ -1480,7 +1507,7 @@ var iris = new function() {
 			json[ p_obj['name'] ] = p_obj['value'];
 		});
 		return json;
-	} 
+	};
 	
 	
 	/** @namespace Screen management: Add a new screen, ... */
@@ -1661,7 +1688,6 @@ var iris = new function() {
 	 * See {@link iris.local.Locale} for more details.
 	 * @function
 	 * @param {String} p_label Label
-	 * @param {String} [p_locale] Locale (optional)
 	 * @example
 	 * iris.lang.Get("LABEL");
 	 *
@@ -1798,7 +1824,7 @@ var iris = new function() {
 	 *   }
 	 * );
 	 */
-	this.Screen = _ScreenCreate;
+	this.Screen = _CreateScreen;
 	
 	/**
 	 * Register an UI object.
@@ -1819,7 +1845,7 @@ var iris = new function() {
 	 *   }
 	 * );
 	 */
-	this.UI =  _UICreate;
+	this.UI =  _CreateUI;
 	
 	/**
 	 * Set the initial screen.
@@ -1841,7 +1867,7 @@ var iris = new function() {
 	 * @example
 	 * iris.screen.Destroy("#books/edit");
 	 */
-	this.screen.Destroy = _ScreenDestroy;
+	this.screen.Destroy = _DestroyScreen;
 	
 	/**
 	 * Copy all data-* attributes to an object.
@@ -1957,7 +1983,7 @@ var iris = new function() {
 	 * Navigate to a screen.
 	 * The screen must be previously added using {@link iris-_AbstractScreen#AddScreen}.<br>
 	 * You can send parameters to the target screen as <code>... /screen?param1=value1&param2=value2/ ...</code>,
-	 * remember apply <code>encodeURI()</code> to the parameter values.
+	 * remember apply <code>encodeURIComponent()</code> to the parameter values.<br>
 	 * @function
 	 * @param p_hashUri {String} Hash URL
 	 * @example
@@ -1968,8 +1994,8 @@ var iris = new function() {
 	 * iris.Goto("#home/section?id=5&name=example%20name/subsection");
 	 * 
 	 * // Remember encode param values
-	 * var title = encodeURI("Title Example");
-	 * iris.Goto("#home/section?title=" + title);
+	 * var email = encodeURIComponent("user@example.com");
+	 * iris.Goto("#home/section?email=" + email);
 	 */
 	this.Goto = _Goto;
 	
@@ -1987,7 +2013,7 @@ var iris = new function() {
 	 *   }
 	 * );
 	 */
-	this.AddOn = _AddOn;
+	this.AddOn = _CreateAddOn;
 	
 	/**
 	 * Apply a AddOn to a group of UI components or single UI.
@@ -2033,8 +2059,8 @@ var iris = new function() {
 	 *			,"Septiembre","Octubre","Noviembre","Diciembre"]
 	 *		,dateFormat : "d/m/Y H:i:s"
 	 *		,currency : {
-	 *			 formatPos : "n €"
-	 *			,formatNeg : "-n €"
+	 *			 formatPos : "n"
+	 *			,formatNeg : "-n"
 	 *			,decimal : ","
 	 *			,thousand : "."
 	 *			,precision : 2
@@ -2044,14 +2070,14 @@ var iris = new function() {
 	 * @param p_locale {String} Locale identifier
 	 * @param p_regional {Object} Regional data
 	 * @example
-	 *  iris.Regional("es-ES", {
+	 *  iris.Regional("custom-es_ES", {
 	 *		 dayNames : ["D","L","M","M","J","V","S"]
 	 *		,monthNames : ["Ene","Feb","Mar","Abr","May","Jun"
 	 *			,"Jul","Ago","Sep","Oct","Nov","Dic"]
 	 *		,dateFormat : "d/m/Y"
 	 *		,currency : {
-	 *			 formatPos : "n €"
-	 *			,formatNeg : "-n €"
+	 *			 formatPos : "n"
+	 *			,formatNeg : "-n"
 	 *			,decimal : ","
 	 *			,thousand : "."
 	 *			,precision : 2

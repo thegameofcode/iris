@@ -19,8 +19,8 @@ $(document).ready(
 //			,monthNames : ["E","F","M","A","M","J","J","A","S","O","N","D"]
 //			,dateFormat : "d/m/Y"
 //			,currency : {
-//				 formatPos : "n €"
-//				,formatNeg : "-n €"
+//				 formatPos : "n"
+//				,formatNeg : "-n"
 //				,decimal : ","
 //				,thousand : "."
 //				,precision : 2

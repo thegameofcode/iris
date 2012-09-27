@@ -35,13 +35,13 @@
  * [version] date -> authors
  * 		upd|fix|new|dep|rmv - description
  *
- * [0.4.4] 2012-09-xx
+ * [0.4.4] 2012-09-27
  * 		[new] Screen error messages when template is not set (https://github.com/intelygenz/iris/issues/19)
  * 		[new] Prepend UI (https://github.com/intelygenz/iris/issues/21)
  * 		[rmv] Remove currency symbol of number regional format
  * 		[upd] self.Settings returns complete __Settings__ if don't use any parameter
  * 		[fix] Fix asynchronous load components on Firefox when hashchange event is triggered
- * 		[fix] Screen parameter bug (https://github.com/intelygenz/iris/issues/9)
+ * 		[fix] Screen parameter bugs (https://github.com/intelygenz/iris/issues/9)
  *
  * [0.4.3] 2012-09-06 -> angel.sanchez@intelygenz.com
  * 		[fix] Screen Context Bug (https://github.com/intelygenz/iris/issues/10)
@@ -82,11 +82,11 @@
  *  This JavaScript library provides different client-side optimization techniques for front construction.
  *  It is independent and compatible with any server-side technology: JAVA, PHP, Python, GOOGLE APP ENGINE, .NET...
  * 
- * @version 0.4.4-SNAPSHOT
+ * @version 0.4.4
  * */
 var iris = new function() {
 	
-	var _APP_VERSION = "0.4.4-SNAPSHOT"
+	var _APP_VERSION = "0.4.4"
 	,	_APP_NAME = "iris"
 	,	_JQ_MIN_VER = 1.5
 	;
@@ -2059,8 +2059,8 @@ var iris = new function() {
 	 *			,"Septiembre","Octubre","Noviembre","Diciembre"]
 	 *		,dateFormat : "d/m/Y H:i:s"
 	 *		,currency : {
-	 *			 formatPos : "n €"
-	 *			,formatNeg : "-n €"
+	 *			 formatPos : "n"
+	 *			,formatNeg : "-n"
 	 *			,decimal : ","
 	 *			,thousand : "."
 	 *			,precision : 2
@@ -2070,14 +2070,14 @@ var iris = new function() {
 	 * @param p_locale {String} Locale identifier
 	 * @param p_regional {Object} Regional data
 	 * @example
-	 *  iris.Regional("es-ES", {
+	 *  iris.Regional("custom-es_ES", {
 	 *		 dayNames : ["D","L","M","M","J","V","S"]
 	 *		,monthNames : ["Ene","Feb","Mar","Abr","May","Jun"
 	 *			,"Jul","Ago","Sep","Oct","Nov","Dic"]
 	 *		,dateFormat : "d/m/Y"
 	 *		,currency : {
-	 *			 formatPos : "n €"
-	 *			,formatNeg : "-n €"
+	 *			 formatPos : "n"
+	 *			,formatNeg : "-n"
 	 *			,decimal : ","
 	 *			,thousand : "."
 	 *			,precision : 2
