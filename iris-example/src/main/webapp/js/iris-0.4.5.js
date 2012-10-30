@@ -35,11 +35,11 @@
  * It is independent and compatible with any server-side technology: JAVA, PHP, Python, GOOGLE APP ENGINE, .NET...
  *  
  * */
-var iris = (function () {
-    "use strict";
+var iris = {};
 
-    var _Iris = {},
-        _CacheVersion,
+(function () {
+
+    var _CacheVersion,
         _JQ_MIN_VER = 1.5,
         _Env = null,
         _Log = {"error":true},
@@ -64,6 +64,7 @@ var iris = (function () {
         _HasConsole,
         _GotoCancelled = false,
         _WelcomeScreenCreated = false
+        _UI = {}
     ;
 
     function _Init () {
@@ -591,7 +592,8 @@ var iris = (function () {
     function _ApplyAddOn( p_id, p_uis, p_settings ){
         _Include(p_id);
         
-        var addOn = _AbstractAddOn();
+        var addOn = function () {};
+        addOn.prototype = new _AbstractAddOn();
         addOn.__Components__ = [];
         addOn.__Setting__ =  {};
         
@@ -617,24 +619,22 @@ var iris = (function () {
     function _InstanceUI (p_$container, p_uiId, p_jsUrl, p_uiSettings, p_templateMode) {
         _Include(p_jsUrl);
         
-        var uiInstance = _AbstractUI();
+        var uiInstance = new _AbstractUI();
+        _Includes[p_jsUrl](uiInstance);
         uiInstance.__Id__ = p_uiId;
         uiInstance.__$Container__ = p_$container;
         uiInstance.__UIComponents__ = [];
         uiInstance.__Setting__ = {};
         uiInstance.__FileJs__ = p_jsUrl;
-        
         if ( p_templateMode !== undefined ) {
             uiInstance.__TemplateMode__ = p_templateMode;
         }
-        
-        uiInstance.prototype = _Includes[p_jsUrl](uiInstance);
         
         p_uiSettings = p_uiSettings === undefined ? {} : p_uiSettings;
         var jqToHash = _JqToHash(p_$container);
         
         $.extend(uiInstance.__Setting__, jqToHash, p_uiSettings);
-        
+
         uiInstance.Create(jqToHash, p_uiSettings);
         
         return uiInstance;
@@ -645,7 +645,7 @@ var iris = (function () {
     // SCREEN
     //
     function _CreateScreen (f_screen) {
-        f_screen.prototype = _AbstractScreen();
+        f_screen.prototype = new _AbstractScreen();
         _Includes[_LastIncludePath] = f_screen;
     }
     
@@ -654,7 +654,7 @@ var iris = (function () {
         var jsUrl = _ScreenUrl[p_screenPath];
         _Include(jsUrl);
         
-        var screenInstance = _AbstractScreen();
+        var screenInstance = new _AbstractScreen();
         screenInstance.prototype = _Includes[jsUrl](screenInstance);
 
         screenInstance.__Id__ = p_screenPath;
@@ -710,9 +710,8 @@ var iris = (function () {
 
         _Include(p_jsUrl);
 
-        var screenInstance = _AbstractScreen();
+        var screenInstance = new _AbstractScreen();
         screenInstance.prototype = _Includes[p_jsUrl](screenInstance);
-
         screenInstance.__Id__ = "welcome-screen";
         screenInstance.__UIComponents__ = [];
         screenInstance.__$Container__ = $(document.body);
@@ -926,51 +925,47 @@ var iris = (function () {
      * @class
      * Provide mechanism to store and retrieve settings values.
      */
-    function _Settable () {
-        
-        var _Self = {};
-
-        _Self.__Setting__ = null;
-        
-        /**
-         * Set multiple component settings.
-         * You can access to this values using {@link iris-_Settable#Setting}.
-         * @function
-         * @example
-         * 
-         * self.Settings({
-         *      "min" : 0
-         *     ,"label" : "example" 
-         * });
-         */
-        _Self.Settings = function (p_settings) {
-            return $.extend(_Self.__Setting__, p_settings);
-        };
-        
-        /**
-         * Set or get a single component setting.
-         * @function
-         * @example
-         * 
-         * var label = self.Setting("label"); // Get setting value
-         * 
-         * self.Setting("label", "example"); // Set setting value
-         */
-        _Self.Setting = function (p_label, p_value) {
-            if ( p_value === undefined ) {
-                if ( !_Self.__Setting__.hasOwnProperty(p_label) ) {
-                    iris.W("The setting ", p_label, " is not in ", _Self.__Setting__, _Self);
-                }
-                return _Self.__Setting__[p_label];
-            }
-            else {
-                _Self.__Setting__[p_label] = p_value;
-            }
-        };
-        
-        return _Self;
+    var _Settable = function () {
+        this.__Setting__ = null;
     }
+    
+    /**
+     * Set multiple component settings.
+     * You can access to this values using {@link iris-_Settable#Setting}.
+     * @function
+     * @example
+     * 
+     * self.Settings({
+     *      "min" : 0
+     *     ,"label" : "example" 
+     * });
+     */
+    _Settable.prototype.Settings = function (p_settings) {
+        return $.extend(this.__Setting__, p_settings);
+    };
 
+    /**
+     * Set or get a single component setting.
+     * @function
+     * @example
+     * 
+     * var label = self.Setting("label"); // Get setting value
+     * 
+     * self.Setting("label", "example"); // Set setting value
+     */
+    _Settable.prototype.Setting = function (p_label, p_value) {
+        if ( p_value === undefined ) {
+            if ( !this.__Setting__.hasOwnProperty(p_label) ) {
+                iris.W("The setting ", p_label, " is not in ", this.__Setting__, this);
+            }
+            return this.__Setting__[p_label];
+        }
+        else {
+            this.__Setting__[p_label] = p_value;
+        }
+    };
+    
+        
     /**
      * @class
      * Abstract component for UIs / Screens extending.
@@ -978,302 +973,300 @@ var iris = (function () {
      */
     function _AbstractComponent () {
         
-        var _Self = _Settable();
+        this.TEMPLATE_APPEND = "append";
+        this.TEMPLATE_REPLACE = "replace";
+        this.TEMPLATE_PREPEND = "prepend";
         
-        _Self.TEMPLATE_APPEND = "append";
-        _Self.TEMPLATE_REPLACE = "replace";
-        _Self.TEMPLATE_PREPEND = "prepend";
-        
-        _Self.__$Tmpl__ = null;
-        _Self.__Id__ = null;
-        _Self.__UIComponents__ = null;
-        _Self.__$Container__ = null;
-        _Self.__IsSleeping__ = null;
-        _Self.__FileJs__ = null;
-        _Self.__FileTmpl__ = null;
-        
-        _Self.__Sleep__ = function () {
-            for ( var f=0, F=_Self.__UIComponents__.length; f < F; f++ ) {
-                _Self.__UIComponents__[f].__Sleep__();
-            }
-            _Self.__IsSleeping__ = true;
-            _Self.Sleep();
-        };
-        
-        _Self.__Awake__ = function (p_params) {
-            for ( var f=0, F=_Self.__UIComponents__.length; f < F; f++ ) {
-                _Self.__UIComponents__[f].__Awake__();
-            }
-            _Self.__IsSleeping__ = false;
-            _Self.Awake(p_params);
-        };
-        
-        _Self.__Destroy__ = function () {
-            if ( !_Self.__IsSleeping__ ) {
-                _Self.__Sleep__();
-            }
+        this.__$Tmpl__ = null;
+        this.__Id__ = null;
+        this.__UIComponents__ = null;
+        this.__$Container__ = null;
+        this.__IsSleeping__ = null;
+        this.__FileJs__ = null;
+        this.__FileTmpl__ = null;
+    }
+    
+    _AbstractComponent.prototype = new _Settable();
+    
+    _AbstractComponent.prototype.__Sleep__ = function () {
+        for ( var f=0, F=this.__UIComponents__.length; f < F; f++ ) {
+            this.__UIComponents__[f].__Sleep__();
+        }
+        this.__IsSleeping__ = true;
+        this.Sleep();
+    };
+    
+    _AbstractComponent.prototype.__Awake__ = function (p_params) {
+        for ( var f=0, F=this.__UIComponents__.length; f < F; f++ ) {
+            this.__UIComponents__[f].__Awake__();
+        }
+        this.__IsSleeping__ = false;
+        this.Awake(p_params);
+    };
+    
+    _AbstractComponent.prototype.__Destroy__ = function () {
+        if ( !this.__IsSleeping__ ) {
+            this.__Sleep__();
+        }
 
-            for ( var f=0, F=_Self.__UIComponents__.length; f < F; f++ ) {
-                _Self.__UIComponents__[f].__Destroy__();
-            }
-            _Self.__UIComponents__ = null;
-            _Self.Destroy();
-        };
+        for ( var f=0, F=this.__UIComponents__.length; f < F; f++ ) {
+            this.__UIComponents__[f].__Destroy__();
+        }
+        this.__UIComponents__ = null;
+        this.Destroy();
+    };
 
-        _Self.__Template__ = function (p_htmlUrl, p_params, p_mode) {
-            _Self.__FileTmpl__ = p_htmlUrl;
-            
-            if ( typeof p_htmlUrl === "undefined" ) {
-                _Self.__$Tmpl__ = _Self.__$Container__;
-                return _Self.__$Tmpl__;
-            }
-            
-            iris.Include(p_htmlUrl);
-            
-            var tmplHtml = p_params ? _TemplateParse(_Includes[p_htmlUrl], p_params, p_htmlUrl) : _Includes[p_htmlUrl];
-            var $tmpl = $(tmplHtml);
-            
-            _Self.__$Tmpl__ = $tmpl;
-            if ( $tmpl.size() > 1 ) {
-                iris.E("Template '" + p_htmlUrl + "' must have only one root node");
-            }
-            
-            switch ( p_mode ) {
-                case _Self.TEMPLATE_APPEND:
-                    _Self.__$Container__.append($tmpl);
-                    break;
-                case _Self.TEMPLATE_REPLACE:
-                    _Self.__$Container__.replaceWith($tmpl);
-                    break;
-                case _Self.TEMPLATE_PREPEND:
-                    _Self.__$Container__.prepend($tmpl);
-                    break;
-                default:
-                    iris.E("Unknown template mode '" + p_mode + "'");
-            }
-            
-        };
+    _AbstractComponent.prototype.__Template__ = function (p_htmlUrl, p_params, p_mode) {
+        this.__FileTmpl__ = p_htmlUrl;
         
-        // Check if the template is set (https://github.com/intelygenz/iris/issues/19)
-        _Self.__CheckTmpl__ = function () {
-            if ( _Self.__$Tmpl__ === null ) {
-                iris.E("You must set a template using self.Template() in '" + _Self.__FileJs__ + "'");
+        if ( typeof p_htmlUrl === "undefined" ) {
+            this.__$Tmpl__ = this.__$Container__;
+            return this.__$Tmpl__;
+        }
+        
+        iris.Include(p_htmlUrl);
+        
+        var tmplHtml = p_params ? _TemplateParse(_Includes[p_htmlUrl], p_params, p_htmlUrl) : _Includes[p_htmlUrl];
+        var $tmpl = $(tmplHtml);
+        
+        this.__$Tmpl__ = $tmpl;
+        if ( $tmpl.size() > 1 ) {
+            iris.E("Template '" + p_htmlUrl + "' must have only one root node");
+        }
+        
+        switch ( p_mode ) {
+            case this.TEMPLATE_APPEND:
+                this.__$Container__.append($tmpl);
+                break;
+            case this.TEMPLATE_REPLACE:
+                this.__$Container__.replaceWith($tmpl);
+                break;
+            case this.TEMPLATE_PREPEND:
+                this.__$Container__.prepend($tmpl);
+                break;
+            default:
+                iris.E("Unknown template mode '" + p_mode + "'");
+        }
+        
+    };
+    
+    // Check if the template is set (https://github.com/intelygenz/iris/issues/19)
+    _AbstractComponent.prototype.__CheckTmpl__ = function () {
+        if ( this.__$Tmpl__ === null ) {
+            iris.E("You must set a template using self.Template() in '" + this.__FileJs__ + "'");
+            return undefined;
+        }
+    };
+
+    /**
+     * Show the template object.
+     * If the component is a screen, this is called automatically 
+     * after self.Awake() when iris navigates.
+     * 
+     * See {@link iris.Goto} for more details.
+     * @function
+     */
+    _AbstractComponent.prototype.Show = function () {
+        this.__CheckTmpl__();
+        
+        this.__$Tmpl__.show();
+    };
+
+    /**
+     * Hide the template object.
+     * If the component is the current screen, this is called automatically 
+     * after self.Sleep() when iris navigates to other screen. Is called too 
+     * when a new screen is created.
+     * 
+     * See {@link iris.Goto} for more details.
+     * @function
+     */
+    _AbstractComponent.prototype.Hide = function () {
+        this.__CheckTmpl__();
+        
+        this.__$Tmpl__.hide();
+    };
+    
+    
+    
+    /**
+     * Find a JQuery object, using its <code>data-id</code> attribute, in the template.
+     * The template must be defined using <code>self.Template()</code>.<br>
+     * The <code>data-id</code> must be unique in the template.
+     * 
+     * @function
+     * @param {String} [p_id] Element <code>data-id</code> value, if no set return root element (optional)
+     * @example
+     * 
+     * var $label = self.$Get("span_label");
+     * 
+     * var $root = self.$Get();
+     */
+    _AbstractComponent.prototype.$Get = function (p_id) {
+        this.__CheckTmpl__();
+        
+        if ( p_id ) {
+            var
+               id = "[data-id=" + p_id + "]",
+               filter = this.__$Tmpl__.filter(id),
+               $element = null
+            ;
+            
+            if ( filter.length > 0 ) {
+                $element = filter;
+            }
+            else {
+                var find = this.__$Tmpl__.find(id);
+                if ( find.size() > 0 ) {
+                    $element = find;
+                }
+            }
+            
+            if ( $element === null ) {
+                iris.E("[data-id=" + p_id + "] not found in '" + this.__FileTmpl__ + "' used by '" +  this.__FileJs__ + "'");
                 return undefined;
             }
-        };
-
-        /**
-         * Show the template object.
-         * If the component is a screen, this is called automatically 
-         * after self.Awake() when iris navigates.
-         * 
-         * See {@link iris.Goto} for more details.
-         * @function
-         */
-        _Self.Show = function () {
-            _Self.__CheckTmpl__();
-            
-            _Self.__$Tmpl__.show();
-        };
-
-        /**
-         * Hide the template object.
-         * If the component is the current screen, this is called automatically 
-         * after self.Sleep() when iris navigates to other screen. Is called too 
-         * when a new screen is created.
-         * 
-         * See {@link iris.Goto} for more details.
-         * @function
-         */
-        _Self.Hide = function () {
-            _Self.__CheckTmpl__();
-            
-            _Self.__$Tmpl__.hide();
-        };
+            else if ( $element.size() > 1 ) {
+                iris.E("[data-id=" + p_id + "] must be unique in '" + this.__FileTmpl__ + "' used by '" + this.__FileJs__ + "'");
+                return undefined;
+            }
+            return $element;
+        }
         
-        
-        
-        /**
-         * Find a JQuery object, using its <code>data-id</code> attribute, in the template.
-         * The template must be defined using <code>self.Template()</code>.<br>
-         * The <code>data-id</code> must be unique in the template.
-         * 
-         * @function
-         * @param {String} [p_id] Element <code>data-id</code> value, if no set return root element (optional)
-         * @example
-         * 
-         * var $label = self.$Get("span_label");
-         * 
-         * var $root = self.$Get();
-         */
-        _Self.$Get = function (p_id) {
-            _Self.__CheckTmpl__();
+        return this.__$Tmpl__;
+    };
+    
+    /**
+     * Create a new UI component instance.
+     * 
+     * The created component is registered into the parent screen or UI,
+     * so you must use {@link iris-_AbstractComponent#DestroyUI} in order to remove it.
+     * 
+     * The component is added to <code>p_id</code> container or replace it.
+     * See {@link iris-_AbstractUI#TemplateMode} for more details.
+     * 
+     * @function
+     * @param {String} p_id Container <code>data-id</code>
+     * @param {String} p_jsUrl UI file path
+     * @param {Object} [p_uiSettings] UI Settings is optional
+     * @param {Constant} [p_templateMode] Use self.TEMPLATE_APPEND, self.TEMPLATE_PREPEND, the default mode isself.TEMPLATE_REPLACE (optional) 
+     * @example
+     * 
+     * self.InstanceUI("custom_ui", "custom_ui.js");
+     * 
+     * self.InstanceUI("btn_ok", "button.js", {"label":"OK","ico":"accept"});
+     * 
+     * self.InstanceUI("btn_ok", "button.js", {"label":"example"}, self.TEMPLATE_PREPEND);
+     */
+    _AbstractComponent.prototype.InstanceUI = function (p_id, p_jsUrl, p_uiSettings, p_templateMode) {
+        var $container = this.$Get(p_id);
+        if ( $container.size() === 1 ) {
+            var uiInstance = _InstanceUI($container, $container.data("id"), p_jsUrl, p_uiSettings, p_templateMode);
+            this.__UIComponents__[this.__UIComponents__.length] = uiInstance;
+            return uiInstance;
+        }
+    };
+    
+    /**
+     * Remove a child UI component completely previously created using {@link self.InstanceUI}.
+     * Remove parent references.
+     * @function
+     * @param {UI} p_ui UI to be removed
+     * @example
+     * 
+     * var customUI = self.InstanceUI("custom_ui", "custom_ui.js");
+     * self.DestroyUI(customUI);
+     */
+    _AbstractComponent.prototype.DestroyUI = function (p_ui) {
+        for (var f=0, F=this.__UIComponents__.length; f < F; f++) {
+            if (this.__UIComponents__[f] === p_ui) {
+                this.__UIComponents__.splice(f, 1);
+                p_ui.__Destroy__();
+                p_ui.$Get().remove();
+                break;
+            }
+        }
+    };
+    
+    /**
+     * Remove all UI components from a container.
+     * The UIs must be previously created using {@link self.InstanceUI}.<br>
+     * Remove parent references.
+     * @function
+     * @param {String|JQuery} p_idOrJq UI Container <code>data-id</code> or JQuery object
+     * @example
+     * self.DestroyAllUIs("container");
+     * 
+     * self.DestroyAllUIs($container);
+     */
+    _AbstractComponent.prototype.DestroyAllUIs = function (p_idOrJq) {
+        var contSelector = typeof p_idOrJq === "string" ? "[data-id=" + p_idOrJq + "]" : p_idOrJq.selector;
+        var ui;
+        for (var f=0, F=this.__UIComponents__.length; f < F; f++) {
+            ui = this.__UIComponents__[f];
             
-            if ( p_id ) {
-                var
-                   id = "[data-id=" + p_id + "]",
-                   filter = _Self.__$Tmpl__.filter(id),
-                   $element = null
-                ;
+            if (ui.__$Container__.selector === contSelector) {
+                this.__UIComponents__.splice(f--, 1);
+                F--;
                 
-                if ( filter.length > 0 ) {
-                    $element = filter;
-                }
-                else {
-                    var find = _Self.__$Tmpl__.find(id);
-                    if ( find.size() > 0 ) {
-                        $element = find;
-                    }
-                }
-                
-                if ( $element === null ) {
-                    iris.E("[data-id=" + p_id + "] not found in '" + _Self.__FileTmpl__ + "' used by '" +  _Self.__FileJs__ + "'");
-                    return undefined;
-                }
-                else if ( $element.size() > 1 ) {
-                    iris.E("[data-id=" + p_id + "] must be unique in '" + _Self.__FileTmpl__ + "' used by '" + _Self.__FileJs__ + "'");
-                    return undefined;
-                }
-                return $element;
+                ui.__Destroy__();
+                ui.$Get().remove();
             }
-            
-            return _Self.__$Tmpl__;
-        };
-        
-        /**
-         * Create a new UI component instance.
-         * 
-         * The created component is registered into the parent screen or UI,
-         * so you must use {@link iris-_AbstractComponent#DestroyUI} in order to remove it.
-         * 
-         * The component is added to <code>p_id</code> container or replace it.
-         * See {@link iris-_AbstractUI#TemplateMode} for more details.
-         * 
-         * @function
-         * @param {String} p_id Container <code>data-id</code>
-         * @param {String} p_jsUrl UI file path
-         * @param {Object} [p_uiSettings] UI Settings is optional
-         * @param {Constant} [p_templateMode] Use self.TEMPLATE_APPEND, self.TEMPLATE_PREPEND, the default mode isself.TEMPLATE_REPLACE (optional) 
-         * @example
-         * 
-         * self.InstanceUI("custom_ui", "custom_ui.js");
-         * 
-         * self.InstanceUI("btn_ok", "button.js", {"label":"OK","ico":"accept"});
-         * 
-         * self.InstanceUI("btn_ok", "button.js", {"label":"example"}, self.TEMPLATE_PREPEND);
-         */
-        _Self.InstanceUI = function (p_id, p_jsUrl, p_uiSettings, p_templateMode) {
-            var $container = _Self.$Get(p_id);
-            if ( $container.size() === 1 ) {
-                var uiInstance = _InstanceUI($container, $container.data("id"), p_jsUrl, p_uiSettings, p_templateMode);
-                _Self.__UIComponents__[_Self.__UIComponents__.length] = uiInstance;
-                return uiInstance;
-            }
-        };
-        
-        /**
-         * Remove a child UI component completely previously created using {@link self.InstanceUI}.
-         * Remove parent references.
-         * @function
-         * @param {UI} p_ui UI to be removed
-         * @example
-         * 
-         * var customUI = self.InstanceUI("custom_ui", "custom_ui.js");
-         * self.DestroyUI(customUI);
-         */
-        _Self.DestroyUI = function (p_ui) {
-            for (var f=0, F=_Self.__UIComponents__.length; f < F; f++) {
-                if (_Self.__UIComponents__[f] === p_ui) {
-                    _Self.__UIComponents__.splice(f, 1);
-                    p_ui.__Destroy__();
-                    p_ui.$Get().remove();
-                    break;
-                }
-            }
-        };
-        
-        /**
-         * Remove all UI components from a container.
-         * The UIs must be previously created using {@link self.InstanceUI}.<br>
-         * Remove parent references.
-         * @function
-         * @param {String|JQuery} p_idOrJq UI Container <code>data-id</code> or JQuery object
-         * @example
-         * self.DestroyAllUIs("container");
-         * 
-         * self.DestroyAllUIs($container);
-         */
-        _Self.DestroyAllUIs = function (p_idOrJq) {
-            var contSelector = typeof p_idOrJq === "string" ? "[data-id=" + p_idOrJq + "]" : p_idOrJq.selector;
-            var ui;
-            for (var f=0, F=_Self.__UIComponents__.length; f < F; f++) {
-                ui = _Self.__UIComponents__[f];
-                
-                if (ui.__$Container__.selector === contSelector) {
-                    _Self.__UIComponents__.splice(f--, 1);
-                    F--;
-                    
-                    ui.__Destroy__();
-                    ui.$Get().remove();
-                }
-            }
-        };
-        
-        /**
-         * Get the component container.
-         * If the component is a screen, the container is
-         * set using {@link iris-_AbstractScreen#AddScreen} function.
-         * Otherwise if the component is a UI, the container is
-         * set using {@link iris-_AbstractComponent#InstanceUI} function.
-         * @function
-         * @example
-         * 
-         * var screenContainer = self.$Container();
-         */
-        _Self.$Container = function () {
-            return _Self.__$Container__;
-        };
-        
-        // To override functions
-        
-        /**
-         * Called automatically only once at the creation phase.
-         * Function to override.
-         * @function
-         */
-        _Self.Create = function () {};
-        
-        /**
-         * Called automatically when a screen is showed.
-         * Function to override.
-         * @function 
-         */
-        _Self.Awake = function () {};
-        
-        /**
-         * Called automatically when a screen is going to sleep, before {@link iris-_AbstractComponent#Sleep}.
-         * If return false, the <code>self.Sleep()</code> function is not called.
-         * @function 
-         */
-        _Self.CanSleep = function () {
-            return true;
-        };
-        
-        /**
-         * Called automatically when a screen is hidden.
-         * Function to override.
-         * @function
-         */
-        _Self.Sleep = function () {};
-        
-        /**
-         * Called automatically by {@link iris-_AbstractComponent#DestroyUI}.
-         * Function to override.
-         */
-        _Self.Destroy = function () {};
-        
-        return _Self;
-    }
+        }
+    };
+    
+    /**
+     * Get the component container.
+     * If the component is a screen, the container is
+     * set using {@link iris-_AbstractScreen#AddScreen} function.
+     * Otherwise if the component is a UI, the container is
+     * set using {@link iris-_AbstractComponent#InstanceUI} function.
+     * @function
+     * @example
+     * 
+     * var screenContainer = self.$Container();
+     */
+    _AbstractComponent.prototype.$Container = function () {
+        return this.__$Container__;
+    };
+    
+    // To override functions
+    
+    /**
+     * Called automatically only once at the creation phase.
+     * Function to override.
+     * @function
+     */
+    _AbstractComponent.prototype.Create = function () {};
+    
+    /**
+     * Called automatically when a screen is showed.
+     * Function to override.
+     * @function 
+     */
+    _AbstractComponent.prototype.Awake = function () {};
+    
+    /**
+     * Called automatically when a screen is going to sleep, before {@link iris-_AbstractComponent#Sleep}.
+     * If return false, the <code>self.Sleep()</code> function is not called.
+     * @function 
+     */
+    _AbstractComponent.prototype.CanSleep = function () {
+        return true;
+    };
+    
+    /**
+     * Called automatically when a screen is hidden.
+     * Function to override.
+     * @function
+     */
+    _AbstractComponent.prototype.Sleep = function () {};
+    
+    /**
+     * Called automatically by {@link iris-_AbstractComponent#DestroyUI}.
+     * Function to override.
+     */
+    _AbstractComponent.prototype.Destroy = function () {};
     
     /**
      * @class
@@ -1281,80 +1274,75 @@ var iris = (function () {
      * Common AddOn functions and properties.
      */
     function _AbstractAddOn () {
-        
-        var _Self = _Settable();
-        
-        _Self.__Components__ = null;
-        
-        /**
-         * Add a array of UIs to the AddOn.
-         * It is called automatically from {@link iris.ApplyAddOn}.
-         * @param p_uis {Array} Array of UIs
-         * @function
-         */
-        _Self.AddAll = function (p_uis) {
-            for (var f=0, F=p_uis.length; f<F; f++) {
-                _Self.Add( p_uis[f] );
-            }
-        };
-        
-        /**
-         * Add a UI to the AddOn.
-         * @param p_uis {UI} UI instance
-         * @function
-         */
-        _Self.Add = function (p_ui) {
-            if ( _Self.hasOwnProperty("UIAddOn") ) {
-                p_ui.proptotype = _Self.UIAddOn( p_ui );
-            }
-            _Self.__Components__[_Self.__Components__.length] = p_ui;
-        };
-        
-        /**
-         * Remove a UI from the AddOn.
-         * @param p_uis {UI} UI instance
-         * @function
-         */
-        _Self.Remove = function (p_ui) {
-            var ui;
-            for (var f=0, F=_Self.__Components__.length; f<F; f++) {
-                ui = _Self.__Components__[f];
-                if ( ui === p_ui ) {
-                    _Self.__Components__.splice(f, 1);
-                }
-            }
-        };
-
-        /**
-         * Get a registered UI from the AddOn.
-         * The UI must be previosly registered using {@link iris.ApplyAddOn},
-         * {@link iris-_AbstractAddOn#AddAll} or {@link iris-_AbstractAddOn#Add}
-         * @param p_idx {integer} UI instance position
-         * @function
-         */
-        _Self.Get = function (p_idx) {
-            return _Self.__Components__[p_idx];
-        };
-
-        /**
-         * The number of UI components registered.
-         * @function
-         */
-        _Self.Size = function () {
-            return _Self.__Components__.length;
-        };
-        
-        // To override
-        
-        /**
-         * Called automatically when all UIs have been added.
-         * Function to override.
-         * @function
-         */
-        _Self.Create = function () {};
-        
-        return _Self;
+        this.__Components__ = null;
     }
+        
+    /**
+     * Add a array of UIs to the AddOn.
+     * It is called automatically from {@link iris.ApplyAddOn}.
+     * @param p_uis {Array} Array of UIs
+     * @function
+     */
+    _AbstractAddOn.prototype.AddAll = function (p_uis) {
+        for (var f=0, F=p_uis.length; f<F; f++) {
+            this.Add( p_uis[f] );
+        }
+    };
+    
+    /**
+     * Add a UI to the AddOn.
+     * @param p_uis {UI} UI instance
+     * @function
+     */
+    _AbstractAddOn.prototype.Add = function (p_ui) {
+        if ( this.hasOwnProperty("UIAddOn") ) {
+            p_ui.proptotype = this.UIAddOn( p_ui );
+        }
+        this.__Components__[this.__Components__.length] = p_ui;
+    };
+    
+    /**
+     * Remove a UI from the AddOn.
+     * @param p_uis {UI} UI instance
+     * @function
+     */
+    _AbstractAddOn.prototype.Remove = function (p_ui) {
+        var ui;
+        for (var f=0, F=this.__Components__.length; f<F; f++) {
+            ui = this.__Components__[f];
+            if ( ui === p_ui ) {
+                this.__Components__.splice(f, 1);
+            }
+        }
+    };
+
+    /**
+     * Get a registered UI from the AddOn.
+     * The UI must be previosly registered using {@link iris.ApplyAddOn},
+     * {@link iris-_AbstractAddOn#AddAll} or {@link iris-_AbstractAddOn#Add}
+     * @param p_idx {integer} UI instance position
+     * @function
+     */
+    _AbstractAddOn.prototype.Get = function (p_idx) {
+        return this.__Components__[p_idx];
+    };
+
+    /**
+     * The number of UI components registered.
+     * @function
+     */
+    _AbstractAddOn.prototype.Size = function () {
+        return this.__Components__.length;
+    };
+    
+    // To override
+    
+    /**
+     * Called automatically when all UIs have been added.
+     * Function to override.
+     * @function
+     */
+    _AbstractAddOn.prototype.Create = function () {};
     
     /**
      * @class
@@ -1362,96 +1350,94 @@ var iris = (function () {
      * Common UI functions and properties.
      */
     function _AbstractUI () {
-        var _Self = _AbstractComponent();
-        
-        _Self.__TemplateMode__ = _Self.TEMPLATE_REPLACE;
-        
-        /**
-         * Set the template behaviour.
-         * The template can be added to the container
-         * or can replace it. The default mode is <code>self.TEMPLATE_REPLACE</code>.
-         * Use this function before call {@link iris-_AbstractUI.Template}.
-         * @function
-         * @example
-         * self.TemplateMode(self.TEMPLATE_APPEND);
-         * self.Template("tmpl.html");
-         */
-        _Self.TemplateMode = function (p_mode) {
-            _Self.__TemplateMode__ = p_mode;
-        };
-        
-        /**
-         * Create the component template.
-         * Translate multilanguage values, draw parameters, 
-         * create DOM elements and insert into container or replace it.
-         * 
-         * See {@link iris-_AbstractUI.TemplateMode}.
-         * @function
-         * @example
-         * self.TemplateMode(self.TEMPLATE_APPEND);
-         * self.Template("tmpl.html", {"age":23});
-         */
-        _Self.Template = function (p_htmlUrl, p_params) {
-            _Self.__Template__(p_htmlUrl, p_params, _Self.__TemplateMode__);
-        };
-        
-        return _Self;
+        this.__TemplateMode__ = this.TEMPLATE_REPLACE;
     }
+    
+    _AbstractUI.prototype = _AbstractComponent.prototype;
+        
+    /**
+     * Set the template behaviour.
+     * The template can be added to the container
+     * or can replace it. The default mode is <code>self.TEMPLATE_REPLACE</code>.
+     * Use this function before call {@link iris-_AbstractUI.Template}.
+     * @function
+     * @example
+     * self.TemplateMode(self.TEMPLATE_APPEND);
+     * self.Template("tmpl.html");
+     */
+    _AbstractUI.prototype.TemplateMode = function (p_mode) {
+        this.__TemplateMode__ = p_mode;
+    };
+    
+    /**
+     * Create the component template.
+     * Translate multilanguage values, draw parameters, 
+     * create DOM elements and insert into container or replace it.
+     * 
+     * See {@link iris-_AbstractUI.TemplateMode}.
+     * @function
+     * @example
+     * self.TemplateMode(self.TEMPLATE_APPEND);
+     * self.Template("tmpl.html", {"age":23});
+     */
+    _AbstractUI.prototype.Template = function (p_htmlUrl, p_params) {
+        this.__Template__(p_htmlUrl, p_params, this.__TemplateMode__);
+    };
+        
 
     /**
      * @class
      * Abstract class for screen extending.
      * Common screen functions and properties.
      */
-    function _AbstractScreen () {
+    var _AbstractScreen = function () {}
+    
+    _AbstractScreen.prototype = new _Settable();
+    _AbstractScreen.prototype = new _AbstractComponent();
         
-        var _Self = _AbstractComponent();
+    /**
+     * Create the screen template.
+     * Translate multilanguage values, draw parameters, 
+     * create DOM elements and it is insert into the screen container.
+     * @function
+     * @example
+     * self.Template("tmpl.html", {"name":"Jonh"});
+     */
+    _AbstractScreen.prototype.Template = function (p_htmlUrl, p_params) {
+        this.__Template__(p_htmlUrl, p_params, this.TEMPLATE_APPEND);
+    };
         
-        /**
-         * Create the screen template.
-         * Translate multilanguage values, draw parameters, 
-         * create DOM elements and it is insert into the screen container.
-         * @function
-         * @example
-         * self.Template("tmpl.html", {"name":"Jonh"});
-         */
-        _Self.Template = function (p_htmlUrl, p_params) {
-            _Self.__Template__(p_htmlUrl, p_params, _Self.TEMPLATE_APPEND);
-        };
+    /**
+     * Add a new screen.
+     * You can navigate to this using <code>iris.Goto</code>.
+     * See {@link iris.Goto} for more details.
+     * @function
+     * @param {JQuery} p_containerId Screen container <code>data-id</code>
+     * @param {String} p_screenPath Screen URL path
+     * @param {String} p_jsUrl Screen controller
+     * @example
+     * self.AddScreen(
+     *     "screens"
+     *   , "#books/edit"
+     *   , "screen/book_edit.js"
+     * );
+     * 
+     * iris.Goto("#books/edit");
+     */
+    _AbstractScreen.prototype.AddScreen = function _ScreenAdd (p_containerId, p_screenPath, p_jsUrl) {
+        var $cont = this.$Get(p_containerId);
         
-        /**
-         * Add a new screen.
-         * You can navigate to this using <code>iris.Goto</code>.
-         * See {@link iris.Goto} for more details.
-         * @function
-         * @param {JQuery} p_containerId Screen container <code>data-id</code>
-         * @param {String} p_screenPath Screen URL path
-         * @param {String} p_jsUrl Screen controller
-         * @example
-         * self.AddScreen(
-         *     "screens"
-         *   , "#books/edit"
-         *   , "screen/book_edit.js"
-         * );
-         * 
-         * iris.Goto("#books/edit");
-         */
-        _Self.AddScreen = function _ScreenAdd (p_containerId, p_screenPath, p_jsUrl) {
-            var $cont = _Self.$Get(p_containerId);
+        if ( $cont.data("screen_context") === undefined ) {
             
-            if ( $cont.data("screen_context") === undefined ) {
-                
-                // Set a unique screen context id to the screen container
-                // like: #path/to/screen|containerid
-                $cont.data("screen_context", _Self.__Id__ + "|" + p_containerId);
-            }
+            // Set a unique screen context id to the screen container
+            // like: #path/to/screen|containerid
+            $cont.data("screen_context", this.__Id__ + "|" + p_containerId);
+        }
 
-            _ScreenUrl[p_screenPath] = p_jsUrl;
-            _ScreenContainer[p_screenPath] = $cont;
-        };
+        _ScreenUrl[p_screenPath] = p_jsUrl;
+        _ScreenContainer[p_screenPath] = $cont;
+    };
         
-        return _Self;
-    }
     
     function _Deserialize (p_$form, p_data) {
         var element, tag, value;
@@ -1496,31 +1482,31 @@ var iris = (function () {
     
     
     /** @namespace Screen management: Add a new screen, ... */
-    _Iris.screen = {};
+    iris.screen = {};
     
     /** @namespace Event management: Add/remove listeners and trigger events. */
-    _Iris.event = {};
+    iris.event = {};
     
     /** @namespace Application configuration: Load configuration data and environments. */
-    _Iris.config = {};
+    iris.config = {};
     
     /** @namespace User interface: Work with HTML elements. */
-    _Iris.ui = {};
+    iris.ui = {};
     
     /** @namespace Asynchronous HTTP request and URL base. */
-    _Iris.net = {};
+    iris.net = {};
     
     /** @namespace Global configurations management */
-    _Iris.global = {};
+    iris.global = {};
     
     /** @namespace Environment configurations management */
-    _Iris.local = {};
+    iris.local = {};
     
     /** @namespace Multilanguage : Load translation files, get translated text, ...*/
-    _Iris.lang = {};
+    iris.lang = {};
 
     /** @namespace Various utilities: Date formatting, serialization, ... */
-    _Iris.util = {};
+    iris.util = {};
     
     /**
      * Load the configuration JSON.
@@ -1551,7 +1537,7 @@ var iris = (function () {
      *    });
      * 
      */
-    _Iris.config.Load = _ConfigLoad;
+    iris.config.Load = _ConfigLoad;
     
     /**
      * Set or get the current environment.
@@ -1575,7 +1561,7 @@ var iris = (function () {
      * 
      * iris.config.Env("pro"); // set environment to "pro"
      */
-    _Iris.config.Env = _GetEnv;
+    iris.config.Env = _GetEnv;
     
     /**
      * Add global configuration values​​.
@@ -1587,7 +1573,7 @@ var iris = (function () {
      * iris.global.Load({"global-variable" : "value"});
      * iris.global.Data("global-variable"); // return "value"
      */
-    _Iris.global.Load = _GlobalLoad;
+    iris.global.Load = _GlobalLoad;
     
     /**
      * Get or set the value of a global configuration variable.
@@ -1599,7 +1585,7 @@ var iris = (function () {
      * @example
      * iris.global.Data("global-variable");
      */
-    _Iris.global.Data = _GlobalData;
+    iris.global.Data = _GlobalData;
     
     /**
      * Add configuration values that depends on current environment.
@@ -1611,7 +1597,7 @@ var iris = (function () {
      * iris.global.Load({"global-variable" : "value"});
      * iris.global.Data("global-variable"); // return "value"
      */
-    _Iris.local.Load = _LocalLoad;
+    iris.local.Load = _LocalLoad;
     
     /**
      * Get or set the value of a configuration variable that depends on current environment.
@@ -1631,7 +1617,7 @@ var iris = (function () {
      * // If environemnt="dev" then return "example-dev"
      * iris.local.Data("local-variable");
      */
-    _Iris.local.Data = _LocalData;
+    iris.local.Data = _LocalData;
     
     /**
      * Add translation texts to a locale.
@@ -1650,7 +1636,7 @@ var iris = (function () {
      * iris.lang.Get("LABEL");
      * iris.lang.Get("GROUP.NESTED_VALUE");
      */
-    _Iris.lang.Load = _LocaleLoad;
+    iris.lang.Load = _LocaleLoad;
     
     /**
      * Load remote translation texts into a locale.
@@ -1665,7 +1651,7 @@ var iris = (function () {
      *    , {"success":_OnLangLoad}
      * );
      */
-    _Iris.lang.LoadFrom = _LangLoadFrom;
+    iris.lang.LoadFrom = _LangLoadFrom;
     
     /**
      * Get a translation text according to the Locale.
@@ -1678,7 +1664,7 @@ var iris = (function () {
      *
      * iris.lang.Get("GROUP.LABEL");
      */
-    _Iris.lang.Get = _LangGet;
+    iris.lang.Get = _LangGet;
     
     /**
      * Set or get the current locale.
@@ -1688,7 +1674,7 @@ var iris = (function () {
      * var locale = iris.lang.Locale();
      * iris.lang.Locale("es-ES");
      */
-    _Iris.lang.Locale = _LocaleGet;
+    iris.lang.Locale = _LocaleGet;
     
     /**
      * Safe debug traces.
@@ -1697,7 +1683,7 @@ var iris = (function () {
      * @example
      * iris.L("text", variable);
      */
-    _Iris.L = _L;
+    iris.L = _L;
     
     /**
      * Safe debug traces. If debug-level is active for the current environment then print traces.
@@ -1707,7 +1693,7 @@ var iris = (function () {
      * @example
      * iris.D("text", variable);
      */
-    _Iris.D = _D;
+    iris.D = _D;
     
     /**
      * Safe warning traces. If warning-level is active for the current environment then print traces.
@@ -1717,7 +1703,7 @@ var iris = (function () {
      * @example
      * iris.W("text", variable);
      */
-    _Iris.W = _W;
+    iris.W = _W;
     
     /**
      * Safe error traces. If error-level is active for the current environment then print traces.
@@ -1727,14 +1713,14 @@ var iris = (function () {
      * @example
      * iris.E("text", variable);
      */
-    _Iris.E = _E;
+    iris.E = _E;
     
     /**
      * Event fired before do a navigation.
      * @example
      * iris.event.Subscribe(iris.event.BEFORE_NAVIGATION, _OnBeforeNavigation);
      */
-    _Iris.event.BEFORE_NAVIGATION = "iris_before_navigation";
+    iris.event.BEFORE_NAVIGATION = "iris_before_navigation";
     
     /**
      * Add an event listener.
@@ -1745,7 +1731,7 @@ var iris = (function () {
      * @example
      * iris.event.Subscribe("user_select", _OnUserSelect);
      */
-    _Iris.event.Subscribe = _EventSubscribe;
+    iris.event.Subscribe = _EventSubscribe;
     
     /**
      * Trigger an event.
@@ -1759,7 +1745,7 @@ var iris = (function () {
      *  , {"user_id" : 123, "name" : "John"}
      * );
      */
-    _Iris.event.Notify = _EventNotify;
+    iris.event.Notify = _EventNotify;
     
     /**
      * Remove an event listener.
@@ -1770,7 +1756,7 @@ var iris = (function () {
      * @example
      * iris.event.Remove("user_select", _OnUserSelect);
      */
-    _Iris.event.Remove = _EventRemove;
+    iris.event.Remove = _EventRemove;
     
     /**
      * Get or set the application base URL.
@@ -1781,7 +1767,7 @@ var iris = (function () {
      * // Current URL = http://www.example.com/admin/example/path?a=1
      * iris.net.BaseUri(); // return http://www.example.com/
      */
-    _Iris.net.BaseUri = _BaseUri;
+    iris.net.BaseUri = _BaseUri;
     
     /**
      * Do an Ajax request.
@@ -1795,7 +1781,7 @@ var iris = (function () {
      *         }
      * );
      */
-    _Iris.net.Ajax = _Ajax;
+    iris.net.Ajax = _Ajax;
     
     /**
      * Set a URL parameter to be used as cache version control.
@@ -1804,7 +1790,7 @@ var iris = (function () {
      * @function
      * @param {String} p_value Parameter value
      */
-    _Iris.net.CacheVersion = _SetCacheVersion;
+    iris.net.CacheVersion = _SetCacheVersion;
     
     /**
      * Register a Screen object.
@@ -1825,7 +1811,7 @@ var iris = (function () {
      *   }
      * );
      */
-    _Iris.Screen = _CreateScreen;
+    iris.Screen = _CreateScreen;
     
     /**
      * Register an UI object.
@@ -1846,7 +1832,7 @@ var iris = (function () {
      *   }
      * );
      */
-    _Iris.UI =  _CreateUI;
+    iris.UI =  _CreateUI;
     
     /**
      * Set the initial screen.
@@ -1857,7 +1843,7 @@ var iris = (function () {
      * @example
      * iris.screen.WelcomeScreen("screen/main.js");
      */
-    _Iris.screen.WelcomeScreen = _WelcomeScreen;
+    iris.screen.WelcomeScreen = _WelcomeScreen;
     
     /**
      * Destroy a created screen.
@@ -1868,7 +1854,7 @@ var iris = (function () {
      * @example
      * iris.screen.Destroy("#books/edit");
      */
-    _Iris.screen.Destroy = _DestroyScreen;
+    iris.screen.Destroy = _DestroyScreen;
     
     /**
      * Copy all data-* attributes to an object.
@@ -1880,7 +1866,7 @@ var iris = (function () {
      * var params = iris.ui.JqToHash($obj);
      * // return: {"id" : "test", "class" : "myclass"}
      */
-    _Iris.ui.JqToHash = _JqToHash;
+    iris.ui.JqToHash = _JqToHash;
     
     /**
      * Set the object values to a JQuery object.
@@ -1895,7 +1881,7 @@ var iris = (function () {
      *  , class"]
      * ); // Set the $obj attribute "class"
      */
-    _Iris.ui.HashToJq = _HashToJq;
+    iris.ui.HashToJq = _HashToJq;
     
     /**
      * Include static resources dynamically.
@@ -1912,7 +1898,7 @@ var iris = (function () {
      * @example
      * iris.Include("app/service/myservice.js", "app/css/mycss.css");
      */
-    _Iris.Include = _IncludeFiles;
+    iris.Include = _IncludeFiles;
     
     /**
      * Formats a Date object or timestamp to the specified format and according to the current locale. <br>
@@ -1942,7 +1928,7 @@ var iris = (function () {
      * iris.util.DateFormat("1331954654564","d/m/y h:i:s"); // 17/03/12 04:24:14
      * iris.util.DateFormat(1331954654564);
      */
-    _Iris.util.DateFormat = _DateFormat;
+    iris.util.DateFormat = _DateFormat;
     
 
     /**
@@ -1957,7 +1943,7 @@ var iris = (function () {
      *         iris.util.Currency(1234.56);        -> 1,234.56 €
      *        iris.util.Currency("123456789");     -> 123,456,789 €
      */
-    _Iris.util.Currency = _ParseCurrency;
+    iris.util.Currency = _ParseCurrency;
 
 
     /**
@@ -1969,7 +1955,7 @@ var iris = (function () {
      * var data = {"name":"Jonh", "surname": "Doe"};
      * iris.util.Deserialize($form, data);
      */
-    _Iris.util.Deserialize = _Deserialize;
+    iris.util.Deserialize = _Deserialize;
     
     /**
      * Serialize a form data to Object.
@@ -1978,7 +1964,7 @@ var iris = (function () {
      * @example
      * var data = iris.util.Serialize($form);
      */
-    _Iris.util.Serialize = _Serialize;
+    iris.util.Serialize = _Serialize;
     
     /**
      * Navigate to a screen.
@@ -1998,7 +1984,7 @@ var iris = (function () {
      * var email = encodeURIComponent("user@example.com");
      * iris.Goto("#home/section?email=" + email);
      */
-    _Iris.Goto = _Goto;
+    iris.Goto = _Goto;
     
     /**
      * Register a AddOn object.
@@ -2014,7 +2000,7 @@ var iris = (function () {
      *   }
      * );
      */
-    _Iris.AddOn = _CreateAddOn;
+    iris.AddOn = _CreateAddOn;
     
     /**
      * Apply a AddOn to a group of UI components or single UI.
@@ -2029,7 +2015,7 @@ var iris = (function () {
      * iris.ApplyAddOn("validator.js", [customUI, otherCustomUI]);
      *
      */
-    _Iris.ApplyAddOn = _ApplyAddOn;
+    iris.ApplyAddOn = _ApplyAddOn;
     
     /**
      * Specify a new regional or change the actuals regionals to format dates and currencies.
@@ -2085,11 +2071,9 @@ var iris = (function () {
      *        }
      *    }
      */
-    _Iris.Regional = _AddRegional;
+    iris.Regional = _AddRegional;
     
     
     _Init();
-    
-    return _Iris;
     
 })();
