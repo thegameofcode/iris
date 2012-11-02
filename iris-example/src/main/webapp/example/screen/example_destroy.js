@@ -1,6 +1,5 @@
 iris.Screen(function(self) {
-	var _Cont = 0
-	,	_UIs = []
+	var _UIs = []
 	,	_$InputIdx
 	;
 	
@@ -16,9 +15,7 @@ iris.Screen(function(self) {
 
 	function _Create() {
 		_UIs.push(
-			self.InstanceUI("container", "example/ui/example.js", {
-				"count" : _Cont++
-			})
+			self.InstanceUI("container", "example/ui/example.js")
 		);
 	}
 

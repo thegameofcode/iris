@@ -35,16 +35,17 @@ Settings:
   Formatting -> All unchecked
 
 Result:
-  Original Size:	49.36KB (13.62KB gzipped)
-  Compiled Size:	13.6KB (5.14KB gzipped)
+  Original Size:  49.99KB (13.71KB gzipped)
+  Compiled Size:  14.37KB (5.17KB gzipped)
 
-  Saved 72.45% off the original size (62.25% off the gzipped size)
+  Saved 71.26% off the original size (62.28% off the gzipped size)
 
 
 Changelog:
 
-[0.4.5] 2012-10-16 david.garcia@intelygenz.com, angel.sanchez@intelygenz.com
-	[fix] Prevent multiple calls to hashchange event handler when welcome screen calls to iris.Goto() on create phase
-	[upd] Code refactoring to suppress JS validation warnings. All JSHint validations in strict mode are passed. (http://www.jshint.com/)
-	[fix] DateFormat bug with month names (https://github.com/intelygenz/iris/issues/22)
-	[new] iris.net.CacheVersion (https://github.com/intelygenz/iris/issues/23) 
+ [0.4.5] 2012-11-03 david.garcia@intelygenz.com, angel.sanchez@intelygenz.com
+    [fix] Prevent multiple calls to hashchange event handler when welcome screen calls to iris.Goto() on create phase
+    [upd] Code refactoring to suppress JS validation warnings. All JSHint validations whitout strict mode are passed. (http://www.jshint.com/)
+    [fix] DateFormat bug with month names (https://github.com/intelygenz/iris/issues/22)
+    [new] iris.net.CacheVersion (https://github.com/intelygenz/iris/issues/23) 
+    [upd] self.$Get() selectors cache: improved performance & permit nested UIs

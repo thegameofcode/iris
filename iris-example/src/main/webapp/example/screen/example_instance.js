@@ -8,6 +8,5 @@ iris.Screen(function(self) {
 	function _Create() {
 		self.InstanceUI("container", "example/ui/example_basic.js");
 		self.$Get("btn_create").remove();
-		_Create = null;
 	}
 });

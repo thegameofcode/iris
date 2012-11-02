@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>Iris Memory Leak Test</title>
+	
+	<base href='/iris/example/' />
+	
+	<meta http-equiv='X-UA-Compatible' content='IE=8'/>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	
+	<script type='text/javascript' src='./js/jquery-1.8.0.min.js'></script>
+	<script type='text/javascript' src='./js/iris-0.4.5-prototype.js'></script>
+	<script type='text/javascript' src='./memory-leak-test/memoryleak.js'></script>
+
+	
+</head>
+<body>
+</body>
+</html>
+
+<!-- 
+
+v0.4.5 - Final
+Creating 1000 UIs ... 139 ms (0.139 ms/object)
+Creating 1000 UIs ... 117 ms (0.117 ms/object)
+Creating 1000 UIs ... 113 ms (0.113 ms/object)
+Creating 1000 UIs ... 112 ms (0.112 ms/object)
+Creating 1000 UIs ... 111 ms (0.111 ms/object)
+Creating 1000 UIs ... 111 ms (0.111 ms/object)
+Creating 1000 UIs ... 111 ms (0.111 ms/object)
+Creating 1000 UIs ... 125 ms (0.125 ms/object)
+Creating 1000 UIs ... 180 ms (0.18 ms/object)
+Creating 1000 UIs ... 108 ms (0.108 ms/object)
+Destroying UIs ...79 ms
+
+
+v0.4.5 - Prototype
+Creating 1000 UIs ... 199 ms (0.199 ms/object)
+Creating 1000 UIs ... 226 ms (0.226 ms/object)
+Creating 1000 UIs ... 289 ms (0.289 ms/object)
+Creating 1000 UIs ... 396 ms (0.396 ms/object)
+Creating 1000 UIs ... 579 ms (0.579 ms/object)
+Creating 1000 UIs ... 857 ms (0.857 ms/object)
+Creating 1000 UIs ... 909 ms (0.909 ms/object)
+Creating 1000 UIs ... 1144 ms (1.144 ms/object)
+Creating 1000 UIs ... 1499 ms (1.499 ms/object)
+Creating 1000 UIs ... 1612 ms (1.612 ms/object)
+Destroying UIs ...78 ms
+
+
+
+
+v0.4.5 - Object
+Creating 1000 UIs ... 213 ms (0.213 ms/object)
+Creating 1000 UIs ... 239 ms (0.239 ms/object)
+Creating 1000 UIs ... 317 ms (0.317 ms/object)
+Creating 1000 UIs ... 395 ms (0.395 ms/object)
+Creating 1000 UIs ... 550 ms (0.55 ms/object)
+Creating 1000 UIs ... 718 ms (0.718 ms/object)
+Creating 1000 UIs ... 934 ms (0.934 ms/object)
+Creating 1000 UIs ... 1023 ms (1.023 ms/object)
+Creating 1000 UIs ... 1240 ms (1.24 ms/object)
+Creating 1000 UIs ... 1460 ms (1.46 ms/object)
+Destroying UIs ...231 ms
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+v0.4.5 - Prototype
+
+Creating 5000 UIs ... 1758 ms (0.3516 ms/object)
+Creating 5000 UIs ... 5750 ms (1.15 ms/object)
+Creating 5000 UIs ... 10660 ms (2.132 ms/object)
+Creating 5000 UIs ... 16050 ms (3.21 ms/object)
+Creating 5000 UIs ... 21818 ms (4.3636 ms/object)
+Destroying UIs ...380 ms
+
+v0.4.5 - Object
+
+Creating UIs ... 1790 ms (0.358 ms/object)
+Creating UIs ... 5418 ms (1.0836 ms/object)
+Creating UIs ... 10446 ms (2.0892 ms/object)
+Creating UIs ... 15941 ms (3.1882 ms/object)
+Creating UIs ... 21471 ms (4.2942 ms/object)
+Destroying UIs ...16242 ms
+
+
+
+v0.4.4
+
+Creating UIs ... 1686 ms (0.3372 ms/object)
+Creating UIs ... 5604 ms (1.1208 ms/object)
+Creating UIs ... 10294 ms (2.0588 ms/object)
+Creating UIs ... 15774 ms (3.1548 ms/object)
+Creating UIs ... 20613 ms (4.1226 ms/object)
+Destroying UIs ...294 ms
+
+
+v0.4.2
+Creating UIs ... 1712 ms (0.3424 ms/object)
+Creating UIs ... 5893 ms (1.1786 ms/object)
+Creating UIs ... 9921 ms (1.9842 ms/object)
+Creating UIs ... 14947 ms (2.9894 ms/object)
+Creating UIs ... 20981 ms (4.1962 ms/object)
+Destroying UIs ...310 ms
+
+ -->

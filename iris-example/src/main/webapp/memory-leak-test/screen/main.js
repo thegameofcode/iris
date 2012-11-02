@@ -4,6 +4,7 @@ iris.Screen(function(self) {
 	,	_$InputMaxScreens
 	,	_ScreenCount
 	,	_ScreenInterval
+	,	_$UIResults
 	;
 	
 	self.Create = function() {
@@ -15,6 +16,9 @@ iris.Screen(function(self) {
 		self.$Get("btn_create_screens").click(_CreateScreens);
 		self.$Get("btn_destroy_all_screens").click(_DestroyAllScreens);
 		
+		self.$Get("btn_run_ui_tests").click(_RunUITests);
+		_$UIResults = self.$Get("ui_results");
+		
 		_$InputMaxUIs = self.$Get("ui_max");
 		_$InputMaxScreens = self.$Get("screen_max");
 	}
@@ -22,24 +26,31 @@ iris.Screen(function(self) {
 	
 	function _CreateUIs() {
 		var init = new Date().getTime();
-		console.log("Creating UIs ...");
+		var num_uis = _$InputMaxUIs.val();
 		
-		for(var f=0, F=_$InputMaxUIs.val(); f<F; f++) {
+		for(var f=0, num_uis; f<num_uis; f++) {
 			self.InstanceUI("uis", "example/ui/example.js", {
 				"count" : self.__UIComponents__.length
 			});
 		}
-		
-		console.log("    Finished at " + (new Date().getTime() - init) + " ms");
+		var total = new Date().getTime() - init;
+		var avg = total / num_uis;
+		_$UIResults.append("<li style='color:green;'>Creating " + num_uis + " UIs ... " + total + " ms (" + avg + " ms/object)</li>");
 	}
 
 	function _DestroyAllUIs() {
 		var init = new Date().getTime();
-		console.log("Destroying UIs ...");
 		
 		self.DestroyAllUIs("uis");
 		
-		console.log("    Finished at " + (new Date().getTime() - init) + " ms");
+		_$UIResults.append("<li style='color:red;'>Destroying  UIs ..." + (new Date().getTime() - init) + " ms</li>");
+	}
+	
+	function _RunUITests () {
+		for ( var i=0; i<10; i++) {
+			_CreateUIs();
+		}
+		_DestroyAllUIs();
 	}
 	
 	

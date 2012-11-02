@@ -27,7 +27,7 @@ $(document).ready(
 //			}
 //		});
 		
-		iris.net.CacheVersion("v123");
+//		iris.net.CacheVersion("v123");
 		
 		iris.screen.WelcomeScreen("example/screen/main.js");
 	}
