@@ -10,6 +10,7 @@ iris.Screen(function(self) {
 		self.AddScreen("screens", "#addon-validation", "example/screen/example_addon_validation.js");
 		self.AddScreen("screens", "#template-parameters", "example/screen/example_template_params.js");
 		self.AddScreen("screens", "#screen-parameters", "example/screen/example_screen_params.js");
+		self.AddScreen("screens", "#nested-uis", "example/screen/example_nested_uis.js");
 
 		if ( !document.location.hash ) {
 			iris.Goto("#instance");
