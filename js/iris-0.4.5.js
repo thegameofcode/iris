@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /**
  * Copyright (c) 2012 Intelygenz <www.intelygenz.com>
  * All rights reserved.
@@ -4166,6 +4165,5 @@ var iris = {};
     
     
     _Init();
-    
->>>>>>> v0.45 Final Release
+
 })();
