@@ -1,0 +1,28 @@
+{
+  "name": "iris",
+  "title": "Iris",
+  "description": "This JavaScript library provides different client-side optimization techniques for front construction.",
+  "version": "0.5.0",
+  "homepage": "https://github.com/iris-js/iris.git",
+  "author": {
+    "name": "Iris",
+    "url": "http://iris-js.github.com/iris"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/iris-js/iris.git"
+  },
+  "bugs": {
+    "url": "https://github.com/iris-js/iris/issues"
+  },
+  "licenses": [
+    {
+      "type": "New-BSD",
+      "url": "https://github.com/iris-js/iris.git/blob/master/LICENSE-New-BSD"
+    }
+  ],
+  "dependencies": {
+    "jquery": "1.5.1"
+  },
+  "keywords": []
+}
