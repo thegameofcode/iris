@@ -3,6 +3,7 @@
 /*global notDeepEqual:false, strictEqual:false, notStrictEqual:false, raises:false*/
 (function($) {
 
+var iris = window.iris;
   /*
     ======== A Handy Little QUnit Reference ========
     http://docs.jquery.com/QUnit
@@ -85,7 +86,7 @@
 
       var amount = 1234.56;
       iris.lang.Locale("es-ES");
-      formatted = iris.util.Currency(amount);
+      var formatted = iris.util.Currency(amount);
       strictEqual( formatted, "1.234,56", "Currency Spanish Format" );
       
 

@@ -6,6 +6,8 @@
  * Licensed under the New-BSD license.
  */
 
+(function ($, window) {
+
 /**
  * @namespace
  * This JavaScript library provides different client-side optimization techniques for front construction.
@@ -35,9 +37,7 @@ var iris = {
     /** @namespace Various utilities: Date formatting, serialization, ... */
     util : {}
 };
-
-
-(function ($) {
+window.iris = iris;
 
   var _CacheVersion,
         _JQ_MIN_VER = 1.5,
@@ -591,8 +591,8 @@ var iris = {
     function _ApplyAddOn( p_id, p_uis, p_settings ){
         _Include(p_id);
         
-        var addOn = new _AbstractAddOn ();
-        addOn.__Components__ = [];
+        var addOn = new AddOn ();
+        addOn.__Cmps__ = [];
         addOn.__Setting__ =  {};
         
         _AddOns[p_id]( addOn );
@@ -617,12 +617,12 @@ var iris = {
     function _InstanceUI (p_$container, p_uiId, p_jsUrl, p_uiSettings, p_templateMode) {
         _Include(p_jsUrl);
         
-        var uiInstance = new _AbstractUI();
+        var uiInstance = new UI();
         _Includes[p_jsUrl](uiInstance);
         uiInstance.__Id__ = p_uiId;
         uiInstance.__Element__ = {};
         uiInstance.__$Container__ = p_$container;
-        uiInstance.__UIComponents__ = [];
+        uiInstance.__UICmps__ = [];
         uiInstance.__Setting__ = {};
         uiInstance.__FileJs__ = p_jsUrl;
         if ( p_templateMode !== undefined ) {
@@ -644,7 +644,7 @@ var iris = {
     // SCREEN
     //
     function _CreateScreen (f_screen) {
-        f_screen.prototype = new _AbstractScreen();
+        f_screen.prototype = new Screen();
         _Includes[_LastIncludePath] = f_screen;
     }
     
@@ -653,12 +653,12 @@ var iris = {
         var jsUrl = _ScreenUrl[p_screenPath];
         _Include(jsUrl);
         
-        var screenInstance = new _AbstractScreen();
+        var screenInstance = new Screen();
         _Includes[jsUrl](screenInstance);
 
         screenInstance.__Id__ = p_screenPath;
         screenInstance.__Element__ = {};
-        screenInstance.__UIComponents__ = [];
+        screenInstance.__UICmps__ = [];
         screenInstance.__$Container__ = _ScreenContainer[p_screenPath];
         screenInstance.__FileJs__ = jsUrl;
         screenInstance.Create();
@@ -710,11 +710,11 @@ var iris = {
 
         _Include(p_jsUrl);
 
-        var screenInstance = new _AbstractScreen();
+        var screenInstance = new Screen();
         _Includes[p_jsUrl](screenInstance);
         screenInstance.__Id__ = "welcome-screen";
         screenInstance.__Element__ = {};
-        screenInstance.__UIComponents__ = [];
+        screenInstance.__UICmps__ = [];
         screenInstance.__$Container__ = $(document.body);
         screenInstance.__FileJs__ = p_jsUrl;
         screenInstance.Create();
@@ -926,13 +926,13 @@ var iris = {
      * @class
      * Provide mechanism to store and retrieve settings values.
      */
-    var _Settable = function () {
+    var Settable = function () {
         this.__Setting__ = null;
     };
     
     /**
-     * Set multiple component settings.
-     * You can access to this values using {@link iris-_Settable#Setting}.
+     * Set multiple Cmp settings.
+     * You can access to this values using {@link iris-Settable#Setting}.
      * @function
      * @example
      * 
@@ -941,12 +941,12 @@ var iris = {
      *     ,"label" : "example" 
      * });
      */
-    _Settable.prototype.Settings = function (p_settings) {
+    Settable.prototype.Settings = function (p_settings) {
         return $.extend(this.__Setting__, p_settings);
     };
 
     /**
-     * Set or get a single component setting.
+     * Set or get a single Cmp setting.
      * @function
      * @example
      * 
@@ -954,7 +954,7 @@ var iris = {
      * 
      * self.Setting("label", "example"); // Set setting value
      */
-    _Settable.prototype.Setting = function (p_label, p_value) {
+    Settable.prototype.Setting = function (p_label, p_value) {
         if ( p_value === undefined ) {
             if ( !this.__Setting__.hasOwnProperty(p_label) ) {
                 iris.W("The setting ", p_label, " is not in ", this.__Setting__, this);
@@ -969,10 +969,10 @@ var iris = {
         
     /**
      * @class
-     * Abstract component for UIs / Screens extending.
+     * Abstract Cmp for UIs / Screens extending.
      * Common properties and functions.
      */
-    var _AbstractComponent = function () {
+    var Cmp = function () {
         
         this.TEMPLATE_APPEND = "append";
         this.TEMPLATE_REPLACE = "replace";
@@ -980,7 +980,7 @@ var iris = {
         
         this.__$Tmpl__ = null;
         this.__Id__ = null;
-        this.__UIComponents__ = null;
+        this.__UICmps__ = null;
         this.__$Container__ = null;
         this.__IsSleeping__ = null;
         this.__FileJs__ = null;
@@ -988,37 +988,37 @@ var iris = {
         this.__Element__ = null;
     };
     
-    _AbstractComponent.prototype = new _Settable();
+    Cmp.prototype = new Settable();
     
-    _AbstractComponent.prototype.__Sleep__ = function () {
-        for ( var f=0, F=this.__UIComponents__.length; f < F; f++ ) {
-            this.__UIComponents__[f].__Sleep__();
+    Cmp.prototype.__Sleep__ = function () {
+        for ( var f=0, F=this.__UICmps__.length; f < F; f++ ) {
+            this.__UICmps__[f].__Sleep__();
         }
         this.__IsSleeping__ = true;
         this.Sleep();
     };
     
-    _AbstractComponent.prototype.__Awake__ = function (p_params) {
-        for ( var f=0, F=this.__UIComponents__.length; f < F; f++ ) {
-            this.__UIComponents__[f].__Awake__();
+    Cmp.prototype.__Awake__ = function (p_params) {
+        for ( var f=0, F=this.__UICmps__.length; f < F; f++ ) {
+            this.__UICmps__[f].__Awake__();
         }
         this.__IsSleeping__ = false;
         this.Awake(p_params);
     };
     
-    _AbstractComponent.prototype.__Destroy__ = function () {
+    Cmp.prototype.__Destroy__ = function () {
         if ( !this.__IsSleeping__ ) {
             this.__Sleep__();
         }
 
-        for ( var f=0, F=this.__UIComponents__.length; f < F; f++ ) {
-            this.__UIComponents__[f].__Destroy__();
+        for ( var f=0, F=this.__UICmps__.length; f < F; f++ ) {
+            this.__UICmps__[f].__Destroy__();
         }
-        this.__UIComponents__ = null;
+        this.__UICmps__ = null;
         this.Destroy();
     };
 
-    _AbstractComponent.prototype.__Template__ = function (p_htmlUrl, p_params, p_mode) {
+    Cmp.prototype.__Template__ = function (p_htmlUrl, p_params, p_mode) {
         this.__FileTmpl__ = p_htmlUrl;
         
         if ( typeof p_htmlUrl === "undefined" ) {
@@ -1052,7 +1052,7 @@ var iris = {
     };
     
     // Check if the template is set (https://github.com/intelygenz/iris/issues/19)
-    _AbstractComponent.prototype.__CheckTmpl__ = function () {
+    Cmp.prototype.__CheckTmpl__ = function () {
         if ( this.__$Tmpl__ === null ) {
             iris.E("You must set a template using self.Template() in '" + this.__FileJs__ + "'");
             return undefined;
@@ -1061,13 +1061,13 @@ var iris = {
 
     /**
      * Show the template object.
-     * If the component is a screen, this is called automatically 
+     * If the Cmp is a screen, this is called automatically 
      * after self.Awake() when iris navigates.
      * 
      * See {@link iris.Goto} for more details.
      * @function
      */
-    _AbstractComponent.prototype.Show = function () {
+    Cmp.prototype.Show = function () {
         this.__CheckTmpl__();
         
         this.__$Tmpl__.show();
@@ -1075,14 +1075,14 @@ var iris = {
 
     /**
      * Hide the template object.
-     * If the component is the current screen, this is called automatically 
+     * If the Cmp is the current screen, this is called automatically 
      * after self.Sleep() when iris navigates to other screen. Is called too 
      * when a new screen is created.
      * 
      * See {@link iris.Goto} for more details.
      * @function
      */
-    _AbstractComponent.prototype.Hide = function () {
+    Cmp.prototype.Hide = function () {
         this.__CheckTmpl__();
         
         this.__$Tmpl__.hide();
@@ -1103,7 +1103,7 @@ var iris = {
      * 
      * var $root = self.$Get();
      */
-    _AbstractComponent.prototype.$Get = function(p_id) {
+    Cmp.prototype.$Get = function(p_id) {
     this.__CheckTmpl__();
 
     if (p_id) {
@@ -1138,13 +1138,13 @@ var iris = {
   };
     
     /**
-   * Create a new UI component instance.
+   * Create a new UI Cmp instance.
    * 
-   * The created component is registered into the parent screen or UI, so you
-   * must use {@link iris-_AbstractComponent#DestroyUI} in order to remove it.
+   * The created Cmp is registered into the parent screen or UI, so you
+   * must use {@link iris-Cmp#DestroyUI} in order to remove it.
    * 
-   * The component is added to <code>p_id</code> container or replace it.
-   * See {@link iris-_AbstractUI#TemplateMode} for more details.
+   * The Cmp is added to <code>p_id</code> container or replace it.
+   * See {@link iris-UI#TemplateMode} for more details.
    * 
    * @function
    * @param {String}
@@ -1166,17 +1166,17 @@ var iris = {
    * self.InstanceUI("btn_ok", "button.js", {"label":"example"},
    * self.TEMPLATE_PREPEND);
    */
-    _AbstractComponent.prototype.InstanceUI = function (p_id, p_jsUrl, p_uiSettings, p_templateMode) {
+    Cmp.prototype.InstanceUI = function (p_id, p_jsUrl, p_uiSettings, p_templateMode) {
         var $container = this.$Get(p_id);
         if ( $container.size() === 1 ) {
             var uiInstance = _InstanceUI($container, $container.data("id"), p_jsUrl, p_uiSettings, p_templateMode);
-            this.__UIComponents__[this.__UIComponents__.length] = uiInstance;
+            this.__UICmps__[this.__UICmps__.length] = uiInstance;
             return uiInstance;
         }
     };
     
     /**
-     * Remove a child UI component completely previously created using {@link self.InstanceUI}.
+     * Remove a child UI Cmp completely previously created using {@link self.InstanceUI}.
      * Remove parent references.
      * @function
      * @param {UI} p_ui UI to be removed
@@ -1185,10 +1185,10 @@ var iris = {
      * var customUI = self.InstanceUI("custom_ui", "custom_ui.js");
      * self.DestroyUI(customUI);
      */
-    _AbstractComponent.prototype.DestroyUI = function (p_ui) {
-        for (var f=0, F=this.__UIComponents__.length; f < F; f++) {
-            if (this.__UIComponents__[f] === p_ui) {
-                this.__UIComponents__.splice(f, 1);
+    Cmp.prototype.DestroyUI = function (p_ui) {
+        for (var f=0, F=this.__UICmps__.length; f < F; f++) {
+            if (this.__UICmps__[f] === p_ui) {
+                this.__UICmps__.splice(f, 1);
                 p_ui.__Destroy__();
                 p_ui.$Get().remove();
                 break;
@@ -1197,7 +1197,7 @@ var iris = {
     };
     
     /**
-     * Remove all UI components from a container.
+     * Remove all UI Cmps from a container.
      * The UIs must be previously created using {@link self.InstanceUI}.<br>
      * Remove parent references.
      * @function
@@ -1207,14 +1207,14 @@ var iris = {
      * 
      * self.DestroyAllUIs($container);
      */
-    _AbstractComponent.prototype.DestroyAllUIs = function (p_idOrJq) {
+    Cmp.prototype.DestroyAllUIs = function (p_idOrJq) {
         var contSelector = typeof p_idOrJq === "string" ? "[data-id=" + p_idOrJq + "]" : p_idOrJq.selector;
         var ui;
-        for (var f=0, F=this.__UIComponents__.length; f < F; f++) {
-            ui = this.__UIComponents__[f];
+        for (var f=0, F=this.__UICmps__.length; f < F; f++) {
+            ui = this.__UICmps__[f];
             
             if (ui.__$Container__.selector === contSelector) {
-                this.__UIComponents__.splice(f--, 1);
+                this.__UICmps__.splice(f--, 1);
                 F--;
                 
                 ui.__Destroy__();
@@ -1224,17 +1224,17 @@ var iris = {
     };
     
     /**
-     * Get the component container.
-     * If the component is a screen, the container is
-     * set using {@link iris-_AbstractScreen#AddScreen} function.
-     * Otherwise if the component is a UI, the container is
-     * set using {@link iris-_AbstractComponent#InstanceUI} function.
+     * Get the Cmp container.
+     * If the Cmp is a screen, the container is
+     * set using {@link iris-Screen#AddScreen} function.
+     * Otherwise if the Cmp is a UI, the container is
+     * set using {@link iris-Cmp#InstanceUI} function.
      * @function
      * @example
      * 
      * var screenContainer = self.$Container();
      */
-    _AbstractComponent.prototype.$Container = function () {
+    Cmp.prototype.$Container = function () {
         return this.__$Container__;
     };
     
@@ -1245,21 +1245,21 @@ var iris = {
      * Function to override.
      * @function
      */
-    _AbstractComponent.prototype.Create = function () {};
+    Cmp.prototype.Create = function () {};
     
     /**
      * Called automatically when a screen is showed.
      * Function to override.
      * @function 
      */
-    _AbstractComponent.prototype.Awake = function () {};
+    Cmp.prototype.Awake = function () {};
     
     /**
-     * Called automatically when a screen is going to sleep, before {@link iris-_AbstractComponent#Sleep}.
+     * Called automatically when a screen is going to sleep, before {@link iris-Cmp#Sleep}.
      * If return false, the <code>self.Sleep()</code> function is not called.
      * @function 
      */
-    _AbstractComponent.prototype.CanSleep = function () {
+    Cmp.prototype.CanSleep = function () {
         return true;
     };
     
@@ -1268,24 +1268,24 @@ var iris = {
      * Function to override.
      * @function
      */
-    _AbstractComponent.prototype.Sleep = function () {};
+    Cmp.prototype.Sleep = function () {};
     
     /**
-     * Called automatically by {@link iris-_AbstractComponent#DestroyUI}.
+     * Called automatically by {@link iris-Cmp#DestroyUI}.
      * Function to override.
      */
-    _AbstractComponent.prototype.Destroy = function () {};
+    Cmp.prototype.Destroy = function () {};
     
     /**
      * @class
      * Abstract class for AddOn extending.
      * Common AddOn functions and properties.
      */
-    var _AbstractAddOn = function () {
-        this.__Components__ = null;
+    var AddOn = function () {
+        this.__Cmps__ = null;
     };
     
-    _AbstractAddOn.prototype = new _Settable();
+    AddOn.prototype = new Settable();
         
     /**
      * Add a array of UIs to the AddOn.
@@ -1293,7 +1293,7 @@ var iris = {
      * @param p_uis {Array} Array of UIs
      * @function
      */
-    _AbstractAddOn.prototype.AddAll = function (p_uis) {
+    AddOn.prototype.AddAll = function (p_uis) {
         for (var f=0, F=p_uis.length; f<F; f++) {
             this.Add( p_uis[f] );
         }
@@ -1304,11 +1304,11 @@ var iris = {
      * @param p_uis {UI} UI instance
      * @function
      */
-    _AbstractAddOn.prototype.Add = function (p_ui) {
+    AddOn.prototype.Add = function (p_ui) {
         if ( this.hasOwnProperty("UIAddOn") ) {
             this.UIAddOn( p_ui );
         }
-        this.__Components__[this.__Components__.length] = p_ui;
+        this.__Cmps__[this.__Cmps__.length] = p_ui;
     };
     
     /**
@@ -1316,12 +1316,12 @@ var iris = {
      * @param p_uis {UI} UI instance
      * @function
      */
-    _AbstractAddOn.prototype.Remove = function (p_ui) {
+    AddOn.prototype.Remove = function (p_ui) {
         var ui;
-        for (var f=0, F=this.__Components__.length; f<F; f++) {
-            ui = this.__Components__[f];
+        for (var f=0, F=this.__Cmps__.length; f<F; f++) {
+            ui = this.__Cmps__[f];
             if ( ui === p_ui ) {
-                this.__Components__.splice(f, 1);
+                this.__Cmps__.splice(f, 1);
             }
         }
     };
@@ -1329,20 +1329,20 @@ var iris = {
     /**
      * Get a registered UI from the AddOn.
      * The UI must be previosly registered using {@link iris.ApplyAddOn},
-     * {@link iris-_AbstractAddOn#AddAll} or {@link iris-_AbstractAddOn#Add}
+     * {@link iris-AddOn#AddAll} or {@link iris-AddOn#Add}
      * @param p_idx {integer} UI instance position
      * @function
      */
-    _AbstractAddOn.prototype.Get = function (p_idx) {
-        return this.__Components__[p_idx];
+    AddOn.prototype.Get = function (p_idx) {
+        return this.__Cmps__[p_idx];
     };
 
     /**
-     * The number of UI components registered.
+     * The number of UI Cmps registered.
      * @function
      */
-    _AbstractAddOn.prototype.Size = function () {
-        return this.__Components__.length;
+    AddOn.prototype.Size = function () {
+        return this.__Cmps__.length;
     };
     
     // To override
@@ -1352,45 +1352,45 @@ var iris = {
      * Function to override.
      * @function
      */
-    _AbstractAddOn.prototype.Create = function () {};
+    AddOn.prototype.Create = function () {};
     
     /**
      * @class
      * Abstract class for UI extending.
      * Common UI functions and properties.
      */
-    var _AbstractUI = function () {
+    var UI = function () {
         this.__TemplateMode__ = "replace";
     };
     
-    _AbstractUI.prototype = new _AbstractComponent();
+    UI.prototype = new Cmp();
         
     /**
      * Set the template behaviour.
      * The template can be added to the container
      * or can replace it. The default mode is <code>self.TEMPLATE_REPLACE</code>.
-     * Use this function before call {@link iris-_AbstractUI.Template}.
+     * Use this function before call {@link iris-UI.Template}.
      * @function
      * @example
      * self.TemplateMode(self.TEMPLATE_APPEND);
      * self.Template("tmpl.html");
      */
-    _AbstractUI.prototype.TemplateMode = function (p_mode) {
+    UI.prototype.TemplateMode = function (p_mode) {
         this.__TemplateMode__ = p_mode;
     };
     
     /**
-     * Create the component template.
+     * Create the Cmp template.
      * Translate multilanguage values, draw parameters, 
      * create DOM elements and insert into container or replace it.
      * 
-     * See {@link iris-_AbstractUI.TemplateMode}.
+     * See {@link iris-UI.TemplateMode}.
      * @function
      * @example
      * self.TemplateMode(self.TEMPLATE_APPEND);
      * self.Template("tmpl.html", {"age":23});
      */
-    _AbstractUI.prototype.Template = function (p_htmlUrl, p_params) {
+    UI.prototype.Template = function (p_htmlUrl, p_params) {
         this.__Template__(p_htmlUrl, p_params, this.__TemplateMode__);
     };
         
@@ -1400,9 +1400,9 @@ var iris = {
      * Abstract class for screen extending.
      * Common screen functions and properties.
      */
-    var _AbstractScreen = function () {};
+    var Screen = function () {};
     
-    _AbstractScreen.prototype = new _AbstractComponent();
+    Screen.prototype = new Cmp();
         
     /**
      * Create the screen template.
@@ -1412,7 +1412,7 @@ var iris = {
      * @example
      * self.Template("tmpl.html", {"name":"Jonh"});
      */
-    _AbstractScreen.prototype.Template = function (p_htmlUrl, p_params) {
+    Screen.prototype.Template = function (p_htmlUrl, p_params) {
         this.__Template__(p_htmlUrl, p_params, this.TEMPLATE_APPEND);
     };
         
@@ -1433,7 +1433,7 @@ var iris = {
      * 
      * iris.Goto("#books/edit");
      */
-    _AbstractScreen.prototype.AddScreen = function _ScreenAdd (p_containerId, p_screenPath, p_jsUrl) {
+    Screen.prototype.AddScreen = function _ScreenAdd (p_containerId, p_screenPath, p_jsUrl) {
         var $cont = this.$Get(p_containerId);
         
         if ( $cont.data("screen_context") === undefined ) {
@@ -1956,7 +1956,7 @@ var iris = {
 
 
     /**
-     * Fill all form component with data.
+     * Fill all form Cmp with data.
      * @function
      * @param p_$form {JQuery Object} Form target
      * @param p_data {Object} Object data source
@@ -1977,7 +1977,7 @@ var iris = {
     
     /**
      * Navigate to a screen.
-     * The screen must be previously added using {@link iris-_AbstractScreen#AddScreen}.<br>
+     * The screen must be previously added using {@link iris-Screen#AddScreen}.<br>
      * You can send parameters to the target screen as <code>... /screen?param1=value1&param2=value2/ ...</code>,
      * remember apply <code>encodeURIComponent()</code> to the parameter values.<br>
      * @function
@@ -2012,10 +2012,10 @@ var iris = {
     iris.AddOn = _CreateAddOn;
     
     /**
-     * Apply a AddOn to a group of UI components or single UI.
+     * Apply a AddOn to a group of UI Cmps or single UI.
      * @function
      * @param p_id {String} AddOn identifier
-     * @param p_uis {Object|Array} UI Component/s
+     * @param p_uis {Object|Array} UI Cmp/s
      * @example
      * var customUI = self.InstanceUI("input", "input.js");
      * iris.ApplyBE("validator.js", customUI);
@@ -2085,4 +2085,4 @@ var iris = {
     
     _Init();
 
-})(jQuery);
+})(jQuery, window);
