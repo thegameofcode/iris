@@ -26,5 +26,10 @@ _(Coming soon)_
 ## Examples
 _(Coming soon)_
 
+## Test
+Execute `grunt test`
+
+Open in your browser `http://localhost:8080/test/iris.html`
+
 ## Release History
 _(Nothing yet)_

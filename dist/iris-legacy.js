@@ -91,7 +91,7 @@
     function _Window_OnHashChange () {
         
         if ( !_WelcomeScreenCreated ) {
-            iris.e("You must set the welcome screen using iris.screen.WelcomeScreen()");
+            iris.E("You must set the welcome screen using iris.screen.WelcomeScreen()");
             return false;
         }
         
@@ -459,14 +459,14 @@
         if ( _Lang.hasOwnProperty(_Locale) ) {
             value = _GetObjectValue(_Lang[_Locale], p_label);
             if ( value === undefined ) {
-                iris.w("Label '" + p_label + "' not found in Locale '" + _Locale + "'", _Lang[_Locale]);
+                iris.W("Label '" + p_label + "' not found in Locale '" + _Locale + "'", _Lang[_Locale]);
             }
             if ( typeof value === "object" ) {
-                iris.w("Label '" + p_label + "' is an object but must be a property in Locale '" + _Locale + "'", _Lang[_Locale]);
+                iris.W("Label '" + p_label + "' is an object but must be a property in Locale '" + _Locale + "'", _Lang[_Locale]);
             }
         }
         else {
-            iris.w("Locale '" + _Locale + "' not loaded");
+            iris.W("Locale '" + _Locale + "' not loaded");
         }
         return ( value ) ? value : "??" + p_label + "??";
     }
@@ -629,7 +629,7 @@
             delete _Screen[p_screenPath];
         }
         else {
-            iris.w("Error removing the screen \"" + p_screenPath + "\", path not found.");
+            iris.W("Error removing the screen \"" + p_screenPath + "\", path not found.");
         }
     }
     
@@ -710,12 +710,12 @@
                             value = _ParseCurrency(value);
                             break;
                         default:
-                            iris.w("Unknow template format label '" + formatLabel + "' in '" + p_htmlUrl + "'");
+                            iris.W("Unknow template format label '" + formatLabel + "' in '" + p_htmlUrl + "'");
                     }
                 }
             }
             else {
-                iris.w("Template param '" + matches[1] + "' in '" + p_htmlUrl + "' not found", p_data);
+                iris.W("Template param '" + matches[1] + "' in '" + p_htmlUrl + "' not found", p_data);
             }
 
             result = result.replace(matches[0], value);
@@ -767,11 +767,11 @@
                 return _Regional[_Locale][p_label];
             }
             else {
-                iris.e("Regional setting '" + p_label + "' not found for locale '" + _Locale + "'");
+                iris.E("Regional setting '" + p_label + "' not found for locale '" + _Locale + "'");
             }
         }
         else {
-            iris.e("Regional for locale '" + _Locale + "' not found");
+            iris.E("Regional for locale '" + _Locale + "' not found");
         }
     }
     
@@ -894,7 +894,7 @@
     Settable.prototype.Setting = function (p_label, p_value) {
         if ( p_value === undefined ) {
             if ( !this.settings.hasOwnProperty(p_label) ) {
-                iris.w("The setting ", p_label, " is not in ", this.settings, this);
+                iris.W("The setting ", p_label, " is not in ", this.settings, this);
             }
             return this.settings[p_label];
         }
@@ -970,7 +970,7 @@
         
         this.__$Tmpl__ = $tmpl;
         if ( $tmpl.size() > 1 ) {
-            iris.e("Template '" + p_htmlUrl + "' must have only one root node");
+            iris.E("Template '" + p_htmlUrl + "' must have only one root node");
         }
         switch ( p_mode ) {
             case this.TEMPLATE_APPEND:
@@ -983,7 +983,7 @@
                 this.__$Container__.prepend($tmpl);
                 break;
             default:
-                iris.e("Unknown template mode '" + p_mode + "'");
+                iris.E("Unknown template mode '" + p_mode + "'");
         }
         
     };
@@ -991,7 +991,7 @@
     // Check if the template is set (https://github.com/intelygenz/iris/issues/19)
     Component.prototype.__CheckTmpl__ = function () {
         if ( this.__$Tmpl__ === null ) {
-            iris.e("You must set a template using self.Template() in '" + this.__FileJs__ + "'");
+            iris.E("You must set a template using self.Template() in '" + this.__FileJs__ + "'");
             return undefined;
         }
     };
@@ -1058,10 +1058,10 @@
         }
 
         if ($element === null) {
-          iris.e("[data-id=" + p_id + "] not found in '" + this.__FileTmpl__ + "' used by '" + this.__FileJs__ + "'");
+          iris.E("[data-id=" + p_id + "] not found in '" + this.__FileTmpl__ + "' used by '" + this.__FileJs__ + "'");
           return undefined;
         } else if ($element.size() > 1) {
-          iris.e("[data-id=" + p_id + "] must be unique in '" + this.__FileTmpl__ + "' used by '" + this.__FileJs__ + "'");
+          iris.E("[data-id=" + p_id + "] must be unique in '" + this.__FileTmpl__ + "' used by '" + this.__FileJs__ + "'");
           return undefined;
         }
 
@@ -1561,7 +1561,7 @@
      * @function 
      * @param {arguments} 
      * @example
-     * iris.l("text", variable);
+     * iris.L("text", variable);
      */
     iris.l = _L;
     
@@ -1571,7 +1571,7 @@
      * @function
      * @param {arguments} 
      * @example
-     * iris.d("text", variable);
+     * iris.D("text", variable);
      */
     iris.d = _D;
     
@@ -1581,7 +1581,7 @@
      * @see {@link iris.config.Load}
      * @param {arguments} 
      * @example
-     * iris.w("text", variable);
+     * iris.W("text", variable);
      */
     iris.w = _W;
     
@@ -1591,7 +1591,7 @@
      * @function
      * @param {arguments} 
      * @example
-     * iris.e("text", variable);
+     * iris.E("text", variable);
      */
     iris.e = _E;
     
@@ -1910,5 +1910,253 @@
     
     
     _Init();
+
+})(jQuery, window);
+
+(function () {
+
+	var iris = window.iris;
+
+    var Service = function () {
+        this.type = "json";
+        this.path = "";
+    };
+
+    Service.prototype.ajax = function (p_method, p_path, p_params, f_success, f_error){
+        var path = this.path + p_path;
+
+        iris.net.Ajax({
+            "url" : path,
+            "type" : p_method,
+            "data" : p_params,
+            "cache" : false,
+            "dataType" : this.type,
+            "async" : true,
+            "success" : f_success,
+            "error" : f_error // function (p_request, p_textStatus, p_errorThrown)
+        });
+    };
+
+    Service.prototype.get = function (p_path, p_params, f_success, f_error){
+        this.ajax("GET", p_path, p_params, f_success, f_error);
+    };
+
+    Service.prototype.put = function (p_path, p_params, f_success, f_error){
+        this.ajax("PUT", p_path, p_params, f_success, f_error);
+    };
+
+    Service.prototype.post = function (p_path, p_params, f_success, f_error){
+        this.ajax("POST", p_path, p_params, f_success, f_error);
+    };
+
+    Service.prototype.del = function (p_path, p_params, f_success, f_error){
+        this.ajax("DELETE", p_path, p_params, f_success, f_error);
+    };
+
+    function createService (f_service) {
+        var serv = new Service();
+        f_service(serv);
+        return serv;
+    }
+
+	iris.service = createService;
+
+
+
+})($, window);
+(function ($, window) {
+
+    //@deprecated
+    iris.net = {};
+
+    //@deprecated
+    iris.util = {};
+
+    //@deprecated
+    iris.config.Load = iris.config;
+    
+    //@deprecated
+    iris.config.Env = iris.env;
+    
+    //@deprecated
+    iris.global.Load = iris.addGlobal;  // TODO iris.global
+    
+    //@deprecated
+    iris.global.Data = iris.global;
+    
+    //@deprecated
+    iris.local.Load = iris.addLocal;  // TODO iris.local
+    
+    //@deprecated
+    iris.local.Data = iris.local;
+    
+    //@deprecated
+    iris.lang.Load = iris.addLang; // TODO iris.lang
+    
+    //@deprecated
+    iris.lang.LoadFrom = iris.loadLang;
+    
+    //@deprecated
+    iris.lang.Get = iris.lang;
+    
+    //@deprecated
+    iris.lang.Locale = iris.locale;
+    
+    //@deprecated
+    iris.L = iris.l;
+    
+    //@deprecated
+    iris.D = iris.d;
+    
+    //@deprecated
+    iris.W = iris.w;
+    
+    //@deprecated
+    iris.E = iris.e;
+    
+    //@deprecated
+    iris.event.BEFORE_NAVIGATION = iris.BEFORE_NAVIGATION;
+    
+    //@deprecated
+    iris.event.Subscribe = iris.on;
+    
+    //@deprecated
+    iris.event.Notify = iris.notify;
+    
+    //@deprecated
+    iris.event.Remove = iris.off;
+    
+    //@deprecated
+    iris.net.BaseUri = iris.baseUri;
+    
+    //@deprecated
+    iris.net.Ajax = iris.ajax;
+    
+    //@deprecated
+    iris.net.CacheVersion = iris.cacheVersion;
+    
+    //@deprecated
+    iris.Screen = iris.screen;
+
+    //@deprecated
+    iris.UI =  iris.ui;
+    
+    //@deprecated
+    iris.screen.WelcomeScreen = iris.welcome;
+    
+    //@deprecated
+    iris.screen.Destroy = iris.destroyScreen;
+    
+    //@deprecated
+    function _HashToJq(p_hash, p_$obj, p_filter){
+        var dom = p_$obj.get(0);
+        if ( p_filter ){
+            var filter;
+            for ( var f=0, F=p_filter.length; f<F; f++ ){
+                filter = p_hash[p_filter[f]];
+                if ( filter ) {
+                    dom.setAttribute(p_filter[f], filter);
+                }
+            }
+        }
+        else {
+            for ( var label in p_hash){
+                if ( p_hash.hasOwnProperty(label) ) {
+                    dom.setAttribute(label, p_hash[label]);
+                }
+            }
+        }
+        return p_$obj;
+    }
+
+    //@deprecated
+    function _JqToHash(p_$obj) {
+        var hash = {};
+        var attrs = p_$obj.get(0).attributes;
+        var label;
+        for( var f=0, F=attrs.length; f<F; f++ ) {
+            label = attrs[f].name;
+            if ( label.indexOf("data-") === 0 ){
+                label = label.substr(5);
+            }
+            hash[label] = attrs[f].value;
+        }
+        return hash;
+    }
+
+    //@deprecated
+    iris.ui.JqToHash = _JqToHash;
+    
+    //@deprecated
+    iris.ui.HashToJq = _HashToJq;
+
+    //@deprecated
+    iris.Include = iris.include;
+    
+    //@deprecated
+    iris.util.DateFormat = iris.date;
+    
+    //@deprecated
+    iris.util.Currency = iris.currency;
+
+    //@deprecated
+    function _Deserialize (p_$form, p_data) {
+        var element, tag, value;
+        for ( var name in p_data ) {
+            if ( p_data.hasOwnProperty(name) ) {
+                element = p_$form.find('[name="' + name + '"]');
+                
+                if ( element.length > 0 ) {
+                    tag = element[0].tagName.toLowerCase();
+                    value = p_data[name];
+                    switch (tag) {
+                    case "select":
+                    case"textarea":
+                        $(element).val(value);
+                        break;
+                    case "input":
+                        switch (tag) {
+                        case "checkbox":
+                            if (value) {
+                                element.attr("checked", "checked"); 
+                            }
+                            break;
+                        case "radio":
+                            element.filter('[value="' + value + '"]').attr("checked", "checked");
+                            break;
+                        default:
+                            element.val(value);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    //@deprecated
+    iris.util.Deserialize = _Deserialize;
+
+    //@deprecated
+    function _Serialize (p_$form) {
+        var json = {};
+        $.map(p_$form.serializeArray(), function(p_obj){
+            json[ p_obj.name ] = p_obj.value;
+        });
+        return json;
+    }
+    //@deprecated
+    iris.util.Serialize = _Serialize;
+    
+    //@deprecated
+    iris.Goto = iris.goto;
+    
+    //@deprecated
+    iris.AddOn = iris.addOn;
+    
+    //@deprecated
+    iris.ApplyAddOn = iris.applyAddOn;
+    
+    //@deprecated
+    iris.Regional = iris.regional;
+
 
 })(jQuery, window);
