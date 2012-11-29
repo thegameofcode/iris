@@ -57,10 +57,10 @@
     iris.lang = {};
 
     /** @deprecated */
-    iris.lang.Load = iris.addLang; // TODO iris.lang
+    iris.lang.Load = iris.langAux;
     
     /** @deprecated */
-    iris.lang.LoadFrom = iris.loadLang;
+    iris.lang.LoadFrom = iris.langAux;
     
     /** @deprecated */
     iris.lang.Get = iris.langAux;
@@ -128,6 +128,9 @@
     iris.Screen = function (f_screen){
         iris.screenAux(
             function (self) {
+
+window.console.log("((((((((LEGACY Screen))))))))", self);
+
                 self.InstanceUI = self.ui;
                 self.Show = self.show;
                 self.Hide = self.hide;

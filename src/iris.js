@@ -992,7 +992,7 @@
             return this._$tmpl;
         }
         
-        iris.Include(p_htmlUrl);
+        iris.include(p_htmlUrl);
         
         var tmplHtml = p_params ? _TemplateParse(_Includes[p_htmlUrl], p_params, p_htmlUrl) : _Includes[p_htmlUrl];
         var $tmpl = $(tmplHtml);
