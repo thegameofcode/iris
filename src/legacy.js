@@ -125,6 +125,30 @@
     iris.screenAux = iris.screen;
 
     /** @deprecated */
+    iris.Screen = function (f_screen){
+        iris.screenAux(
+            function (self) {
+                self.InstanceUI = self.ui;
+                self.Show = self.show;
+                self.Hide = self.hide;
+                self.$Get = self.get;
+                self.DestroyUI = self.destroyUI;
+                self.DestroyAllUIs = self.destroyUIs;
+                self.$Container = self.container;
+                self.Create = self.create;
+                self.Awake = self.awake;
+                self.CanSleep = self.canSleep;
+                self.Sleep = self.sleep;
+                self.Destroy = self.destroy;
+
+                self.Template = self.tmpl;
+                self.AddScreen = self.screen;
+                f_screen(self);
+            }
+        );
+    };
+
+    /** @deprecated */
     iris.screen = {};
 
     /** @deprecated */
@@ -182,7 +206,28 @@
     iris.ui = {};
 
     /** @deprecated */
-    iris.UI =  iris.uiAux;
+    iris.UI = function (f_ui){
+        iris.uiAux(
+            function (self) {
+                self.InstanceUI = self.ui;
+                self.Show = self.show;
+                self.Hide = self.hide;
+                self.$Get = self.get;
+                self.DestroyUI = self.destroyUI;
+                self.DestroyAllUIs = self.destroyUIs;
+                self.$Container = self.container;
+                self.Create = self.create;
+                self.Awake = self.awake;
+                self.CanSleep = self.canSleep;
+                self.Sleep = self.sleep;
+                self.Destroy = self.destroy;
+
+                self.TemplateMode = self.tmplMode;
+                self.Template = self.tmpl;
+                f_ui(self);
+            }
+        );
+    };
 
     /** @deprecated */
     iris.ui.JqToHash = _JqToHash;
