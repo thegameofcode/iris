@@ -14,17 +14,21 @@ module.exports = function(grunt) {
     concat: {
       dist: {
         src: ['<banner:meta.banner>', '<file_strip_banner:src/<%= pkg.name %>.js>', "src/service.js"],
-        dest: 'dist/<%= pkg.name %>.js'
-      }/*,
+        dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.js'
+      },
       legacy: {
         src: ['src/iris.js', 'src/service.js', 'src/legacy.js'],
-        dest: 'dist/iris-legacy.js'
-      }*/
+        dest: 'dist/iris-legacy-<%= pkg.version %>.js'
+      }
     },
     min: {
       dist: {
         src: ['<banner:meta.banner>', '<config:concat.dist.dest>'],
-        dest: 'dist/<%= pkg.name %>.min.js'
+        dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.min.js'
+      },
+      legacy: {
+        src: ['<banner:meta.banner>', '<config:concat.legacy.dest>'],
+        dest: 'dist/<%= pkg.name %>-<%= pkg.version %>-legacy.min.js'
       }
     },
     qunit: {

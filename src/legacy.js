@@ -2,88 +2,143 @@
 
     var iris = window.iris;
 
-    //@deprecated
+    /** @deprecated */
     iris.net = {};
 
-    //@deprecated
+    /** @deprecated */
     iris.util = {};
 
-    //@deprecated
-    iris.config.Load = iris.config;
+
+    /** @deprecated */
+    iris.configAux = iris.config;
+
+    /** @deprecated */
+    iris.config = {};
+
+    /** @deprecated */
+    iris.config.Load = iris.configAux;
     
-    //@deprecated
+    /** @deprecated */
     iris.config.Env = iris.env;
+
+
+
+    /** @deprecated */
+    iris.globalAux = iris.global;
+
+    /** @deprecated */
+    iris.global = {};
+
+    /** @deprecated */
+    iris.global.Load = iris.globalAux;
     
-    //@deprecated
-    iris.global.Load = iris.addGlobal;  // TODO iris.global
+    /** @deprecated */
+    iris.global.Data = iris.globalAux;
+
+
+    /** @deprecated */
+    iris.localAux = iris.local;
+
+    /** @deprecated */
+    iris.local = {};
+
+    /** @deprecated */
+    iris.local.Load = iris.localAux;
     
-    //@deprecated
-    iris.global.Data = iris.global;
+    /** @deprecated */
+    iris.local.Data = iris.localAux;
+
+
     
-    //@deprecated
-    iris.local.Load = iris.addLocal;  // TODO iris.local
-    
-    //@deprecated
-    iris.local.Data = iris.local;
-    
-    //@deprecated
+    /** @deprecated */
+    iris.langAux = iris.lang;
+
+    /** @deprecated */
+    iris.lang = {};
+
+    /** @deprecated */
     iris.lang.Load = iris.addLang; // TODO iris.lang
     
-    //@deprecated
+    /** @deprecated */
     iris.lang.LoadFrom = iris.loadLang;
     
-    //@deprecated
-    iris.lang.Get = iris.lang;
+    /** @deprecated */
+    iris.lang.Get = iris.langAux;
     
-    //@deprecated
+    /** @deprecated */
     iris.lang.Locale = iris.locale;
+
+
+
+
     
-    //@deprecated
+    /** @deprecated */
     iris.L = iris.l;
     
-    //@deprecated
+    /** @deprecated */
     iris.D = iris.d;
     
-    //@deprecated
+    /** @deprecated */
     iris.W = iris.w;
     
-    //@deprecated
+    /** @deprecated */
     iris.E = iris.e;
+
+
+    /** @deprecated */
+    iris.event = {};
     
-    //@deprecated
+    /** @deprecated */
     iris.event.BEFORE_NAVIGATION = iris.BEFORE_NAVIGATION;
+
+
+
     
-    //@deprecated
+    /** @deprecated */
     iris.event.Subscribe = iris.on;
     
-    //@deprecated
+    /** @deprecated */
     iris.event.Notify = iris.notify;
     
-    //@deprecated
+    /** @deprecated */
     iris.event.Remove = iris.off;
     
-    //@deprecated
+
+
+
+    /** @deprecated */
     iris.net.BaseUri = iris.baseUri;
     
-    //@deprecated
+    /** @deprecated */
     iris.net.Ajax = iris.ajax;
     
-    //@deprecated
+    /** @deprecated */
     iris.net.CacheVersion = iris.cacheVersion;
-    
-    //@deprecated
-    iris.Screen = iris.screen;
 
-    //@deprecated
-    iris.UI =  iris.ui;
+
+
+
+    /** @deprecated */
+    iris.Include = iris.include;
     
-    //@deprecated
+    /** @deprecated */
+    iris.screenAux = iris.screen;
+
+    /** @deprecated */
+    iris.screen = {};
+
+    /** @deprecated */
+    iris.Screen = iris.screenAux;
+
+    /** @deprecated */
     iris.screen.WelcomeScreen = iris.welcome;
     
-    //@deprecated
+    /** @deprecated */
     iris.screen.Destroy = iris.destroyScreen;
+
+
     
-    //@deprecated
+    /** @deprecated */
     function _HashToJq(p_hash, p_$obj, p_filter){
         var dom = p_$obj.get(0);
         if ( p_filter ){
@@ -105,7 +160,7 @@
         return p_$obj;
     }
 
-    //@deprecated
+    /** @deprecated */
     function _JqToHash(p_$obj) {
         var hash = {};
         var attrs = p_$obj.get(0).attributes;
@@ -120,22 +175,32 @@
         return hash;
     }
 
-    //@deprecated
+    /** @deprecated */
+    iris.uiAux = iris.ui;
+
+    /** @deprecated */
+    iris.ui = {};
+
+    /** @deprecated */
+    iris.UI =  iris.uiAux;
+
+    /** @deprecated */
     iris.ui.JqToHash = _JqToHash;
     
-    //@deprecated
+    /** @deprecated */
     iris.ui.HashToJq = _HashToJq;
 
-    //@deprecated
-    iris.Include = iris.include;
+
+
+
     
-    //@deprecated
+    /** @deprecated */
     iris.util.DateFormat = iris.date;
     
-    //@deprecated
+    /** @deprecated */
     iris.util.Currency = iris.currency;
 
-    //@deprecated
+    /** @deprecated */
     function _Deserialize (p_$form, p_data) {
         var element, tag, value;
         for ( var name in p_data ) {
@@ -168,10 +233,10 @@
             }
         }
     }
-    //@deprecated
+    /** @deprecated */
     iris.util.Deserialize = _Deserialize;
 
-    //@deprecated
+    /** @deprecated */
     function _Serialize (p_$form) {
         var json = {};
         $.map(p_$form.serializeArray(), function(p_obj){
@@ -179,19 +244,19 @@
         });
         return json;
     }
-    //@deprecated
+    /** @deprecated */
     iris.util.Serialize = _Serialize;
     
-    //@deprecated
+    /** @deprecated */
     iris.Goto = iris.goto;
     
-    //@deprecated
+    /** @deprecated */
     iris.AddOn = iris.addOn;
     
-    //@deprecated
+    /** @deprecated */
     iris.ApplyAddOn = iris.applyAddOn;
     
-    //@deprecated
+    /** @deprecated */
     iris.Regional = iris.regional;
 
 

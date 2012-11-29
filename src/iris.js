@@ -32,11 +32,11 @@
         _Cache = true,
         _HasConsole,
         _GotoCancelled = false,
-        _WelcomeScreenCreated = false
+        _welcomeCreated = false
     ;
-
-    function _Init () {
-
+    
+    function _welcome (p_jsUrl) {
+        
         // CHECK JQ DEPENDENCY
         if( typeof jQuery === "undefined" ) {
             _E( "jQuery " + _JQ_MIN_VER + "+ previous load required" );
@@ -50,8 +50,35 @@
         if ( !_HasConsole && window.console && window.console.log ) {
             window.console.log("advanced console debugging is not supported in this browser");
         }
+
+        _Include(p_jsUrl);
+
+        var screenInstance = new Screen();
+        _Includes[p_jsUrl](screenInstance);
+        screenInstance.id = "welcome-screen";
+        screenInstance.el = {};
+        screenInstance.uis = [];
+        screenInstance.con = $(document.body);
+        screenInstance.fileJs = p_jsUrl;
+        screenInstance.Create();
+        screenInstance._awake();
+        screenInstance.Show();
+
+        _welcomeCreated = true;
+
+        // CHECK HASH SUPPORT
+        if ( !("onhashchange" in window) ) {
+            _E("The browser doesn't support the hashchange event");
+        }
+        else {
+            
+            if ( document.location.hash ) {
+                _Window_OnHashChange();
+            }
+            
+            $(window).bind("hashchange", _Window_OnHashChange);
+        }
     }
-    
     
     function _LogOf (p_type) {
         return _Log[p_type];
@@ -90,7 +117,7 @@
 
     function _Window_OnHashChange () {
         
-        if ( !_WelcomeScreenCreated ) {
+        if ( !_welcomeCreated ) {
             iris.e("You must set the welcome screen using iris.screen.WelcomeScreen()");
             return false;
         }
@@ -288,7 +315,7 @@
         if ( p_json ) {
             $.extend(_Config, p_json);
 
-            _GlobalLoad( _Config.global );
+            _addGlobal( _Config.global );
 
             var currentEnv = _GetEnv();
             if ( _Config.log ) {
@@ -310,7 +337,7 @@
                 }
             }
             
-            _LocalLoad( _Config.local );
+            _addLocal( _Config.local );
         }
         return _Config;
     }
@@ -337,12 +364,15 @@
         }
     }
     
-    function _GlobalLoad(p_hash){
+    //
+    // Global
+    //
+    function _addGlobal(p_hash){
         $.extend(_Global, p_hash);
         return _Global;
     }
 
-    function _GlobalData (p_label, p_value){
+    function _getOrSetGlobal (p_label, p_value){
         if ( p_label && p_value !== undefined ) {
             _Global[p_label] = p_value;     
         }
@@ -353,13 +383,25 @@
             return _Global;
         }
     }
-    
-    function _LocalLoad(p_hash){
+
+    function _global (p_labelOrObject, p_value){
+        if ( typeof p_labelOrObject === "object" ) {
+            _addGlobal(p_labelOrObject);
+        } else {
+            _getOrSetGlobal(p_labelOrObject, p_value);
+        }
+    }
+
+
+    //
+    // Local
+    //
+    function _addLocal(p_hash){
         $.extend(_Local, p_hash);
         return _Local;
     }
 
-    function _LocalData(p_label, p_value){
+    function _getOrSetLocal(p_label, p_value){
         if ( p_label && p_value !== undefined ) {
             _Local[p_label][_GetEnv()] = p_value;     
         }
@@ -371,6 +413,13 @@
         }
     }
     
+    function _local (p_labelOrObject, p_value) {
+        if ( typeof p_labelOrObject === "object" ) {
+            _addLocal(p_labelOrObject);
+        } else {
+            _getOrSetLocal(p_labelOrObject, p_value);
+        }
+    }
     
     //
     // EVENT
@@ -439,38 +488,11 @@
         }
         return value;
     }
-
-    function _LocaleLoad(p_locale, p_data){
-        _D("[iris.lang.Load]", p_locale, p_data);
-        
-        if ( _Locale === null ) {
-            _Locale = p_locale;
-        }
-        
-        if ( !_Lang.hasOwnProperty(p_locale) ) {
-            _Lang[p_locale] = {};
-        }
-        
-        $.extend(_Lang[p_locale], p_data);
-    }
-
-    function _LangGet (p_label) {
-        var value;
-        if ( _Lang.hasOwnProperty(_Locale) ) {
-            value = _GetObjectValue(_Lang[_Locale], p_label);
-            if ( value === undefined ) {
-                iris.w("Label '" + p_label + "' not found in Locale '" + _Locale + "'", _Lang[_Locale]);
-            }
-            if ( typeof value === "object" ) {
-                iris.w("Label '" + p_label + "' is an object but must be a property in Locale '" + _Locale + "'", _Lang[_Locale]);
-            }
-        }
-        else {
-            iris.w("Locale '" + _Locale + "' not loaded");
-        }
-        return ( value ) ? value : "??" + p_label + "??";
-    }
     
+
+    //
+    // LANG
+    //
     function _LocaleGet(p_locale) {
         if ( p_locale !== undefined ) {
             _Locale = p_locale;
@@ -487,20 +509,64 @@
         if ( matches ) {
             var f, F = matches.length;
             for ( f=0; f<F; f++ ) {
-                html = html.replace(matches[f], _LangGet(matches[f].substring(2,matches[f].length-2)));
+                html = html.replace(matches[f], _getLang(matches[f].substring(2,matches[f].length-2)));
             }
         }
         return html;
     }
 
-    function _LangLoadFrom (p_locale, p_uri, p_settings) {
+    //
+    // LANG
+    //
+    function _lang (p_label, p_value, p_settings) {
+        if ( typeof p_value === "undefined" ) {
+            return _getLang(p_label);
+        } else if ( typeof p_value === "object" ) {
+            _addLang(p_label, p_value);
+        } else {
+            _loadLang(p_label, p_value, p_settings);
+        }
+    }
+
+    function _addLang(p_locale, p_data){
+        _D("[add lang]", p_locale, p_data);
+        
+        if ( _Locale === null ) {
+            _Locale = p_locale;
+        }
+        
+        if ( !_Lang.hasOwnProperty(p_locale) ) {
+            _Lang[p_locale] = {};
+        }
+        
+        $.extend(_Lang[p_locale], p_data);
+    }
+
+    function _getLang (p_label) {
+        var value;
+        if ( _Lang.hasOwnProperty(_Locale) ) {
+            value = _GetObjectValue(_Lang[_Locale], p_label);
+            if ( value === undefined ) {
+                iris.w("Label '" + p_label + "' not found in Locale '" + _Locale + "'", _Lang[_Locale]);
+            }
+            if ( typeof value === "object" ) {
+                iris.w("Label '" + p_label + "' is an object but must be a property in Locale '" + _Locale + "'", _Lang[_Locale]);
+            }
+        }
+        else {
+            iris.w("Locale '" + _Locale + "' not loaded");
+        }
+        return ( value ) ? value : "??" + p_label + "??";
+    }
+
+    function _loadLang (p_locale, p_uri, p_settings) {
         _D("[iris.lang.LoadFrom]", p_locale, p_uri);
         
         _AjaxSync(
             p_uri,
             "json",
             function (p_data) {
-                  _LocaleLoad(p_locale, p_data);
+                  _addLang(p_locale, p_data);
                   _D("[iris.lang.LoadFrom] loaded", p_data);
 
                   if ( p_settings && p_settings.hasOwnProperty("success") ) {
@@ -654,37 +720,6 @@
             currentScreen.Show();
 
             _LastScreen[contextId] = currentScreen;
-        }
-    }
-    
-    function _WelcomeScreen (p_jsUrl) {
-
-        _Include(p_jsUrl);
-
-        var screenInstance = new Screen();
-        _Includes[p_jsUrl](screenInstance);
-        screenInstance.id = "welcome-screen";
-        screenInstance.el = {};
-        screenInstance.uis = [];
-        screenInstance.con = $(document.body);
-        screenInstance.fileJs = p_jsUrl;
-        screenInstance.Create();
-        screenInstance._awake();
-        screenInstance.Show();
-
-        _WelcomeScreenCreated = true;
-
-        // CHECK HASH SUPPORT
-        if ( !("onhashchange" in window) ) {
-            _E("The browser doesn't support the hashchange event");
-        }
-        else {
-            
-            if ( document.location.hash ) {
-                _Window_OnHashChange();
-            }
-            
-            $(window).bind("hashchange", _Window_OnHashChange);
         }
     }
 
@@ -1385,530 +1420,48 @@
     };
 
 
-    var iris = {};
+    var iris = {
+        config : _ConfigLoad,
+        env : _GetEnv,
+        global : _global,
+        local : _local,
+
+        lang : _lang,
+        locale : _LocaleGet,
+
+        l : _L,
+        d : _D,
+        w : _W,
+        e : _E,
+
+        BEFORE_NAVIGATION : "iris_before_navigation",
+
+        notify : _EventNotify,
+        on : _EventSubscribe,
+        off : _EventRemove,
+
+        baseUri : _BaseUri,
+        ajax : _Ajax,
+        cacheVersion : _SetCacheVersion,
+
+        include : _IncludeFiles,
+        screen : _CreateScreen,
+        ui :  _CreateUI,
+        
+        regional : _AddRegional,
+        welcome : _welcome,
+        goto : _Goto,
+
+        destroyScreen : _DestroyScreen,
+
+        date : _DateFormat,
+        currency : _ParseCurrency,
+
+        addOn : _CreateAddOn,
+        applyAddOn : _ApplyAddOn
+
+    };
+
     window.iris = iris;
-    
-    /**
-     * Load the configuration JSON.
-     * You can use iris without load this file.
-     * @function
-     * @param {JSON} config Contains information about environments, global and environment settings, loglevel logs ...
-     * @example
-     * iris.config.Load({
-     * "environment-default" : "pro"
-     *,"environments-nocache" : "dev"
-     *   ,"environment": {
-     *        "localhost" : "dev"
-     *       ,"www.example.com" : "pro"
-     *   }
-     *   ,"log": {
-     *        "dev": "debug,warning,error"
-     *       ,"pro" : "debug,error"
-     *   }
-     *   ,"global": {
-     *            "global-variable" : "example"
-     *     }
-     *     ,"local": {
-     *        "local-variable" : {
-     *             "dev" : "example-dev"
-     *            ,"pro" : "example-pro"
-     *        }
-     *     }
-     *    });
-     * 
-     */
-    iris.config = _ConfigLoad;
-    
-    /**
-     * Set or get the current environment.
-     * If a configuration file is loaded, iris try set this value using 
-     * the current URL and the defined environments.
-     * If not match anything use "environment-default"
-     * The local variables depends of this value.
-     * @function
-     * @param {String} [p_env] Environment name (optional)
-     * @example
-     * Example: URL=http://localhost:8080/admin
-     * Configuration file:
-     * ...
-     *  "environment": {
-     *        "localhost" : "dev"
-     *       ,"www.example.com" : "pro"
-     *  }
-     * ...
-     *   
-     * iris.config.Env(); // return "dev"
-     * 
-     * iris.config.Env("pro"); // set environment to "pro"
-     */
-    iris.env = _GetEnv;
-    
-    /**
-     * Add global configuration values​​.
-     * If you load a configuration file, automatically load the object "global" ({@link iris.config.Load}).
-     * See {@link iris.global.Data} for more details.
-     * @function
-     * @param {Object} p_hash Object like: { "name" : value, ... }
-     * @example
-     * iris.global.Load({"global-variable" : "value"});
-     * iris.global.Data("global-variable"); // return "value"
-     */
-    iris.addGlobal = _GlobalLoad;
-    
-    /**
-     * Get or set the value of a global configuration variable.
-     * If label and value are not specified then return an object with all values.
-     * See {@link iris.global.Load} for more details.
-     * @function
-     * @param {String} [p_label] Variable label (optional)
-     * @param {String} [p_value] Variable value (optional)
-     * @example
-     * iris.global.Data("global-variable");
-     */
-    iris.global = _GlobalData;
-    
-    /**
-     * Add configuration values that depends on current environment.
-     * If you load a configuration file, automatically load the object "local" ({@link iris.config.Load}).
-     * See {@link iris.local.Data} for more details.
-     * @function
-     * @param {Object} p_hash Object like: { "name" : {"environment" : value, ... }, ... }
-     * @example
-     * iris.global.Load({"global-variable" : "value"});
-     * iris.global.Data("global-variable"); // return "value"
-     */
-    iris.addLocal = _LocalLoad;
-    
-    /**
-     * Get or set the value of a configuration variable that depends on current environment.
-     * If label and value are not specified then return an object with all values.
-     * See {@link iris.local.Load} for more details.
-     * @function
-     * @param {String} [p_label] Variable label (optional)
-     * @param {String} [p_value] Variable value (optional)
-     * @example
-     * iris.local.Data({
-     *  "local-variable" : {
-     *    "dev" : "example-dev"
-     *   ,"pro" : "example-pro"
-     *    }
-     * });
-     *  
-     * // If environemnt="dev" then return "example-dev"
-     * iris.local.Data("local-variable");
-     */
-    iris.local = _LocalData;
-    
-    /**
-     * Add translation texts to a locale.
-     * See {@link iris.lang.Get} for more details.
-     * @function
-     * @param {String} p_locale Locale
-     * @param {Object} p_data Object like { "LABEL" : "value", GROUP : { "LABEL" : "value", ... }, ... }
-     * @example
-     * iris.lang.Load( "es-ES"
-     *               ,{ "LABEL":"etiqueta"
-     *                 ,{"GROUP":{
-     *                      "NESTED_VALUE" : "valor anidado"
-     *                  }
-     *                });
-     *
-     * iris.lang.Get("LABEL");
-     * iris.lang.Get("GROUP.NESTED_VALUE");
-     */
-    iris.addLang = _LocaleLoad;
-    
-    /**
-     * Load remote translation texts into a locale.
-     * @function
-     * @param {String} p_locale Locale
-     * @param {String} p_uri URL to load
-     * @param {Object} p_settings <code>{"success" : function (p_locale) {}, "error" : function (p_locale) {}}</code>
-     * @example
-     * iris.lang.LoadFrom(
-     *      "es-ES"
-     *    , "http://example.com/lang"
-     *    , {"success":_OnLangLoad}
-     * );
-     */
-    iris.loadLang = _LangLoadFrom;
-    
-    /**
-     * Get a translation text according to the Locale.
-     * You can access to nested values using dot notation.
-     * See {@link iris.local.Locale} for more details.
-     * @function
-     * @param {String} p_label Label
-     * @example
-     * iris.lang.Get("LABEL");
-     *
-     * iris.lang.Get("GROUP.LABEL");
-     */
-    iris.lang = _LangGet;
-    
-    /**
-     * Set or get the current locale.
-     * @function
-     * @param {String} [p_locale] Locale (optional)
-     * @example
-     * var locale = iris.lang.Locale();
-     * iris.lang.Locale("es-ES");
-     */
-    iris.locale = _LocaleGet;
-    
-    /**
-     * Safe debug traces.
-     * @function 
-     * @param {arguments} 
-     * @example
-     * iris.l("text", variable);
-     */
-    iris.l = _L;
-    
-    /**
-     * Safe debug traces. If debug-level is active for the current environment then print traces.
-     * See {@link iris.config.Load} for more details.
-     * @function
-     * @param {arguments} 
-     * @example
-     * iris.d("text", variable);
-     */
-    iris.d = _D;
-    
-    /**
-     * Safe warning traces. If warning-level is active for the current environment then print traces.
-     * @function
-     * @see {@link iris.config.Load}
-     * @param {arguments} 
-     * @example
-     * iris.w("text", variable);
-     */
-    iris.w = _W;
-    
-    /**
-     * Safe error traces. If error-level is active for the current environment then print traces.
-     * See {@link iris.config.Load} for more details.
-     * @function
-     * @param {arguments} 
-     * @example
-     * iris.e("text", variable);
-     */
-    iris.e = _E;
-    
-    /**
-     * Event fired before do a navigation.
-     * @example
-     * iris.event.Subscribe(iris.event.BEFORE_NAVIGATION, _OnBeforeNavigation);
-     */
-    iris.BEFORE_NAVIGATION = "iris_before_navigation";
-    
-    /**
-     * Add an event listener.
-     * See {@link iris.event.Notify} and {@link iris.event.Remove} for more details.
-     * @function
-     * @param {String} p_eventName Event identifier
-     * @param {Function} f_func Event listener
-     * @example
-     * iris.event.Subscribe("user_select", _OnUserSelect);
-     */
-    iris.on = _EventSubscribe;
-    
-    /**
-     * Trigger an event.
-     * See {@link iris.event.Subscribe} and {@link iris.event.Remove} for more details.
-     * @function
-     * @param {String} p_eventName Event identifier
-     * @param {Object} p_data Event paramater
-     * @example
-     * iris.event.Notify(
-     *    "user_select"
-     *  , {"user_id" : 123, "name" : "John"}
-     * );
-     */
-    iris.notify = _EventNotify;
-    
-    /**
-     * Remove an event listener.
-     * See {@link iris.event.Subscribe} and {@link iris.event.Notify} for more details.
-     * @function
-     * @param {String} p_eventName Event identifier
-     * @param {String}  f_func Event listener
-     * @example
-     * iris.event.Remove("user_select", _OnUserSelect);
-     */
-    iris.off = _EventRemove;
-    
-    /**
-     * Get or set the application base URL.
-     * Use the &lt;base &gt; HTML tag if are defined.
-     * @function
-     * @param {String} [p_baseUri] URL base (optional)
-     * @example
-     * // Current URL = http://www.example.com/admin/example/path?a=1
-     * iris.net.BaseUri(); // return http://www.example.com/
-     */
-    iris.baseUri = _BaseUri;
-    
-    /**
-     * Do an Ajax request.
-     * Accepts the same parameters as jQuery.ajax()
-     * @function
-     * @see <a href="http://api.jquery.com/jQuery.ajax/">JQuery Ajax</a>.
-     * @example
-     * iris.net.Ajax(
-     *        {     "url" : "/s/myservice"
-     *            , "type" : "GET"
-     *         }
-     * );
-     */
-    iris.ajax = _Ajax;
-    
-    /**
-     * Set a URL parameter to be used as cache version control.
-     * This parameter will be appended to URL string automatically
-     * when loading static resources.
-     * @function
-     * @param {String} p_value Parameter value
-     */
-    iris.cacheVersion = _SetCacheVersion;
-    
-    /**
-     * Register a Screen object.
-     * It must appear at the beginning of the screen file.
-     * @function
-     * @param {Function} f_screen Screen class
-     * @example
-     * iris.Screen(
-     *   function (self) {
-     *       self.Create = function () {
-     *       }
-     *   
-     *       self.Awake = function (p_params) {
-     *       }
-     *   
-     *       self.Sleep = function () {
-     *       }
-     *   }
-     * );
-     */
-    iris.screen = _CreateScreen;
-
-    
-    
-    /**
-     * Register an UI object.
-     * It must appear at the beginning of the screen file.
-     * @function
-     * @param {Function} f_ui UI class
-     * @example
-     * iris.UI(
-     *   function (self) {
-     *       self.Create = function (p_domAttr, p_settings) {
-     *       }
-     *   
-     *       self.Awake = function (p_params) {
-     *       }
-     *   
-     *       self.Sleep = function () {
-     *       }
-     *   }
-     * );
-     */
-    iris.ui =  _CreateUI;
-    
-    /**
-     * Set the initial screen.
-     * This screen is registered as the root screen 
-     * and automatically is shown.
-     * @param {String} p_jsUrl Screen controller
-     * @function
-     * @example
-     * iris.screen.WelcomeScreen("screen/main.js");
-     */
-    iris.welcome = _WelcomeScreen;
-    
-    /**
-     * Destroy a created screen.
-     * Free screen and its UIs memory.
-     * Call in cascade all Sleep() and Destroy() functions for its UI childs.
-     * @function
-     * @param {String} p_screenPath Screen URL path
-     * @example
-     * iris.screen.Destroy("#books/edit");
-     */
-    iris.destroyScreen = _DestroyScreen;
-    
-    /**
-     * Include static resources dynamically.
-     * The load is <b>synchronous</b> and tracks all the files included to prevent them to be included twice.<br>
-     * You can include:<br>
-     * <ul>
-     * <li>CSS files: style files are included by creating a link dynamically in the header of the index page.</li>
-     * <li>JS files: script files are included by creating a script object dynamically in the header of the index page 
-     *      and append the loaded content to it. When including javascript files you must take care of the syntax 
-     *      as including javascript file with some syntax error would produce an error when adding it to a script element.</li>
-     *  </ul>
-     * @function
-     * @param {arguments} File paths
-     * @example
-     * iris.Include("app/service/myservice.js", "app/css/mycss.css");
-     */
-    iris.include = _IncludeFiles;
-    
-    /**
-     * Formats a Date object or timestamp to the specified format and according to the current locale. <br>
-     * You can use the following special characters:<br><br>
-     *   <b>a</b>    'a.m.' or 'p.m.'<br>
-     *   <b>A</b>    'AM' or 'PM'<br>
-     *   <b>b</b>    Month, textual, 3 letters, lowercase.    'jan'<br>
-     *   <b>d</b>    Day of the month, 2 digits with leading zeros.    '01' to '31'<br>
-     *   <b>D</b>    Day of the week, textual, 3 letters.    'Fri'<br>
-     *   <b>F</b>    Month, textual, long.    'January'<br>
-     *   <b>h</b>    Hour, 12-hour format.    '01' to '12'<br>
-     *   <b>H</b>    Hour, 24-hour format.    '00' to '23'<br>
-     *   <b>i</b>    Minutes.    '00' to '59'<br>
-     *   <b>l</b>    Day of the week, textual, long.    'Friday'<br>
-     *   <b>m</b>    Month, 2 digits with leading zeros.    '01' to '12'<br>
-     *   <b>M</b>    Month, textual, 3 letters.    'Jan'<br>
-     *   <b>n</b>    Month without leading zeros.    '1' to '12'<br>
-     *   <b>s</b>    Seconds, 2 digits with leading zeros.    '00' to '59'<br>
-     *   <b>U</b>    Seconds since the Unix Epoch (January 1 1970 00:00:00 UTC)<br>
-     *   <b>y</b>     Year, 2 digits.    '99'<br>
-     *   <b>Y</b>    Year, 4 digits.    '1999'<br>
-     * @function
-     * @param {Date|Timestamp} p_date Date object or timestamp (UNIX timestamp)
-     * @param {String} [p_format] Format string (optional)
-     * @example
-     * iris.util.DateFormat(new Date(),"ymd");
-     * iris.util.DateFormat("1331954654564","d/m/y h:i:s"); // 17/03/12 04:24:14
-     * iris.util.DateFormat(1331954654564);
-     */
-    iris.date = _DateFormat;
-    
-
-    /**
-     * Formats a Number or String to Currency using the current locale defined at {@link iris.Regional} <br>
-     * @function
-     * @param {Number|String} p_value Number or String number
-     * @example
-     *    regional = en-US
-     *         iris.util.Currency(1234.56);        -> $ 1,234.56
-     *         iris.util.Currency("123456789");     -> $ 123,456,789
-     *     regional = es-ES
-     *         iris.util.Currency(1234.56);        -> 1,234.56 €
-     *        iris.util.Currency("123456789");     -> 123,456,789 €
-     */
-    iris.currency = _ParseCurrency;
-
-    
-    /**
-     * Navigate to a screen.
-     * The screen must be previously added using {@link iris-Screen#AddScreen}.<br>
-     * You can send parameters to the target screen as <code>... /screen?param1=value1&param2=value2/ ...</code>,
-     * remember apply <code>encodeURIComponent()</code> to the parameter values.<br>
-     * @function
-     * @param p_hashUri {String} Hash URL
-     * @example
-     * 
-     * iris.Goto("#home/section/subsection");
-     *
-     * // Call with screen parameters
-     * iris.Goto("#home/section?id=5&name=example%20name/subsection");
-     * 
-     * // Remember encode param values
-     * var email = encodeURIComponent("user@example.com");
-     * iris.Goto("#home/section?email=" + email);
-     */
-    iris.goto = _Goto;
-    
-    /**
-     * Register a AddOn object.
-     * It must appear at the beginning of the AddOn file.
-     * @function
-     * @param {Function} f_addOn AddOn Class
-     * @example
-     * iris.AddOn(
-     *   function (self) {
-     *       self.Create = function ( p_uis ) {
-     *       }
-     *       ...
-     *   }
-     * );
-     */
-    iris.addOn = _CreateAddOn;
-    
-    /**
-     * Apply a AddOn to a group of UI Components or single UI.
-     * @function
-     * @param p_id {String} AddOn identifier
-     * @param p_uis {Object|Array} UI Component/s
-     * @example
-     * var customUI = self.InstanceUI("input", "input.js");
-     * iris.ApplyBE("validator.js", customUI);
-     *
-     * var otherCustomUI = self.InstanceUI("input", "input.js");
-     * iris.ApplyAddOn("validator.js", [customUI, otherCustomUI]);
-     *
-     */
-    iris.applyAddOn = _ApplyAddOn;
-    
-    /**
-     * Specify a new regional or change the actuals regionals to format dates and currencies.
-     * You must set a valid regional object with all properties: 'dayNames', 'monthNames', etc...<br>
-     * Iris has two predefined regionals:
-     * <pre>    "en-US" : {
-     *         dayNames : ["Sunday","Monday","Tuesday"
-     *                ,"Wednesday","Thursday","Friday","Saturday"]
-     *        ,monthNames : ["January","February","March"
-     *                ,"April","May","June","July"
-     *                ,"August","September","October"
-     *                ,"November","December"]
-     *        ,dateFormat : "m/d/Y h:i:s"
-     *        ,currency : {
-     *             formatPos : "$ n"
-     *            ,formatNeg : "($ n)"
-     *            ,decimal : "."
-     *            ,thousand : ","
-     *            ,precision : 2
-     *        }
-     *    }
-     *    
-     *    "es-ES" : {
-     *         dayNames : ["Domingo","Lunes","Martes"
-     *            ,"Miércoles","Jueves","Viernes","Sábado"]
-     *        ,monthNames : ["Enero","Febrero","Marzo"
-     *            ,"Abril","Mayo","Junio","Julio","Agosto"
-     *            ,"Septiembre","Octubre","Noviembre","Diciembre"]
-     *        ,dateFormat : "d/m/Y H:i:s"
-     *        ,currency : {
-     *             formatPos : "n"
-     *            ,formatNeg : "-n"
-     *            ,decimal : ","
-     *            ,thousand : "."
-     *            ,precision : 2
-     *        }
-     *    }</pre>
-     * @function
-     * @param p_locale {String} Locale identifier
-     * @param p_regional {Object} Regional data
-     * @example
-     *  iris.Regional("custom-es_ES", {
-     *         dayNames : ["D","L","M","M","J","V","S"]
-     *        ,monthNames : ["Ene","Feb","Mar","Abr","May","Jun"
-     *            ,"Jul","Ago","Sep","Oct","Nov","Dic"]
-     *        ,dateFormat : "d/m/Y"
-     *        ,currency : {
-     *             formatPos : "n"
-     *            ,formatNeg : "-n"
-     *            ,decimal : ","
-     *            ,thousand : "."
-     *            ,precision : 2
-     *        }
-     *    }
-     */
-    iris.regional = _AddRegional;
-    
-    
-    _Init();
 
 })(jQuery, window);

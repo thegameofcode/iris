@@ -63,9 +63,9 @@
   });*/
 
 
-  test( "Iris lang load", function() {
+  test( "Lang Test", function() {
 
-    iris.addLang("es-ES", {TEST:{LABEL:"VALUE"}});
+    iris.lang("es-ES", {TEST:{LABEL:"VALUE"}});
 
     var translated = iris.lang("TEST.LABEL");
     strictEqual( translated, "VALUE", "Should get a lang value" );
@@ -76,14 +76,14 @@
 
   });
 
-  test( "Iris date format", function() {
+  test( "Date format", function() {
 
     var date = "1331954654564";
     var formatted = iris.date(date, "d/m/y h:i:s");
       strictEqual( formatted, "17/03/12 04:24:14", "Custom DateFormat" );
   });
 
-  test( "Iris currency format", function() {
+  test( "Currency format", function() {
 
       var amount = 1234.56;
       iris.locale("es-ES");

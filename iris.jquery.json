@@ -2,7 +2,7 @@
   "name": "iris",
   "title": "Iris",
   "description": "This JavaScript library provides different client-side optimization techniques for front construction.",
-  "version": "0.5.0",
+  "version": "0.5.0-SNAPSHOT",
   "homepage": "https://github.com/iris-js/iris.git",
   "author": {
     "name": "Iris",
