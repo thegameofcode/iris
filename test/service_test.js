@@ -9,37 +9,32 @@
 
       self.path = "http://localhost:8080/";
 
-      self.loadSimple = function (success, error) {
-        self.get("test/service/test.json", null, success, error);
-      };
-
-      self.loadPathParam = function (name, ext, success, error) {
-        self.get("test/service/{name}.{ext}", {"name" : name, "ext" : ext}, success, error);
+      self.load = function (id, success, error) {
+        self.get("test/service/" + id, success, error);
       };
 
       self.create = function (params, success, error) {
-        self.post("echo/example", params, success, error);
+        self.post("echo/create", params, success, error);
       };
 
-      self.update = function (params, success, error) {
-        self.put("echo/example", params, success, error);
+      self.update = function (id, params, success, error) {
+        self.put("echo/put/" + id, params, success, error);
       };
 
       self.remove = function (id, success, error) {
-        self.del("{id}", {"id" : id}, success, error);
+        self.del("echo/delete/" + id, success, error);
       };
 
   });
 
-  asyncTest("Get Success Simple", function () {
+
+  asyncTest("Service Get Success", function () {
       expect(2);
 
-      testService.loadSimple(function (json) {
+      testService.load("test.json", function (json) {
           strictEqual(1, json.id);
           strictEqual("book title", json.title);
-
           start();
-
       }, function (p_request, p_textStatus, p_errorThrown) {
           ok(false, "Error callback unexpected: " + p_errorThrown);
           start();
@@ -47,26 +42,10 @@
 
   });
 
-  asyncTest("Get Success Path Param", function () {
-      expect(2);
-
-      testService.loadPathParam("test", "json", function (json) {
-          strictEqual(1, json.id);
-          strictEqual("book title", json.title);
-
-          start();
-
-      }, function (p_request, p_textStatus, p_errorThrown) {
-          ok(false, "Error callback unexpected: " + p_errorThrown);
-          start();
-      });
-
-  });
-
-  asyncTest("Get Error Path Param", function () {
+  asyncTest("Service Get Error", function () {
       expect(1);
 
-      testService.loadPathParam("no_valid", "id", function (json) {
+      testService.load("no_valid", function (json) {
           ok(false, "Success callback unexpected: " + json);
           start();
       }, function (p_request, p_textStatus, p_errorThrown) {
@@ -76,14 +55,21 @@
 
   });
 
-  asyncTest("Put Success Simple", function () {
-      expect(2);
 
-      var params = 'param1=1&param2=example';
-      testService.update(params, function (json) {
-          strictEqual('PUT', json.method);
-          strictEqual('param1=1&param2=example', json.data);
+  asyncTest("Service Put Success", function () {
+      expect(1);
 
+      var id = 1;
+      var params = 'param1=1&param2=2';
+
+      var expectedResponse = {
+        "method":"PUT",
+        "url":"/echo/put/" + id,
+        "data" : params
+      };
+
+      testService.update(id, params, function (json) {
+          deepEqual(json, expectedResponse, "the json response is not valid");
           start();
       }, function (p_request, p_textStatus, p_errorThrown) {
           ok(false, "Error callback unexpected: " + p_errorThrown);
@@ -92,14 +78,20 @@
 
   });
 
-  asyncTest("Post Success Simple", function () {
-      expect(2);
+
+  asyncTest("Service Post Success", function () {
+      expect(1);
 
       var params = 'param1=1&param2=example';
+
+      var expectedResponse = {
+        "method":"POST",
+        "url":"/echo/create",
+        "data" : params
+      };
+      
       testService.create(params, function (json) {
-          strictEqual('POST', json.method);
-          strictEqual('param1=1&param2=example', json.data);
-
+          deepEqual(json, expectedResponse, "the json response is not valid");
           start();
       }, function (p_request, p_textStatus, p_errorThrown) {
           ok(false, "Error callback unexpected: " + p_errorThrown);
@@ -108,13 +100,18 @@
 
   });
 
-  asyncTest("Delete Success Simple", function () {
-      expect(2);
+  asyncTest("Service Delete Success", function () {
+      expect(1);
 
-      testService.remove(1, function (json) {
-          strictEqual('DELETE', json.method);
-          strictEqual('', json.data);
+      var id = 1;
 
+      var expectedResponse = {
+        "method":"DELETE",
+        "url":"/echo/delete/" + id
+      };
+
+      testService.remove(id, function (json) {
+          deepEqual(json, expectedResponse, "the json response is not valid");
           start();
       }, function (p_request, p_textStatus, p_errorThrown) {
           ok(false, "Error callback unexpected: " + p_errorThrown);

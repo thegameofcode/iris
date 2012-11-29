@@ -8,20 +8,8 @@
     };
 
     Service.prototype.ajax = function (p_method, p_path, p_params, f_success, f_error){
-        p_path = this.path + p_path;
-        var path = p_path;
-
-        // replace path params
-		var pathParamRegExp = /\{(\w+)\}/g;
-		var matches = pathParamRegExp.exec(p_path);
-		while (matches) {
-			path = path.replace(new RegExp(matches[0], "g"), p_params[matches[1]]);
-			matches = pathParamRegExp.exec(p_path);
-		}
-
-        // do async call
         iris.ajax({
-            "url" : path,
+            "url" : this.path + p_path,
             "type" : p_method,
             "data" : p_params,
             "cache" : false,
@@ -32,8 +20,12 @@
         });
     };
 
-    Service.prototype.get = function (p_path, p_params, f_success, f_error){
-        this.ajax("GET", p_path, p_params, f_success, f_error);
+    Service.prototype.get = function (p_path, f_success, f_error){
+        this.ajax("GET", p_path, null, f_success, f_error);
+    };
+
+    Service.prototype.del = function (p_path, f_success, f_error){
+        this.ajax("DELETE", p_path, null, f_success, f_error);
     };
 
     Service.prototype.put = function (p_path, p_params, f_success, f_error){
@@ -44,18 +36,14 @@
         this.ajax("POST", p_path, p_params, f_success, f_error);
     };
 
-    Service.prototype.del = function (p_path, p_params, f_success, f_error){
-        this.ajax("DELETE", p_path, p_params, f_success, f_error);
-    };
-
     function createService (f_service) {
         var serv = new Service();
         f_service(serv);
         return serv;
     }
 
-	iris.service = createService;
 
+	iris.service = createService;
 
 
 })(jQuery, window);
