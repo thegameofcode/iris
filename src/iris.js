@@ -8,7 +8,7 @@
 
 (function ($, window) {
 
-  var _CacheVersion,
+  var   _CacheVersion,
         _JQ_MIN_VER = 1.5,
         _Env = null,
         _Log = {"error":true},
@@ -143,7 +143,7 @@
                     hasRemainingChilds = true;
                     pathWithoutParams = _RemoveURLParams(prevPath);
 
-                    _Screen[pathWithoutParams].__Sleep__();
+                    _Screen[pathWithoutParams]._sleep();
                     _Screen[pathWithoutParams].Hide();
                 }
             }
@@ -528,7 +528,7 @@
         _Include(p_id);
         
         var addOn = new AddOn ();
-        addOn.__Components__ = [];
+        addOn._components = [];
         addOn.settings =  {};
         
         _AddOns[p_id]( addOn );
@@ -555,14 +555,14 @@
         
         var uiInstance = new UI();
         _Includes[p_jsUrl](uiInstance);
-        uiInstance.__Id__ = p_uiId;
-        uiInstance.__Element__ = {};
-        uiInstance.__$Container__ = p_$container;
-        uiInstance.__UIComponents__ = [];
+        uiInstance.id = p_uiId;
+        uiInstance.el = {};
+        uiInstance.con = p_$container;
+        uiInstance.uis = [];
         uiInstance.settings = {};
-        uiInstance.__FileJs__ = p_jsUrl;
+        uiInstance.fileJs = p_jsUrl;
         if ( p_templateMode !== undefined ) {
-            uiInstance.__TemplateMode__ = p_templateMode;
+            uiInstance._tmplMode = p_templateMode;
         }
         
         p_uiSettings = p_uiSettings === undefined ? {} : p_uiSettings;
@@ -607,11 +607,11 @@
         var screenInstance = new Screen();
         _Includes[jsUrl](screenInstance);
 
-        screenInstance.__Id__ = p_screenPath;
-        screenInstance.__Element__ = {};
-        screenInstance.__UIComponents__ = [];
-        screenInstance.__$Container__ = _ScreenContainer[p_screenPath];
-        screenInstance.__FileJs__ = jsUrl;
+        screenInstance.id = p_screenPath;
+        screenInstance.el = {};
+        screenInstance.uis = [];
+        screenInstance.con = _ScreenContainer[p_screenPath];
+        screenInstance.fileJs = jsUrl;
         screenInstance.Create();
         screenInstance.Hide();
         
@@ -624,7 +624,7 @@
             if ( _LastScreen[contextId] === _Screen[p_screenPath] ) {
                 delete _LastScreen[contextId];
             }
-            _Screen[p_screenPath].__Destroy__();
+            _Screen[p_screenPath]._destroy();
             _Screen[p_screenPath].$Get().remove();
             delete _Screen[p_screenPath];
         }
@@ -647,10 +647,10 @@
             var contextId = currentScreen.$Get().parent().data("screen_context");
             if ( _LastScreen.hasOwnProperty(contextId) ) {
                 var lastScreen = _LastScreen[contextId];
-                lastScreen.__Sleep__();
+                lastScreen._sleep();
                 lastScreen.Hide();
             }
-            currentScreen.__Awake__( p_params ? p_params : {} );
+            currentScreen._awake( p_params ? p_params : {} );
             currentScreen.Show();
 
             _LastScreen[contextId] = currentScreen;
@@ -663,13 +663,13 @@
 
         var screenInstance = new Screen();
         _Includes[p_jsUrl](screenInstance);
-        screenInstance.__Id__ = "welcome-screen";
-        screenInstance.__Element__ = {};
-        screenInstance.__UIComponents__ = [];
-        screenInstance.__$Container__ = $(document.body);
-        screenInstance.__FileJs__ = p_jsUrl;
+        screenInstance.id = "welcome-screen";
+        screenInstance.el = {};
+        screenInstance.uis = [];
+        screenInstance.con = $(document.body);
+        screenInstance.fileJs = p_jsUrl;
         screenInstance.Create();
-        screenInstance.__Awake__();
+        screenInstance._awake();
         screenInstance.Show();
 
         _WelcomeScreenCreated = true;
@@ -915,52 +915,52 @@
         this.TEMPLATE_REPLACE = "replace";
         this.TEMPLATE_PREPEND = "prepend";
         
-        this.__$Tmpl__ = null;
-        this.__Id__ = null;
-        this.__UIComponents__ = null;
-        this.__$Container__ = null;
-        this.__IsSleeping__ = null;
-        this.__FileJs__ = null;
-        this.__FileTmpl__ = null;
-        this.__Element__ = null;
+        this._$tmpl = null;
+        this.id = null;
+        this.uis = null;
+        this.con = null;
+        this._sleeping = null;
+        this.fileJs = null;
+        this.fileTmpl = null;
+        this.el = null;
     };
     
     Component.prototype = new Settable();
     
-    Component.prototype.__Sleep__ = function () {
-        for ( var f=0, F=this.__UIComponents__.length; f < F; f++ ) {
-            this.__UIComponents__[f].__Sleep__();
+    Component.prototype._sleep = function () {
+        for ( var f=0, F=this.uis.length; f < F; f++ ) {
+            this.uis[f]._sleep();
         }
-        this.__IsSleeping__ = true;
+        this._sleeping = true;
         this.Sleep();
     };
     
-    Component.prototype.__Awake__ = function (p_params) {
-        for ( var f=0, F=this.__UIComponents__.length; f < F; f++ ) {
-            this.__UIComponents__[f].__Awake__();
+    Component.prototype._awake = function (p_params) {
+        for ( var f=0, F=this.uis.length; f < F; f++ ) {
+            this.uis[f]._awake();
         }
-        this.__IsSleeping__ = false;
+        this._sleeping = false;
         this.Awake(p_params);
     };
     
-    Component.prototype.__Destroy__ = function () {
-        if ( !this.__IsSleeping__ ) {
-            this.__Sleep__();
+    Component.prototype._destroy = function () {
+        if ( !this._sleeping ) {
+            this._sleep();
         }
 
-        for ( var f=0, F=this.__UIComponents__.length; f < F; f++ ) {
-            this.__UIComponents__[f].__Destroy__();
+        for ( var f=0, F=this.uis.length; f < F; f++ ) {
+            this.uis[f]._destroy();
         }
-        this.__UIComponents__ = null;
+        this.uis = null;
         this.Destroy();
     };
 
-    Component.prototype.__Template__ = function (p_htmlUrl, p_params, p_mode) {
-        this.__FileTmpl__ = p_htmlUrl;
+    Component.prototype._tmpl = function (p_htmlUrl, p_params, p_mode) {
+        this.fileTmpl = p_htmlUrl;
         
         if ( typeof p_htmlUrl === "undefined" ) {
-            this.__$Tmpl__ = this.__$Container__;
-            return this.__$Tmpl__;
+            this._$tmpl = this.con;
+            return this._$tmpl;
         }
         
         iris.Include(p_htmlUrl);
@@ -968,19 +968,19 @@
         var tmplHtml = p_params ? _TemplateParse(_Includes[p_htmlUrl], p_params, p_htmlUrl) : _Includes[p_htmlUrl];
         var $tmpl = $(tmplHtml);
         
-        this.__$Tmpl__ = $tmpl;
+        this._$tmpl = $tmpl;
         if ( $tmpl.size() > 1 ) {
             iris.e("Template '" + p_htmlUrl + "' must have only one root node");
         }
         switch ( p_mode ) {
             case this.TEMPLATE_APPEND:
-                this.__$Container__.append($tmpl);
+                this.con.append($tmpl);
                 break;
             case this.TEMPLATE_REPLACE:
-                this.__$Container__.replaceWith($tmpl);
+                this.con.replaceWith($tmpl);
                 break;
             case this.TEMPLATE_PREPEND:
-                this.__$Container__.prepend($tmpl);
+                this.con.prepend($tmpl);
                 break;
             default:
                 iris.e("Unknown template mode '" + p_mode + "'");
@@ -989,9 +989,9 @@
     };
     
     // Check if the template is set (https://github.com/intelygenz/iris/issues/19)
-    Component.prototype.__CheckTmpl__ = function () {
-        if ( this.__$Tmpl__ === null ) {
-            iris.e("You must set a template using self.Template() in '" + this.__FileJs__ + "'");
+    Component.prototype._checkTmpl = function () {
+        if ( this._$tmpl === null ) {
+            iris.e("You must set a template using self.Template() in '" + this.fileJs + "'");
             return undefined;
         }
     };
@@ -1005,9 +1005,9 @@
      * @function
      */
     Component.prototype.Show = function () {
-        this.__CheckTmpl__();
+        this._checkTmpl();
         
-        this.__$Tmpl__.show();
+        this._$tmpl.show();
     };
 
     /**
@@ -1020,9 +1020,9 @@
      * @function
      */
     Component.prototype.Hide = function () {
-        this.__CheckTmpl__();
+        this._checkTmpl();
         
-        this.__$Tmpl__.hide();
+        this._$tmpl.hide();
     };
     
     
@@ -1041,37 +1041,37 @@
      * var $root = self.$Get();
      */
     Component.prototype.$Get = function(p_id) {
-    this.__CheckTmpl__();
+    this._checkTmpl();
 
     if (p_id) {
 
-      if (!this.__Element__.hasOwnProperty(p_id)) {
-        var id = "[data-id=" + p_id + "]", filter = this.__$Tmpl__.filter(id), $element = null;
+      if (!this.el.hasOwnProperty(p_id)) {
+        var id = "[data-id=" + p_id + "]", filter = this._$tmpl.filter(id), $element = null;
 
         if (filter.length > 0) {
           $element = filter;
         } else {
-          var find = this.__$Tmpl__.find(id);
+          var find = this._$tmpl.find(id);
           if (find.size() > 0) {
             $element = find;
           }
         }
 
         if ($element === null) {
-          iris.e("[data-id=" + p_id + "] not found in '" + this.__FileTmpl__ + "' used by '" + this.__FileJs__ + "'");
+          iris.e("[data-id=" + p_id + "] not found in '" + this.fileTmpl + "' used by '" + this.fileJs + "'");
           return undefined;
         } else if ($element.size() > 1) {
-          iris.e("[data-id=" + p_id + "] must be unique in '" + this.__FileTmpl__ + "' used by '" + this.__FileJs__ + "'");
+          iris.e("[data-id=" + p_id + "] must be unique in '" + this.fileTmpl + "' used by '" + this.fileJs + "'");
           return undefined;
         }
 
-        this.__Element__[p_id] = $element;
+        this.el[p_id] = $element;
       }
 
-      return this.__Element__[p_id];
+      return this.el[p_id];
     }
 
-    return this.__$Tmpl__;
+    return this._$tmpl;
   };
     
     /**
@@ -1107,7 +1107,7 @@
         var $container = this.$Get(p_id);
         if ( $container.size() === 1 ) {
             var uiInstance = _InstanceUI($container, $container.data("id"), p_jsUrl, p_uiSettings, p_templateMode);
-            this.__UIComponents__[this.__UIComponents__.length] = uiInstance;
+            this.uis[this.uis.length] = uiInstance;
             return uiInstance;
         }
     };
@@ -1123,10 +1123,10 @@
      * self.DestroyUI(customUI);
      */
     Component.prototype.DestroyUI = function (p_ui) {
-        for (var f=0, F=this.__UIComponents__.length; f < F; f++) {
-            if (this.__UIComponents__[f] === p_ui) {
-                this.__UIComponents__.splice(f, 1);
-                p_ui.__Destroy__();
+        for (var f=0, F=this.uis.length; f < F; f++) {
+            if (this.uis[f] === p_ui) {
+                this.uis.splice(f, 1);
+                p_ui._destroy();
                 p_ui.$Get().remove();
                 break;
             }
@@ -1147,14 +1147,14 @@
     Component.prototype.DestroyAllUIs = function (p_idOrJq) {
         var contSelector = typeof p_idOrJq === "string" ? "[data-id=" + p_idOrJq + "]" : p_idOrJq.selector;
         var ui;
-        for (var f=0, F=this.__UIComponents__.length; f < F; f++) {
-            ui = this.__UIComponents__[f];
+        for (var f=0, F=this.uis.length; f < F; f++) {
+            ui = this.uis[f];
             
-            if (ui.__$Container__.selector === contSelector) {
-                this.__UIComponents__.splice(f--, 1);
+            if (ui.con.selector === contSelector) {
+                this.uis.splice(f--, 1);
                 F--;
                 
-                ui.__Destroy__();
+                ui._destroy();
                 ui.$Get().remove();
             }
         }
@@ -1172,7 +1172,7 @@
      * var screenContainer = self.$Container();
      */
     Component.prototype.$Container = function () {
-        return this.__$Container__;
+        return this.con;
     };
     
     // To override functions
@@ -1219,7 +1219,7 @@
      * Common AddOn functions and properties.
      */
     var AddOn = function () {
-        this.__Components__ = null;
+        this._components = null;
     };
     
     AddOn.prototype = new Settable();
@@ -1245,7 +1245,7 @@
         if ( this.hasOwnProperty("UIAddOn") ) {
             this.UIAddOn( p_ui );
         }
-        this.__Components__[this.__Components__.length] = p_ui;
+        this._components[this._components.length] = p_ui;
     };
     
     /**
@@ -1255,10 +1255,10 @@
      */
     AddOn.prototype.Remove = function (p_ui) {
         var ui;
-        for (var f=0, F=this.__Components__.length; f<F; f++) {
-            ui = this.__Components__[f];
+        for (var f=0, F=this._components.length; f<F; f++) {
+            ui = this._components[f];
             if ( ui === p_ui ) {
-                this.__Components__.splice(f, 1);
+                this._components.splice(f, 1);
             }
         }
     };
@@ -1271,7 +1271,7 @@
      * @function
      */
     AddOn.prototype.Get = function (p_idx) {
-        return this.__Components__[p_idx];
+        return this._components[p_idx];
     };
 
     /**
@@ -1279,7 +1279,7 @@
      * @function
      */
     AddOn.prototype.Size = function () {
-        return this.__Components__.length;
+        return this._components.length;
     };
     
     // To override
@@ -1297,7 +1297,7 @@
      * Common UI functions and properties.
      */
     var UI = function () {
-        this.__TemplateMode__ = "replace";
+        this._tmplMode = "replace";
     };
     
     UI.prototype = new Component();
@@ -1313,7 +1313,7 @@
      * self.Template("tmpl.html");
      */
     UI.prototype.TemplateMode = function (p_mode) {
-        this.__TemplateMode__ = p_mode;
+        this._tmplMode = p_mode;
     };
     
     /**
@@ -1328,7 +1328,7 @@
      * self.Template("tmpl.html", {"age":23});
      */
     UI.prototype.Template = function (p_htmlUrl, p_params) {
-        this.__Template__(p_htmlUrl, p_params, this.__TemplateMode__);
+        this._tmpl(p_htmlUrl, p_params, this._tmplMode);
     };
         
 
@@ -1350,7 +1350,7 @@
      * self.Template("tmpl.html", {"name":"Jonh"});
      */
     Screen.prototype.Template = function (p_htmlUrl, p_params) {
-        this.__Template__(p_htmlUrl, p_params, this.TEMPLATE_APPEND);
+        this._tmpl(p_htmlUrl, p_params, this.TEMPLATE_APPEND);
     };
         
     /**
@@ -1377,7 +1377,7 @@
             
             // Set a unique screen context id to the screen container
             // like: #path/to/screen|containerid
-            $cont.data("screen_context", this.__Id__ + "|" + p_containerId);
+            $cont.data("screen_context", this.id + "|" + p_containerId);
         }
 
         _ScreenUrl[p_screenPath] = p_jsUrl;
