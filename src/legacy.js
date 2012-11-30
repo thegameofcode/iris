@@ -129,8 +129,6 @@
         iris.screenAux(
             function (self) {
 
-window.console.log("((((((((LEGACY Screen))))))))", self);
-
                 self.InstanceUI = self.ui;
                 self.Show = self.show;
                 self.Hide = self.hide;

@@ -8,30 +8,30 @@
 
 (function ($, window) {
 
-  var   _CacheVersion,
+  var   _cacheVersion,
         _JQ_MIN_VER = 1.5,
-        _Env = null,
-        _Log = {"error":true},
-        _LogPrefix = "",
-        _Screen = {},
-        _ScreenUrl = {},
-        _ScreenContainer = {},
-        _LastScreen = {},
-        _PrevHashUrl = "",
-        _Global = {},
-        _Local = {},
-        _Locale = null,
-        _Config = {},
-        _Lang = {},
-        _Event = {},
-        _Includes = {},
-        _AddOns = {},
-        _AppBaseUri = "",
-        _LastIncludePath,
-        _Head = $("head").get(0),
-        _Cache = true,
-        _HasConsole,
-        _GotoCancelled = false,
+        _env = null,
+        _log = {"error":true},
+        _logPrefix = "",
+        _screen = {},
+        _screenUrl = {},
+        _screenContainer = {},
+        _lastScreen = {},
+        _prevHash = "",
+        _global = {},
+        _local = {},
+        _locale = null,
+        _config = {},
+        _lang = {},
+        _event = {},
+        _includes = {},
+        _addOns = {},
+        _appBaseUri = "",
+        _lastIncludePath,
+        _head = $("head").get(0),
+        _cache = true,
+        _hasConsole,
+        _gotoCancelled = false,
         _welcomeCreated = false
     ;
     
@@ -39,97 +39,97 @@
         
         // CHECK JQ DEPENDENCY
         if( typeof jQuery === "undefined" ) {
-            _E( "jQuery " + _JQ_MIN_VER + "+ previous load required" );
+            _logError( "jQuery " + _JQ_MIN_VER + "+ previous load required" );
         }
         else if ( $().jquery < _JQ_MIN_VER ) {
-            _E( "jQuery " + $().jquery + " currently loaded, jQuery " + _JQ_MIN_VER + "+ required" );
+            _logError( "jQuery " + $().jquery + " currently loaded, jQuery " + _JQ_MIN_VER + "+ required" );
         }
         
         // CHECK CONSOLE SUPPORT
-        _HasConsole = (window.console && window.console.debug && window.console.warn && window.console.error);
-        if ( !_HasConsole && window.console && window.console.log ) {
-            window.console.log("advanced console debugging is not supported in this browser");
+        _hasConsole = (window.console && window.console.debug && window.console.warn && window.console.error);
+        if ( !_hasConsole && window.console && window.console.log ) {
+            window.console.log("advanced console is unsupported in this browser");
         }
 
-        _Include(p_jsUrl);
+        _include(p_jsUrl);
 
-        var screenInstance = new Screen();
-        _Includes[p_jsUrl](screenInstance);
-        screenInstance.id = "welcome-screen";
-        screenInstance.el = {};
-        screenInstance.uis = [];
-        screenInstance.con = $(document.body);
-        screenInstance.fileJs = p_jsUrl;
-        screenInstance.Create();
-        screenInstance._awake();
-        screenInstance.Show();
+        var screenObj = new Screen();
+        _includes[p_jsUrl](screenObj);
+        screenObj.id = "welcome-screen";
+        screenObj.el = {};
+        screenObj.uis = [];
+        screenObj.con = $(document.body);
+        screenObj.fileJs = p_jsUrl;
+        screenObj.Create();
+        screenObj._awake();
+        screenObj.Show();
 
         _welcomeCreated = true;
 
         // CHECK HASH SUPPORT
         if ( !("onhashchange" in window) ) {
-            _E("The browser doesn't support the hashchange event");
+            _logError("doesn't support the hashchange event");
         }
         else {
             
             if ( document.location.hash ) {
-                _Window_OnHashChange();
+                _onHashChange();
             }
             
-            $(window).bind("hashchange", _Window_OnHashChange);
+            $(window).bind("hashchange", _onHashChange);
         }
     }
     
-    function _LogOf (p_type) {
-        return _Log[p_type];
+    function _logOf (p_type) {
+        return _log[p_type];
     }
     
     function _L(){
-        if ( _HasConsole && window.console.log) {
-            window.console.log(_LogPrefix, arguments);
+        if ( _hasConsole && window.console.log) {
+            window.console.log(_logPrefix, arguments);
         }
     }
     
     function _D(){
-        if(_HasConsole && _LogOf("debug") ){
-            window.console.debug(_LogPrefix, arguments);
+        if(_hasConsole && _logOf("debug") ){
+            window.console.debug(_logPrefix, arguments);
         }
     }
     
-    function _W(){
-        if(_HasConsole && _LogOf("warning") ){
-            window.console.warn(_LogPrefix, arguments);
+    function _logWarning(){
+        if(_hasConsole && _logOf("warning") ){
+            window.console.warn(_logPrefix, arguments);
         }
     }
     
-    function _E(){
-        if(_HasConsole && _LogOf("error") ){
-            window.console.error(_LogPrefix, arguments);
+    function _logError(){
+        if(_hasConsole && _logOf("error") ){
+            window.console.error(_logPrefix, arguments);
         }
     }
     
     
     
-    function _Goto (p_hashUri) {
-        _PrevHashUrl = document.location.hash;
-        document.location.hash = p_hashUri; // Trigger hashchange event, then execute _Window_OnHashChange()
+    function _goto (p_hashUri) {
+        _prevHash = document.location.hash;
+        document.location.hash = p_hashUri; // Trigger hashchange event, then execute _onHashChange()
     }
 
-    function _Window_OnHashChange () {
+    function _onHashChange () {
         
         if ( !_welcomeCreated ) {
-            iris.e("You must set the welcome screen using iris.screen.WelcomeScreen()");
+            iris.e("You must set the welcome screen using iris.welcome()");
             return false;
         }
         
         iris.event.Notify(iris.event.BEFORE_NAVIGATION);
         
-        if ( _GotoCancelled ) {
-            _GotoCancelled = false;
+        if ( _gotoCancelled ) {
+            _gotoCancelled = false;
             return false;
         }
         
-        var prev = _PrevHashUrl.split("/"),
+        var prev = _prevHash.split("/"),
             curr = document.location.hash.split("/"),
             prevPath = "",
             currPath = "",
@@ -139,16 +139,16 @@
         ;
         
         // Check if all screen.canSleep() are true
-        if ( _PrevHashUrl !== "" ) {
+        if ( _prevHash !== "" ) {
             for ( i=0; i<prev.length; i++ ) {
                 
                 if ( prev[i] !== "" ) {
                     prevPath += prev[i] + "/";
-                    pathWithoutParams = _RemoveURLParams(prevPath);
+                    pathWithoutParams = _removeURLParams(prevPath);
                     
-                    if (_Screen.hasOwnProperty(pathWithoutParams) && _Screen[pathWithoutParams].CanSleep() === false ) {
-                        _GotoCancelled = true;
-                        document.location.hash = _PrevHashUrl;
+                    if (_screen.hasOwnProperty(pathWithoutParams) && _screen[pathWithoutParams].canSleep() === false ) {
+                        _gotoCancelled = true;
+                        document.location.hash = _prevHash;
                         return false;
                     }
                 }
@@ -168,10 +168,10 @@
                 
                 if ( hasRemainingChilds || currPath !== prevPath ) {
                     hasRemainingChilds = true;
-                    pathWithoutParams = _RemoveURLParams(prevPath);
+                    pathWithoutParams = _removeURLParams(prevPath);
 
-                    _Screen[pathWithoutParams]._sleep();
-                    _Screen[pathWithoutParams].Hide();
+                    _screen[pathWithoutParams]._sleep();
+                    _screen[pathWithoutParams].hide();
                 }
             }
         }
@@ -190,24 +190,24 @@
             if ( hasRemainingChilds || currPath !== prevPath ) {
                 hasRemainingChilds = true;
                 
-                pathWithoutParams = _RemoveURLParams(currPath);
-                _ShowScreen(pathWithoutParams, _NavGetParams(curr[i]) );
+                pathWithoutParams = _removeURLParams(currPath);
+                _ShowScreen(pathWithoutParams, _navGetParams(curr[i]) );
                 
             }
         }
         
-        _PrevHashUrl = _RemoveLastSlash(currPath);
+        _prevHash = _removeLastSlash(currPath);
     }
     
-    function _RemoveURLParams (p_url) {
-        return _RemoveLastSlash(p_url.replace(/\?[^\/]*/, ""));
+    function _removeURLParams (p_url) {
+        return _removeLastSlash(p_url.replace(/\?[^\/]*/, ""));
     }
     
-    function _RemoveLastSlash (p_url) {
+    function _removeLastSlash (p_url) {
         return p_url.replace(/\/$/, "");
     }
     
-    function _NavGetParams(p_hashPart) {
+    function _navGetParams(p_hashPart) {
         var params = {},
             regex = /([\.\w_\-]*)=([^&]*)/g,
             matches = regex.exec(p_hashPart)
@@ -221,56 +221,56 @@
         return params;
     }
     
-    function _BaseUri(p_baseUri){
+    function _baseUri(p_baseUri){
         if ( p_baseUri !== undefined ) {
-            _AppBaseUri = p_baseUri;
+            _appBaseUri = p_baseUri;
         }
         else {
             var base = document.getElementsByTagName("base");
             base = base.length > 0 ? base[0].attributes.href.value : "/";
-            _AppBaseUri = document.location.protocol + "//" + document.location.host + base;
+            _appBaseUri = document.location.protocol + "//" + document.location.host + base;
         }
-        return _AppBaseUri;
+        return _appBaseUri;
     }
 
-    function _Ajax (p_settings) {
+    function _ajax (p_settings) {
         return $.ajax(p_settings);
     }
     
-    function _AjaxSync (p_uri, p_dataType, f_success, f_error) {
+    function _ajaxSync (p_uri, p_dataType, f_success, f_error) {
         var ajaxSettings = {
             url: p_uri,
             dataType: p_dataType,
             async: false,
-            cache: _Cache,
+            cache: _cache,
             success : f_success,
             error : f_error
         };
         
-        if ( _Cache && _CacheVersion !== undefined ) {
-            ajaxSettings.data = "_=" + _CacheVersion;
+        if ( _cache && _cacheVersion !== undefined ) {
+            ajaxSettings.data = "_=" + _cacheVersion;
         }
         
         $.ajax(ajaxSettings);
     }
     
-    function _SetCacheVersion (p_value) {
-        _CacheVersion = p_value;
+    function _setCacheVersion (p_value) {
+        _cacheVersion = p_value;
     }
     
     
-    function _IncludeFiles () {
+    function _includeFiles () {
         for ( var f=0,F=arguments.length; f<F; f++ ){
-            _Include( arguments[f] );
+            _include( arguments[f] );
         }
     }
 
-    function _Include(p_uiFile) {
+    function _include(p_uiFile) {
 
-        if ( !_Includes.hasOwnProperty(p_uiFile) ) {
-            _Includes[p_uiFile] = true;
+        if ( !_includes.hasOwnProperty(p_uiFile) ) {
+            _includes[p_uiFile] = true;
             
-            var fileUrl = p_uiFile.indexOf("http") === 0 ? p_uiFile: _BaseUri() + p_uiFile;
+            var fileUrl = p_uiFile.indexOf("http") === 0 ? p_uiFile: _baseUri() + p_uiFile;
             
             _D("[iris.ui.Include]", fileUrl);
             
@@ -279,31 +279,31 @@
                 link.rel = 'stylesheet';
                 link.type = 'text/css';
                 link.href = fileUrl;
-                _Head.appendChild(link);
+                _head.appendChild(link);
             }
             else {
                 var isHtml = p_uiFile.lastIndexOf(".html") > -1;
-                _AjaxSync(
+                _ajaxSync(
                     fileUrl,
                     (isHtml ? "html" : "text"),
                     function (p_data) {
-                        _LastIncludePath = p_uiFile;
+                        _lastIncludePath = p_uiFile;
                         
                         if ( isHtml ) {
-                            _Includes[p_uiFile] = _LocaleParse(p_data);
+                            _includes[p_uiFile] = _localeParse(p_data);
                         }
                         else {
                             var script = document.createElement("script");
                             script.language = "javascript";
                             script.type = "text/javascript";
                             script.text = p_data;
-                            _Head.appendChild(script);
+                            _head.appendChild(script);
                         }
                         
                     },
                     function (p_err) {
-                        delete _Includes[fileUrl];
-                        _E(p_err.status, "Error loading file '" + fileUrl + "'");
+                        delete _includes[fileUrl];
+                        _logError(p_err.status, "Error loading file '" + fileUrl + "'");
                     }
                 );
             }
@@ -311,56 +311,56 @@
     }
     
     
-    function _ConfigLoad (p_json){
+    function _configLoad (p_json){
         if ( p_json ) {
-            $.extend(_Config, p_json);
+            $.extend(_config, p_json);
 
-            _addGlobal( _Config.global );
+            _addGlobal( _config.global );
 
-            var currentEnv = _GetEnv();
-            if ( _Config.log ) {
-                var logConfig = _Config.log[currentEnv];
+            var currentEnv = _getEnv();
+            if ( _config.log ) {
+                var logConfig = _config.log[currentEnv];
                 var logs = logConfig.split(",");
                 for ( var i=0; i < logs.length; i++ ) {
-                    _Log[ $.trim(logs[i]) ] = true;
+                    _log[ $.trim(logs[i]) ] = true;
                 }
             }
             
-            _Cache = true;
-            if ( _Config.hasOwnProperty("environments-nocache") ) {
-                var envNocache = _Config["environments-nocache"].split(",");
+            _cache = true;
+            if ( _config.hasOwnProperty("environments-nocache") ) {
+                var envNocache = _config["environments-nocache"].split(",");
                 for ( var f=0, F=envNocache.length; f<F; f++ ) {
                     if ( envNocache[f] === currentEnv ) {
-                        _Cache = false;
+                        _cache = false;
                         break;
                     }
                 }
             }
             
-            _addLocal( _Config.local );
+            _addLocal( _config.local );
         }
-        return _Config;
+        return _config;
     }
     
-    function _GetEnv (p_env) {
+    function _getEnv (p_env) {
         if ( p_env !== undefined ) {
-            _Env = p_env;
+            _env = p_env;
         }
         else {
-            if ( !_Env ) {
-                _Env = _Config["environment-default"];
-                for (var p in _Config.environment ){
+            if ( !_env ) {
+                _env = _config["environment-default"];
+                for (var p in _config.environment ){
                     if ( document.location.href.indexOf( p ) > -1 ) {
-                        _Env = _Config.environment[p];
+                        _env = _config.environment[p];
                         break;
                     }
                 }
-                if ( !_Env ) {
-                    _Env = "pro";
+                if ( !_env ) {
+                    _env = "pro";
                 }
-                _LogPrefix = "[" + _Env + "]";
+                _logPrefix = "[" + _env + "]";
             }
-            return _Env;
+            return _env;
         }
     }
     
@@ -368,19 +368,19 @@
     // Global
     //
     function _addGlobal(p_hash){
-        $.extend(_Global, p_hash);
-        return _Global;
+        $.extend(_global, p_hash);
+        return _global;
     }
 
     function _getOrSetGlobal (p_label, p_value){
         if ( p_label && p_value !== undefined ) {
-            _Global[p_label] = p_value;     
+            _global[p_label] = p_value;     
         }
         else if ( p_label ) {
-            return _Global[p_label];
+            return _global[p_label];
         }
         else {
-            return _Global;
+            return _global;
         }
     }
 
@@ -397,19 +397,19 @@
     // Local
     //
     function _addLocal(p_hash){
-        $.extend(_Local, p_hash);
-        return _Local;
+        $.extend(_local, p_hash);
+        return _local;
     }
 
     function _getOrSetLocal(p_label, p_value){
         if ( p_label && p_value !== undefined ) {
-            _Local[p_label][_GetEnv()] = p_value;     
+            _local[p_label][_getEnv()] = p_value;     
         }
         else if ( p_label ) {
-            return _Local[p_label][_GetEnv()];
+            return _local[p_label][_getEnv()];
         }
         else  {
-            return _Local;
+            return _local;
         }
     }
     
@@ -425,7 +425,7 @@
     // EVENT
     //
     function _FindEvent(p_eventName, f_func){
-        var events = _Event[p_eventName];
+        var events = _event[p_eventName];
         if ( events ) {
             for ( var f=0, F=events.length; f<F; f++ ) {
                 if ( events[f] === f_func ) {
@@ -436,29 +436,29 @@
         return -1;
     }
     
-    function _EventSubscribe(p_eventName, f_func){
-        if ( !_Event[p_eventName] ) {
-            _Event[p_eventName] = [];
+    function _eventSubscribe(p_eventName, f_func){
+        if ( !_event[p_eventName] ) {
+            _event[p_eventName] = [];
         }
 
         var index = _FindEvent( p_eventName, f_func );
         if ( index === -1 ) {
-            index = _Event[p_eventName].length;
+            index = _event[p_eventName].length;
         }
 
-        _Event[p_eventName][index] = f_func;
+        _event[p_eventName][index] = f_func;
     }
     
-    function _EventRemove(p_eventName, f_func){
+    function _eventRemove(p_eventName, f_func){
         var index = _FindEvent(p_eventName, f_func);
         if ( index !== -1 ){
-            _Event[p_eventName].splice(index,1);
+            _event[p_eventName].splice(index,1);
         }
     }
 
-    function _EventNotify(p_eventName, p_data){
-        if ( _Event[p_eventName] ) {
-            var funcs = _Event[p_eventName];
+    function _eventNotify(p_eventName, p_data){
+        if ( _event[p_eventName] ) {
+            var funcs = _event[p_eventName];
             for ( var f=0, F=funcs.length; f<F; f++ ) {
                 funcs[f](p_data);
             }
@@ -493,16 +493,16 @@
     //
     // LANG
     //
-    function _LocaleGet(p_locale) {
+    function _localeGet(p_locale) {
         if ( p_locale !== undefined ) {
-            _Locale = p_locale;
+            _locale = p_locale;
         }
         else {
-            return _Locale;
+            return _locale;
         }
     }
 
-    function _LocaleParse(p_html){
+    function _localeParse(p_html){
         var html = p_html;
         var matches = html.match(/@@[A-Za-z_\.]+@@/g);
         
@@ -531,30 +531,30 @@
     function _addLang(p_locale, p_data){
         _D("[add lang]", p_locale, p_data);
         
-        if ( _Locale === null ) {
-            _Locale = p_locale;
+        if ( _locale === null ) {
+            _locale = p_locale;
         }
         
-        if ( !_Lang.hasOwnProperty(p_locale) ) {
-            _Lang[p_locale] = {};
+        if ( !_lang.hasOwnProperty(p_locale) ) {
+            _lang[p_locale] = {};
         }
         
-        $.extend(_Lang[p_locale], p_data);
+        $.extend(_lang[p_locale], p_data);
     }
 
     function _getLang (p_label) {
         var value;
-        if ( _Lang.hasOwnProperty(_Locale) ) {
-            value = _GetObjectValue(_Lang[_Locale], p_label);
+        if ( _lang.hasOwnProperty(_locale) ) {
+            value = _GetObjectValue(_lang[_locale], p_label);
             if ( value === undefined ) {
-                iris.w("Label '" + p_label + "' not found in Locale '" + _Locale + "'", _Lang[_Locale]);
+                iris.w("Label '" + p_label + "' not found in Locale '" + _locale + "'", _lang[_locale]);
             }
             if ( typeof value === "object" ) {
-                iris.w("Label '" + p_label + "' is an object but must be a property in Locale '" + _Locale + "'", _Lang[_Locale]);
+                iris.w("Label '" + p_label + "' is an object but must be a property in Locale '" + _locale + "'", _lang[_locale]);
             }
         }
         else {
-            iris.w("Locale '" + _Locale + "' not loaded");
+            iris.w("Locale '" + _locale + "' not loaded");
         }
         return ( value ) ? value : "??" + p_label + "??";
     }
@@ -562,7 +562,7 @@
     function _loadLang (p_locale, p_uri, p_settings) {
         _D("[iris.lang.LoadFrom]", p_locale, p_uri);
         
-        _AjaxSync(
+        _ajaxSync(
             p_uri,
             "json",
             function (p_data) {
@@ -574,7 +574,7 @@
                   }
             },
             function (p_err) {
-                  _E(p_err.status, "Error loading lang file", p_uri);
+                  _logError(p_err.status, "Error loading lang file", p_uri);
                   
                   if ( p_settings && p_settings.hasOwnProperty("error") ) {
                       p_settings.error(p_locale);
@@ -591,13 +591,13 @@
     // ADDON
     //
     function _ApplyAddOn( p_id, p_uis, p_settings ){
-        _Include(p_id);
+        _include(p_id);
         
         var addOn = new AddOn ();
         addOn._components = [];
         addOn.settings =  {};
         
-        _AddOns[p_id]( addOn );
+        _addOns[p_id]( addOn );
         addOn.Settings(p_settings);
         addOn.AddAll(p_uis);
         addOn.Create();
@@ -606,21 +606,21 @@
 
     
     function _CreateAddOn( f_addOn  ){
-        _AddOns[ _LastIncludePath ] = f_addOn;
+        _addOns[ _lastIncludePath ] = f_addOn;
     }
     
     //
     // UI
     //
     function _registerUI (f_ui) {
-        _Includes[_LastIncludePath] = f_ui;
+        _includes[_lastIncludePath] = f_ui;
     }
     
     function _InstanceUI (p_$container, p_uiId, p_jsUrl, p_uiSettings, p_templateMode) {
-        _Include(p_jsUrl);
+        _include(p_jsUrl);
         
         var uiInstance = new UI();
-        _Includes[p_jsUrl](uiInstance);
+        _includes[p_jsUrl](uiInstance);
         uiInstance.id = p_uiId;
         uiInstance.el = {};
         uiInstance.con = p_$container;
@@ -661,37 +661,37 @@
     // SCREEN
     //
     function _registerScreen (f_screen) {
-        _Includes[_LastIncludePath] = f_screen;
+        _includes[_lastIncludePath] = f_screen;
     }
     
     function _instanceScreen (p_screenPath) {
         
-        var jsUrl = _ScreenUrl[p_screenPath];
-        _Include(jsUrl);
+        var jsUrl = _screenUrl[p_screenPath];
+        _include(jsUrl);
         
-        var screenInstance = new Screen();
-        _Includes[jsUrl](screenInstance);
+        var screenObj = new Screen();
+        _includes[jsUrl](screenObj);
 
-        screenInstance.id = p_screenPath;
-        screenInstance.el = {};
-        screenInstance.uis = [];
-        screenInstance.con = _ScreenContainer[p_screenPath];
-        screenInstance.fileJs = jsUrl;
-        screenInstance.Create();
-        screenInstance.Hide();
+        screenObj.id = p_screenPath;
+        screenObj.el = {};
+        screenObj.uis = [];
+        screenObj.con = _screenContainer[p_screenPath];
+        screenObj.fileJs = jsUrl;
+        screenObj.Create();
+        screenObj.hide();
         
-        _Screen[p_screenPath] = screenInstance;
+        _screen[p_screenPath] = screenObj;
     }
     
     function _DestroyScreen (p_screenPath) {
-        if ( _Screen.hasOwnProperty(p_screenPath) ) {
-            var contextId = _Screen[p_screenPath].get().parent().data("screen_context");
-            if ( _LastScreen[contextId] === _Screen[p_screenPath] ) {
-                delete _LastScreen[contextId];
+        if ( _screen.hasOwnProperty(p_screenPath) ) {
+            var contextId = _screen[p_screenPath].get().parent().data("screen_context");
+            if ( _lastScreen[contextId] === _screen[p_screenPath] ) {
+                delete _lastScreen[contextId];
             }
-            _Screen[p_screenPath]._destroy();
-            _Screen[p_screenPath].get().remove();
-            delete _Screen[p_screenPath];
+            _screen[p_screenPath]._destroy();
+            _screen[p_screenPath].get().remove();
+            delete _screen[p_screenPath];
         }
         else {
             iris.w("Error removing the screen \"" + p_screenPath + "\", path not found.");
@@ -700,25 +700,25 @@
     
     function _ShowScreen (p_screenPath, p_params) {
 
-        if ( !_ScreenContainer.hasOwnProperty(p_screenPath) ) {
-            _E( "Screen '" + p_screenPath + "' must be registered with self.screen() before go to" );
+        if ( !_screenContainer.hasOwnProperty(p_screenPath) ) {
+            _logError( "Screen '" + p_screenPath + "' must be registered with self.screen() before go to" );
         }
         else {
-            if ( !_Screen.hasOwnProperty(p_screenPath) ) {
+            if ( !_screen.hasOwnProperty(p_screenPath) ) {
                 _instanceScreen(p_screenPath);
             }
 
-            var currentScreen = _Screen[p_screenPath];
+            var currentScreen = _screen[p_screenPath];
             var contextId = currentScreen.get().parent().data("screen_context");
-            if ( _LastScreen.hasOwnProperty(contextId) ) {
-                var lastScreen = _LastScreen[contextId];
+            if ( _lastScreen.hasOwnProperty(contextId) ) {
+                var lastScreen = _lastScreen[contextId];
                 lastScreen._sleep();
-                lastScreen.Hide();
+                lastScreen.hide();
             }
             currentScreen._awake( p_params ? p_params : {} );
             currentScreen.Show();
 
-            _LastScreen[contextId] = currentScreen;
+            _lastScreen[contextId] = currentScreen;
         }
     }
 
@@ -796,16 +796,16 @@
     }
     
     function _GetRegionalSetting (p_label) {
-        if ( _Regional.hasOwnProperty(_Locale) ) {
-            if ( _Regional[_Locale].hasOwnProperty(p_label) ) {
-                return _Regional[_Locale][p_label];
+        if ( _Regional.hasOwnProperty(_locale) ) {
+            if ( _Regional[_locale].hasOwnProperty(p_label) ) {
+                return _Regional[_locale][p_label];
             }
             else {
-                iris.e("Regional setting '" + p_label + "' not found for locale '" + _Locale + "'");
+                iris.e("Regional setting '" + p_label + "' not found for locale '" + _locale + "'");
             }
         }
         else {
-            iris.e("Regional for locale '" + _Locale + "' not found");
+            iris.e("Regional for locale '" + _locale + "' not found");
         }
     }
     
@@ -814,7 +814,7 @@
     }
     
     function _DateFormatChar (p_formatChar, p_date) {
-        var regional = _Regional[_Locale];
+        var regional = _Regional[_locale];
         switch (p_formatChar) {
             case "y":
                 return String(p_date.getFullYear()).substring(2);
@@ -994,7 +994,7 @@
         
         iris.include(p_htmlUrl);
         
-        var tmplHtml = p_params ? _TemplateParse(_Includes[p_htmlUrl], p_params, p_htmlUrl) : _Includes[p_htmlUrl];
+        var tmplHtml = p_params ? _TemplateParse(_includes[p_htmlUrl], p_params, p_htmlUrl) : _includes[p_htmlUrl];
         var $tmpl = $(tmplHtml);
         
         this._$tmpl = $tmpl;
@@ -1245,42 +1245,42 @@
             $cont.data("screen_context", this.id + "|" + p_containerId);
         }
 
-        _ScreenUrl[p_screenPath] = p_jsUrl;
-        _ScreenContainer[p_screenPath] = $cont;
+        _screenUrl[p_screenPath] = p_jsUrl;
+        _screenContainer[p_screenPath] = $cont;
     };
 
 
     var iris = {
-        config : _ConfigLoad,
-        env : _GetEnv,
+        config : _configLoad,
+        env : _getEnv,
         global : _global,
         local : _local,
 
         lang : _lang,
-        locale : _LocaleGet,
+        locale : _localeGet,
 
         l : _L,
         d : _D,
-        w : _W,
-        e : _E,
+        w : _logWarning,
+        e : _logError,
 
         BEFORE_NAVIGATION : "iris_before_navigation",
 
-        notify : _EventNotify,
-        on : _EventSubscribe,
-        off : _EventRemove,
+        notify : _eventNotify,
+        on : _eventSubscribe,
+        off : _eventRemove,
 
-        baseUri : _BaseUri,
-        ajax : _Ajax,
-        cacheVersion : _SetCacheVersion,
+        baseUri : _baseUri,
+        ajax : _ajax,
+        cacheVersion : _setCacheVersion,
 
-        include : _IncludeFiles,
+        include : _includeFiles,
         screen : _registerScreen,
         ui :  _registerUI,
         
         regional : _AddRegional,
         welcome : _welcome,
-        goto : _Goto,
+        goto : _goto,
 
         destroyScreen : _DestroyScreen,
 
