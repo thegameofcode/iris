@@ -8,7 +8,7 @@
 
 (function ($, window) {
 
-  var   _cacheVersion,
+    var _cacheVersion,
         _JQ_MIN_VER = 1.5,
         _env = null,
         _log = {"error":true},
@@ -34,6 +34,33 @@
         _gotoCancelled = false,
         _welcomeCreated = false
     ;
+
+    var _Regional = {
+         "en-US" : {
+            dayNames : ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+            monthNames : ["January","February","March","April","May","June","July","August","September","October","November","December"],
+            dateFormat : "m/d/Y h:i:s",
+            currency : {
+                formatPos : "n",
+                formatNeg : "(n)",
+                decimal : ".",
+                thousand : ",",
+                precision : 2
+            }
+        },
+        "es-ES" : {
+            dayNames : ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"],
+            monthNames : ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"],
+            dateFormat : "d/m/Y H:i:s",
+            currency : {
+                formatPos : "n",
+                formatNeg : "-n",
+                decimal : ",",
+                thousand : ".",
+                precision : 2
+            }
+        }
+    };
     
     function _welcome (p_jsUrl) {
         
@@ -84,13 +111,13 @@
         return _log[p_type];
     }
     
-    function _L(){
+    function _log(){
         if ( _hasConsole && window.console.log) {
             window.console.log(_logPrefix, arguments);
         }
     }
     
-    function _D(){
+    function _logDebug(){
         if(_hasConsole && _logOf("debug") ){
             window.console.debug(_logPrefix, arguments);
         }
@@ -191,7 +218,7 @@
                 hasRemainingChilds = true;
                 
                 pathWithoutParams = _removeURLParams(currPath);
-                _ShowScreen(pathWithoutParams, _navGetParams(curr[i]) );
+                _showScreen(pathWithoutParams, _navGetParams(curr[i]) );
                 
             }
         }
@@ -272,7 +299,7 @@
             
             var fileUrl = p_uiFile.indexOf("http") === 0 ? p_uiFile: _baseUri() + p_uiFile;
             
-            _D("[iris.ui.Include]", fileUrl);
+            _logDebug("[iris.include]", fileUrl);
             
             if ( p_uiFile.lastIndexOf(".css") > -1 ) {
                 var link  = document.createElement('link');
@@ -303,7 +330,7 @@
                     },
                     function (p_err) {
                         delete _includes[fileUrl];
-                        _logError(p_err.status, "Error loading file '" + fileUrl + "'");
+                        _logError(p_err.status, "error loading file '" + fileUrl + "'");
                     }
                 );
             }
@@ -424,7 +451,7 @@
     //
     // EVENT
     //
-    function _FindEvent(p_eventName, f_func){
+    function _findEvent(p_eventName, f_func){
         var events = _event[p_eventName];
         if ( events ) {
             for ( var f=0, F=events.length; f<F; f++ ) {
@@ -441,7 +468,7 @@
             _event[p_eventName] = [];
         }
 
-        var index = _FindEvent( p_eventName, f_func );
+        var index = _findEvent( p_eventName, f_func );
         if ( index === -1 ) {
             index = _event[p_eventName].length;
         }
@@ -450,7 +477,7 @@
     }
     
     function _eventRemove(p_eventName, f_func){
-        var index = _FindEvent(p_eventName, f_func);
+        var index = _findEvent(p_eventName, f_func);
         if ( index !== -1 ){
             _event[p_eventName].splice(index,1);
         }
@@ -468,7 +495,7 @@
     
     
     
-    function _GetObjectValue (p_obj, p_label) {
+    function _getObjectValue (p_obj, p_label) {
         var value;
         if ( p_label.indexOf(".") > -1 ){
             var labels = p_label.split(".");
@@ -529,7 +556,7 @@
     }
 
     function _addLang(p_locale, p_data){
-        _D("[add lang]", p_locale, p_data);
+        _logDebug("[add lang]", p_locale, p_data);
         
         if ( _locale === null ) {
             _locale = p_locale;
@@ -545,7 +572,7 @@
     function _getLang (p_label) {
         var value;
         if ( _lang.hasOwnProperty(_locale) ) {
-            value = _GetObjectValue(_lang[_locale], p_label);
+            value = _getObjectValue(_lang[_locale], p_label);
             if ( value === undefined ) {
                 iris.w("Label '" + p_label + "' not found in Locale '" + _locale + "'", _lang[_locale]);
             }
@@ -560,14 +587,14 @@
     }
 
     function _loadLang (p_locale, p_uri, p_settings) {
-        _D("[iris.lang.LoadFrom]", p_locale, p_uri);
+        _logDebug("[iris.lang.LoadFrom]", p_locale, p_uri);
         
         _ajaxSync(
             p_uri,
             "json",
             function (p_data) {
                   _addLang(p_locale, p_data);
-                  _D("[iris.lang.LoadFrom] loaded", p_data);
+                  _d("[iris.lang.LoadFrom] loaded", p_data);
 
                   if ( p_settings && p_settings.hasOwnProperty("success") ) {
                       p_settings.success(p_locale);
@@ -616,7 +643,7 @@
         _includes[_lastIncludePath] = f_ui;
     }
     
-    function _InstanceUI (p_$container, p_uiId, p_jsUrl, p_uiSettings, p_templateMode) {
+    function _instanceUI (p_$container, p_uiId, p_jsUrl, p_uiSettings, p_templateMode) {
         _include(p_jsUrl);
         
         var uiInstance = new UI();
@@ -632,7 +659,7 @@
         }
         
         p_uiSettings = p_uiSettings === undefined ? {} : p_uiSettings;
-        var jqToHash = _JqToHash(p_$container);
+        var jqToHash = _jqToHash(p_$container);
         
         $.extend(uiInstance.settings, jqToHash, p_uiSettings);
 
@@ -642,7 +669,7 @@
     }
 
     // @private
-    function _JqToHash(p_$obj) {
+    function _jqToHash(p_$obj) {
         var hash = {};
         var attrs = p_$obj.get(0).attributes;
         var label;
@@ -683,7 +710,7 @@
         _screen[p_screenPath] = screenObj;
     }
     
-    function _DestroyScreen (p_screenPath) {
+    function _destroyScreen (p_screenPath) {
         if ( _screen.hasOwnProperty(p_screenPath) ) {
             var contextId = _screen[p_screenPath].get().parent().data("screen_context");
             if ( _lastScreen[contextId] === _screen[p_screenPath] ) {
@@ -698,7 +725,7 @@
         }
     }
     
-    function _ShowScreen (p_screenPath, p_params) {
+    function _showScreen (p_screenPath, p_params) {
 
         if ( !_screenContainer.hasOwnProperty(p_screenPath) ) {
             _logError( "Screen '" + p_screenPath + "' must be registered with self.screen() before go to" );
@@ -722,7 +749,7 @@
         }
     }
 
-    function _TemplateParse (p_html, p_data, p_htmlUrl) {
+    function _tmplParse (p_html, p_data, p_htmlUrl) {
         var result = p_html,
             formatLabel,
             value,
@@ -731,14 +758,14 @@
         ;
 
         while ( matches ) {
-            value = _GetObjectValue(p_data, matches[1]);
+            value = _getObjectValue(p_data, matches[1]);
             
             if ( value !== undefined ) {
                 formatLabel = matches[2];
                 if ( formatLabel ) {
                     switch (formatLabel) {
                         case "date":
-                            value = _DateFormat(value, matches[3]);
+                            value = _dateFormat(value, matches[3]);
                             break;
                         case "currency":
                             value = _ParseCurrency(value);
@@ -761,7 +788,7 @@
     }
     
     function _ParseCurrency (p_value) {
-        var settings = _GetRegionalSetting("currency");
+        var settings = _getRegionalSetting("currency");
             
         var val = Number(p_value);
         var format = (val >= 0) ? settings.formatPos : settings.formatNeg;
@@ -779,9 +806,9 @@
         return format.replace("n", num + settings.decimal + decimal );
     }
     
-    function _DateFormat (p_date, p_format) {
+    function _dateFormat (p_date, p_format) {
         if ( !p_format ) {
-            p_format = _GetRegionalSetting("dateFormat");
+            p_format = _getRegionalSetting("dateFormat");
         }
         
         if ( typeof p_date !== "object" ) {
@@ -790,12 +817,12 @@
         
         var dateFormat = "";
         for (var f=0, F=p_format.length; f<F; f++) {
-            dateFormat += _DateFormatChar(p_format[f], p_date);
+            dateFormat += _dateFormatChar(p_format[f], p_date);
         }
         return dateFormat;
     }
     
-    function _GetRegionalSetting (p_label) {
+    function _getRegionalSetting (p_label) {
         if ( _Regional.hasOwnProperty(_locale) ) {
             if ( _Regional[_locale].hasOwnProperty(p_label) ) {
                 return _Regional[_locale][p_label];
@@ -809,11 +836,11 @@
         }
     }
     
-    function _LeadingZero (p_number) {
+    function _leadingZero (p_number) {
         return (p_number < 10) ? "0" + p_number : p_number;
     }
     
-    function _DateFormatChar (p_formatChar, p_date) {
+    function _dateFormatChar (p_formatChar, p_date) {
         var regional = _Regional[_locale];
         switch (p_formatChar) {
             case "y":
@@ -822,7 +849,7 @@
                 return p_date.getFullYear();
             case "m":
                 var m = p_date.getMonth()+1;
-                return _LeadingZero(m);
+                return _leadingZero(m);
             case "n":
                 return p_date.getMonth()+1;
             case "M":
@@ -833,24 +860,24 @@
                 return regional.monthNames[p_date.getMonth()];
             case "d":
                 var d = p_date.getDate();
-                return _LeadingZero(d);
+                return _leadingZero(d);
             case "D":
                 return regional.dayNames[p_date.getDay()].substring(0, 3);
             case "l":
                 return regional.dayNames[p_date.getDay()];
             case "s":
                 var s = p_date.getSeconds();
-                return _LeadingZero(s);
+                return _leadingZero(s);
             case "i":
                 var i = p_date.getMinutes();
-                return _LeadingZero(i);
+                return _leadingZero(i);
             case "H":
                 var h = p_date.getHours();
-                return _LeadingZero(h);
+                return _leadingZero(h);
             case "h":
                 var hour = p_date.getHours();
                 hour = (hour % 12) === 0 ? 12 : hour % 12;
-                return _LeadingZero(hour);
+                return _leadingZero(hour);
             case "a":
                 return (p_date.getHours() > 12) ? "p.m." : "a.m.";
             case "A":
@@ -861,33 +888,6 @@
                 return p_formatChar;
         }
     }
-
-    var _Regional = {
-         "en-US" : {
-            dayNames : ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
-            monthNames : ["January","February","March","April","May","June","July","August","September","October","November","December"],
-            dateFormat : "m/d/Y h:i:s",
-            currency : {
-                formatPos : "n",
-                formatNeg : "(n)",
-                decimal : ".",
-                thousand : ",",
-                precision : 2
-            }
-        },
-        "es-ES" : {
-            dayNames : ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"],
-            monthNames : ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"],
-            dateFormat : "d/m/Y H:i:s",
-            currency : {
-                formatPos : "n",
-                formatNeg : "-n",
-                decimal : ",",
-                thousand : ".",
-                precision : 2
-            }
-        }
-    };
 
     function _AddRegional (p_locale, p_regional) {
         _Regional[p_locale] = p_regional;
@@ -994,7 +994,7 @@
         
         iris.include(p_htmlUrl);
         
-        var tmplHtml = p_params ? _TemplateParse(_includes[p_htmlUrl], p_params, p_htmlUrl) : _includes[p_htmlUrl];
+        var tmplHtml = p_params ? _tmplParse(_includes[p_htmlUrl], p_params, p_htmlUrl) : _includes[p_htmlUrl];
         var $tmpl = $(tmplHtml);
         
         this._$tmpl = $tmpl;
@@ -1074,7 +1074,7 @@
     Component.prototype.ui = function (p_id, p_jsUrl, p_uiSettings, p_templateMode) {
         var $container = this.get(p_id);
         if ( $container.size() === 1 ) {
-            var uiInstance = _InstanceUI($container, $container.data("id"), p_jsUrl, p_uiSettings, p_templateMode);
+            var uiInstance = _instanceUI($container, $container.data("id"), p_jsUrl, p_uiSettings, p_templateMode);
             this.uis[this.uis.length] = uiInstance;
             return uiInstance;
         }
@@ -1259,8 +1259,8 @@
         lang : _lang,
         locale : _localeGet,
 
-        l : _L,
-        d : _D,
+        l : _log,
+        d : _logDebug,
         w : _logWarning,
         e : _logError,
 
@@ -1282,9 +1282,9 @@
         welcome : _welcome,
         goto : _goto,
 
-        destroyScreen : _DestroyScreen,
+        destroyScreen : _destroyScreen,
 
-        date : _DateFormat,
+        date : _dateFormat,
         currency : _ParseCurrency,
 
         addOn : _CreateAddOn,
