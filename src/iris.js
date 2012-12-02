@@ -18,11 +18,11 @@
         _screenContainer = {},
         _lastScreen = {},
         _prevHash = "",
-        _global = {},
-        _local = {},
+        _globals = {},
+        _locals = {},
         _locale = null,
         _config = {},
-        _lang = {},
+        _langs = {},
         _event = {},
         _includes = {},
         _addOns = {},
@@ -111,7 +111,7 @@
         return _log[p_type];
     }
     
-    function _log(){
+    function _logMsg(){
         if ( _hasConsole && window.console.log) {
             window.console.log(_logPrefix, arguments);
         }
@@ -395,19 +395,19 @@
     // Global
     //
     function _addGlobal(p_hash){
-        $.extend(_global, p_hash);
-        return _global;
+        $.extend(_globals, p_hash);
+        return _globals;
     }
 
     function _getOrSetGlobal (p_label, p_value){
         if ( p_label && p_value !== undefined ) {
-            _global[p_label] = p_value;     
+            _globals[p_label] = p_value;     
         }
         else if ( p_label ) {
-            return _global[p_label];
+            return _globals[p_label];
         }
         else {
-            return _global;
+            return _globals;
         }
     }
 
@@ -424,19 +424,19 @@
     // Local
     //
     function _addLocal(p_hash){
-        $.extend(_local, p_hash);
+        $.extend(_locals, p_hash);
         return _local;
     }
 
     function _getOrSetLocal(p_label, p_value){
         if ( p_label && p_value !== undefined ) {
-            _local[p_label][_getEnv()] = p_value;     
+            _locals[p_label][_getEnv()] = p_value;     
         }
         else if ( p_label ) {
-            return _local[p_label][_getEnv()];
+            return _locals[p_label][_getEnv()];
         }
         else  {
-            return _local;
+            return _locals;
         }
     }
     
@@ -562,22 +562,22 @@
             _locale = p_locale;
         }
         
-        if ( !_lang.hasOwnProperty(p_locale) ) {
-            _lang[p_locale] = {};
+        if ( !_langs.hasOwnProperty(p_locale) ) {
+            _langs[p_locale] = {};
         }
         
-        $.extend(_lang[p_locale], p_data);
+        $.extend(_langs[p_locale], p_data);
     }
 
     function _getLang (p_label) {
         var value;
-        if ( _lang.hasOwnProperty(_locale) ) {
-            value = _getObjectValue(_lang[_locale], p_label);
+        if ( _langs.hasOwnProperty(_locale) ) {
+            value = _getObjectValue(_langs[_locale], p_label);
             if ( value === undefined ) {
-                iris.w("Label '" + p_label + "' not found in Locale '" + _locale + "'", _lang[_locale]);
+                iris.w("Label '" + p_label + "' not found in Locale '" + _locale + "'", _langs[_locale]);
             }
             if ( typeof value === "object" ) {
-                iris.w("Label '" + p_label + "' is an object but must be a property in Locale '" + _locale + "'", _lang[_locale]);
+                iris.w("Label '" + p_label + "' is an object but must be a property in Locale '" + _locale + "'", _langs[_locale]);
             }
         }
         else {
@@ -587,14 +587,14 @@
     }
 
     function _loadLang (p_locale, p_uri, p_settings) {
-        _logDebug("[iris.lang.LoadFrom]", p_locale, p_uri);
+        _logDebug("[iris.lang]", p_locale, p_uri);
         
         _ajaxSync(
             p_uri,
             "json",
             function (p_data) {
                   _addLang(p_locale, p_data);
-                  _d("[iris.lang.LoadFrom] loaded", p_data);
+                  _logDebug("[iris.lang]", p_data);
 
                   if ( p_settings && p_settings.hasOwnProperty("success") ) {
                       p_settings.success(p_locale);
@@ -1256,16 +1256,15 @@
         global : _global,
         local : _local,
 
-        lang : _lang,
-        locale : _localeGet,
-
-        l : _log,
+        l : _logMsg,
         d : _logDebug,
         w : _logWarning,
         e : _logError,
 
-        BEFORE_NAVIGATION : "iris_before_navigation",
+        lang : _lang,
+        locale : _localeGet,
 
+        BEFORE_NAVIGATION : "iris_before_navigation",
         notify : _eventNotify,
         on : _eventSubscribe,
         off : _eventRemove,
