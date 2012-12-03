@@ -126,7 +126,7 @@ iris.UI(
 		self.create = function () {
 			console.log("UI Create");
 			self.tmpl("example-ui.html");
-			self.get("button").mousedown(greet);
+			self.get("button").on("click", greet);
 		}
 
 		function greet () {
@@ -247,7 +247,7 @@ Is performed automatically using the `@@` notation:
 
 ```html
 <div>
-    <p>@@GRETTING@@</p>
+    <p>@@GREETING@@</p>
 </div>
 ```
 

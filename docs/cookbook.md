@@ -9,11 +9,11 @@ You can download all source code from the **iris-example** folder at repository:
 
 1 - Create the new screen files
 ```javascript
-iris.Screen(
+iris.screen(
 	function (self) {
 		
-		self.Create = function () {
-			self.Template("other-screen.html");
+		self.create = function () {
+			self.tmpl("other-screen.html");
 		}
 		
 		self.Awake = function () {
@@ -44,16 +44,16 @@ iris.Screen(
 </div>
 ```
 
-3 - Register the new screen in its parent class (**self.AddScreen()**), eg *welcome-screen.js*, and navigate to it (**iris.Goto()**):
+3 - Register the new screen in its parent class (**self.screen()**), eg *welcome-screen.js*, and navigate to it (**iris.goto()**):
 ```javascript
-iris.Screen(
+iris.screen(
 	function (self) {
-		self.Create = function () {
-			self.Template("welcome-screen.html");
+		self.create = function () {
+			self.tmpl("welcome-screen.html");
 			console.log("Welcome Screen Created");
 
-			self.AddScreen("screen_container", "#other-screen", "other-screen.js");
-			iris.Goto("#other-screen");
+			self.screen("screen_container", "#other-screen", "other-screen.js");
+			iris.goto("#other-screen");
 		}
 	}
 );
@@ -72,14 +72,14 @@ iris.Screen(
 
 **/example/screen/example_instance.js**
 ```javascript
-iris.Screen(function(self) {
-	self.Create = function() {
-		self.Template("example/screen/example_instance.html");
-		self.$Get("btn_create").click(_Create);
+iris.screen(function(self) {
+	self.create = function() {
+		self.tmpl("example/screen/example_instance.html");
+		self.get("btn_create").click(creteUi);
 	}
 
-	function _Create() {
-		self.InstanceUI("container", "example/ui/example_basic.js");
+	function creteUi() {
+		self.ui("container", "example/ui/example_basic.js");
 	}
 });
 ```
@@ -93,9 +93,9 @@ iris.Screen(function(self) {
 
 **/example/ui/example_basic.js**
 ```javascript
-iris.UI(function(self) {
-	self.Create = function() {
-		self.Template("example/ui/example_basic.html");
+iris.ui(function(self) {
+	self.create = function() {
+		self.tmpl("example/ui/example_basic.html");
 	};
 });
 ```
@@ -116,17 +116,17 @@ iris.UI(function(self) {
 
 **/example/screen/example_list.js**
 ```javascript
-iris.Screen(function(self) {
-	var _Count = 0;
+iris.screen(function(self) {
+	var count = 0;
 	
-	self.Create = function() {
-		self.Template("example/screen/example_list.html");
-		self.$Get("btn_create").click(_Create);
+	self.create = function() {
+		self.tmpl("example/screen/example_list.html");
+		self.get("btn_create").click(creteUi);
 	}
 
-	function _Create() {
-		self.InstanceUI("container", "example/ui/example.js", {
-			"count" : _Count++
+	function creteUi() {
+		self.ui("container", "example/ui/example.js", {
+			"count" : count++
 		});
 	}
 });
@@ -141,12 +141,12 @@ iris.Screen(function(self) {
 
 **/example/ui/example.js**
 ```javascript
-iris.UI(function(self) {
+iris.ui(function(self) {
 
-	self.Create = function() {
-		self.TemplateMode(self.TEMPLATE_APPEND);
-		self.Template("example/ui/example.html");
-		self.$Get("label").text("Example " + self.Setting("count"));
+	self.create = function() {
+		self.tmplMode(self.TEMPLATE_APPEND);
+		self.tmpl("example/ui/example.html");
+		self.get("label").text("Example " + self.setting("count"));
 
 	};
 
@@ -175,34 +175,34 @@ iris.UI(function(self) {
 ```
 **/example/screen/example_destroy.js**
 ```javascript
-iris.Screen(function(self) {
-	var _Cont = 0
-	,	_UIs = []
-	,	_$InputIdx
+iris.screen(function(self) {
+	var count = 0
+	,	uiInstances = []
+	,	inputIndex
 	;
 	
-	self.Create = function() {
-		self.Template("example/screen/example_destroy.html");
+	self.create = function() {
+		self.tmpl("example/screen/example_destroy.html");
 
-		self.$Get("btn_create").click(_Create);
-		self.$Get("btn_destroy").click(_DestroyUI);
+		self.get("btn_create").click(creteUi);
+		self.get("btn_destroy").click(_DestroyUI);
 
-		_$InputIdx = self.$Get("idx");
+		inputIndex = self.get("idx");
 		
 	}
 
-	function _Create() {
-		_UIs.push(
-			self.InstanceUI("container", "example/ui/example.js", {
-				"count" : _Cont++
+	function creteUi() {
+		uiInstances.push(
+			self.ui("container", "example/ui/example.js", {
+				"count" : count++
 			})
 		);
 	}
 
 	function _DestroyUI() {
-		var idx = _$InputIdx.val();
-		self.DestroyUI(_UIs[idx]);
-		_UIs.splice(idx, 1);
+		var idx = inputIndex.val();
+		self.destroyUI(uiInstances[idx]);
+		uiInstances.splice(idx, 1);
 	}
 });
 ```
@@ -216,13 +216,13 @@ iris.Screen(function(self) {
 
 **/example/ui/example.js**
 ```javascript
-iris.UI(function(self) {
+iris.ui(function(self) {
 
-	self.Create = function() {
-		self.TemplateMode(self.TEMPLATE_APPEND);
-		self.Template("example/ui/example.html");
+	self.create = function() {
+		self.tmplMode(self.TEMPLATE_APPEND);
+		self.tmpl("example/ui/example.html");
 
-		self.$Get("label").text("Example " + self.Setting("count"));
+		self.get("label").text("Example " + self.setting("count"));
 
 	};
 
@@ -246,22 +246,22 @@ iris.UI(function(self) {
 ```
 **/example/screen/example_destroy_all.js**
 ```javascript
-iris.Screen(function(self) {
-	self.Create = function() {
-		self.Template("example/screen/example_destroy_all.html");
+iris.screen(function(self) {
+	self.create = function() {
+		self.tmpl("example/screen/example_destroy_all.html");
 
-		self.$Get("btn_create").click(_Create);
-		self.$Get("btn_destroy_all").click(_DestroyAllUIs);
+		self.get("btn_create").click(creteUi);
+		self.get("btn_destroy_all").on("click", destroyAll);
 	}
 
-	function _Create() {
-		self.InstanceUI("uis", "example/ui/example.js", {
+	function creteUi() {
+		self.ui("uis", "example/ui/example.js", {
 			"count" : self.__UIComponents__.length
 		});
 	}
 
-	function _DestroyAllUIs() {
-		self.DestroyAllUIs("uis");
+	function destroyAll() {
+		self.destroyUIs("uis");
 	}
 });
 ```
@@ -275,13 +275,13 @@ iris.Screen(function(self) {
 
 **/example/ui/example.js**
 ```javascript
-iris.UI(function(self) {
+iris.ui(function(self) {
 
-	self.Create = function() {
-		self.TemplateMode(self.TEMPLATE_APPEND);
-		self.Template("example/ui/example.html");
+	self.create = function() {
+		self.tmplMode(self.TEMPLATE_APPEND);
+		self.tmpl("example/ui/example.html");
 
-		self.$Get("label").text("Example " + self.Setting("count"));
+		self.get("label").text("Example " + self.setting("count"));
 
 	};
 
