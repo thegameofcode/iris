@@ -24,6 +24,18 @@
       raises(block, [expected], [message])
   */
 
+  test("Include JS", function() {
+    stop();
+
+    // for lang values test
+    iris.lang("test",{"TEST":"lang_val"});
+    iris.locale("test");
+
+    expect(1);
+
+    iris.include("test/component/include_test.js");
+
+  });
 
   test("Welcome Screen", function() {
     stop();
@@ -64,6 +76,13 @@
 
     expect(1);
     iris.notify("template_params");
+  });
+
+  test("Template Lang Values", function() {
+    stop();
+
+    expect(1);
+    iris.notify("template_langs");
   });
 
   test("Destroy Screen", function() {

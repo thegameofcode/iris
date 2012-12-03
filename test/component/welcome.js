@@ -9,6 +9,7 @@ iris.screen(function (self) {
 		self.screen("screens", "#screen", "test/component/screen.js");
 
 		iris.on("template_params", templateParams);
+		iris.on("template_langs", templateLangs);
 
 		// check screen properties
 		window.strictEqual(self.id, "welcome-screen");
@@ -19,6 +20,11 @@ iris.screen(function (self) {
 		window.start();
 
 	};
+
+	function templateLangs () {
+		window.strictEqual(self.get("lang_values").text(), iris.lang("TEST"));
+		window.start();
+	}
 
 	function templateParams () {
 		window.strictEqual(self.get("param").text(), PARAM_VAL);

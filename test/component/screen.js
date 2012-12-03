@@ -23,8 +23,6 @@ iris.screen(function (self) {
 		iris.off("create_ui", createUi);
 		iris.off("destroy_ui", destroyUi);
 
-		document.location.href = document.location.href.replace("#screen", "#");
-
 		window.ok(true);
 		window.start();
 	};
