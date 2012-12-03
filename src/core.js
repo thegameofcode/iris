@@ -1,7 +1,9 @@
-(function($) {
+var iris = {};
 
-    var iris = {};
-    window.iris = iris;
+// Expose iris to the global object
+window.iris = iris;
+
+(function($, iris) {
 
     var _globals = {},
         _locals = {},
@@ -188,4 +190,4 @@
 
     _init();
 
-})(jQuery);
+})(jQuery, iris);

@@ -1,6 +1,6 @@
-(function($, iris) {
+(function($, window) {
 
-    var  = window.iris;
+    var iris = window.iris;
 
     var _screen = {},
         _screenUrl = {},
