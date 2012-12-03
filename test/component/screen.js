@@ -19,6 +19,12 @@ iris.screen(function (self) {
 	};
 
 	self.destroy = function () {
+		// to prevent memory leaks
+		iris.off("create_ui", createUi);
+		iris.off("destroy_ui", destroyUi);
+
+		document.location.href = document.location.href.replace("#screen", "#");
+
 		window.ok(true);
 		window.start();
 	};
@@ -27,7 +33,6 @@ iris.screen(function (self) {
 		ui = self.ui("container", "test/component/ui.js", {test:"test"});
 
 		window.strictEqual(self.uis.length, 1);
-
 		window.start();
 	}
 
@@ -35,7 +40,6 @@ iris.screen(function (self) {
 		self.destroyUI(ui);
 
 		window.strictEqual(self.uis.length, 0);
-
 		window.start();
 	}
 

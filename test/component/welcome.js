@@ -1,10 +1,14 @@
 iris.screen(function (self) {
 
+	var PARAM_VAL = "param_value";
+
 	self.create = function() {
 
-		self.tmpl("test/component/welcome.html");
+		self.tmpl("test/component/welcome.html", {param:PARAM_VAL});
 
 		self.screen("screens", "#screen", "test/component/screen.js");
+
+		iris.on("template_params", templateParams);
 
 		// check screen properties
 		window.strictEqual(self.id, "welcome-screen");
@@ -12,6 +16,13 @@ iris.screen(function (self) {
 		window.strictEqual(self.fileJs, "test/component/welcome.js");
 		window.strictEqual(self.uis.length, 0);
 
+		window.start();
+
 	};
+
+	function templateParams () {
+		window.strictEqual(self.get("param").text(), PARAM_VAL);
+		window.start();
+	}
 
 });

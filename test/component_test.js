@@ -25,31 +25,51 @@
   */
 
 
-  asyncTest("Create & Navigate To Screen", function() {
-    
-    expect(7);
+  test("Welcome Screen", function() {
+    stop();
+
+    expect(4);
 
     iris.welcome("test/component/welcome.js");
+
+  });
+
+  test("Create & Navigate To Screen", function() {
+    stop();
+    
+    expect(3);
 
     iris.goto("#screen");
 
   });
 
-  asyncTest("Create UI", function() {
+  test("Create UI", function() {
+    stop();
+
     expect(4);
 
     iris.notify("create_ui");
   });
 
-  asyncTest("Destroy UI", function() {
+  test("Destroy UI", function() {
+    stop();
+
     expect(1);
 
     iris.notify("destroy_ui");
   });
 
-  asyncTest("Destroy Screen", function() {
-    expect(1);
+  test("Template Params", function() {
+    stop();
 
+    expect(1);
+    iris.notify("template_params");
+  });
+
+  test("Destroy Screen", function() {
+    stop();
+
+    expect(1);
     iris.destroyScreen("#screen");
   });
 
