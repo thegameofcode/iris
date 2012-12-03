@@ -694,7 +694,7 @@
         _addOns[_lastIncludePath] = f_addOn;
     }
 
-    iris.addOn = _createAddOn;
+    iris.addOn = _createAddOn; // TODO
     iris.applyAddOn = _applyAddOn;
     iris.include = _includeFiles;
     iris.screen = _registerScreen;
