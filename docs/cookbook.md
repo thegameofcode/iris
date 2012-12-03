@@ -75,10 +75,10 @@ iris.screen(
 iris.screen(function(self) {
 	self.create = function() {
 		self.tmpl("example/screen/example_instance.html");
-		self.get("btn_create").click(creteUi);
+		self.get("btn_create").click(createUi);
 	}
 
-	function creteUi() {
+	function createUi() {
 		self.ui("container", "example/ui/example_basic.js");
 	}
 });
@@ -121,10 +121,10 @@ iris.screen(function(self) {
 	
 	self.create = function() {
 		self.tmpl("example/screen/example_list.html");
-		self.get("btn_create").click(creteUi);
+		self.get("btn_create").click(createUi);
 	}
 
-	function creteUi() {
+	function createUi() {
 		self.ui("container", "example/ui/example.js", {
 			"count" : count++
 		});
@@ -184,14 +184,14 @@ iris.screen(function(self) {
 	self.create = function() {
 		self.tmpl("example/screen/example_destroy.html");
 
-		self.get("btn_create").click(creteUi);
-		self.get("btn_destroy").click(_DestroyUI);
+		self.get("btn_create").click(createUi);
+		self.get("btn_destroy").click(destroyUi);
 
 		inputIndex = self.get("idx");
 		
 	}
 
-	function creteUi() {
+	function createUi() {
 		uiInstances.push(
 			self.ui("container", "example/ui/example.js", {
 				"count" : count++
@@ -199,7 +199,7 @@ iris.screen(function(self) {
 		);
 	}
 
-	function _DestroyUI() {
+	function destroyUi() {
 		var idx = inputIndex.val();
 		self.destroyUI(uiInstances[idx]);
 		uiInstances.splice(idx, 1);
@@ -241,7 +241,7 @@ iris.ui(function(self) {
 	<button data-id="btn_create">Create a new UI</button>
 
 	<br>Container:
-	<div data-id='uis'></div>
+	<div data-id='ui_container'></div>
 </div>
 ```
 **/example/screen/example_destroy_all.js**
@@ -250,18 +250,18 @@ iris.screen(function(self) {
 	self.create = function() {
 		self.tmpl("example/screen/example_destroy_all.html");
 
-		self.get("btn_create").click(creteUi);
+		self.get("btn_create").click(createUi);
 		self.get("btn_destroy_all").on("click", destroyAll);
 	}
 
-	function creteUi() {
-		self.ui("uis", "example/ui/example.js", {
-			"count" : self.__UIComponents__.length
+	function createUi() {
+		self.ui("ui_container", "example/ui/example.js", {
+			"count" : self.uis.length
 		});
 	}
 
 	function destroyAll() {
-		self.destroyUIs("uis");
+		self.destroyUIs("ui_container");
 	}
 });
 ```
