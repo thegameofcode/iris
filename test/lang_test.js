@@ -44,4 +44,30 @@
 
   });
 
+  asyncTest("Lang Load Test", function() {
+    expect(3);
+
+    iris.lang("fr-FR", "./service/lang.json", {"success" : onSuccess, "error" : onError });
+  });
+
+  function onSuccess () {
+
+    iris.locale("fr-FR");
+    var translated = iris.lang("LANG-TEST");
+    strictEqual(translated, "LANG-TEST-VALUE", "Should get a lang value");
+
+    translated = iris.lang("TITLE");
+    strictEqual(translated, "TITLE-VALUE", "Should get a lang value");
+
+    translated = iris.lang("NO_EXISTS");
+    strictEqual(translated, "??NO_EXISTS??", "Should get a lang value");    
+
+    start();
+  }
+
+  function onError () {
+    ok(false, "Error callback unexpected");
+    start();
+  }
+
 }(jQuery));
