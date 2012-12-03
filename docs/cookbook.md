@@ -135,7 +135,7 @@ iris.screen(function(self) {
 **/example/ui/example.html**
 ```html
 <div style='border: 1px solid #000;'>
-	<p data-id='label'></p>
+	<p>Example ##count##</p>
 </div>
 ```
 
@@ -145,9 +145,7 @@ iris.ui(function(self) {
 
 	self.create = function() {
 		self.tmplMode(self.APPEND);
-		self.tmpl("example/ui/example.html");
-		self.get("label").text("Example " + self.setting("count"));
-
+		self.tmpl("example/ui/example.html", {"count" : self.setting("count")});
 	};
 
 });
@@ -210,7 +208,7 @@ iris.screen(function(self) {
 **/example/ui/example.html**
 ```html
 <div style='border: 1px solid #000;'>
-	<p data-id='label'>Example</p>
+	<p>Example ##count##</p>
 </div>
 ```
 
@@ -220,9 +218,7 @@ iris.ui(function(self) {
 
 	self.create = function() {
 		self.tmplMode(self.APPEND);
-		self.tmpl("example/ui/example.html");
-
-		self.get("label").text("Example " + self.setting("count"));
+		self.tmpl("example/ui/example.html", {"count" : self.setting("count")});
 
 	};
 
@@ -269,7 +265,7 @@ iris.screen(function(self) {
 **/example/ui/example.html**
 ```html
 <div style='border: 1px solid #000;'>
-	<p data-id='label'></p>
+	<p>Example ##count##</p>
 </div>
 ```
 
@@ -279,10 +275,7 @@ iris.ui(function(self) {
 
 	self.create = function() {
 		self.tmplMode(self.APPEND);
-		self.tmpl("example/ui/example.html");
-
-		self.get("label").text("Example " + self.setting("count"));
-
+		self.tmpl("example/ui/example.html", {"count" : self.setting("count")});
 	};
 
 });
