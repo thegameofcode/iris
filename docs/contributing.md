@@ -1,3 +1,5 @@
+[Iris homepage](https://github.com/iris-js/iris) | [Documentation table of contents](toc.md)
+
 # Contributing
 
 ## Important notes
@@ -30,6 +32,6 @@ Assuming that you don't see any red, you're ready to go. Just be sure to run `gr
 1. Add failing tests for the change you want to make. Run `grunt` to see the tests fail.
 1. Fix stuff.
 1. Run `grunt` to see if the tests pass. Repeat steps 2-4 until done.
-1. Open `test/*.html` unit test file(s) in actual browser to ensure tests pass everywhere.
+1. Run `grunt test` to start a web server and open `http://localhost:8080/test/iris.html` unit test file in actual browser to ensure tests pass everywhere.
 1. Update the documentation to reflect any changes.
 1. Push to your fork and submit a pull request.
