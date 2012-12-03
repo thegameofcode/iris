@@ -13,12 +13,12 @@ module.exports = function(grunt) {
     },
     concat: {
       dist: {
-        src: ['<banner:meta.banner>', '<file_strip_banner:src/<%= pkg.name %>.js>', "src/service.js"],
+        src: ['<banner:meta.banner>', 'src/debug.js', 'src/config.js', 'src/event.js', 'src/lang.js', 'src/regional.js', 'src/util.js', 'src/component.js', 'src/service.js'],
         dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.js'
       },
       legacy: {
-        src: ['src/iris.js', 'src/service.js', 'src/legacy.js'],
-        dest: 'dist/iris-legacy-<%= pkg.version %>.js'
+        src: ['<config:concat.dist.dest>', 'src/legacy.js'],
+        dest: 'dist/<%= pkg.name %>-legacy-<%= pkg.version %>.js'
       }
     },
     min: {
@@ -28,14 +28,15 @@ module.exports = function(grunt) {
       },
       legacy: {
         src: ['<banner:meta.banner>', '<config:concat.legacy.dest>'],
-        dest: 'dist/<%= pkg.name %>-<%= pkg.version %>-legacy.min.js'
+        dest: 'dist/<%= pkg.name %>-legacy-<%= pkg.version %>.min.js'
       }
     },
     qunit: {
       all: ['http://localhost:8080/test/iris.html']
     },
     lint: {
-      files: [/*'grunt.js',*/ 'src/**/*.js', 'test/**/*.js']
+      files: ['src/debug.js', 'src/config.js', 'src/event.js', 'src/lang.js', 'src/regional.js', 'src/util.js', 'src/component.js', "src/service.js"]
+      //files: [/*'grunt.js',*/ 'src/**/*.js', 'test/**/*.js']
     },
     watch: {
       files: '<config:lint.files>',

@@ -128,6 +128,8 @@
     iris.Screen = function (f_screen){
         iris.screenAux(
             function (self) {
+                self.Settings = self.settings;
+                self.Setting = self.setting;
 
                 self.InstanceUI = self.ui;
                 self.Show = self.show;
@@ -210,6 +212,9 @@
     iris.UI = function (f_ui){
         iris.uiAux(
             function (self) {
+                self.Settings = self.settings;
+                self.Setting = self.setting;
+
                 self.InstanceUI = self.ui;
                 self.Show = self.show;
                 self.Hide = self.hide;
@@ -297,7 +302,26 @@
     iris.Goto = iris.goto;
     
     /** @deprecated */
-    iris.AddOn = iris.addOn;
+    iris.AddOn = function (f_addon){
+        iris.addOn(
+            function (self) {
+
+                self.Settings = self.settings;
+                self.Setting = self.setting;
+
+                self.Create = self.create;
+
+                self.AddAll = self.addAll;
+                self.Add = self.add;
+                self.Remove = self.remove;
+                self.Get = self.get;
+                self.Size = self.size;
+                self.UIAddOn = self.addOn;
+
+                f_screen(self);
+            }
+        );
+    };
     
     /** @deprecated */
     iris.ApplyAddOn = iris.applyAddOn;
