@@ -146,6 +146,9 @@
 
                 self.Template = self.tmpl;
                 self.AddScreen = self.screen;
+                self.TEMPLATE_APPEND = self.APPEND;
+                self.TEMPLATE_REPLACE = self.REPLACE;
+                self.TEMPLATE_PREPEND = self.PREPEND;
                 f_screen(self);
             }
         );
@@ -230,6 +233,9 @@
 
                 self.TemplateMode = self.tmplMode;
                 self.Template = self.tmpl;
+                self.TEMPLATE_APPEND = self.APPEND;
+                self.TEMPLATE_REPLACE = self.REPLACE;
+                self.TEMPLATE_PREPEND = self.PREPEND;
                 f_ui(self);
             }
         );

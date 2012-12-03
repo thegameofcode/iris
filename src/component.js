@@ -402,9 +402,9 @@
 
     var Component = function() {
 
-            this.TEMPLATE_APPEND = "append";
-            this.TEMPLATE_REPLACE = "replace";
-            this.TEMPLATE_PREPEND = "prepend";
+            this.APPEND = "append";
+            this.REPLACE = "replace";
+            this.PREPEND = "prepend";
 
             this._$tmpl = null;
             this.id = null;
@@ -465,13 +465,13 @@
             iris.e("'" + p_htmlUrl + "' must have only one root node");
         }
         switch(p_mode) {
-        case this.TEMPLATE_APPEND:
+        case this.APPEND:
             this.con.append($tmpl);
             break;
-        case this.TEMPLATE_REPLACE:
+        case this.REPLACE:
             this.con.replaceWith($tmpl);
             break;
-        case this.TEMPLATE_PREPEND:
+        case this.PREPEND:
             this.con.prepend($tmpl);
             break;
         default:
@@ -595,8 +595,8 @@
     // UI
     //
     var UI = function() {
-            this._tmplMode = "replace";
-        };
+        this._tmplMode = "replace";
+    };
 
     UI.prototype = new Component();
 
@@ -617,7 +617,7 @@
     Screen.prototype = new Component();
 
     Screen.prototype.tmpl = function(p_htmlUrl, p_params) {
-        this._tmpl(p_htmlUrl, p_params, this.TEMPLATE_APPEND);
+        this._tmpl(p_htmlUrl, p_params, this.APPEND);
     };
 
     Screen.prototype.screen = function(p_containerId, p_screenPath, p_jsUrl) {

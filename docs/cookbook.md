@@ -144,7 +144,7 @@ iris.screen(function(self) {
 iris.ui(function(self) {
 
 	self.create = function() {
-		self.tmplMode(self.TEMPLATE_APPEND);
+		self.tmplMode(self.APPEND);
 		self.tmpl("example/ui/example.html");
 		self.get("label").text("Example " + self.setting("count"));
 
@@ -219,7 +219,7 @@ iris.screen(function(self) {
 iris.ui(function(self) {
 
 	self.create = function() {
-		self.tmplMode(self.TEMPLATE_APPEND);
+		self.tmplMode(self.APPEND);
 		self.tmpl("example/ui/example.html");
 
 		self.get("label").text("Example " + self.setting("count"));
@@ -278,7 +278,7 @@ iris.screen(function(self) {
 iris.ui(function(self) {
 
 	self.create = function() {
-		self.tmplMode(self.TEMPLATE_APPEND);
+		self.tmplMode(self.APPEND);
 		self.tmpl("example/ui/example.html");
 
 		self.get("label").text("Example " + self.setting("count"));
