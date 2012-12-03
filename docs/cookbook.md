@@ -16,12 +16,12 @@ iris.screen(
 			self.tmpl("other-screen.html");
 		}
 		
-		self.Awake = function () {
-			iris.D("Other screen is awakened");
+		self.awake = function () {
+			iris.d("Other-Screen awake");
 		}
 		
-		self.Sleep = function () {
-			iris.D("Other screen is sleeping");
+		self.sleep = function () {
+			iris.d("Other-Screen sleep");
 		}
 		
 	}
