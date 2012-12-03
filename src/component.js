@@ -182,24 +182,37 @@
                 _head.appendChild(link);
             } else {
                 var isHtml = p_uiFile.lastIndexOf(".html") > -1;
-                iris.ajaxSync(
-                fileUrl, (isHtml ? "html" : "text"), function(p_data) {
-                    _lastIncludePath = p_uiFile;
 
-                    if(isHtml) {
-                        _includes[p_uiFile] = _parseLangTags(p_data);
-                    } else {
-                        var script = document.createElement("script");
-                        script.language = "javascript";
-                        script.type = "text/javascript";
-                        script.text = p_data;
-                        _head.appendChild(script);
+                var ajaxSettings = {
+                    url: fileUrl,
+                    dataType: (isHtml ? "html" : "text"),
+                    async: false,
+                    cache: iris.cache(),
+                    success: function(p_data) {
+                        _lastIncludePath = p_uiFile;
+
+                        if(isHtml) {
+                            _includes[p_uiFile] = _parseLangTags(p_data);
+                        } else {
+                            var script = document.createElement("script");
+                            script.language = "javascript";
+                            script.type = "text/javascript";
+                            script.text = p_data;
+                            _head.appendChild(script);
+                        }
+
+                    },
+                    error: function(p_err) {
+                        delete _includes[fileUrl];
+                        iris.e(p_err.status, "error loading file '" + fileUrl + "'");
                     }
+                };
 
-                }, function(p_err) {
-                    delete _includes[fileUrl];
-                    iris.e(p_err.status, "error loading file '" + fileUrl + "'");
-                });
+                if(iris.cache() && iris.cacheVersion()) {
+                    ajaxSettings.data = "_=" + iris.cacheVersion();
+                }
+
+                iris.ajax(ajaxSettings);
             }
         }
     }
@@ -368,8 +381,8 @@
 
 
     var Settable = function() {
-        this._settings = null;
-    };
+            this._settings = null;
+        };
 
     Settable.prototype.settings = function(p_settings) {
         return $.extend(this._settings, p_settings);
@@ -389,19 +402,19 @@
 
     var Component = function() {
 
-        this.TEMPLATE_APPEND = "append";
-        this.TEMPLATE_REPLACE = "replace";
-        this.TEMPLATE_PREPEND = "prepend";
+            this.TEMPLATE_APPEND = "append";
+            this.TEMPLATE_REPLACE = "replace";
+            this.TEMPLATE_PREPEND = "prepend";
 
-        this._$tmpl = null;
-        this.id = null;
-        this.uis = null;
-        this.con = null;
-        this._sleeping = null;
-        this.fileJs = null;
-        this.fileTmpl = null;
-        this.el = null;
-    };
+            this._$tmpl = null;
+            this.id = null;
+            this.uis = null;
+            this.con = null;
+            this._sleeping = null;
+            this.fileJs = null;
+            this.fileTmpl = null;
+            this.el = null;
+        };
 
     Component.prototype = new Settable();
 
@@ -582,8 +595,8 @@
     // UI
     //
     var UI = function() {
-        this._tmplMode = "replace";
-    };
+            this._tmplMode = "replace";
+        };
 
     UI.prototype = new Component();
 
@@ -625,8 +638,8 @@
     // ADDON
     //
     var AddOn = function() {
-        this._components = null;
-    };
+            this._components = null;
+        };
 
     AddOn.prototype = new Settable();
 

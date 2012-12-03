@@ -46,4 +46,10 @@
 
   });
 
+  test("Get Object Value", function() {
+    var test = {p1:{p2:{p3:"value"}}};
+    var value = iris.val(test, "p1.p2.p3");
+    strictEqual(value, "value", "Object value should be the same");
+  });
+
 }(jQuery));

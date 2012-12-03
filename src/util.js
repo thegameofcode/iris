@@ -126,23 +126,6 @@
         }
     }
 
-    function _ajaxSync(p_uri, p_dataType, f_success, f_error) {
-        var ajaxSettings = {
-            url: p_uri,
-            dataType: p_dataType,
-            async: false,
-            cache: _cache,
-            success: f_success,
-            error: f_error
-        };
-
-        if(_cache && _cacheVersion) {
-            ajaxSettings.data = "_=" + _cacheVersion;
-        }
-
-        $.ajax(ajaxSettings);
-    }
-
     function _setCacheVersion(p_value) {
         _cacheVersion = p_value;
     }
@@ -151,12 +134,21 @@
         return $.ajax(p_settings);
     }
 
+    function _setOrGetCache(p_value) {
+        if(p_value !== undefined) {
+            _cache = p_value;
+        } else {
+            return _cache;
+        }
+    }
+
     iris.ajax = _ajax;
+    iris.cache = _setOrGetCache;
     iris.cacheVersion = _setCacheVersion;
     iris.date = _formatDate;
     iris.currency = _formatCurrency;
-    iris.ajaxSync = _ajaxSync; // TODO
-    iris.val = _getObjectValue; // TODO
+    iris.val = _getObjectValue;
+
     _init();
 
 })(jQuery, window);
