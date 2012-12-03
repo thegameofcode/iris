@@ -41,6 +41,6 @@
   function onEvent () {
     ok(true);
     start();
-  };
+  }
 
 }(jQuery));

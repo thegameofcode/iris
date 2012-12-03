@@ -318,7 +318,7 @@
                 self.Size = self.size;
                 self.UIAddOn = self.addOn;
 
-                f_screen(self);
+                f_addon(self);
             }
         );
     };
