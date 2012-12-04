@@ -5,15 +5,21 @@
 Iris exposes all of its methods and properties on the `iris` object.
 
 ## Core
+### iris.settings
+### iris.setting
+
+### iris.env
+### iris.envSetting
+
+### iris.baseUri
+### iris.cache
+### iris.cacheVersion
+
 ### iris.l
 ### iris.d
 ### iris.w
 ### iris.e
-### iris.config
-### iris.env
-### iris.global
-### iris.local
-### iris.baseUri
+
 
 ## Events
 ### iris.BEFORE_NAVIGATION
@@ -21,9 +27,12 @@ Iris exposes all of its methods and properties on the `iris` object.
 ### iris.on
 ### iris.off
 
+
 ## Language
-### iris.lang
+### iris.translate
+### iris.translations
 ### iris.locale
+
 
 ## Components
 ### iris.addOn
@@ -34,17 +43,20 @@ Iris exposes all of its methods and properties on the `iris` object.
 ### iris.welcome
 ### iris.goto
 ### iris.ui
+### iris.instanceUI
+### iris.instanceScreen
+
 
 ## Util
 ### iris.ajax
-### iris.cache
-### iris.cacheVersion
 ### iris.date
 ### iris.currency
 ### iris.val
 
+
 ## Regional
 ### iris.regional
+
 
 ## Service
 ### iris.service

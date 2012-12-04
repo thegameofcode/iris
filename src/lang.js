@@ -1,11 +1,9 @@
-(function($, window) {
-
-    var iris = window.iris;
+(function($, iris) {
 
     var _locale = null,
-        _langs = {};
+        _translations = {};
 
-    function _localeGet(p_locale) {
+    function _getOrSetLocale(p_locale) {
         if(p_locale !== undefined) {
             _locale = p_locale;
         } else {
@@ -13,45 +11,15 @@
         }
     }
 
-
-
-    //
-    // LANG
-    //
-
-    function _lang(p_label, p_value, p_settings) {
-        if(typeof p_value === "undefined") {
-            return _getLang(p_label);
-        } else if(typeof p_value === "object") {
-            _addLang(p_label, p_value);
-        } else {
-            _loadLang(p_label, p_value, p_settings);
-        }
-    }
-
-    function _addLang(p_locale, p_data) {
-        iris.d("[add lang]", p_locale, p_data);
-
-        if(_locale === null) {
-            _locale = p_locale;
-        }
-
-        if(!_langs.hasOwnProperty(p_locale)) {
-            _langs[p_locale] = {};
-        }
-
-        $.extend(_langs[p_locale], p_data);
-    }
-
-    function _getLang(p_label) {
+    function _translate(p_label) {
         var value;
-        if(_langs.hasOwnProperty(_locale)) {
-            value = iris.val(_langs[_locale], p_label);
+        if(_translations.hasOwnProperty(_locale)) {
+            value = iris.val(_translations[_locale], p_label);
             if(value === undefined) {
-                iris.w("Label '" + p_label + "' not found in Locale '" + _locale + "'", _langs[_locale]);
+                iris.w("Label '" + p_label + "' not found in Locale '" + _locale + "'", _translations[_locale]);
             }
             if(typeof value === "object") {
-                iris.w("Label '" + p_label + "' is an object but must be a property in Locale '" + _locale + "'", _langs[_locale]);
+                iris.w("Label '" + p_label + "' is an object but must be a property in Locale '" + _locale + "'", _translations[_locale]);
             }
         } else {
             iris.w("Locale '" + _locale + "' not loaded");
@@ -59,18 +27,42 @@
         return(value) ? value : "??" + p_label + "??";
     }
 
+    //
+    // Translations
+    //
+    function _setTranslations(p_label, p_value, p_settings) {
+        if(typeof p_value === "object") {
+            _addTranslations(p_label, p_value);
+        } else {
+            _loadTranslations(p_label, p_value, p_settings);
+        }
+    }
 
-    function _loadLang(p_locale, p_uri, p_settings) {
-        iris.d("[iris.lang]", p_locale, p_uri);
+    function _addTranslations(p_locale, p_data) {
+        iris.d("[translations]", p_locale, p_data);
+
+        if(_locale === null) {
+            _locale = p_locale;
+        }
+
+        if(!_translations.hasOwnProperty(p_locale)) {
+            _translations[p_locale] = {};
+        }
+
+        $.extend(_translations[p_locale], p_data);
+    }
+
+    function _loadTranslations(p_locale, p_uri, p_settings) {
+        iris.d("[translations]", p_locale, p_uri);
 
         var ajaxSettings = {
             url: p_uri,
             dataType: "json",
             async: false,
             cache: iris.cache(),
-            success: function _loadLangSuccess(p_data) {
-                _addLang(p_locale, p_data);
-                iris.d("[iris.lang]", p_data);
+            success: function _loadTranslationsSuccess(p_data) {
+                _addTranslations(p_locale, p_data);
+                iris.d("[translations]", p_data);
 
                 if(p_settings && p_settings.hasOwnProperty("success")) {
                     p_settings.success(p_locale);
@@ -92,7 +84,9 @@
         iris.ajax(ajaxSettings);
     }
 
-    iris.lang = _lang;
-    iris.locale = _localeGet;
 
-})(jQuery, window);
+    iris.translate = _translate;
+    iris.translations = _setTranslations;
+    iris.locale = _getOrSetLocale;
+
+})(jQuery, iris);

@@ -1,22 +1,5 @@
-(function($, window) {
+(function($, iris) {
 
-    var iris = window.iris;
-
-    var _cacheVersion, _cache;
-
-    function _init() {
-        var currentEnv = iris.env();
-        _cache = true;
-        if(iris.config().hasOwnProperty("environments-nocache")) {
-            var envNocache = iris.config()["environments-nocache"].split(",");
-            for(var f = 0, F = envNocache.length; f < F; f++) {
-                if(envNocache[f] === currentEnv) {
-                    _cache = false;
-                    break;
-                }
-            }
-        }
-    }
 
     function _getObjectValue(p_obj, p_label) {
         var value;
@@ -126,29 +109,14 @@
         }
     }
 
-    function _setCacheVersion(p_value) {
-        _cacheVersion = p_value;
-    }
-
     function _ajax(p_settings) {
         return $.ajax(p_settings);
     }
 
-    function _setOrGetCache(p_value) {
-        if(p_value !== undefined) {
-            _cache = p_value;
-        } else {
-            return _cache;
-        }
-    }
 
     iris.ajax = _ajax;
-    iris.cache = _setOrGetCache;
-    iris.cacheVersion = _setCacheVersion;
     iris.date = _formatDate;
     iris.currency = _formatCurrency;
     iris.val = _getObjectValue;
 
-    _init();
-
-})(jQuery, window);
+})(jQuery, iris);

@@ -28,7 +28,7 @@
     stop();
 
     // for lang values test
-    iris.lang("test",{"TEST":"lang_val"});
+    iris.translations("test",{"TEST":"lang_val"});
     iris.locale("test");
 
     expect(1);

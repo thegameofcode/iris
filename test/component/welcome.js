@@ -22,7 +22,7 @@ iris.screen(function (self) {
 	};
 
 	function templateLangs () {
-		window.strictEqual(self.get("lang_values").text(), iris.lang("TEST"));
+		window.strictEqual(self.get("lang_values").text(), iris.translate("TEST"));
 		window.start();
 	}
 

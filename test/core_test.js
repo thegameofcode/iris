@@ -27,7 +27,7 @@
 
   test("Load Config Test", function() {
 
-    iris.config({
+    iris.settings({
       "environment-default": "pro",
       "environments-nocache": "dev",
       "environment": {
@@ -40,33 +40,31 @@
       }
     });
 
-    ok(iris.config(), "Should be not null");
-
     strictEqual(iris.env(), "dev", "Should get a dev environment");
     strictEqual(iris.baseUri(), "http://localhost:8080/", "Should get a dev URL");
 
   });
 
   test("Global Config Test", function() {
-    iris.config({
+    iris.settings({
       "environment-default": "dev",
       "global" : {"global-test":"value"}
     });
-    strictEqual(iris.global("global-test"), "value", "Should get global config value");
+    strictEqual(iris.setting("global-test"), "value", "Should get global config value");
 
-    iris.global("global-test2", 15);
-    strictEqual(iris.global("global-test2"), 15, "Should get global config value");
+    iris.setting("global-test2", 15);
+    strictEqual(iris.setting("global-test2"), 15, "Should get global config value");
   });
 
   test("Local Config Test", function() {
-    iris.config({
+    iris.settings({
       "environment-default": "dev",
       "local" : {"local-test" : {"dev":"value"} }
     });
-    strictEqual(iris.local("local-test"), "value", "Should get local config value");
+    strictEqual(iris.envSetting("local-test"), "value", "Should get local config value");
 
-    iris.local("local-test2", 15);
-    strictEqual(iris.local("local-test2"), 15, "Should get local config value");
+    iris.envSetting("local-test2", 15);
+    strictEqual(iris.envSetting("local-test2"), 15, "Should get local config value");
   });
 
 }(jQuery));

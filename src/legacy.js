@@ -1,6 +1,4 @@
-(function ($, window) {
-
-    var iris = window.iris;
+(function ($, iris) {
 
     /** @deprecated */
     iris.net = {};
@@ -8,62 +6,47 @@
     /** @deprecated */
     iris.util = {};
 
-
-    /** @deprecated */
-    iris.configAux = iris.config;
-
     /** @deprecated */
     iris.config = {};
 
     /** @deprecated */
-    iris.config.Load = iris.configAux;
+    iris.config.Load = iris.settings;
     
     /** @deprecated */
     iris.config.Env = iris.env;
 
 
-
-    /** @deprecated */
-    iris.globalAux = iris.global;
-
     /** @deprecated */
     iris.global = {};
 
     /** @deprecated */
-    iris.global.Load = iris.globalAux;
+    iris.global.Load = iris.setting;
     
     /** @deprecated */
-    iris.global.Data = iris.globalAux;
+    iris.global.Data = iris.setting;
 
-
-    /** @deprecated */
-    iris.localAux = iris.local;
 
     /** @deprecated */
     iris.local = {};
 
     /** @deprecated */
-    iris.local.Load = iris.localAux;
+    iris.local.Load = iris.envSetting;
     
     /** @deprecated */
-    iris.local.Data = iris.localAux;
+    iris.local.Data = iris.envSetting;
 
-
-    
-    /** @deprecated */
-    iris.langAux = iris.lang;
 
     /** @deprecated */
     iris.lang = {};
 
     /** @deprecated */
-    iris.lang.Load = iris.langAux;
+    iris.lang.Load = iris.translations;
     
     /** @deprecated */
-    iris.lang.LoadFrom = iris.langAux;
+    iris.lang.LoadFrom = iris.translations;
     
     /** @deprecated */
-    iris.lang.Get = iris.langAux;
+    iris.lang.Get = iris.translate;
     
     /** @deprecated */
     iris.lang.Locale = iris.locale;
@@ -124,35 +107,46 @@
     /** @deprecated */
     iris.screenAux = iris.screen;
 
-    /** @deprecated */
-    iris.Screen = function (f_screen){
-        iris.screenAux(
-            function (self) {
-                self.Settings = self.settings;
-                self.Setting = self.setting;
+    var instanceScreenAux = iris.instanceScreen;
+    iris.instanceScreen = function (p_path) {
+        var self = instanceScreenAux(p_path);
 
-                self.InstanceUI = self.ui;
-                self.Show = self.show;
-                self.Hide = self.hide;
-                self.$Get = self.get;
-                self.DestroyUI = self.destroyUI;
-                self.DestroyAllUIs = self.destroyUIs;
-                self.$Container = self.container;
-                self.Create = self.create;
-                self.Awake = self.awake;
-                self.CanSleep = self.canSleep;
-                self.Sleep = self.sleep;
-                self.Destroy = self.destroy;
+        // inherit
+        self.Settings = self.settings;
+        self.Setting = self.setting;
+        self.InstanceUI = self.ui;
+        self.Show = self.show;
+        self.Hide = self.hide;
+        self.$Get = self.get;
+        self.DestroyUI = self.destroyUI;
+        self.DestroyAllUIs = self.destroyUIs;
+        self.$Container = self.container;
+        self.Template = self.tmpl;
+        self.AddScreen = self.screen;
+        self.TEMPLATE_PREPEND = self.PREPEND;
+        self.TEMPLATE_APPEND = self.APPEND;
+        self.TEMPLATE_REPLACE = self.REPLACE;
 
-                self.Template = self.tmpl;
-                self.AddScreen = self.screen;
-                self.TEMPLATE_APPEND = self.APPEND;
-                self.TEMPLATE_REPLACE = self.REPLACE;
-                self.TEMPLATE_PREPEND = self.PREPEND;
-                f_screen(self);
-            }
-        );
+        // overrides        
+        self.create = self.Create;
+        if ( self.Awake ) {
+            self.awake = self.Awake;
+        }
+        if ( self.CanSleep ) {
+            self.canSleep = self.CanSleep;
+        }
+        if ( self.Sleep ) {
+            self.sleep = self.Sleep;
+        }
+        if ( self.Destroy ) {
+            self.destroy = self.Destroy;
+        }
+
+        return self;
     };
+
+    /** @deprecated */
+    iris.Screen = iris.screenAux;
 
     /** @deprecated */
     iris.screen = {};
@@ -205,41 +199,52 @@
         return hash;
     }
 
+    var instanceUIAux = iris.instanceUI;
+
+    iris.instanceUI = function (p_$container, p_uiId, p_jsUrl, p_uiSettings, p_templateMode) {
+        var self = instanceUIAux(p_$container, p_uiId, p_jsUrl, p_uiSettings, p_templateMode);
+
+        self.Settings = self.settings;
+        self.Setting = self.setting;
+        self.InstanceUI = self.ui;
+        self.Show = self.show;
+        self.Hide = self.hide;
+        self.$Get = self.get;
+        self.DestroyUI = self.destroyUI;
+        self.DestroyAllUIs = self.destroyUIs;
+        self.$Container = self.container;
+        self.TemplateMode = self.tmplMode;
+        self.Template = self.tmpl;
+        self.TEMPLATE_APPEND = self.APPEND;
+        self.TEMPLATE_REPLACE = self.REPLACE;
+        self.TEMPLATE_PREPEND = self.PREPEND;
+
+        self.create = self.Create;
+
+        if ( self.Awake ) {
+            self.awake = self.Awake;
+        }
+        if ( self.CanSleep ) {
+            self.canSleep = self.CanSleep;
+        }
+        if ( self.Sleep ) {
+            self.sleep = self.Sleep;
+        }
+        if ( self.Destroy ) {
+            self.destroy = self.Destroy;
+        }
+
+        return self;
+    };
+
     /** @deprecated */
-    iris.uiAux = iris.ui;
+    var uiAux = iris.ui;
 
     /** @deprecated */
     iris.ui = {};
 
     /** @deprecated */
-    iris.UI = function (f_ui){
-        iris.uiAux(
-            function (self) {
-                self.Settings = self.settings;
-                self.Setting = self.setting;
-
-                self.InstanceUI = self.ui;
-                self.Show = self.show;
-                self.Hide = self.hide;
-                self.$Get = self.get;
-                self.DestroyUI = self.destroyUI;
-                self.DestroyAllUIs = self.destroyUIs;
-                self.$Container = self.container;
-                self.Create = self.create;
-                self.Awake = self.awake;
-                self.CanSleep = self.canSleep;
-                self.Sleep = self.sleep;
-                self.Destroy = self.destroy;
-
-                self.TemplateMode = self.tmplMode;
-                self.Template = self.tmpl;
-                self.TEMPLATE_APPEND = self.APPEND;
-                self.TEMPLATE_REPLACE = self.REPLACE;
-                self.TEMPLATE_PREPEND = self.PREPEND;
-                f_ui(self);
-            }
-        );
-    };
+    iris.UI = uiAux;
 
     /** @deprecated */
     iris.ui.JqToHash = _JqToHash;
@@ -336,4 +341,4 @@
     iris.Regional = iris.regional;
 
 
-})(jQuery, window);
+})(jQuery, iris);

@@ -11,7 +11,10 @@ window.iris = iris;
         _config = {},
         _appBaseUri = "",
         _env, _logPrefix = "",
-        _hasConsole, _JQ_MIN_VER = 1.5;
+        _hasConsole,
+        _JQ_MIN_VER = 1.5,
+        _cache,
+        _cacheVersion;
 
     var _log = {
         "error": true
@@ -62,15 +65,7 @@ window.iris = iris;
 
     // Configuration
 
-    function _getOrSetConfig(p_json) {
-        if(typeof p_json === "object") {
-            _configLoad(p_json);
-        } else {
-            return _config;
-        }
-    }
-
-    function _configLoad(p_json) {
+    function _addConfigurations(p_json) {
         $.extend(_config, p_json);
 
         // set environment
@@ -86,7 +81,7 @@ window.iris = iris;
         }
 
         // set log level
-        var log = iris.config().log;
+        var log = _config.log;
         if(log) {
             var logConfig = log[iris.env()];
             var logs = logConfig.split(",");
@@ -96,6 +91,19 @@ window.iris = iris;
         }
 
         _logPrefix = "[" + iris.env() + "]";
+
+        // set cache
+        var currentEnv = iris.env();
+        _cache = true;
+        if(_config.hasOwnProperty("environments-nocache")) {
+            var envNocache = _config["environments-nocache"].split(",");
+            for(var f = 0, F = envNocache.length; f < F; f++) {
+                if(envNocache[f] === currentEnv) {
+                    _cache = false;
+                    break;
+                }
+            }
+        }
 
         // add configuration values
         _addGlobal(_config.global);
@@ -177,15 +185,35 @@ window.iris = iris;
         return _appBaseUri;
     }
 
+    function _setOrGetCache(p_value) {
+        if(p_value !== undefined) {
+            _cache = p_value;
+        } else {
+            return _cache;
+        }
+    }
+
+    function _setCacheVersion(p_value) {
+        _cacheVersion = p_value;
+    }
 
     iris.l = _logMsg;
     iris.d = _logDebug;
     iris.w = _logWarning;
     iris.e = _logError;
-    iris.config = _getOrSetConfig;
+
+    // Add configurations
+    iris.settings = _addConfigurations;
+
     iris.env = _getEnv;
-    iris.global = _global;
-    iris.local = _local;
+
+    iris.setting = _global;
+
+    iris.cache = _setOrGetCache;
+    iris.cacheVersion = _setCacheVersion;
+
+    iris.envSetting = _local;
+
     iris.baseUri = _baseUri;
 
     _init();

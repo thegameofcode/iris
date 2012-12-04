@@ -13,8 +13,20 @@
         _gotoCancelled = false,
         _addOns = {};
 
+    function _welcome(p_jsUrl) {
+        iris.include(p_jsUrl);
 
-    function _init() {
+        _welcomeCreated = true;
+
+        var p_screenPath = "";
+        _screenUrl[p_screenPath] = p_jsUrl;
+        _screenContainer[p_screenPath] = $(document.body);
+        
+        var screenObj = iris.instanceScreen(p_screenPath);
+        screenObj.id = "welcome-screen";
+        screenObj.create();
+        screenObj._awake();
+        screenObj.show();
 
         // CHECK HASH SUPPORT
         if(!("onhashchange" in window)) {
@@ -27,24 +39,6 @@
 
             $(window).bind("hashchange", _onHashChange);
         }
-    }
-
-    function _welcome(p_jsUrl) {
-
-        iris.include(p_jsUrl);
-
-        var screenObj = new Screen();
-        _includes[p_jsUrl](screenObj);
-        screenObj.id = "welcome-screen";
-        screenObj.el = {};
-        screenObj.uis = [];
-        screenObj.con = $(document.body);
-        screenObj.fileJs = p_jsUrl;
-        screenObj.create();
-        screenObj._awake();
-        screenObj.show();
-
-        _welcomeCreated = true;
     }
 
     function _goto(p_hashUri) {
@@ -172,7 +166,7 @@
             _includes[p_uiFile] = true;
 
             var fileUrl = p_uiFile.indexOf("http") === 0 ? p_uiFile : iris.baseUri() + p_uiFile;
-            iris.d("[iris.include]", fileUrl);
+            iris.d("[include]", fileUrl);
 
             if(p_uiFile.lastIndexOf(".css") > -1) {
                 var link = document.createElement('link');
@@ -187,8 +181,15 @@
                     url: fileUrl,
                     dataType: (isHtml ? "html" : "text"),
                     async: false,
-                    cache: iris.cache(),
-                    success: function(p_data) {
+                    cache: iris.cache()
+                };
+
+                if(iris.cache() && iris.cacheVersion()) {
+                    ajaxSettings.data = "_=" + iris.cacheVersion();
+                }
+
+                iris.ajax(ajaxSettings)
+                    .done(function(p_data) {
                         _lastIncludePath = p_uiFile;
 
                         if(isHtml) {
@@ -201,18 +202,10 @@
                             _head.appendChild(script);
                         }
 
-                    },
-                    error: function(p_err) {
+                    }).fail(function(p_err) {
                         delete _includes[fileUrl];
                         iris.e(p_err.status, "error loading file '" + fileUrl + "'");
-                    }
-                };
-
-                if(iris.cache() && iris.cacheVersion()) {
-                    ajaxSettings.data = "_=" + iris.cacheVersion();
-                }
-
-                iris.ajax(ajaxSettings);
+                    });
             }
         }
     }
@@ -224,7 +217,7 @@
         if(matches) {
             var f, F = matches.length;
             for(f = 0; f < F; f++) {
-                html = html.replace(matches[f], iris.lang(matches[f].substring(2, matches[f].length - 2)));
+                html = html.replace(matches[f], iris.translate(matches[f].substring(2, matches[f].length - 2)));
             }
         }
         return html;
@@ -240,7 +233,7 @@
     }
 
     function _instanceUI(p_$container, p_uiId, p_jsUrl, p_uiSettings, p_templateMode) {
-        _include(p_jsUrl);
+        iris.include(p_jsUrl);
 
         var uiInstance = new UI();
         _includes[p_jsUrl](uiInstance);
@@ -302,10 +295,10 @@
         screenObj.uis = [];
         screenObj.con = _screenContainer[p_screenPath];
         screenObj.fileJs = jsUrl;
-        screenObj.create();
-        screenObj.hide();
 
         _screen[p_screenPath] = screenObj;
+
+        return screenObj;
     }
 
     function _destroyScreen(p_screenPath) {
@@ -328,7 +321,9 @@
             iris.e("'" + p_screenPath + "' must be registered using self.screen()");
         } else {
             if(!_screen.hasOwnProperty(p_screenPath)) {
-                _instanceScreen(p_screenPath);
+                var screenObj = iris.instanceScreen(p_screenPath);
+                screenObj.create();
+                screenObj.hide();
             }
 
             var currentScreen = _screen[p_screenPath];
@@ -537,7 +532,7 @@
     Component.prototype.ui = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
         var $container = this.get(p_id);
         if($container.size() === 1) {
-            var uiInstance = _instanceUI($container, $container.data("id"), p_jsUrl, p_uiSettings, p_templateMode);
+            var uiInstance = iris.instanceUI($container, $container.data("id"), p_jsUrl, p_uiSettings, p_templateMode);
             this.uis[this.uis.length] = uiInstance;
             return uiInstance;
         }
@@ -638,8 +633,8 @@
     // ADDON
     //
     var AddOn = function() {
-            this._components = null;
-        };
+        this._components = null;
+    };
 
     AddOn.prototype = new Settable();
 
@@ -695,15 +690,17 @@
     }
 
     iris.addOn = _createAddOn; // TODO
-    iris.applyAddOn = _applyAddOn;
+    iris.applyAddOn = _applyAddOn; // TODO
+    
     iris.include = _includeFiles;
     iris.screen = _registerScreen;
+    
+    iris.instanceScreen = _instanceScreen; // TODO
+    iris.instanceUI = _instanceUI; // TODO
+
     iris.destroyScreen = _destroyScreen;
     iris.welcome = _welcome;
     iris.goto = _goto;
     iris.ui = _registerUI;
-
-
-    _init();
 
 })(jQuery, window);

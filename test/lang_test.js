@@ -27,7 +27,7 @@
 
   test("Lang Test", function() {
 
-    iris.lang("es-ES", {
+    iris.translations("es-ES", {
       TEST: {
         LABEL: "VALUE"
       }
@@ -35,11 +35,11 @@
 
     iris.locale("es-ES");
 
-    var translated = iris.lang("TEST.LABEL");
+    var translated = iris.translate("TEST.LABEL");
     strictEqual(translated, "VALUE", "Should get a lang value");
 
     iris.locale("en-US");
-    translated = iris.lang("TEST.LABEL");
+    translated = iris.translate("TEST.LABEL");
     strictEqual(translated, "??TEST.LABEL??", "Should get a non created value");
 
   });
@@ -47,19 +47,19 @@
   asyncTest("Lang Load Test", function() {
     expect(3);
 
-    iris.lang("fr-FR", "./service/lang.json", {"success" : onSuccess, "error" : onError });
+    iris.translations("fr-FR", "/test/service/lang.json", {"success" : onSuccess, "error" : onError });
   });
 
   function onSuccess () {
 
     iris.locale("fr-FR");
-    var translated = iris.lang("LANG-TEST");
+    var translated = iris.translate("LANG-TEST");
     strictEqual(translated, "LANG-TEST-VALUE", "Should get a lang value");
 
-    translated = iris.lang("TITLE");
+    translated = iris.translate("TITLE");
     strictEqual(translated, "TITLE-VALUE", "Should get a lang value");
 
-    translated = iris.lang("NO_EXISTS");
+    translated = iris.translate("NO_EXISTS");
     strictEqual(translated, "??NO_EXISTS??", "Should get a lang value");    
 
     start();
