@@ -107,44 +107,6 @@
     /** @deprecated */
     iris.screenAux = iris.screen;
 
-    var instanceScreenAux = iris.instanceScreen;
-    iris.instanceScreen = function (p_path) {
-        var self = instanceScreenAux(p_path);
-
-        // inherit
-        self.Settings = self.settings;
-        self.Setting = self.setting;
-        self.InstanceUI = self.ui;
-        self.Show = self.show;
-        self.Hide = self.hide;
-        self.$Get = self.get;
-        self.DestroyUI = self.destroyUI;
-        self.DestroyAllUIs = self.destroyUIs;
-        self.$Container = self.container;
-        self.Template = self.tmpl;
-        self.AddScreen = self.screen;
-        self.TEMPLATE_PREPEND = self.PREPEND;
-        self.TEMPLATE_APPEND = self.APPEND;
-        self.TEMPLATE_REPLACE = self.REPLACE;
-
-        // overrides        
-        self.create = self.Create;
-        if ( self.Awake ) {
-            self.awake = self.Awake;
-        }
-        if ( self.CanSleep ) {
-            self.canSleep = self.CanSleep;
-        }
-        if ( self.Sleep ) {
-            self.sleep = self.Sleep;
-        }
-        if ( self.Destroy ) {
-            self.destroy = self.Destroy;
-        }
-
-        return self;
-    };
-
     /** @deprecated */
     iris.Screen = iris.screenAux;
 
@@ -199,44 +161,32 @@
         return hash;
     }
 
-    var instanceUIAux = iris.instanceUI;
+    var ComPro = iris.Component.prototype;
+    ComPro.InstanceUI = ComPro.ui;
+    ComPro.Show = ComPro.show;
+    ComPro.Hide = ComPro.hide;
+    ComPro.$Get = ComPro.get;
+    ComPro.DestroyUI = ComPro.destroyUI;
+    ComPro.DestroyAllUIs = ComPro.destroyUIs;
+    ComPro.$Container = ComPro.container;
+    ComPro.TEMPLATE_APPEND = ComPro.APPEND;
+    ComPro.TEMPLATE_REPLACE = ComPro.REPLACE;
+    ComPro.TEMPLATE_PREPEND = ComPro.PREPEND;
 
-    iris.instanceUI = function (p_$container, p_uiId, p_jsUrl, p_uiSettings, p_templateMode) {
-        var self = instanceUIAux(p_$container, p_uiId, p_jsUrl, p_uiSettings, p_templateMode);
 
-        self.Settings = self.settings;
-        self.Setting = self.setting;
-        self.InstanceUI = self.ui;
-        self.Show = self.show;
-        self.Hide = self.hide;
-        self.$Get = self.get;
-        self.DestroyUI = self.destroyUI;
-        self.DestroyAllUIs = self.destroyUIs;
-        self.$Container = self.container;
-        self.TemplateMode = self.tmplMode;
-        self.Template = self.tmpl;
-        self.TEMPLATE_APPEND = self.APPEND;
-        self.TEMPLATE_REPLACE = self.REPLACE;
-        self.TEMPLATE_PREPEND = self.PREPEND;
+    var UIPro = iris.UI.prototype;
+    UIPro.TemplateMode = UIPro.tmplMode;
+    UIPro.Template = UIPro.tmpl;
 
-        self.create = self.Create;
+    var ScreenPro = iris.Screen.prototype;
+    ScreenPro.AddScreen = ScreenPro.screen;
+    ScreenPro.Template = ScreenPro.tmpl;
+    
+    var SettingPro = iris.Setting.prototype;
+    SettingPro.Settings = SettingPro.settings;
+    SettingPro.Setting = SettingPro.setting;
 
-        if ( self.Awake ) {
-            self.awake = self.Awake;
-        }
-        if ( self.CanSleep ) {
-            self.canSleep = self.CanSleep;
-        }
-        if ( self.Sleep ) {
-            self.sleep = self.Sleep;
-        }
-        if ( self.Destroy ) {
-            self.destroy = self.Destroy;
-        }
-
-        return self;
-    };
-
+    
     /** @deprecated */
     var uiAux = iris.ui;
 

@@ -18,11 +18,11 @@
 
         _welcomeCreated = true;
 
-        var p_screenPath = "";
-        _screenUrl[p_screenPath] = p_jsUrl;
-        _screenContainer[p_screenPath] = $(document.body);
+        var path = "";
+        _screenUrl[path] = p_jsUrl;
+        _screenContainer[path] = $(document.body);
         
-        var screenObj = iris.instanceScreen(p_screenPath);
+        var screenObj = _instanceScreen(path);
         screenObj.id = "welcome-screen";
         screenObj.create();
         screenObj._awake();
@@ -321,7 +321,7 @@
             iris.e("'" + p_screenPath + "' must be registered using self.screen()");
         } else {
             if(!_screen.hasOwnProperty(p_screenPath)) {
-                var screenObj = iris.instanceScreen(p_screenPath);
+                var screenObj = _instanceScreen(p_screenPath);
                 screenObj.create();
                 screenObj.hide();
             }
@@ -532,7 +532,7 @@
     Component.prototype.ui = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
         var $container = this.get(p_id);
         if($container.size() === 1) {
-            var uiInstance = iris.instanceUI($container, $container.data("id"), p_jsUrl, p_uiSettings, p_templateMode);
+            var uiInstance = _instanceUI($container, $container.data("id"), p_jsUrl, p_uiSettings, p_templateMode);
             this.uis[this.uis.length] = uiInstance;
             return uiInstance;
         }
@@ -689,14 +689,16 @@
         _addOns[_lastIncludePath] = f_addOn;
     }
 
-    iris.addOn = _createAddOn; // TODO
-    iris.applyAddOn = _applyAddOn; // TODO
+    iris.addOn = _createAddOn; // TODO qunit tests
+    iris.applyAddOn = _applyAddOn; // TODO qunit tests
     
     iris.include = _includeFiles;
     iris.screen = _registerScreen;
-    
-    iris.instanceScreen = _instanceScreen; // TODO
-    iris.instanceUI = _instanceUI; // TODO
+
+    iris.Settable = Settable;
+    iris.Component = Component;
+    iris.UI = UI;
+    iris.Screen = Screen;
 
     iris.destroyScreen = _destroyScreen;
     iris.welcome = _welcome;
