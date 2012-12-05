@@ -15,11 +15,6 @@ Iris exposes all of its methods and properties on the `iris` object.
 ### iris.cache
 ### iris.cacheVersion
 
-### iris.l
-### iris.d
-### iris.w
-### iris.e
-
 
 ## Events
 ### iris.BEFORE_NAVIGATION

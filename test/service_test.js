@@ -3,11 +3,13 @@
 /*global notDeepEqual:false, strictEqual:false, notStrictEqual:false, raises:false*/
 (function($) {
 
-  var iris = window.iris;
+  module('Module Service');
 
   var testService = iris.service(function(self){
 
       self.path = "http://localhost:8080/";
+
+      self.settings({path : "http://localhost:8080/"});
 
       self.load = function (id, success, error) {
         self.get("test/service/" + id, success, error);

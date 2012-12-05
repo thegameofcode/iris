@@ -218,11 +218,22 @@ function listener (eventParams) {
 ### Load the translation texts
 
 ```javascript
-iris.lang("es-ES", {"GREETING":"¡Hola!"});
+var esTranslation = { 
+	"COMMON" : {
+		"GREETING":"¡Hola!"
+	}
+};
+iris.translations("es-ES", esTranslation);
 
-iris.lang("en-US", {"GREETING":"Hi!"});
 
-iris.lang(
+var enTranslation = { 
+	"COMMON" : {
+		"GREETING":"Hi!"
+	}
+};
+iris.translations("en-US", enTranslation);
+
+iris.translations(
       "fr-FR"
     , "http://example.com/lang-fr-fr.json"
 );
@@ -234,11 +245,11 @@ iris.lang(
 // set default locale
 iris.locale("es-ES"); 
 
-iris.lang("GREETING"); // return "¡Hola!"
+iris.translate("COMMON.GREETING"); // return "¡Hola!"
 
 
 // specified locale
-iris.lang("GREETING", "en-US"); // return "Hi!"
+iris.translate("COMMON.GREETING", "en-US"); // return "Hi!"
 ```
 
 ### Template translations
@@ -280,13 +291,13 @@ iris.config({
 });
 ```
 
-### Global values
+### Global settings
 ```javascript
 // add/override a global value
-iris.global({"global-variable" : "value"});
+iris.setting({"global-variable" : "value"});
 
 // return "value"
-iris.global("global-variable");
+iris.setting("global-variable");
 ```
 
 ### Establishing the current environment
@@ -308,17 +319,17 @@ iris.env();
 iris.env("pro");
 ```
 
-### Environment values
+### Environment settings
 
 ```javascript
 // add/override a environment variable
-iris.local({
-    "local-variable" : {
-	 "dev" : "example-dev"
-	,"pro" : "example-pro"
+iris.envSetting({
+    "environemnt-variable" : {
+		 "dev" : "example-dev"
+		,"pro" : "example-pro"
     }
 });
   
-// If environment="dev" then return "example-dev"
-iris.local("local-variable");
+// If iris.env() == "dev" then return "example-dev"
+iris.envSetting("local-variable");
 ```

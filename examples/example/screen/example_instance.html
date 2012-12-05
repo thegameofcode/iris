@@ -1,0 +1,18 @@
+<div>
+	<h1>Replace a template element with a new UI:</h1>
+	
+	<p>The container will be replaced by the UI generated.</p>
+	<pre>self.InstanceUI("container_to_replace", "example/ui/example_basic.js");</pre>
+	
+	<p>Template:</p>
+	<pre>&lt;div&gt;
+  &lt;div data-id='container_to_replace'&gt;Container content&lt;/div&gt;
+&lt;div&gt;</pre>
+
+<p>To append UIs instead of replace set the <i>Template Mode</i> to <a href="#list">self.TEMPLATE_APPEND</a></p>
+
+    <p>Try it:</p>
+	<button data-id="btn_create">Create a new UI</button>
+
+	<div data-id='container'>Container content</div>
+</div>

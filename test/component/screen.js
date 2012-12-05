@@ -1,3 +1,4 @@
+
 iris.screen(function (self) {
 
 	var ui;
@@ -7,12 +8,13 @@ iris.screen(function (self) {
 		self.tmpl("test/component/screen.html");
 
 		iris.on("create_ui", createUi);
-		iris.on("destroy_ui", destroyUi);
+		self.on("destroy_ui", destroyUi);
 
 		// check screen properties
 		window.strictEqual(self.id, "#screen");
 		window.strictEqual(self.fileJs, "test/component/screen.js");
 		window.strictEqual(self.uis.length, 0);
+
 
 		window.start();
 
@@ -20,8 +22,8 @@ iris.screen(function (self) {
 
 	self.destroy = function () {
 		// to prevent memory leaks
-		iris.off("create_ui", createUi);
-		iris.off("destroy_ui", destroyUi);
+		self.off("create_ui", createUi);
+		self.off("destroy_ui", destroyUi);
 
 		window.ok(true);
 		window.start();
@@ -31,6 +33,7 @@ iris.screen(function (self) {
 		ui = self.ui("container", "test/component/ui.js", {test:"test"});
 
 		window.strictEqual(self.uis.length, 1);
+
 		window.start();
 	}
 

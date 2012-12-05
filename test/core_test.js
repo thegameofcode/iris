@@ -3,8 +3,6 @@
 /*global notDeepEqual:false, strictEqual:false, notStrictEqual:false, raises:false*/
 (function($) {
 
-  var iris = window.iris;
-
   /*
     ======== A Handy Little QUnit Reference ========
     http://docs.jquery.com/QUnit
@@ -24,47 +22,11 @@
       raises(block, [expected], [message])
   */
 
+  module('Module Core');
 
-  test("Load Config Test", function() {
 
-    iris.settings({
-      "environment-default": "pro",
-      "environments-nocache": "dev",
-      "environment": {
-        "localhost": "dev",
-        "example.com": "pro"
-      },
-      "log": {
-        "dev": "debug,warning,error",
-        "pro": "error"
-      }
-    });
-
-    strictEqual(iris.env(), "dev", "Should get a dev environment");
+  test("Get Base URI", function() {
     strictEqual(iris.baseUri(), "http://localhost:8080/", "Should get a dev URL");
-
-  });
-
-  test("Global Config Test", function() {
-    iris.settings({
-      "environment-default": "dev",
-      "global" : {"global-test":"value"}
-    });
-    strictEqual(iris.setting("global-test"), "value", "Should get global config value");
-
-    iris.setting("global-test2", 15);
-    strictEqual(iris.setting("global-test2"), 15, "Should get global config value");
-  });
-
-  test("Local Config Test", function() {
-    iris.settings({
-      "environment-default": "dev",
-      "local" : {"local-test" : {"dev":"value"} }
-    });
-    strictEqual(iris.envSetting("local-test"), "value", "Should get local config value");
-
-    iris.envSetting("local-test2", 15);
-    strictEqual(iris.envSetting("local-test2"), 15, "Should get local config value");
   });
 
 }(jQuery));

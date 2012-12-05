@@ -2,7 +2,7 @@ iris.ui(function (self) {
 
 	self.create = function() {
 
-		self.tmplMode(self.TEMPLATE_APPEND);
+		self.tmplMode(self.APPEND);
 		self.tmpl("test/component/ui.html");
 
 		window.strictEqual(self.id, "container");

@@ -3,8 +3,6 @@
 /*global notDeepEqual:false, strictEqual:false, notStrictEqual:false, raises:false*/
 (function($) {
 
-  var iris = window.iris;
-
   /*
     ======== A Handy Little QUnit Reference ========
     http://docs.jquery.com/QUnit
@@ -24,8 +22,10 @@
       raises(block, [expected], [message])
   */
 
-  asyncTest("Event Test", function () {
-      expect(2);
+  module('Module Event');
+
+  test("Event Test", function () {
+      expect(1);
 
       iris.on("test-event", onEvent);
       iris.notify("test-event");
@@ -33,14 +33,21 @@
       iris.off("test-event", onEvent);
       iris.notify("test-event");
 
-      ok(true);
-      start();
+  });
+
+  test("Duplicated Event Test", function () {
+      expect(1);
+
+      iris.on("duplicated-event", onEvent);
+      iris.on("duplicated-event", onEvent);
+      iris.on("duplicated-event", onEvent);
+
+      iris.notify("duplicated-event");
 
   });
 
   function onEvent () {
     ok(true);
-    start();
   }
 
 }(jQuery));

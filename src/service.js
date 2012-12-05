@@ -1,17 +1,20 @@
-(function(iris) {
+(function() {
 
-    var Service = function() {
-        this.type = "json";
-        this.path = "";
-    };
+    var Service = function() {};
+
+    Service.prototype = new iris.Settable();
 
     Service.prototype.ajax = function(p_method, p_path, p_params, f_success, f_error) {
+
+        var type = this.setting("type");
+        var path = this.setting("path");
+
         iris.ajax({
-            "url": this.path + p_path,
+            "url": (path ? path : "") + p_path,
             "type": p_method,
             "data": p_params,
             "cache": false,
-            "dataType": this.type,
+            "dataType": (type ? type : "json"),
             "async": true,
             "success": f_success,
             "error": f_error // function (p_request, p_textStatus, p_errorThrown)
@@ -34,13 +37,11 @@
         this.ajax("POST", p_path, p_params, f_success, f_error);
     };
 
-    function createService(f_service) {
+    iris.service = function (f_service) {
         var serv = new Service();
+        serv.cfg = {};
         f_service(serv);
         return serv;
-    }
+    };
 
-
-    iris.service = createService;
-
-})(window.iris);
+})();

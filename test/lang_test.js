@@ -3,8 +3,6 @@
 /*global notDeepEqual:false, strictEqual:false, notStrictEqual:false, raises:false*/
 (function($) {
 
-  var iris = window.iris;
-
   /*
     ======== A Handy Little QUnit Reference ========
     http://docs.jquery.com/QUnit
@@ -24,21 +22,23 @@
       raises(block, [expected], [message])
   */
 
+  module('Module Lang');
+
 
   test("Lang Test", function() {
 
-    iris.translations("es-ES", {
+    iris.translations("es_ES", {
       TEST: {
         LABEL: "VALUE"
       }
     });
 
-    iris.locale("es-ES");
+    iris.locale("es_ES");
 
     var translated = iris.translate("TEST.LABEL");
     strictEqual(translated, "VALUE", "Should get a lang value");
 
-    iris.locale("en-US");
+    iris.locale("locale_not_loaded");
     translated = iris.translate("TEST.LABEL");
     strictEqual(translated, "??TEST.LABEL??", "Should get a non created value");
 

@@ -1,6 +1,4 @@
-(function($, window) {
-
-    var iris = window.iris;
+(function($) {
 
     var _screen = {},
         _screenUrl = {},
@@ -10,11 +8,15 @@
         _includes = {},
         _lastIncludePath, _head = $("head").get(0),
         _welcomeCreated = false,
-        _gotoCancelled = false,
-        _addOns = {};
+        _gotoCancelled = false;
 
     function _welcome(p_jsUrl) {
-        iris.include(p_jsUrl);
+
+        if ( window.console && window.console.log ) {
+            window.console.log("[iris] noCache[" + iris.noCache() + "] enableLog[" + iris.enableLog() + "]");
+        }
+
+        iris.include(p_jsUrl); // TODO Must be async
 
         _welcomeCreated = true;
 
@@ -30,7 +32,7 @@
 
         // CHECK HASH SUPPORT
         if(!("onhashchange" in window)) {
-            iris.e("hashchange event unsupported");
+            throw "hashchange event unsupported";
         } else {
 
             if(document.location.hash) {
@@ -49,8 +51,7 @@
     function _onHashChange() {
 
         if(!_welcomeCreated) {
-            iris.e("Set the first screen using iris.welcome()");
-            return false;
+            throw "set the first screen using iris.welcome()";
         }
 
         iris.notify(iris.BEFORE_NAVIGATION);
@@ -166,7 +167,7 @@
             _includes[p_uiFile] = true;
 
             var fileUrl = p_uiFile.indexOf("http") === 0 ? p_uiFile : iris.baseUri() + p_uiFile;
-            iris.d("[include]", fileUrl);
+            iris.log("[include]", fileUrl);
 
             if(p_uiFile.lastIndexOf(".css") > -1) {
                 var link = document.createElement('link');
@@ -204,7 +205,7 @@
 
                     }).fail(function(p_err) {
                         delete _includes[fileUrl];
-                        iris.e(p_err.status, "error loading file '" + fileUrl + "'");
+                        throw "error [" + p_err.status + "] loading file '" + fileUrl + "'";
                     });
             }
         }
@@ -241,7 +242,8 @@
         uiInstance.el = {};
         uiInstance.con = p_$container;
         uiInstance.uis = [];
-        uiInstance._settings = {};
+        uiInstance.events = {};
+        uiInstance.cfg = {};
         uiInstance.fileJs = p_jsUrl;
         if(p_templateMode !== undefined) {
             uiInstance._tmplMode = p_templateMode;
@@ -250,7 +252,7 @@
         p_uiSettings = p_uiSettings === undefined ? {} : p_uiSettings;
         var jqToHash = _jqToHash(p_$container);
 
-        $.extend(uiInstance._settings, jqToHash, p_uiSettings);
+        $.extend(uiInstance.cfg, jqToHash, p_uiSettings);
 
         uiInstance.create(jqToHash, p_uiSettings);
 
@@ -293,6 +295,7 @@
         screenObj.id = p_screenPath;
         screenObj.el = {};
         screenObj.uis = [];
+        screenObj.events = {};
         screenObj.con = _screenContainer[p_screenPath];
         screenObj.fileJs = jsUrl;
 
@@ -311,14 +314,14 @@
             _screen[p_screenPath].get().remove();
             delete _screen[p_screenPath];
         } else {
-            iris.w("Error removing the screen \"" + p_screenPath + "\", path not found.");
+            iris.log("Error removing the screen \"" + p_screenPath + "\", path not found.");
         }
     }
 
     function _showScreen(p_screenPath, p_params) {
 
         if(!_screenContainer.hasOwnProperty(p_screenPath)) {
-            iris.e("'" + p_screenPath + "' must be registered using self.screen()");
+            throw "'" + p_screenPath + "' must be registered using self.screen()";
         } else {
             if(!_screen.hasOwnProperty(p_screenPath)) {
                 var screenObj = _instanceScreen(p_screenPath);
@@ -359,11 +362,11 @@
                         value = iris.currency(value);
                         break;
                     default:
-                        iris.w("Unknow template format label '" + formatLabel + "' in '" + p_htmlUrl + "'");
+                        iris.log("Unknow template format label '" + formatLabel + "' in '" + p_htmlUrl + "'");
                     }
                 }
             } else {
-                iris.w("Template param '" + matches[1] + "' in '" + p_htmlUrl + "' not found", p_data);
+                iris.log("Template param '" + matches[1] + "' in '" + p_htmlUrl + "' not found", p_data);
             }
 
             result = result.replace(matches[0], value);
@@ -376,40 +379,42 @@
 
 
     var Settable = function() {
-            this._settings = null;
-        };
-
-    Settable.prototype.settings = function(p_settings) {
-        return $.extend(this._settings, p_settings);
+        this.cfg = null;
     };
 
-    Settable.prototype.Setting = function(p_label, p_value) {
+    Settable.prototype = new iris.Event();
+
+    Settable.prototype.settings = function(p_settings) {
+        return $.extend(this.cfg, p_settings);
+    };
+
+    Settable.prototype.setting = function(p_label, p_value) {
         if(p_value === undefined) {
-            if(!this._settings.hasOwnProperty(p_label)) {
-                iris.w("setting " + p_label + " not found", this._settings, this);
+            if(!this.cfg.hasOwnProperty(p_label)) {
+                iris.log("setting " + p_label + " not found", this.cfg, this);
             }
-            return this._settings[p_label];
+            return this.cfg[p_label];
         } else {
-            this._settings[p_label] = p_value;
+            this.cfg[p_label] = p_value;
         }
     };
 
 
     var Component = function() {
 
-            this.APPEND = "append";
-            this.REPLACE = "replace";
-            this.PREPEND = "prepend";
+        this.APPEND = "append";
+        this.REPLACE = "replace";
+        this.PREPEND = "prepend";
 
-            this._$tmpl = null;
-            this.id = null;
-            this.uis = null;
-            this.con = null;
-            this._sleeping = null;
-            this.fileJs = null;
-            this.fileTmpl = null;
-            this.el = null;
-        };
+        this.id = null;
+        this.fileJs = null;
+        this.fileTmpl = null;
+        this.template = null;
+        this.uis = null; // child UIs
+        this.con = null; // JQ container
+        this.sleeping = null;
+        this.el = null; // cached elements
+    };
 
     Component.prototype = new Settable();
 
@@ -417,7 +422,7 @@
         for(var f = 0, F = this.uis.length; f < F; f++) {
             this.uis[f]._sleep();
         }
-        this._sleeping = true;
+        this.sleeping = true;
         this.sleep();
     };
 
@@ -425,20 +430,29 @@
         for(var f = 0, F = this.uis.length; f < F; f++) {
             this.uis[f]._awake();
         }
-        this._sleeping = false;
+        this.sleeping = false;
         this.awake(p_params);
     };
 
     Component.prototype._destroy = function() {
-        if(!this._sleeping) {
+        if(!this.sleeping) {
             this._sleep();
         }
 
+        // propage destroys
         for(var f = 0, F = this.uis.length; f < F; f++) {
             this.uis[f]._destroy();
         }
-        this.uis = null;
+
+        // remove component events
+        for ( var eventName in this.events ) {
+            iris.destroyEvents(eventName, this.events[eventName]);
+        }
+
         this.destroy();
+
+        this.uis = null;
+        this.events = null;
     };
 
     Component.prototype._tmpl = function(p_htmlUrl, p_params, p_mode) {
@@ -446,8 +460,8 @@
 
         // TODO
         if(typeof p_htmlUrl === "undefined") {
-            this._$tmpl = this.con;
-            return this._$tmpl;
+            this.template = this.con;
+            return this.template;
         }
         //
         iris.include(p_htmlUrl);
@@ -455,42 +469,41 @@
         var tmplHtml = p_params ? _tmplParse(_includes[p_htmlUrl], p_params, p_htmlUrl) : _includes[p_htmlUrl];
         var $tmpl = $(tmplHtml);
 
-        this._$tmpl = $tmpl;
+        this.template = $tmpl;
         if($tmpl.size() > 1) {
-            iris.e("'" + p_htmlUrl + "' must have only one root node");
+            throw "'" + p_htmlUrl + "' must have only one root node";
         }
         switch(p_mode) {
-        case this.APPEND:
-            this.con.append($tmpl);
-            break;
-        case this.REPLACE:
-            this.con.replaceWith($tmpl);
-            break;
-        case this.PREPEND:
-            this.con.prepend($tmpl);
-            break;
-        default:
-            iris.e("Unknown template mode '" + p_mode + "'");
+            case this.APPEND:
+                this.con.append($tmpl);
+                break;
+            case this.REPLACE:
+                this.con.replaceWith($tmpl);
+                break;
+            case this.PREPEND:
+                this.con.prepend($tmpl);
+                break;
+            default:
+                throw "Unknown template mode '" + p_mode + "'";
         }
 
     };
 
     // Check if the template is set (https://github.com/intelygenz/iris/issues/19)
     Component.prototype._checkTmpl = function() {
-        if(this._$tmpl === null) {
-            iris.e("Set a template using self.tmpl() in '" + this.fileJs + "'");
-            return undefined;
+        if(this.template === null) {
+            throw "Set a template using self.tmpl() in '" + this.fileJs + "'";
         }
     };
 
     Component.prototype.show = function() {
         this._checkTmpl();
-        this._$tmpl.show();
+        this.template.show();
     };
 
     Component.prototype.hide = function() {
         this._checkTmpl();
-        this._$tmpl.hide();
+        this.template.hide();
     };
 
     Component.prototype.get = function(p_id) {
@@ -500,24 +513,22 @@
 
             if(!this.el.hasOwnProperty(p_id)) {
                 var id = "[data-id=" + p_id + "]",
-                    filter = this._$tmpl.filter(id),
+                    filter = this.template.filter(id),
                     $element = null;
 
                 if(filter.length > 0) {
                     $element = filter;
                 } else {
-                    var find = this._$tmpl.find(id);
+                    var find = this.template.find(id);
                     if(find.size() > 0) {
                         $element = find;
                     }
                 }
 
                 if($element === null) {
-                    iris.e("[data-id=" + p_id + "] not found in '" + this.fileTmpl + "' used by '" + this.fileJs + "'");
-                    return undefined;
+                    throw "[data-id=" + p_id + "] not found in '" + this.fileTmpl + "' used by '" + this.fileJs + "'";
                 } else if($element.size() > 1) {
-                    iris.e("[data-id=" + p_id + "] must be unique in '" + this.fileTmpl + "' used by '" + this.fileJs + "'");
-                    return undefined;
+                    throw "[data-id=" + p_id + "] must be unique in '" + this.fileTmpl + "' used by '" + this.fileJs + "'";
                 }
 
                 this.el[p_id] = $element;
@@ -526,7 +537,7 @@
             return this.el[p_id];
         }
 
-        return this._$tmpl;
+        return this.template;
     };
 
     Component.prototype.ui = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
@@ -629,80 +640,22 @@
         _screenContainer[p_screenPath] = $cont;
     };
 
-    //
-    // ADDON
-    //
-    var AddOn = function() {
-        this._components = null;
-    };
-
-    AddOn.prototype = new Settable();
-
-    AddOn.prototype.addAll = function(p_uis) {
-        for(var f = 0, F = p_uis.length; f < F; f++) {
-            this.add(p_uis[f]);
-        }
-    };
-
-    AddOn.prototype.add = function(p_ui) {
-        if(this.hasOwnProperty("addOn")) {
-            this.addOn(p_ui);
-        }
-        this._components.push(p_ui);
-    };
-
-    AddOn.prototype.remove = function(p_ui) {
-        for(var f = 0, F = this._components.length; f < F; f++) {
-            if(this._components[f] === p_ui) {
-                this._components.splice(f, 1);
-            }
-        }
-    };
-
-    AddOn.prototype.get = function(p_idx) {
-        return this._components[p_idx];
-    };
-
-    AddOn.prototype.size = function() {
-        return this._components.length;
-    };
-
-    // To override
-    AddOn.prototype.create = function() {};
-
-
-    function _applyAddOn(p_id, p_uis, p_settings) {
-        iris.include(p_id);
-
-        var addOn = new AddOn();
-        addOn._components = [];
-        addOn._settings = {};
-
-        _addOns[p_id](addOn);
-        addOn.settings(p_settings);
-        addOn.addAll(p_uis);
-        addOn.create();
-        return addOn;
-    }
-
-    function _createAddOn(f_addOn) {
-        _addOns[_lastIncludePath] = f_addOn;
-    }
-
-    iris.addOn = _createAddOn; // TODO qunit tests
-    iris.applyAddOn = _applyAddOn; // TODO qunit tests
+    
     
     iris.include = _includeFiles;
     iris.screen = _registerScreen;
-
-    iris.Settable = Settable;
-    iris.Component = Component;
-    iris.UI = UI;
-    iris.Screen = Screen;
-
     iris.destroyScreen = _destroyScreen;
     iris.welcome = _welcome;
     iris.goto = _goto;
     iris.ui = _registerUI;
 
-})(jQuery, window);
+
+
+    // TODO Should be no public?
+    iris.Settable = Settable;
+    iris.Component = Component;
+    iris.UI = UI;
+    iris.Screen = Screen;
+
+
+})(jQuery);

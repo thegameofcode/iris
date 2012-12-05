@@ -3,8 +3,6 @@
 /*global notDeepEqual:false, strictEqual:false, notStrictEqual:false, raises:false*/
 (function($) {
 
-  var iris = window.iris;
-
   /*
     ======== A Handy Little QUnit Reference ========
     http://docs.jquery.com/QUnit
@@ -24,8 +22,9 @@
       raises(block, [expected], [message])
   */
 
-  test("Include JS", function() {
-    stop();
+  module('Module Component');
+
+  asyncTest("Include JS", function() {
 
     // for lang values test
     iris.translations("test",{"TEST":"lang_val"});
@@ -37,8 +36,7 @@
 
   });
 
-  test("Welcome Screen", function() {
-    stop();
+  asyncTest("Welcome Screen", function() {
 
     expect(4);
 
@@ -46,8 +44,7 @@
 
   });
 
-  test("Create & Navigate To Screen", function() {
-    stop();
+  asyncTest("Navigate To Screen", function() {
     
     expect(3);
 
@@ -55,38 +52,35 @@
 
   });
 
-  test("Create UI", function() {
-    stop();
+  /*asyncTest("Create UI", function() {
 
     expect(4);
-
     iris.notify("create_ui");
+    
   });
 
-  test("Destroy UI", function() {
-    stop();
 
+  asyncTest("Destroy UI", function() {
+    
     expect(1);
 
     iris.notify("destroy_ui");
   });
 
-  test("Template Params", function() {
-    stop();
+  asyncTest("Template Params", function() {
 
     expect(1);
     iris.notify("template_params");
   });
 
-  test("Template Lang Values", function() {
-    stop();
+  asyncTest("Template Lang Values", function() {
 
     expect(1);
+    console.log(1);
     iris.notify("template_langs");
-  });
+  });*/
 
-  test("Destroy Screen", function() {
-    stop();
+  asyncTest("Destroy Screen", function() {
 
     expect(1);
     iris.destroyScreen("#screen");

@@ -8,8 +8,8 @@ iris.screen(function (self) {
 
 		self.screen("screens", "#screen", "test/component/screen.js");
 
-		iris.on("template_params", templateParams);
-		iris.on("template_langs", templateLangs);
+		self.on("template_params", templateParams);
+		self.on("template_langs", templateLangs);
 
 		// check screen properties
 		window.strictEqual(self.id, "welcome-screen");
@@ -22,6 +22,7 @@ iris.screen(function (self) {
 	};
 
 	function templateLangs () {
+		window.console.log(0);
 		window.strictEqual(self.get("lang_values").text(), iris.translate("TEST"));
 		window.start();
 	}

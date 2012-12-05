@@ -1,62 +1,36 @@
-(function($, window) {
+(function() {
 
-    var iris = window.iris;
+    var _locale, _regional = {};
 
-    // TODO Extract to separated regional files
-    var _regional = {
-        "en-US": {
-            dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-            monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-            dateFormat: "m/d/Y h:i:s",
-            currency: {
-                formatPos: "n",
-                formatNeg: "(n)",
-                decimal: ".",
-                thousand: ",",
-                precision: 2
+    iris.locale = function (p_locale, p_regional) {
+        if ( typeof p_regional === "object" ) {
+            if ( !_regional[p_locale] ) {
+                _regional[p_locale] = {};
             }
-        },
-        "es-ES": {
-            dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
-            monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
-            dateFormat: "d/m/Y H:i:s",
-            currency: {
-                formatPos: "n",
-                formatNeg: "-n",
-                decimal: ",",
-                thousand: ".",
-                precision: 2
-            }
+            $.extend(_regional[p_locale], p_regional);
+
+        } else if ( p_locale !== undefined ) {
+            _locale = p_locale;
+
+        } else {
+            return _locale;
         }
     };
 
-    function _getRegionalSetting(p_label) {
+    iris.regional = function (p_label) {
 
-        var locale = iris.locale();
-
-        if(_regional.hasOwnProperty(locale)) {
+        if(_regional.hasOwnProperty(_locale)) {
             if(typeof p_label === "undefined") {
-                return _regional[locale];
-            } else if(_regional[locale].hasOwnProperty(p_label)) {
-                return _regional[locale][p_label];
+                return _regional[_locale];
+            } else if(_regional[_locale].hasOwnProperty(p_label)) {
+                return _regional[_locale][p_label];
             } else {
-                iris.e("Regional setting '" + p_label + "' not found for locale '" + locale + "'");
+                throw "[regional] setting '" + p_label + "' not found for locale '" + _locale + "'";
             }
         } else {
-            iris.e("Regional for locale '" + locale + "' not found");
+            throw "[regional] for locale '" + _locale + "' not found";
         }
-    }
-
-    function _getOrSetRegional(p_localeOrLabel, p_regional) {
-        if (p_regional) {
-            _regional[p_localeOrLabel] = p_regional;
-        } else {
-            return _getRegionalSetting(p_localeOrLabel);
-        }
-    }
+    };
 
 
-    iris.regional = _getOrSetRegional;
-
-
-})(jQuery, window);
+})();

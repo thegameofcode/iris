@@ -1,55 +1,89 @@
 
-(function ($, window) {
+(function ($) {
 
-var iris = window.iris;
+    // static object to store all app callbacks
+    var _events = {};
 
-var _event = {};
+    iris.on = function (p_eventName, f_func) {
+        if ( !_events.hasOwnProperty(p_eventName) ) {
+            _events[p_eventName] = [];
+        }
 
-function _findEvent(p_eventName, f_func){
-    var events = _event[p_eventName];
-    if ( events ) {
-        for ( var f=0, F=events.length; f<F; f++ ) {
-            if ( events[f] === f_func ) {
-                return f;
+        var callbacks = _events[p_eventName];
+        var index = callbacks.indexOf(f_func);
+        if ( index === -1 ) {
+            callbacks.push(f_func);
+        }
+
+    };
+
+    iris.off = function (p_eventName, f_func){
+        var callbacks = _events[p_eventName];
+        if ( callbacks ){
+            callbacks.splice(callbacks.indexOf(f_func), 1);
+        }
+    };
+
+    iris.notify = function (p_eventName, p_data){
+        if ( _events[p_eventName] ) {
+            var callbacks = _events[p_eventName];
+            for ( var i=0; i < callbacks.length; i++ ) {
+                callbacks[i](p_data);
             }
         }
-    }
-    return -1;
-}
+    };
 
-function _eventSubscribe(p_eventName, f_func){
-    if ( !_event[p_eventName] ) {
-        _event[p_eventName] = [];
-    }
-
-    var index = _findEvent( p_eventName, f_func );
-    if ( index === -1 ) {
-        index = _event[p_eventName].length;
-    }
-
-    _event[p_eventName][index] = f_func;
-}
-
-function _eventRemove(p_eventName, f_func){
-    var index = _findEvent(p_eventName, f_func);
-    if ( index !== -1 ){
-        _event[p_eventName].splice(index,1);
-    }
-}
-
-function _eventNotify(p_eventName, p_data){
-    if ( _event[p_eventName] ) {
-        var funcs = _event[p_eventName];
-        for ( var f=0, F=funcs.length; f<F; f++ ) {
-            funcs[f](p_data);
+    iris.destroyEvents = function (p_eventName, p_callbacks) {
+        var callbacks = _events[p_eventName];
+        if ( callbacks ) {
+            for ( var i=0; i < p_callbacks.length; i++ ) {
+                callbacks.splice(callbacks.indexOf(p_callbacks[i]), 1);
+            }
         }
-    }
-}
-
-iris.BEFORE_NAVIGATION = "iris_before_navigation";
-iris.notify = _eventNotify;
-iris.on = _eventSubscribe;
-iris.off = _eventRemove;
+    };
 
 
-})(jQuery, window);
+    iris.Event = function () {
+
+        this.events = {}; // { "event1" : [f1, f2], "event2" : [f3, f4, f5, f6] }
+
+    };
+
+    var eventPrototype = iris.Event.prototype;
+
+    eventPrototype.on = function (p_eventName, f_func) {
+        if ( !this.events.hasOwnProperty(p_eventName) ) {
+            this.events[p_eventName] = [];
+        }
+
+        var callbacks = this.events[p_eventName];
+        if ( callbacks.indexOf(f_func) === -1 ) {
+            callbacks.push(f_func);
+            iris.on(p_eventName, f_func);
+        }
+
+    };
+
+    eventPrototype.off = function (p_eventName, f_func){
+        var callbacks = this.events[p_eventName];
+
+        if ( callbacks ) {
+            var index = callbacks.indexOf(f_func);
+
+            if ( index !== -1 ) {
+                callbacks.splice(index, 1);
+            }
+        }
+    };
+
+    eventPrototype.notify = function (p_eventName, p_data){
+        iris.notify(p_eventName, p_data);
+    };
+
+    //
+    // Iris custom events
+    //
+    iris.BEFORE_NAVIGATION = "iris_before_navigation";
+
+
+})(jQuery);

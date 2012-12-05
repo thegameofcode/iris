@@ -24,6 +24,7 @@
       raises(block, [expected], [message])
   */
 
+  module('Module Regional');
 
   test("Regional Test", function() {
     var testRegional = {
@@ -39,13 +40,11 @@
       }
     };
 
-    iris.regional("locale-test", testRegional);
+    iris.locale("locale-test", testRegional);
 
     iris.locale("locale-test");
 
     deepEqual(iris.regional(), testRegional);
-
-    deepEqual(iris.regional("currency"), testRegional.currency);
 
 
   });
