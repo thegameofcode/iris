@@ -17,23 +17,23 @@ Iris is not only another framework. It is a methodology that will help you to bu
 
 
 ## API
-http://intelygenz.github.com/iris/api/v0.4.5/
+http://iris-js.github.com/iris/api/v0.4.5/
 
 ## Getting Started
-https://github.com/intelygenz/iris/wiki/Getting-Started
+https://github.com/iris-js/iris/wiki/Getting-Started
 
 ## Cookbook
-https://github.com/intelygenz/iris/wiki/Cookbook
+https://github.com/iris-js/iris/wiki/Cookbook
 
 ## Iris Life Cycle
-https://github.com/intelygenz/iris/wiki/Iris-Life-Cycle
+https://github.com/iris-js/iris/wiki/Iris-Life-Cycle
 
 ## Examples
-https://github.com/intelygenz/iris/wiki/Examples
+https://github.com/iris-js/iris/wiki/Examples
 
 ## Installation
 
-Download the lastest version from http://intelygenz.github.com/iris/
+Download the lastest version from http://iris-js.github.com/iris/
 
 ```html
 <script type='text/javascript' src="iris-0.4.5.min.js"></script>
