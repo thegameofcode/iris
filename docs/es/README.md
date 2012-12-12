@@ -186,7 +186,7 @@ iris.screen(
  
 );
 ```
-Cuando se ejecute el método *iris.welcome*, Iris recibirá la URL del fichero a cargar, este fichero contendrá una llamada a *iris.screen* que recibirá una función que será llamada por Iris cada vez que se produzca un evento del ciclo de vida del componente.
+Cuando se ejecute el método *iris.welcome*, Iris recibirá la URL del fichero a cargar, este fichero contendrá una llamada a *iris.screen* que recibirá una función. Iris creará un objeto de tipo Screen y utilizará 
 
 
 
