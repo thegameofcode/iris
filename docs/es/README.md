@@ -75,7 +75,7 @@ En esta sección se van a presentar los principales componentes de Iris y los m�
 
 La estructura de una aplicación Iris consiste en la creación de varios componentes que interaccionan entre sí.
 
-Un **componente** contiene dos elementos fundamentales: La vista o presentación y el comportamiento.
+Cada **componente** permite definir los elementos que conforman la interfaz de usuario. Un compoenete contiene dos elementos fundamentales: La vista o presentación y el comportamiento.
 
 La **vista** consiste en un fragmento de código en HTML, típicamente un *DIV*, almacenado en un fichero, normalmente con extensión *.html*.
 
@@ -145,16 +145,50 @@ El primer paso será decidir si queremos trabajar con la versión de [desarrollo
 ```
 
 ##Llamando al Screen de bienvenida
-Desde Javascript llamamos al método **welcome** de Iris para cargar el fichero de comportamiento del Screen de bienvenida.
+Desde Javascript, llamamos al método **welcome** de Iris para cargar el fichero de comportamiento del Screen de bienvenida.
 
 ```js
 //In any Javascrit file or in a "<script>" section of an HTML file ... 
 $(document).ready(
  function () {
+  iris.baseUri("./"); //It sets de base directory of the application
   iris.welcome("welcome.js"); //It loads the behavior file of the welcome Screen
  }
 );
 ```
+
+El fichero *welcome.js* antes referido tendrá la siguiente estructura:
+
+```js
+//In welcome.js
+iris.screen(
+	
+ function (self) {
+ 	
+  self.create = function () {
+   self.tmpl("welcome.html");
+   console.log("Welcome Screen Created");
+  }
+
+  self.awake = function () {
+   console.log("Welcome Screen Awakened");
+  }
+		
+  self.sleep = function () {
+   console.log("Welcome Screen Sleeping");
+  }
+  
+  self.sleep = function () {
+   console.log("Welcome Screen Destroyed");
+  }
+  
+ }
+ 
+);
+```
+Cuando se ejecute el método *iris.welcome*, Iris recibirá la URL del fichero a cargar, este fichero contendrá una llamada a *iris.screen* que recibirá una función que será llamada por Iris cada vez que se produzca un evento del ciclo de vida del componente.
+
+
 
 
 #<a name="paso-a-paso"></a>Contruyendo paso a paso una aplicación desde cero
