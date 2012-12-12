@@ -45,14 +45,14 @@ El lenguaje [*Javascript*](http://en.wikipedia.org/wiki/Javascript) se está con
 
 Sin embargo, el mayor peso relativo que está adquiriendo la programación en el *lado del cliente* plantea nuevas dificultades:
 * Por un lado, buena parte del código en [HTML](http://en.wikipedia.org/wiki/Html) ahora se genera dinámicamente desde cliente con *Javascript*. Esto supone una gran ventaja ya que mejora la experiencia de usuario y disminuye la necesidad de interaccionar con el servidor, pero también genera problemas nuevos:
-	* Los buscadores ya no pueden realizar correctamente su trabajo debido a que la aplicación ahora no necesita modificar la [URL](http://en.wikipedia.org/wiki/Url). Por motivos de optimización, los buscadores no analizan el código generado desde *Javascript* (ver [SEO](http://en.wikipedia.org/wiki/Search_Engine_Optimization)).
+	* Los buscadores ya no pueden realizar correctamente su trabajo debido a que la aplicación no necesita modificar la [URL](http://en.wikipedia.org/wiki/Url). Por motivos de optimización, los buscadores no analizan el código generado desde *Javascript* (ver [SEO](http://en.wikipedia.org/wiki/Search_Engine_Optimization)).
 	* Por el mismo motivo, ahora es más difícil enlazar a secciones concretas de la aplicación.
 	* Surgen problemas con el almacenamiento temporal en *caché*. Es frecuente que el navegador almacene la información y no vaya a *buscar* los datos al servidor.
 	* Aparecen anomalías en el comportamiento de los botones de delante/atrás. 
 	* Problemas con el análisis estadístico de las páginas visitadas.
-	* Es fácil que se produzcan *filtraciones* de memoria debido a que los objetos creados dinámicamente con Javascript dejen de apuntar a la referencia correcta o que permanezcan indefinidamente en la memoria.
+	* Es fácil que se produzcan *filtraciones* de memoria debido a que los objetos creados dinámicamente con Javascript dejen de apuntar a la referencia correcta o, por el contrario, que permanezcan indefinidamente en la memoria.
 
-* Por otro lado, el desplazamiento de parte de la lógica al cliente, tiene como consecuencia que ahora las aplicaciones en *Javascript* alcanzan fácilmente varios millares de líneas de código. Esto supone una dificultad de mantenimiento máxime si, como decíamos antes, el código en HTML se genera dinámicamente en el cliente.
+* Por otro lado, el desplazamiento de parte de la lógica al cliente, tiene como consecuencia que las aplicaciones en *Javascript* alcancen fácilmente varios millares de líneas de código. Esto supone una dificultad de mantenimiento máxime si, como decíamos antes, el código en HTML se genera dinámicamente en el cliente.
 
 Iris está especialmente diseñado para dar respuesta a ambos problemas:
 
@@ -106,13 +106,13 @@ Un Screen puede contener otros componentes de tipo UI.
 
 Iris establece cuatro transiciones en el ciclo de vida de un componente: *create*, *awake*, *sleep* y *destroy*. En el fichero Javascript asociado al componente, podemos definir métodos *callbacks* que serán llamados por Iris cuando el evento correspondiente se produzca.
 
-Cuando se cree un componente, Iris ejecutará el código asociado a su función **create**. Normalmente aquí cargaremos el código HTML asociado al componente y registraremos los Screens. Este método sólo se llamará una vez en la vida de un componente. La creación de un Screen se realizará navegando al Hash-URL correspondiente o invocando el método *goto* de Iris. La creación de un UI se realizará invocando el método *ui* del componente en el que lo queramos crear. 
+Cuando se cree un componente, Iris ejecutará el código asociado a su método **create**. Normalmente aquí cargaremos el código HTML asociado al componente y registraremos los Screens. Este método sólo se llamará una vez en la vida de un componente. La creación de un Screen se realizará navegando al Hash-URL correspondiente o invocando el método *goto* de Iris. La creación de un UI se realizará invocando el método *ui* del componente en el que lo queramos crear. 
 
 El evento complementario será **destroy**. Esté método, al igual que *create*, se efectuará una única vez en la vida de un componente. La destrucción de un componente se efectuará llamando al método *destoryUI* o *destroyScreen* dependiendo del componente de que se trate. En el caso de componente de tipo UI, también se llamará cuando un UI sea sustituido por otro. La destrucción de un componente supondrá la destrucción de todos los componentes de tipo UI que contenga.
 
-<a name="awake"></a>El evento **awake** se producirá después del evento *create* y cada vez que cambie el Hash-URL asociado al Screen que se va a visualizar. El método *awake* se llamará en los UIs que compongan el Screen y luego en el propio Screen. <!--TODO preguntar si tiene que tiene que ser así. La primera vez no se está lanzando el evento awake en los UIs-->. Aquí es donde habitualmente asociaremos eventos a nuestra aplicación, reproduciremos vídeo o audio, etc. En la llamada al método *awake* podemos pasar parámetros al componente para varias su comportamiento.
+<a name="awake"></a>El evento **awake** se producirá después del evento *create* y cada vez que cambie el Hash-URL asociado al Screen que se va a visualizar. El método *awake* se llamará en los UIs que compongan el Screen y luego en el propio Screen. <!--TODO preguntar si tiene que tiene que ser así. La primera vez no se está lanzando el evento awake en los UIs-->. Aquí es donde habitualmente asociaremos eventos a nuestra aplicación, reproduciremos vídeo o audio, etc. En la llamada al método *awake* podemos pasar parámetros al componente para variar su comportamiento.
 
-Por último, el evento **sleep** será el complementario de *awake*, y se efectuará primero sobre los UIs contenidos en el Screen y luego en el propio Screen cada vez que se produzca un cambio en el Hash-URL que suponga su ocultamiento. No debemos olvidar desactivar los eventos o detener otras tareas, como la reproducción de componentes multimedia, que hayamos iniciado en el evento *awake*. Antes de que se llame al método *destroy* de un componente, se efectuará la llamada a *sleep*.
+Por último, el evento **sleep** es el complementario de *awake*, y se efectuará primero sobre los UIs contenidos en el Screen y luego en el propio Screen cada vez que se produzca un cambio en el Hash-URL que suponga su ocultamiento. No debemos olvidar desactivar los eventos o detener otras tareas, como la reproducción de componentes multimedia, que hayamos iniciado en el evento *awake*. Antes de que se llame al método *destroy* de un componente, se efectuará la llamada a *sleep*.
 
 Podemos ver esto gráficamente:<!--TODO Actualizar gráfico-->
 
@@ -125,13 +125,13 @@ Toda aplicación Iris debe definir un componente inicial que se cargará al prin
 * A diferencia de lo que ocurre con otros Screens, el componente no puede recibir parámatros en su activación.
 * En una aplicación Iris, normalmente, no habrá necesidad de refrescar o de modificar la *URL* sobre la que se carga el Screen de bienvenida.
 * Por lo tanto, tampoco será habital llamar al método *destroy* de este Screen. Es decir, que el ciclo de vida de este Screen se simplifica ya que únicamente se hará una primera llamada al método *create* y una segunda al método *awake*.
-* Lo habitual es que el cometido del Screen de bienvenida sea registrar otros Screens y *llamar* al Hash-URL del Screen inical de nuestra aplciación.
+* Lo habitual es que el cometido del Screen de bienvenida sea registrar otros Screens y *llamar* al Hash-URL del Screen inical de nuestra aplicación.
 
 #Empezando con Iris
 
-En esta sección vamos proponer ejemplos de código para aclarar y profundizar en lo explicado anteriormente y para introducir nuevas capacidades de Iris.
+En esta sección vamos proponer ejemplos de código para aclarar y profundizar lo explicado anteriormente y para introducir nuevas capacidades de Iris.
 
-Aquí no se pretende crear una aplicación funcional, sino que se comprenda como se trabaja con Iris. Los ejemplos, por lo tanto, no realziarán ningún trabajo úlil. Si se quiere ver como construir una aplicación desde cero, se puede consultar la <a href="#paso-a-paso">sección correspondiente</a>.
+Aquí no se pretende crear una aplicación funcional, sino que se comprenda como se trabaja con Iris. Los ejemplos, por lo tanto, no realizarán ningún trabajo úlil. Si quiere ver como construir una aplicación desde cero, puede consultar la <a href="#paso-a-paso">sección correspondiente</a>.
 
 Para hacer más sencilla la explicación, todo el código de esta sección se situará un el directorio raiz de la aplicación. No es conveniente hacer esto en una aplciación real. En la sección *<a href="#paso-a-paso">Contruyendo paso a paso una aplicación desde cero</a>* se propone una estructura de directorios más adecuada para trabajar con Iris.
 
@@ -175,19 +175,111 @@ iris.screen(
   }
 		
   self.sleep = function () {
-   console.log("Welcome Screen Sleeping");
+   console.log("Welcome Screen Sleeping"); //Never called
   }
   
   self.destroy = function () {
-   console.log("Welcome Screen Destroyed");
+   console.log("Welcome Screen Destroyed");//Never called
   }
   
  }
  
 );
 ```
+
+Y el del archivo *welcome.html*:
+```html
+<div>
+ <h1>Welcome Screen</h1>
+ <p>This is the initial screen.</p>
+</div>
+```
 Cuando se ejecute el método *iris.welcome*, Iris creará un objeto de tipo Screen. Este objeto será pasado a la función que recibe el método *iris.screen* definido en el fichero *welcome.js* y se ejecutarán los métodos del ciclo de vida que se hayan definido en esta función. Concretamente, se ejecutarán sucesivamente los métodos *create* y *awake*.
 
-Observe que el método *create* ejecuta una llamada al método **tmpl** que permite cargar en el DOM el contido del archivo pasado como parámetro.
+Observe que el método *create* ejecuta una llamada al método **tmpl** que permite cargar en el DOM el contenido del archivo *welcome.html* pasado como parámetro. Los ficheros HTML asociados a componentes de Iris deben tener un único nodo raíz (típicamente un DIV).
+
+Tras ejecutarse los métodos *create* y *awake* se visualizará se generará y visualizará el DOM siguiente:
+
+```html
+<html>
+ <head>...</head>
+ <body>
+  <div>
+   <h1>Welcome Screen</h1>
+   <p>This is the initial screen.</p>
+  </div>
+ </body>
+</html>
+```
+Si llamáramos varias veces al método *tmpl* , el código HTML se irá añadiendo al anterior.
+<!--TODO Preguntar si esto tiene sentido -->
+<!-- TODO La llamada a tmpl funciona también si se hace en el awake, ¿Tiene algún sentido hacerlo aqui?. Supongo que no por el comentario anterior -->
+
+##Registrando y mostrando un Screen
+
+Primero creemos el Screen Home con una estructura muy parecida a la anterior.
+
+```js
+//In home.js
+
+iris.screen(
+ function (self) {
+  self.create = function () {   
+   self.tmpl("home.html");
+   console.log("Home Screen Created");
+  }
+  self.awake = function () {   
+   console.log("Home Screen Awakened");
+  }
+		
+  self.sleep = function () {
+   console.log("Home Screen Sleeping");
+  }
+  
+  self.sleep = function () {
+   console.log("Home Screen Destroyed");
+  }
+ }
+);
+```
+
+Y en *home.html*:
+
+```html
+<div>
+ <h1>Home Screen</h1>
+ <p>This is the home screen.</p>
+</div>
+```
+Modificamos el método create del Screen Welcome:
+
+```js
+self.create = function () {
+ console.log("Welcome Screen Created");
+ self.tmpl("welcome.html");
+ self.screen("screens", "#home", "home.js");
+}
+```
+Y dejamos el fichero asociado *welcome.html* de la siguiente manera:
+
+```html
+<div>
+ <h1>Welcome Screen</h1>
+ <p>This is the initial screen.</p>
+ <a href="#home">Click to go to Home Screen</a>
+ <div data-id="screens">
+  Here is where Iris will load the Home Screen
+ </div>
+</div>
+```
+
+
+##Creando un Screen por defecto
+
+Aunque no es obligatorio, las aplicaciones Iris tendrán normalmente un Screen que se cargará por defecto cuando no se especifique ningún Hash-URL.
+
+
+
+
 
 #<a name="paso-a-paso"></a>Contruyendo paso a paso una aplicación desde cero
