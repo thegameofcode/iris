@@ -198,7 +198,7 @@ Cuando se ejecute el método *iris.welcome*, Iris creará un objeto de tipo Scre
 
 Observe que el método *create* ejecuta una llamada al método **tmpl** que permite cargar en el DOM el contenido del archivo *welcome.html* pasado como parámetro. Los ficheros HTML asociados a componentes de Iris deben tener un único nodo raíz (típicamente un DIV).
 
-Tras ejecutarse los métodos *create* y *awake* se visualizará se generará y visualizará el DOM siguiente:
+Tras ejecutarse los métodos *create* y *awake* se generará y visualizará el DOM siguiente:
 
 ```html
 <html>
@@ -276,6 +276,8 @@ Y dejamos el fichero asociado *welcome.html* de la siguiente manera:
 ```
 Observe como el método **screen** permite asociar un Hash-URL con un objeto de tipo Screen. El primer parámetro define el elemento de HTML dentro del cual será cargado el Screen cuando su Hash-URL sea invocado. Esta invocación la hacemos al pulsar sobre el enlace que hemos añadido en *welcome.html*. Iris utiliza el valor del atributo *data-id* para asociar el contenedor HTML con el Screen. Este atributo no debe repetirse dentro de una página Web.
 
+El método *create* del Screen Home no se ejecutará hasta que no pulsemos por primera vez sobre el enlace.
+
 Tras pulsar el enlace, el DOM de la página generada por Iris será el siguiente:
 
 ```html
@@ -297,11 +299,11 @@ Tras pulsar el enlace, el DOM de la página generada por Iris será el siguiente
  </body>
 </html>
 ```
-Es importante observar como el  
+Es importante observar que el código HTML del Screen se añade dentro del contenedor especificado.  
 
 ##Mostrando un Screen desde Javascript
 
-Podemos conseguir lo mismo que en el apartado anterior, desde el código en Javascript asociado al Screen.
+Podemos conseguir lo mismo que en el apartado anterior desde el código en Javascript asociado al Screen.
 
 Para hacer esto, modifiquemos el código del Screen Welcome:
 
@@ -400,13 +402,198 @@ Y el fichero *welcome.html*:
 </div>
 ```
 
+Si pulsamos primero sobre el enlace a *#home* y después sobre *#help*, el DOM generado por Iris será:
+
+```html
+<html>
+ <head>
+ <body>
+  <div>
+   <h1>Welcome Screen</h1>
+   <p>This is the initial screen.</p>
+   <a href="#home">Click to go to Home Screen</a>
+   <br>
+   <a href="#help">Click to gets some help</a>
+   <div data-id="screens">
+    Here is where Iris will load all the Screens
+    <div style="display: none;">
+     <h1>Home Screen</h1>
+     <p>This is the home screen.</p>
+    </div>
+    <div style="display: block;">
+     <h1>Help Screen</h1>
+     <p>This is the help screen.</p>
+    </div>
+   </div>
+  </div>
+ </body>
+</html>
+```
+
+Podemos comprobar, consistentemente con lo explicado anteriormente, que el código HTML de los Screens Home y Help ha sido añadido al contenedor pero sólo estará visible el correspondiente al último enlace pulsado, Help en este caso.
+
+La secuencia de eventos producida tras ejecutar la secuencia anterior será:
+
+<pre>
+Welcome Screen Created
+Welcome Screen Awakened
+Home Screen Created
+Home Screen Awakened
+Help Screen Created
+Home Screen Sleeping
+Help Screen Awakened 
+</pre>
+
+Si volvemos a pulsa sobre el enlace a *#home*, se producirán los eventos adicionales:
+
+<pre>
+Help Screen Sleeping
+Home Screen Awakened 
+</pre>
+
+##Consideraciones adicionales en la visualización de Screens
+
+<!--TODO IMPORTANTE: Aclarar si lo ue se explica en esta sección son solamentre malas prácticas o si Iris se debería proteger de ellas -->
+
+Vamos a poner algunos ejemplos de **malas prácticas** que se deben evitar:
+
+Modificamos el Screen Welcome para que los Screens Home y Help se carguen en contenedores diferentes.
+
+En *welcome.js* tendremos:
+
+```js
+self.create = function () {
+ console.log("Welcome Screen Created");
+ self.tmpl("welcome.html");
+ self.screen("home-screen", "#home", "home.js");
+ self.screen("help-screen", "#help", "help.js");
+}
+```
+
+Y en *welcome.html*:
+
+```html
+<div>
+ <h1>Welcome Screen</h1>
+ <p>This is the initial screen.</p>
+ <a href="#home">Click to go to Home Screen</a>
+ </br>
+ <a href="#help">Click to gets some help</a>
+ <div data-id="home-screen">
+  Here is where Iris will load the Home Screen
+ </div>
+ <div data-id="help-screen">
+  Here is where Iris will load the Home Screen
+ </div>
+</div>
+```
+
+Tras pulsar sobre ambos enlaces el DOM será:
+```html
+<html>
+ <head>
+ <body>
+  <div>
+   <h1>Welcome Screen</h1>
+   <p>This is the initial screen.</p>
+   <a href="#home">Click to go to Home Screen</a>
+   <br>
+   <a href="#help">Click to gets some help</a>
+   <div data-id="home-screen">
+    Here is where Iris will load the Home Screen
+    <div style="display: block;">
+     <h1>Home Screen</h1>
+     <p>This is the home screen.</p>
+    </div>
+   </div>
+   <div data-id="help-screen">
+    Here is where Iris will load the Home Screen
+    <div style="display: block;">
+     <h1>Help Screen</h1>
+     <p>This is the help screen.</p>
+    </div>
+   </div>
+  </div>
+ </body>
+</html>
+```
+Es decir, que se verán ambos Screens pero el Hash-URL apuntará a *#help*.
+El problema es que si la secuencia la hacemos al revés, primero pulsamos sobre *#help* y luego sobre *#home*, la apariencia será la misma pero el Hash-URL del navegador ahora será *home*.
+
+Peor será lo que ocurre con los eventos, la secuencia si pulsamos sobre *#home* y sobre *#help* sucesivamente será:
+
+<pre>
+Welcome Screen Created
+Home Screen Created
+Home Screen Awakened
+Help Screen Created
+Help Screen Awakened
+</pre>
+
+Es decir, que no se llega a llamar al evento *sleep* de Home.
+
+Sin embargo, si después pulsamos sobre nuevamente sobre *#home*:
+
+<pre>
+Home Screen Sleeping
+Home Screen Awakened
+</pre>
+
+Ahora se llama al evento *sleep* que antes echábamos de menos.
+
+> Como norma general, debemos mostrar un único Screen cada vez. Esto lo podemos garantizar si asociamos los Hash-URLs que se vayan a utilizar a un mismo *data-id*.
+
+Otra cosa que debemos evitar es hacer cosas como la siguiente:
+
+```js
+self.screen("screens", "#home", "home.js");
+self.screen("screens", "#home", "help.js");
+```
+
+El registro del segundo Screen reemplazará al primero y será como si no hubiera tenido lugar.
+
+> Debemos evitar asociar el mismo Hash-URL a varios Screens.
+
+Por último, tampoco es conveniente hacer lo siguiente:
+
+```js
+self.screen("screens", "#home", "home.js");
+self.screen("screens", "#help", "home.js");
+```
+
+El problema surge si analizamos la secuencia de eventos que se genera:
+
+<pre>
+Welcome Screen Created
+Welcome Screen Awakened
+Home Screen Created
+Home Screen Awakened
+Home Screen Created
+Home Screen Sleeping
+Home Screen Awakened 
+</pre>
+
+Como se comprueba fácilmente, se está violando el principio de que el método *create* de cada Screen se llamará una única vez.
+
+> Debemos evitar asociar el mismo Screen a varios Hash-URLs.
 
 ##Creando un Screen por defecto
 
-Aunque no es obligatorio, las aplicaciones Iris tendrán normalmente un Screen que se cargará por defecto cuando no se especifique ningún Hash-URL.
+Aunque no es obligatorio, las aplicaciones que usen Iris tendrán normalmente un Screen que se cargará por defecto cuando no se especifique ningún Hash-URL.
 
+Para hacer esto simplemente incluiremos el siguiente código en el método *awake* del Screen de bienvenida:
 
+```js
+//In welcome.js
+self.awake = function () {
+ ...
+ if ( !document.location.hash ) {                
+  iris.goto("#home"); //Default Screen
 
+ }
+ ...
+}
+```
 
 
 #<a name="paso-a-paso"></a>Contruyendo paso a paso una aplicación desde cero
