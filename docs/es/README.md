@@ -69,7 +69,7 @@ Iris está especialmente diseñado para dar respuesta a ambos problemas:
 
 #¿Cómo funciona Iris?
 
-En esta sección se van a presentar los principales componentes de Iris y los métodos para crear, destruir o interaccionar con ellos. No se preocupe si no entiende algunos conceptos, ya que lo único que se pretende en esta sección es que se vaya familirarizando con la forma de trabajo de Iris.  Más adelente se propondrán ejemplos de código que le permitirán clarificar y profundizar en lo aquí esbozado.
+En esta sección se van a presentar los principales componentes de Iris y los métodos para crear, destruir o interaccionar con ellos. No se preocupe si no entiende algunos conceptos, ya que lo único que se pretende en este momento es que se vaya familirarizando con la forma de trabajo de Iris.  Más adelente se propondrán ejemplos de código que le permitirán clarificar y profundizar lo aquí esbozado.
 
 ##Componentes
 
