@@ -80,7 +80,7 @@ La **vista** consiste en un fragmento de código en HTML, típicamente un *DIV*,
 
 El **comportamiento** es un fragmento de código en Javascript almacenado en un fichero, típicamente con extensión *.js*. Cuando un componente se activa (ver más adelante), puede recibir parámetros que permiten modificar su comportamiento.
 
-![Definición de comportamiento](../images/component_equation.png)
+![Definición de comportamiento](https://raw.github.com/surtich/iris/iris-grunt/docs/images/component_equation.png)
 
 Cuando Iris cargue un componente, visualizará el código de su fichero HTML asociado y ejecutará su fichero de Javascript según se haya definido en su ciclo de vida (ver más adelante).
 
@@ -116,7 +116,7 @@ Por último, el evento **sleep** será el complementario de *awake*. Y se efectu
 
 Podemos ver esto gráficamente:<!--TODO Actualizar gráfico-->
 
-![Ciclo de vida](../images/iris_life_cycle.png)
+![Ciclo de vida](https://raw.github.com/surtich/iris/iris-grunt/docs/images/iris_life_cycle.png)
 
 ##Página de inicio de Iris
 
