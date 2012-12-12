@@ -211,7 +211,7 @@ Tras ejecutarse los métodos *create* y *awake* se visualizará se generará y v
  </body>
 </html>
 ```
-Si llamáramos varias veces al método *tmpl* , el código HTML se irá añadiendo al anterior.
+Si llamáramos varias veces al método *tmpl*, el código HTML se irá añadiendo al anterior.
 <!--TODO Preguntar si esto tiene sentido -->
 <!-- TODO La llamada a tmpl funciona también si se hace en el awake, ¿Tiene algún sentido hacerlo aqui?. Supongo que no por el comentario anterior -->
 
@@ -236,7 +236,7 @@ iris.screen(
    console.log("Home Screen Sleeping");
   }
   
-  self.sleep = function () {
+  self.destroy = function () {
    console.log("Home Screen Destroyed");
   }
  }
@@ -259,7 +259,7 @@ self.create = function () {
  self.tmpl("welcome.html");
  self.screen("screens", "#home", "home.js"); 
  //This registers the #home hash and associates it with the Screen home.
- //The Screen will be loaded into the HTML element with attribute "data-id = 'screens'"
+ //The Screen will be added into the HTML element with attribute "data-id = 'screens'"
 }
 ```
 Y dejamos el fichero asociado *welcome.html* de la siguiente manera:
@@ -297,8 +297,108 @@ Tras pulsar el enlace, el DOM de la página generada por Iris será el siguiente
  </body>
 </html>
 ```
+Es importante observar como el  
 
+##Mostrando un Screen desde Javascript
 
+Podemos conseguir lo mismo que en el apartado anterior, desde el código en Javascript asociado al Screen.
+
+Para hacer esto, modifiquemos el código del Screen Welcome:
+
+En *welcome.html* sustituyamos el enlace por un botón:
+
+```html
+<div>
+ <h1>Welcome Screen</h1>
+ <p>This is the initial screen.</p>
+ <button data-id="goto-home">Click to go to Home Screen</button>
+ <div data-id="screens">
+  Here is where Iris will load the Home Screen
+ </div>
+</div>
+```
+
+Y en el fichero *welcome.js*:
+
+```js
+self.create = function () {
+ console.log("Welcome Screen Created");
+ self.tmpl("welcome.html");
+ self.screen("screens", "#home", "home.js");
+ //The get method returns de JQuery element associated with the data-id parameter
+ self.get("goto-home").click( function() {
+   iris.goto("#home"); //It browes to the Hash-URL
+ }
+ );
+}
+```
+Observe como el método **goto** de Iris permite navegar al Hash-URL especificado y que el método **get** recibe el valor del atributo *data-id* del componente que se quiere seleccionar como un objeto JQuery.
+
+##Mostrando varios screens
+
+En este apartado vamos a crear un tercer Screen llamado Help.
+
+Los ficheros asociados serán los habituales:
+
+*help.js*:
+
+```js
+//In help.js
+
+iris.screen(
+ function (self) {
+  self.create = function () {   
+   self.tmpl("help.html");
+   console.log("Help Screen Created");
+  }
+  self.awake = function () {   
+   console.log("Help Screen Awakened");
+  }
+		
+  self.sleep = function () {
+   console.log("Help Screen Sleeping");
+  }
+  
+  self.destroy = function () {
+   console.log("Help Screen Destroyed");
+  }
+ }
+);
+```
+
+*help.html*:
+```html
+<div>
+ <h1>Help Screen</h1>
+ <p>This is the help screen.</p>
+</div>
+```
+
+El método *create* de *welcome.js* quedará así:
+
+```js
+self.create = function () {
+ console.log("Welcome Screen Created");
+ self.tmpl("welcome.html");
+ self.screen("screens", "#home", "home.js");
+ self.screen("screens", "#help", "help.js");
+}
+```
+
+Y el fichero *welcome.html*:
+
+```html
+<div>
+ <h1>Welcome Screen</h1>
+ <p>This is the initial screen.</p>
+ <a href="#home">Click to go to Home Screen</a>
+ </br>
+ <a href="#help">Click to gets some help</a>
+ <div data-id="screens">
+  Here is where Iris will load all the Screens
+ </div>
+</div>
+```
 
 
 ##Creando un Screen por defecto
