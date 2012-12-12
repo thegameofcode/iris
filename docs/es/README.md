@@ -17,6 +17,7 @@ Las principales características de Iris son:
 * Soporte a variaciones regionales de números, monedas, fechas, etc.
 * Funcionamiento desacoplado mediante eventos.
 * Soporte a servicios [REST](http://en.wikipedia.org/wiki/Representational_state_transfer).
+* Soporte para el paso de desarrollo a producción.
 * Independiente del navegador (Chrome, Firefox e Internet Explorer).
 * Independiente del servidor (Apache, Node.js, IIS, GAE, etc).
 * Únicamente dependendiente de JQuery <!--TODO: Preguntar versión-->.
