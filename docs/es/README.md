@@ -118,17 +118,43 @@ Podemos ver esto gráficamente:<!--TODO Actualizar gráfico-->
 
 ![Ciclo de vida](https://raw.github.com/surtich/iris/iris-grunt/docs/images/iris_life_cycle.png)
 
-##Página de inicio de Iris
+##Screen de bienvenida
 
 Toda aplicación Iris debe definir un componente inicial que se cargará al principio. Este componente será un <a href="#screen">Screen</a> especial ya que tiene algunas diferencias con lo explicado anteriormente:
-* Este Screen inicial no tiene Hash-URL asociado y se carga con el método **welcome** de Iris.
+* El Screen de bienvenida no tiene Hash-URL asociado y se carga con el método **welcome** de Iris.
 * A diferencia de lo que ocurre con otros Screens, el componente no puede recibir parámatros en su activación.
+* En una aplicación Iris, normalmente, no habrá necesidad de refrescar o de modificar la *URL* sobre la que se carga el Screen de bienvenida.
+* Por lo tanto, tampoco será habital llamar al método *destroy* de este Screen. Es decir, que el ciclo de vida de este Screen se simplifica ya que únicamente se hará una primera llamada al método *create* y una segunda al método *awake*.
+* Lo habitual es que el cometido del Screen de bienvenida sea registrar otros Screens y *llamar* al Hash-URL del Screen inical de nuestra aplciación.
 
-En una aplicación Iris, normalmente, no habrá necesidad de refrescar o de modificar la *URL* sobre la que se carga el Screen de bienvenida. 
+#Empezando con Iris
 
-Lo habitial es que el cometido del Screen de bienvenida sea registrar otros Screens y *llamar* al Hash-URL del Screen inical de nuestra aplciación.
+En esta sección vamos proponer ejemplos de código para aclarar y profundizar en lo explicado anteriormente y para introducir nuevas capacidades de Iris.
+
+Aquí no se pretende crear una aplicación funcional, sino que se comprenda como se trabaja con Iris. Los ejemplos, por lo tanto, no realziarán ningún trabajo úlil. Si se quiere ver como construir una aplicación desde cero, se puede consultar la <a href="#paso-a-paso">sección correspondiente</a>.
+
+Para hacer más sencilla la explicación, todo el código de esta sección se situará un el directorio raiz de la aplicación. No es conveniente hacer esto en una aplciación real. En la sección *<a href="#paso-a-paso">Contruyendo paso a paso una aplicación desde cero</a>* se propone una estructura de directorios más adecuada para trabajar con Iris.
+
+##Instalando Iris
+El primer paso será decidir si queremos trabajar con la versión de [desarrollo](https://raw.github.com/iris-js/iris/master/dist/iris.js) o de [producción](https://raw.github.com/iris-js/iris/master/dist/iris.min.js)<!--TODO revisar enlaces-->y asociarlas a un fichero en HTML.
+
+```html
+<!-- In index.html -->
+<script src="jquery-min.js"></script> <!--Iris just depends on JQuery-->
+<script src="iris-0.5.0-SNAPSHOT.js"></script> <!-- TODO Change URL -->
+```
+
+##Llamando al Screen de bienvenida
+Desde Javascript llamamos al método **welcome** de Iris para cargar el fichero de comportamiento del Screen de bienvenida.
+
+```js
+//In any Javascrit file or in a "<script>" section of an HTML file ... 
+$(document).ready(
+ function () {
+  iris.welcome("welcome.js"); //It loads the behavior file of the welcome Screen
+ }
+);
+```
 
 
-
-
-#Paso a paso con Iris
+#<a name="paso-a-paso"></a>Contruyendo paso a paso una aplicación desde cero
