@@ -48,7 +48,7 @@ El lenguaje [*Javascript*](http://en.wikipedia.org/wiki/Javascript) se está con
 El mayor peso relativo que está adquiriendo la programación en el *lado del cliente* plantea nuevas dificultades:
 
 * Por un lado, gran parte del código en [HTML](http://en.wikipedia.org/wiki/Html) ahora se genera dinámicamente desde cliente con *Javascript*. Esto supone una gran ventaja ya que mejora la experiencia de usuario y disminuye la necesidad de interaccionar con el servidor, pero también genera problemas nuevos:
-	* Los buscadores ya no pueden realizar correctamente su trabajo, debido a que la aplicación ahora no necesita modificar la [URL](http://en.wikipedia.org/wiki/Url). Por motivos de optimización, los buscadores no analizan el código generado desde *Javascript* (ver [SEO](http://en.wikipedia.org/wiki/Search_Engine_Optimization)).
+	* Los buscadores ya no pueden realizar correctamente su trabajo debido a que la aplicación ahora no necesita modificar la [URL](http://en.wikipedia.org/wiki/Url). Por motivos de optimización, los buscadores no analizan el código generado desde *Javascript* (ver [SEO](http://en.wikipedia.org/wiki/Search_Engine_Optimization)).
 	* Por el mismo motivo, ahora es más difícil enlazar a secciones concretas de la aplicación.
 	* Problemas con el almacenamiento temporal en *caché*. Es frecuente que el navegador almacene la información y no vaya a *buscar* los datos al servidor.
 	* Problemas con los botones de delante/atrás.
