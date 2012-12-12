@@ -178,7 +178,7 @@ iris.screen(
    console.log("Welcome Screen Sleeping");
   }
   
-  self.sleep = function () {
+  self.destroy = function () {
    console.log("Welcome Screen Destroyed");
   }
   
@@ -186,9 +186,8 @@ iris.screen(
  
 );
 ```
-Cuando se ejecute el método *iris.welcome*, Iris recibirá la URL del fichero a cargar, este fichero contendrá una llamada a *iris.screen* que recibirá una función. Iris creará un objeto de tipo Screen y utilizará 
+Cuando se ejecute el método *iris.welcome*, Iris creará un objeto de tipo Screen. Este objeto será pasado a la función que recibe el método *iris.screen* definido en el fichero *welcome.js* y se ejecutarán los métodos del ciclo de vida que se hayan definido en esta función. Concretamente, se ejecutarán sucesivamente los métodos *create* y *awake*.
 
-
-
+Observe que el método *create* ejecuta una llamada al método **tmpl** que permite cargar en el DOM el contido del archivo pasado como parámetro.
 
 #<a name="paso-a-paso"></a>Contruyendo paso a paso una aplicación desde cero
