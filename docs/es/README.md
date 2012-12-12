@@ -217,7 +217,7 @@ Si llamáramos varias veces al método *tmpl* , el código HTML se irá añadien
 
 ##Registrando y mostrando un Screen
 
-Primero creemos el Screen Home con una estructura muy parecida a la anterior.
+Primero creamos el Screen Home con una estructura muy parecida a la anterior.
 
 ```js
 //In home.js
@@ -251,13 +251,15 @@ Y en *home.html*:
  <p>This is the home screen.</p>
 </div>
 ```
-Modificamos el método create del Screen Welcome:
+Modificamos el método *create* del Screen Welcome:
 
 ```js
 self.create = function () {
  console.log("Welcome Screen Created");
  self.tmpl("welcome.html");
- self.screen("screens", "#home", "home.js");
+ self.screen("screens", "#home", "home.js"); 
+ //This registers the #home hash and associates it with the Screen home.
+ //The Screen will be loaded into the HTML element with attribute "data-id = 'screens'"
 }
 ```
 Y dejamos el fichero asociado *welcome.html* de la siguiente manera:
@@ -272,6 +274,31 @@ Y dejamos el fichero asociado *welcome.html* de la siguiente manera:
  </div>
 </div>
 ```
+Observe como el método **screen** permite asociar un Hash-URL con un objeto de tipo Screen. El primer parámetro define el elemento de HTML dentro del cual será cargado el Screen cuando su Hash-URL sea invocado. Esta invocación la hacemos al pulsar sobre el enlace que hemos añadido en *welcome.html*. Iris utiliza el valor del atributo *data-id* para asociar el contenedor HTML con el Screen. Este atributo no debe repetirse dentro de una página Web.
+
+Tras pulsar el enlace, el DOM de la página generada por Iris será el siguiente:
+
+```html
+<html>
+ <head>
+ <body>
+  <div>
+   <h1>Welcome Screen</h1>
+   <p>This is the initial screen.</p>
+   <a href="#home">Click to go to Home Screen</a>
+   <div data-id="screens">
+    Here is where Iris will load the Home Screen
+    <div style="display: block;">
+     <h1>Home Screen</h1>
+     <p>This is the home screen.</p>
+    </div>
+   </div>
+  </div>
+ </body>
+</html>
+```
+
+
 
 
 ##Creando un Screen por defecto
