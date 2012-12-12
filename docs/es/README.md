@@ -1,6 +1,6 @@
 #¿Qué es Iris?
 
-[Iris](https://github.com/iris-js/iris) es un *framework* escrito en Javascript que permite construir el *front-end* de una aplicación Web utilizando distintas técnicas que permiten crear aplicaciones eficientes, rápidas, estructuradas y modulares.
+[Iris](https://github.com/iris-js/iris) es un *framework* escrito en Javascript que permite construir el *front-end* de una aplicación Web utilizando distintas técnicas para que las aplicaciones sean eficientes, rápidas, estructuradas y modulares.
 
 Iris es completamente independiente de la tecnología que se utilice en el servidor. Así, podemos utilizar Iris en aplicaciones basadas en Java, PHP, Python, GAE, .NET, Ruby, etc.
 
@@ -12,7 +12,7 @@ Las principales características de Iris son:
 * Facilita la organización en ficheros.
 * Basada en el patrón [Presenter-View-Resource](http://blog.nodejitsu.com/scaling-isomorphic-javascript-code#rvp).
 * [Navegación en una sola página](http://itsnat.sourceforge.net/php/spim/spi_manifesto_en.php) usando fragmentos Hash-URL.
-* [Motor de plantillas](http://en.wikipedia.org/wiki/Template_engine_(web)) sencillo y eficiente.
+* [Motor de plantillas](http://en.wikipedia.org/wiki/Template_engine_(web) ) sencillo y eficiente.
 * Soporte multilenguaje realizado 100% en el cliente.
 * Soporte a variaciones regionales de números, monedas, fechas, etc.
 * Funcionamiento desacoplado mediante eventos.
@@ -21,12 +21,12 @@ Las principales características de Iris son:
 * Independiente del servidor (Apache, Node.js, IIS, GAE, etc).
 * Únicamente dependendiente de JQuery <!--TODO: Preguntar versión-->.
 * Integrable y totalmente compatible con otros populares *Frameworks* como Backbone o BootStrap <!--TODO: Confirmar y añadir más-->. 
-* Ligera y rápida (<15 KB).
+* Ligero y rápido (<15 KB).
 * De código libre (licencia New BSD License. <!--TODO: Poner enlace-->).
 
 #¿Por qué Iris?
 
-Las aplicaciones Web modernas basadas en [AJAX](http://en.wikipedia.org/wiki/Ajax_(programming)) están cambiando radicalmente la forma tradicional de construir aplicaciones Web.
+El conjunto de tecnologías conocido como [AJAX](http://en.wikipedia.org/wiki/Ajax_(programming) ) están cambiando radicalmente la forma tradicional de construir aplicaciones Web.
 
 Desde el punto de vista del desarrollo, el cambio fundamental supone que parte de la lógica de la aplicación, que antes se ejecutaba en el servidor, ahora se realiza en el cliente.
 
