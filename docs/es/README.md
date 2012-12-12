@@ -19,10 +19,10 @@ Las principales características de Iris son:
 * Soporte a servicios [REST](http://en.wikipedia.org/wiki/Representational_state_transfer).
 * Independiente del navegador (Chrome, Firefox e Internet Explorer).
 * Independiente del servidor (Apache, Node.js, IIS, GAE, etc).
-* Únicamente dependendiente de JQuery (TODO: Preguntar versión).
-* Integrable y totalmente compatible con otros populares *Frameworks* como Backbone o BootStrap (TODO: Confirmar y añadir más). 
+* Únicamente dependendiente de JQuery <!--TODO: Preguntar versión-->.
+* Integrable y totalmente compatible con otros populares *Frameworks* como Backbone o BootStrap <!--TODO: Confirmar y añadir más-->. 
 * Ligera y rápida (<15 KB).
-* De código libre (licencia New BSD License. TODO: Poner enlace).
+* De código libre (licencia New BSD License. <!--TODO: Poner enlace-->).
 
 #¿Por qué Iris?
 
@@ -72,14 +72,52 @@ Iris está especialmente diseñada para dar respuesta a ambos problemas:
 
 ##Componentes
 
-Iris estructura la aplicación dividiéndola en **componentes**.
+La estructura de una aplicación Iris consiste en la creación de varios componentes que interaccionan entre sí.
 
-Un componente contiene dos elementos fundamentales: La vista o presentación y el comportamiento.
+Un **componente** contiene dos elementos fundamentales: La vista o presentación y el comportamiento.
 
 La **vista** consiste en un fragmento de código en HTML, típicamente un *DIV*, almacenado en un fichero, normalmente con extensión *.html*.
 
-El **comportamiento** es un fragmento de código en Javascript almacenado en un fichero, típicamente con extensión *.js*.
+El **comportamiento** es un fragmento de código en Javascript almacenado en un fichero, típicamente con extensión *.js*. Cuando un componente se activa (ver más adelante), puede recibir parámetros que permiten modificar su comportamiento.
+
+![Definición de comportamiento](../images/component_equation.png)
+
+Cuando Iris cargue un componente, visualizará el código de su fichero HTML asociado y ejecutará su fichero de Javascript según se haya definido en su ciclo de vida (ver más adelante).
+
+El código HTML del componente se insertará en el DOM de la página. La inserción se hará sustituyendo o añadiéndose, según se defina, al elemento que se defina del DOM (ver más adelante).
 
 
+##Screens y UIs
+
+Iris utiliza dos tipos de componentes principales: Screens y UIs.
+
+Recuérdese que ambos son componentes y, por lo tanto, se definen mediante dos ficheros: Uno en HTML para establecer la vista o presentación y otro en Javascript para el comportamiento. 
+
+Un **UI** es un elemento sencillo. Puede ser un simple botón o un elemento en una lista. Un UI se puede componer de otros UIs y, así, tener un grado de complejidad mayor.
+
+Un **Screen** es un elemento de navegación. Cada Screen está asociado a un Hash-URL. Si en la barra de direcciones del navegador, escribimos el Hash-URL al que está asociado un Screen, Iris cargará su fichero HTML y ejecutará el fichero en Javascript según su ciclo de vida.
+
+En un Screen podemos registrar otros Screens y visualizarlos forzando que se modifique el Hash-URL de la barra de direcciones del navegador.
+
+Un Screen puede contener otros componentes de tipo UI.
+
+
+##Ciclo de vida de un componente
+
+Iris define cuatro transiciones en el ciclo de vida de un componente: create, awake, sleep y destroy. En el fichero Javascript asociado al componente, podemos definir métodos *callbacks* que serán llamados por Iris cuando el evento correspondiente se produzca.
+
+Cuando se cree un componente, Iris ejecutará el código asociado a la función **create**. Normalmente aquí cargaremos el código HTML asociado al componente y registraremos los Screens. Este método sólo se llamará una vez en la vida de un componente. La creación de un Screen se realizará navegando al Hash-URL correspondiente o invocando el método *goto* de Iris. La creación de un UI se realizará invocando el método *ui* del componente en el que lo queramos crear. 
+
+El evento complementario será **destroy**. Esté método al igual que *create* se efectuará una única vez en la vida de un componente. La destrucción de un componente se efectuará llamando al método *destoryUI* o *destroyScreen* dependiendo del componente de que se trate. En el caso de componente de tipo UI, también se llamará cuando un UI sea sustituido por otro. La destrucción de un componente supondrá la destrucción de todos los componentes de tipo UI que contenga.
+
+El evento **awake** se producirá después del evento *create* y cada vez que cambie el Hash-URL asociado al Screen que se va a visualizar. El método *awake* se llamará en los UIs que compongan el Screen y luego en el propio Screen. <!--TODO preguntar si tiene que tiene que ser así. La primera vez no se está lanzando el evento awake en los UIs-->. Aquí normalmente asociaremos eventos a nuestros aplicación, reproduciremos vídeo o audio, etc.
+
+Por último, el evento **sleep** será el complementario de *awake*. Y se efectuará primero sobre los UIs contenidos en el Screen y luego en el propio Screen cada vez que se produzca un cambio en el Hash-URL que suponga su ocultamiento. No se nos debe olvidar desactivar los eventos o parar la reproducción de componentes multimedia que hayamos efectuado en el evento *awake*. Antes de que se llame al método *destroy* de un componente se efectuará la llamada a *sleep*.
+
+Podemos ver esto gráficamente:<!--TODO Actualizar gráfico-->
+
+![Ciclo de vida](../images/iris_life_cycle.png)
+
+##Página de inicio de Iris
 
 #Paso a paso con Iris
