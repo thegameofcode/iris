@@ -710,11 +710,11 @@ Es interesante estudiar el DOM que genera Iris tras pulsar el botón y cargar el
 
 Obsérvese que el contenedor con *data-id='ui-container'* ha sido reemplazado por el contenido del fichero *myUI.html*.
 
-Aunque se puede modificar como explicaremos posteriormente, este es el comportamiento por defecto de los UIs:
+Aunque se puede modificar, como explicaremos posteriormente, este es el comportamiento por defecto de los UIs:
 
 > De forma predeterminada, cuando se carga un **UI**, su vista reemplaza al contenedor. Por el contrario, cuando se carga un **Screen**, su vista se añade al contenedor.
 
-Comprender esto es esencial ya que si, por ejemplo, volviéramos a pulsar el botón, se trataría de cargar el UI *myUI* sin éxito debido a que contenedor que le estamos pasando en el método *ui* ya no está presente en el DOM.
+Comprender esto es esencial ya que si, por ejemplo, volviéramos a pulsar el botón, se trataría de cargar el UI *myUI* sin éxito debido a que el contenedor que le estamos pasando en el método *ui* ya no está presente en el DOM.
 
 <!--TODO Iris no se queja de esta situación y decho llega a llamar al método create del UI-->
 
@@ -824,11 +824,11 @@ self.create = function () {
 }
 ```
 
-Únicamente hemos llamado el método **tmplMode** con la constante *APPEND*.  Esto hace que el contenedor no sea reemplezado por el UI creado, sino que el UI será añadido al final del contenedor. La implicación más importante es que podemos pulsar varias veces el botón. Cada pulsación creará un nuevo UI que se añadirá al contenedor.
+Únicamente hemos añadido una llamada al método **tmplMode**  pasámdole como parámetro la constante *APPEND*.  Esto hace que el contenedor no sea reemplezado por el UI creado, sino que el UI será añadido al final del contenedor. La implicación más importante es que podemos pulsar varias veces el botón. Cada pulsación creará un nuevo UI que se añadirá al contenedor.
 
-Este comportamiento es similar al que tienen los Screens. La principal diferencia, que todavía permanece, es que Iris mostrará todos los UIs añadidos a un contenedor, mientras que sólo visualizará un Screen permaneciendo el resto ocultos.
+Este comportamiento es similar al que tienen los Screens. La principal diferencia es que Iris mostrará todos los UIs añadidos a un contenedor, mientras que sólo visualizará un Screen permaneciendo el resto ocultos.
 
-El método *tmplMode* puede recibir también la constante *PREPEND* haciendo que los UIs se añadan como primer hijo en vez de como último.
+El método *tmplMode* puede recibir también la constante *PREPEND* haciendo que los UIs se añadan como primer hijo en vez de como último. Existe una tercera constante que podemos utilizar y que es el compotamiento por defecto llamada *REPLACE*.
 
 Se puede especificar el valor de *tmplMode* en el método *ui* pasándolo como cuarto parámetro.
 
@@ -905,7 +905,7 @@ Observe que tenemos dos botones, uno para ir al Screen Home y otro para destruir
 </html>
 ```
 
-Observe que el contenido del Screen Home ha sido completamente eliminada.
+Observe que el contenido del Screen Home ha sido completamente eliminadO.
 
 <!-- TODO Se elimina la referencia pero en la barra de direcciones del navegador se conserva el HAs-UL #home -->
  
@@ -991,7 +991,7 @@ self.create = function () {
 }
 ```
 
-Observe que eliminamos el UI con el método *destroyUI* a través de la referencia al UI que nos devuelve el método *ui*.
+Observe que eliminamos el UI con el método *destroyUI* a través de la referencia que nos devuelve al llamada al método *ui*.
 
 En *myUI.js*:
 
@@ -1003,7 +1003,7 @@ self.create = function () {
 }
 ```
 
-El DOM generado ha eliminado todo el contenido del UI y de su contenedor (*data-id='container'*).
+En el DOM generado ha eliminado todo el contenido del UI. Tampoco aparece ninguna referencia a su contenedor (*data-id='container'*) proque estamos en modo *REPLACE*.
 
 ```html
 <html>
@@ -1020,9 +1020,9 @@ El DOM generado ha eliminado todo el contenido del UI y de su contenedor (*data-
 </html>
 ```
 
-Si descomentamos la línea que asigna el *tmplMode* a *APPEND* en el fichero *myUI.js*, y pulsamos varias veces al botón que crea el UI seguida de una pulsación sobre el que lo destruye, sólo se eliminará el último UI.
+Si descomentamos la línea que asigna el *tmplMode* a *APPEND* en el fichero *myUI.js*, y pulsamos varias veces sobre botón que crea el UI seguida de una pulsación sobre el que lo destruye, sólo se eliminará el último UI creado ya que la referencia la habremos ido reemplazando a medida que creamos nuevos UIs.
 
-Para eliminar todos los UIs de un contenedor debemos utilizar el método *destroyUIs* como se explica en el siguiente ejemplo:
+Podríamos eliminar todos los UIs si los hubiéramos ido almacenando en un *array*. Aunque también lo podemos hacer si utilizamos el método *destroyUIs* como se explica en el siguiente ejemplo:
 
 Para eliminar todos los UIs del contenedor, estas son las modificaciones que habría que hacer:
 
@@ -1106,9 +1106,9 @@ Si trabajamos en modo REPLACE en vez de en modo APPEND, el método *destroyUIs* 
 
 ##Enviando parámetros a un Screen
 
-En esta sección vamos a ver varias formas de que un Screen reciba un parámetro. Los parámetros se pasan los Screen en el *[Query String](http://en.wikipedia.org/wiki/Query_string)* de la URL.
+En esta sección vamos a ver varias formas de que un Screen reciba un parámetro. Los parámetros se pasan a los Screen en el *[Query String](http://en.wikipedia.org/wiki/Query_string)* de la URL.
 
-Observe como se pasa el parámetro al Screen Home en el *welcome.html*:
+Observe como se pasa el parámetro al Screen Home en el archivo *welcome.html*:
 
 ```html
 <div>
@@ -1124,7 +1124,7 @@ Observe como se pasa el parámetro al Screen Home en el *welcome.html*:
 </div>
 ```
 
-El *welcome.js* no tendría nada de particular:
+El archivo *welcome.js* no tendría nada de particular:
 
 ```js
 //In welcome.js
@@ -1142,7 +1142,7 @@ iris.screen(
 
 El parámetro lo recibimos en el Screen Home de esta forma:
 
-En *home.html*:
+En *home.html* ponemos un contendor para visualizar el parámetro:
 
 ```html
 <div>
@@ -1182,7 +1182,7 @@ iris.screen(
 
 Observe que el parámetro se recibe como un atributo del objeto *params* que será pasado por Iris a la función definida en el método *awake*.
 
-También podemos pasar un parámetro en el método *goto* de Iris. Para probar esto hagamos las siguientes cambios:
+También podemos pasar un parámetro en el método *goto* de Iris. Para probar esto hagamos los siguientes cambios:
 
 
 En *welcome.html* cambiamos el enlace por un botón:
@@ -1201,7 +1201,7 @@ En *welcome.html* cambiamos el enlace por un botón:
 </div>
 ```
 
-En *welcome.js* enviamosel parámetro:
+En *welcome.js* enviamos el parámetro:
 
 ```js
 //In welcome.js
@@ -1224,7 +1224,7 @@ iris.screen(
 
 ##Paso de parámetros en UIs
 
-De forma análoga a como se hizo en el último ejemplo, los UIs pueden recibir parámetros. Veámoslo con el siguiente ejemplo:
+Los UIs pueden recibir parámetros de forma análoga a como se hizo en el ejercicio anterior. Veámoslo con el siguiente ejemplo:
 
 En *welcome.html*:
 
@@ -1289,9 +1289,9 @@ En *myUI.html*:
 </div>
 ```
 
-<!--TODO No lo puedo probar porque ya que el evento awake del UI no se lanza. -->
+<!--TODO No lo puedo probar porque el evento awake del UI no se lanza. -->
 
-##Método Settings
+##Settings
 
 ##Eventos
 
