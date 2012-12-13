@@ -1096,7 +1096,9 @@ Si trabajamos en modo REPLACE en vez de en modo APPEND, el método destroyUIs el
 
 -->
 
-##Paso de parámetros en Screens
+##Enviando parámetros a un Screen
+
+En esta sección vamos a ver varias formas de que un Screen reciba un parámetro. Los parámetros se a los Screen en el *(Query String de la URL)*[http://en.wikipedia.org/wiki/Query_string]
 
 
 ##Paso de parámetros en UIs
