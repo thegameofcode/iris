@@ -831,5 +831,8 @@ Es mejor tener un contenedor para UIs y otro para Screens y no mezclar conceptos
 
 Normalmente cada tipo de UI tendrá su propio contenedor.
 
+##Paso de parámetros en Screens
+
+##Paso de parámetros en UIs
 
 #<a name="paso-a-paso"></a>Contruyendo paso a paso una aplicación desde cero
