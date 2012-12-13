@@ -821,7 +821,7 @@ Este comportamiento es similar al que tienen los Screens. La principal diferenci
 
 El método *tmplMode* puede recibir la constante *PREPEND* haciendo que los UIs se añadan como primer hijo en vez de como último.
 
-##Malas pŕacticas con UIs
+##Malas prácticas con UIs
 
 > En general, no es una buena idea reutilizar un contenedor de UIs para cargar Screens o viceversa. Aunque Iris puede manejar esta situación, vamos a tener problemas si el método *tmplMode* del UI no está configurado en modo *APPEND* ó *PREPEND* ya que  el modo por defecto, *REPLACE*, impedirá que se carguen los Screens una vez que se haya creado el UI.
 
@@ -830,6 +830,99 @@ Es mejor tener un contenedor para UIs y otro para Screens y no mezclar conceptos
 > Podemos reutilizar un contenedor para almacenar UIs de distinto tipo pero hay que tener mucho cuidado con la definición que se haga en el método *tmplMode* en cada uno de los UIs.
 
 Normalmente cada tipo de UI tendrá su propio contenedor.
+
+##Destruyendo Screens
+
+Iris dispone del método *destroyScreen* para destruir componentes de tipo Screen.
+
+Podemos probarlo con el siguiente código:
+
+En *welcome.html*:
+
+```html
+div>
+ <h1>Welcome Screen</h1>
+ <p>This is the initial screen.</p>
+ <button data-id="create-home-screen">Click create a Home Screen</button>
+ </br> 
+ <button data-id="destroy-home-screen">Click to destroy Home Screen</button>
+ </br>
+ <a href="#help">Gets some help</a>
+ <div data-id="container"/>
+</div>
+```
+Y en el método *create* *welcome.js*:
+ 
+```js
+ self.create = function () {
+ console.log("Welcome Screen Created");
+ self.tmpl("welcome.html"); 
+ self.screen("container", "#home", "home.js")
+ self.screen("container", "#help", "help.js")
+ 
+ self.get("create-home-screen").click(
+  function() {   
+   iris.goto("#home");
+  }
+ );
+
+ self.get("destroy-home-screen").click(
+  function() {   
+    iris.destroyScreen("#home");
+  }
+ );
+}
+```
+ 
+Observe que tenemos dos botones, uno para ir al Screen Home y otro para destruirlo. Tras pulsar sucesivamente sobre ambos Iris generará el siguiente DOM:
+
+```html
+<<html>
+ <head>
+ <body>
+  <div>
+   <h1>Welcome Screen</h1>
+   <p>This is the initial screen.</p>
+   <button data-id="create-home-screen">Click create a Home Screen</button>
+   <br>
+   <button data-id="destroy-home-screen">Click to destroy Home Screen</button>
+   <br>
+   <a href="#help">Gets some help</a>
+   <div data-id="container"></div>
+  </div>
+ </body>
+</html>
+```
+
+Observe que el contenido del Screen Home ha sido completamente eliminada.
+
+<!-- TODO Se elimina la referencia pero en la barra de direcciones del navegador se conserva el HAs-UL #home -->
+ 
+ Si el Screen destruido contiene UIs, estos también serán destruidos. Para probarlo, modifiquemos el Screen Home de la siguiente manera:
+ 
+En *home.html*:
+
+```html
+<div>
+ <h1>Home Screen</h1>
+ <p>This is the home screen.</p> 
+ <div data-id='ui-container'/>
+</div>
+```
+Y en el método *create* de *home.js*:
+
+```js
+self.create = function () {
+ console.log("Home Screen Created");
+ self.tmpl("home.html");
+ self.ui("ui-container", "myUI.js"); 
+}
+```
+Al pulsar sobre los botones *create* y *destroy* sinultáneamente:
+
+
+ 
+
 
 ##Paso de parámetros en Screens
 
