@@ -935,7 +935,163 @@ Home Screen Destroyed
 
  <!--TODO Revisar la consistencia de esto ya que la secuencia no parece lógica: ¿Por qué se ejecutan los enventos create y awake del UI entre los eventos create y awake del Screen contenedor-->
 
+##Destruyendo UIs
 
+Para destruir UIs, Iris dispone de dos métodos: *destroyUI* y *destroyUIs*. Esto métodos son locales al componente que los vaya a destruir a diferancia de *destroyScreen* que es global.
+
+Para probar *destroyUI* tendremos el siguiente código:
+
+En *welcome.js*:
+
+```html
+<div>
+ <h1>Welcome Screen</h1>
+ <p>This is the initial screen.</p>
+ <button data-id="create-myUI">Click create a myUI UI</button>
+ </br> 
+ <button data-id="destroy-myUI">Click to destroy all myUI UIs</button>
+ <div data-id="container"/>
+</div>
+```
+
+En *welcome.js*:
+
+```js
+self.create = function () {
+ console.log("Welcome Screen Created");
+ self.tmpl("welcome.html"); 
+ 
+ var myUI = null;
+ 
+ self.get("create-myUI").click(
+  
+  function() {   
+   myUI = self.ui("container", "myUI.js");
+  }
+ );
+
+ self.get("destroy-myUI").click(
+  function() {   
+    if (myUI != null) {
+     self.destroyUI(myUI);
+    }
+  }
+ );
+}
+```
+
+Observe que eliminamos el UI con el método *destroyUI* a través de la referencia al UI que nos devuelve el método *ui*.
+
+En *myUI.js*:
+
+```js
+self.create = function () {
+ console.log("myUI UI Created");
+ //self.tmplMode(self.APPEND);
+ self.tmpl("myUI.html");
+}
+```
+
+El DOM generado ha eliminado todo el contenido del UI y de su contenedor (*data-id='container'*).
+
+```html
+<html>
+ <head>...</head>
+ <body>
+  <div>
+   <h1>Welcome Screen</h1>
+   <p>This is the initial screen.</p>
+   <button data-id="create-myUI">Click create a myUI UI</button>
+   <br>
+   <button data-id="destroy-myUI">Click to destroy myUI UI</button>
+  </div>
+ </body>
+</html>
+```
+
+Si descomentamos la línea que asigna el *tmplMode* a *APPEND* en el fichero *myUI.js*, y pulsamos varias veces al botón que crea el UI seguida de una pulsación sobre el que lo destruye, sólo se eliminrá el último UI.
+
+Para eliminar todos los UIs de un contenedor debemos utilizar el método *destroyUIs* como se explica en el siguiente ejemplo:
+
+Para eliminar todos los UIs del contenedor, estas son las modificaciones que habría que hacer:
+
+El método *create* de *welcome.js*:
+
+```js
+self.create = function () {
+ console.log("Welcome Screen Created");
+ self.tmpl("welcome.html"); 
+ 
+ self.get("create-myUI").click(
+  function() {   
+   self.ui("container", "myUI.js");
+  }
+ );
+
+ self.get("destroy-myUI").click(
+  function() {   
+    self.destroyUIs("container");
+  }
+ );
+}
+```
+Para eliminar todos los UIs de un contenedor le pasamos el *data-id* de ese contenedor el método *destroyUIs*.
+
+Y el método *create* de *myUI.js*:
+
+```js
+self.create = function () {
+ console.log("myUI UI Created");
+ self.tmplMode(self.APPEND);
+ self.tmpl("myUI.html");
+}
+```
+
+Tras pulsar tres veces sobre el botón que crea el UI y una vez sobre el que lo destruye, el DOM quedaría:
+
+```html
+<html>
+ <head>
+ <body>
+  <div>
+   <h1>Welcome Screen</h1>
+   <p>This is the initial screen.</p>
+   <button data-id="create-myUI">Click create a myUI UI</button>
+   <br>
+   <button data-id="destroy-myUI">Click to destroy myUI UIs</button>
+   <div data-id="container"></div>
+  </div>
+ </body>
+</html>
+```
+
+Es decir, los UIs habrán sido eliminados pero no su contenedor ya que el *tmplMode* tiene valor *APPEND*.
+
+La secuencia de eventos será:
+
+<pre>
+Welcome Screen Created
+Welcome Screen Awakened
+myUI UI Created
+myUI UI Created
+myUI UI Created
+myUI UI Sleeping
+myUI UI Destroyed
+myUI UI Sleeping
+myUI UI Destroyed
+myUI UI Sleeping
+myUI UI Destroyed
+</pre>
+
+<!TODO Como ya se ha advertido, faltan los eventos awake de los UIs-->
+
+<!-TODO Preguntar si hay algo más no contado sobre el método destroyUIs-->
+
+<!TODO Esto también funciona pero creo que no debería hacerlo:
+
+Si trabajamos en modo REPLACE en vez de en modo APPEND, el método destroyUIs elimina el UI pero su contenedor (data-id'container') no existe por lo que creo que no debería haberlo hecho
+
+-->
 
 ##Paso de parámetros en Screens
 
