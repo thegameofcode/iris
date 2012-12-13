@@ -1098,8 +1098,121 @@ Si trabajamos en modo REPLACE en vez de en modo APPEND, el método destroyUIs el
 
 ##Enviando parámetros a un Screen
 
-En esta sección vamos a ver varias formas de que un Screen reciba un parámetro. Los parámetros se a los Screen en el *[Query String de la URL]*(http://en.wikipedia.org/wiki/Query_string)
+En esta sección vamos a ver varias formas de que un Screen reciba un parámetro. Los parámetros se pasan los Screen en el *[Query String](http://en.wikipedia.org/wiki/Query_string)* de la URL.
 
+Observe como se pasa el parámetro al Screen Home en el *welcome.html*:
+
+```html
+<div>
+ <h1>Welcome Screen</h1>
+ <p>This is the initial screen.</p>
+ <a href="#home?year=2013">Click to go to Home Screen</a>
+ </br>
+ <a href="#help">Click to gets some help</a>
+ </br> 
+ <div data-id="screens">
+  Here is where Iris will load all the Screens
+ </div> 	
+</div>
+```
+
+El *welcome.js* no tendría nada de particular:
+
+```js
+//In welcome.js
+iris.screen(
+ function (self) {
+  self.create = function () {
+   console.log("Welcome Screen Created");
+   self.tmpl("welcome.html");
+   self.screen("screens", "#home", "home.js");
+   self.screen("screens", "#help", "help.js");   
+  }
+ }
+ );
+```
+
+El parámetro lo recibimos en el Screen Home de esta forma:
+
+En *home.html*:
+
+```html
+<div>
+ <h1>Home Screen</h1>
+ <p>This is the home screen.</p>
+ <div data-id="year-parameter"/>
+</div>
+```
+
+Y en *home.js*:
+
+```js
+//In home.js
+
+iris.screen(
+ function (self) {
+  self.create = function () {   
+   console.log("Home Screen Created");
+   self.tmpl("home.html");
+  }
+  
+  self.awake = function (params) {  
+   console.log("Home Screen Awakened");   
+   self.get("year-parameter").text("The value of the year parameter is: " + params.year);
+  }
+		
+  self.sleep = function () {
+   console.log("Home Screen Sleeping");
+  }
+  
+  self.destroy = function () {
+   console.log("Home Screen Destroyed");
+  }
+ }
+);
+```
+
+Observe que el parámetro se recibe como un atributo del objeto *params* que será pasado por Iris a la función definida en el método *awake*.
+
+También podemos pasar un parámetro en el método *goto* de Iris. Para probar esto hagamos las siguientes cambios:
+
+
+En *welcome.html* cambiamos el enlace por un botón:
+
+```html
+<div>
+ <h1>Welcome Screen</h1>
+ <p>This is the initial screen.</p>
+ <button data-id="goto-home">Goto Home</button>
+ </br>
+ <a href="#help">Click to gets some help</a>
+ </br> 
+ <div data-id="screens">
+  Here is where Iris will load all the Screens
+ </div> 	
+</div>
+```
+
+En *welcome.js* enviamosel parámetro:
+
+```js
+//In welcome.js
+iris.screen(
+ function (self) {
+  self.create = function () {
+   console.log("Welcome Screen Created");
+   self.tmpl("welcome.html");
+   self.screen("screens", "#home", "home.js");
+   self.screen("screens", "#help", "help.js");   
+   self.get("goto-home").click(
+    function() {
+     iris.goto("#home?year=" + (new Date().getFullYear())); //Send the current year instead a fixed value
+    }
+   )
+  }
+ }
+ );
+```
 
 ##Paso de parámetros en UIs
 
