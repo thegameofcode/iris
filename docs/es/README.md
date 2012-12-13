@@ -274,7 +274,7 @@ Y dejamos el fichero asociado *welcome.html* de la siguiente manera:
  </div>
 </div>
 ```
-Observe como el método **screen** permite asociar un Hash-URL con un objeto de tipo Screen. El primer parámetro define el elemento de HTML dentro del cual será cargado el Screen cuando su Hash-URL sea invocado. Esta invocación la hacemos al pulsar sobre el enlace que hemos añadido en *welcome.html*. Iris utiliza el valor del atributo *data-id* para asociar el contenedor HTML con el Screen. Este atributo no debe repetirse dentro de una página Web.
+Observe como el método **screen** permite asociar un Hash-URL con un objeto de tipo Screen. El primer parámetro define el elemento de HTML dentro del cual será cargado el Screen cuando su Hash-URL sea invocado. Esta invocación la hacemos al pulsar sobre el enlace que hemos añadido en *welcome.html*. Iris utiliza el valor del atributo *data-id* para asociar el contenedor HTML con el Screen. Este atributo no debe repetirse dentro de un mismo componente.
 
 El método *create* del Screen Home no se ejecutará hasta que no pulsemos por primera vez sobre el enlace.
 
@@ -451,7 +451,7 @@ Help Screen Sleeping
 Home Screen Awakened 
 </pre>
 
-##Consideraciones adicionales en la visualización de Screens
+##Malas prácticas en el registro de Screens
 
 <!--TODO IMPORTANTE: Aclarar si lo ue se explica en esta sección son solamentre malas prácticas o si Iris se debería proteger de ellas -->
 
@@ -594,6 +594,242 @@ self.awake = function () {
  ...
 }
 ```
+
+##Visualizando UIs
+
+En esta apartado vamos a aprender a trabajar con UIs. Los UIs son componentes reutiizables para definir la interfaz de usuario. Un UI pertenece a un Screen o a otro UI.
+
+Los UIs tienen muchas analogías con los Screens por lo que si no lo ha hecho todavía, revise la sección anterior.
+
+Vamos a crear un UI en el Screen Home del apartado anterior.
+
+El código del UI va a ser:
+
+En myUI.js:
+
+```js
+//In myUI.js
+
+iris.ui(
+ function (self) {
+  self.create = function () {
+   console.log("myUI UI Created");
+   self.tmpl("myUI.html");
+  }
+  self.awake = function () {   
+   console.log("myUI UI Awakened");
+  }
+  self.sleep = function () {
+   console.log("myUI UI Sleeping");
+  }
+  
+  self.destroy = function () {
+   console.log("myUI UI Destroyed");
+  }
+ }
+);
+```
+La única diferencia que enonctramos aquí con respoecto a lo explicado en los Screens es que los método se llama *ui* en vez de *screen*.
+
+Tampoco tiene nada especial el fichero *myUI.html*:
+
+```html
+<div>
+ <h1>myUI UI</h1>
+ <p>This is the myUI template.</p>
+</div>
+```
+
+Ahora vamos a ver las modificaciones que haremos en el Screen Home.
+
+El fichero *home.html* tendrá un botón que nos permita cargar el UI y un contenedor que nos permita visualizarlo.
+
+```html
+<div>
+ <h1>Home Screen</h1>
+ <p>This is the home screen.</p>
+ <button data-id="myUI-loader">Load MyUI</button>
+ <div data-id='ui-container'/>
+</div>
+```
+
+En el método *create* del fichero *home.js* tendremos lo siguiente:
+
+```js
+//In home.js
+self.create = function () {   
+ console.log("Home Screen Created");
+ self.tmpl("home.html");
+ self.get("myUI-loader").click(
+  function() {
+   self.ui("ui-container", "myUI.js");
+  }
+ );   
+}
+```
+
+Los UIs son componentes no *navebles* y, por lo tanto, su activación tiene que hacerse desde Javascript de forma análoga a como se puede hacer también con los Screens. La principal diferencia con ellos es que no se registran y se cargan simplemente llamando al método *ui* del componente (en este caso del Screen Home). Este método puede recibir tres parámetros: el *data-id* del contenedor donde se va a cargar; el fichero Javascript asociado al UI y opcionalmente un objeto de Javascript que se pasará al UI como se explica más adelante.
+
+Es interesante estudiar el DOM que genera Iris tras pulsar el botón y cargar el UI:
+
+```html
+<html>
+ <head>
+ <body>
+  <div>
+   <h1>Welcome Screen</h1>
+   <p>This is the initial screen.</p>
+   <a href="#home">Click to go to Home Screen</a>
+   <br>
+   <a href="#help">Click to gets some help</a>
+   <div data-id="screens">
+    Here is where Iris will load all the Screens
+    <div style="display: block;">
+     <h1>Home Screen</h1>
+     <p>This is the home screen.</p>
+     <button data-id="myUI-loader">Load MyUI</button>
+     <div>
+      <h1>myUI UI</h1>
+      <p>This is the myUI template.</p>
+     </div>
+    </div>
+   </div>
+  </div>
+ </body>
+</html>
+```
+
+Obsérvese que el contenedor con *data-id='ui-container'* ha sido reemplazado por el contenido del fichero *myUI.html*.
+
+Aunque se puede modificar como explicaremos posteriormente, este es el comportamiento por defecto de los UIs:
+
+> De forma predeterminada, cuando se carga un **UI**, su vista reempleza al contenedor. Por el contrario, cuando se carga un **Screen**, su vista se añade al contenedor.
+
+Comprender esto es esencial ya que si, por ejemplo, volviéramos a pulsar el botón, se trataría de cargar el UI *myUI* sin éxito debido a que contenedor que le estamos pasando en el método *ui* ya no está presente en el DOM.
+
+<!--TODO Iris no se queja de esta situación y decho llega a llamar al método create del UI-->
+
+También es interesante analizar la secuencia de eventos que se produce:
+
+<pre>
+Welcome Screen Created
+Welcome Screen Awakened
+Home Screen Created
+Home Screen Awakened
+myUI UI Created 
+</pre>
+
+!--TODO Averiguar por qué no se llama al evento awake del UI -->
+Hasta aquí nada especial; pero si luego pulsamos sobre el enlace a *#help*:
+
+<pre>
+Help Screen Created
+myUI UI Sleeping
+Home Screen Sleeping
+Help Screen Awakened 
+</pre>
+
+Obsérvese que se llama al evento *sleep* tanto del UI *myUI* como del Screen *Home*.
+
+Si ahora volvemos a pulsar sobre *#home*:
+
+<pre>
+Help Screen Sleeping
+myUI UI Awakened
+Home Screen Awakened 
+</pre>
+
+Se llama al evento *awake* tanto del UI *myUI* como del Screen *Home* ya que el UI ya estaba cargado.
+
+##UIs contenidos en otros UIs
+
+Un UI puede contener otros UIs. Para probar esto creemos otor UI llamado *innerUI* con los siguientes ficheros:
+
+En *innerUI.js*:
+
+```js
+//In innerUI.js
+
+iris.ui(
+ function (self) {
+  self.create = function () {
+   console.log("innerUI UI Created");
+   self.tmpl("innerUI.html");
+  }
+  self.awake = function () {   
+   console.log("innerUI UI Awakened");
+  }
+  self.sleep = function () {
+   console.log("innerUI UI Sleeping");
+  }
+  
+  self.destroy = function () {
+   console.log("innerUI UI Destroyed");
+  }
+ }
+);
+```
+
+Y en *innerUI.html*:
+
+```html
+<div>
+ <h1>innerUI UI</h1>
+ <p>This is the innerUI template.</p>
+</div>
+```
+
+En el método *create* del UI *myUI*:
+
+```js
+self.create = function () {
+ console.log("myUI UI Created");
+ self.tmpl("myUI.html");
+ self.ui("inner-ui-container", "innerUI.js");
+};
+```
+
+Y el fichero en el fichero *myUI.html*:
+
+```html
+<div>
+ <h1>myUI UI</h1>
+ <p>This is the myUI template.</p>
+ <div data-id="inner-ui-container"/>
+</div>
+```
+
+Aquí hay poco que comentar. Tan sólo que los UIs, al igual que los Screens, tienen un método *ui* que permite cargar otros UIs. Obsérvese también que la carga del UI interno se ha realizado directamtente sin utilizar un botón como hicimos en el ejemplo anterior.
+
+##Añadiendo varios UIs a un mismo contenedor
+
+Anteriormente hemos visto que cuando añadimos un UI, su contenedor es reemplazado por la vista del UI. Este comportamiento se puede modificar.
+
+Para mostrar como hacer esto, modifiquemos el método *create* del UI *myUI*:
+
+```js
+self.create = function () {   
+ console.log("myUI UI Created");
+ self.tmplMode(self.APPEND);
+ self.tmpl("myUI.html");
+}
+```
+
+Únicamente hemos llamado el método **tmplMode** con la constante *APPEND*.  Esto hace que el contenedor no sea reemplezado por el UI creado, sino que el UI será añadido al final del contenedor. La implicación más importante es que podemos pulsar varias veces el botón. Cada pulsación creará un nuevo UI que se añadirá al contenedor.
+
+Este comportamiento es similar al que tienen los Screens. La principal diferencia, que todavía permanece, es que Iris mostrará todos los UIs añadidos a un contenedor, mientras que sólo visualizará un Screen permaneciendo el resto ocultos.
+
+El método *tmplMode* puede recibir la constante *PREPEND* haciendo que los UIs se añadan como primer hijo en vez de como último.
+
+##Malas pŕacticas con UIs
+
+> En general, no es una buena idea reutilizar un contenedor de UIs para cargar Screens o viceversa. Aunque Iris puede manejar esta situación, vamos a tener problemas si el método *tmplMode* del UI no está configurado en modo *APPEND* ó *PREPEND* ya que  el modo por defecto, *REPLACE*, impedirá que se carguen los Screens una vez que se haya creado el UI.
+
+Es mejor tener un contenedor para UIs y otro para Screens y no mezclar conceptos.
+
+> Podemos reutilizar un contenedor para almacenar UIs de distinto tipo pero hay que tener mucho cuidado con la definición que se haga en el método *tmplMode* en cada uno de los UIs.
+
+Normalmente cada tipo de UI tendrá su propio contenedor.
 
 
 #<a name="paso-a-paso"></a>Contruyendo paso a paso una aplicación desde cero
