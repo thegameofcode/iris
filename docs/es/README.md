@@ -107,9 +107,9 @@ Un Screen puede contener otros componentes de tipo UI.
 
 Iris establece cuatro transiciones en el ciclo de vida de un componente: *create*, *awake*, *sleep* y *destroy*. En el fichero Javascript asociado al componente, podemos definir métodos *callbacks* que serán llamados por Iris cuando el evento correspondiente se produzca.
 
-Cuando se cree un componente, Iris ejecutará el código asociado a su método **create**. Normalmente aquí cargaremos el código HTML asociado al componente y registraremos los Screens. Este método sólo se llamará una vez en la vida de un componente. La creación de un Screen se realizará navegando al Hash-URL correspondiente o invocando el método *goto* de Iris. Si un Screen ya se hubiera creado, el método *goto* o escribir su Hash-URL en el navegador hará que Iris *navegue* hacia él provocando el evento *awake* (ver más adelante). La creación de un UI se realizará invocando el método *ui* del componente en el que lo queramos crear. A diferencia de lo que ocurre con los Screens, llamar al método *ui* siempre creará un nuevo UI.
+Cuando se cree un componente, Iris ejecutará el código asociado a su método **create**. Normalmente aquí cargaremos el código HTML asociado al componente y registraremos los Screens (si el componente es de tipo Screen). Este método sólo se llamará una vez en la vida de un componente. La creación de un Screen se realizará navegando al Hash-URL correspondiente o invocando el método *goto* de Iris. Si un Screen ya se hubiera creado, el método *goto* o escribir su Hash-URL en el navegador hará que Iris *navegue* hacia él provocando el evento *awake* (ver más adelante). La creación de un UI se realizará invocando el método *ui* del componente en el que lo queramos crear. A diferencia de lo que ocurre con los Screens, llamar al método *ui* siempre creará un nuevo UI.
 
-El evento complementario será **destroy**. Esté método, al igual que *create*, se efectuará una única vez en la vida de un componente. La destrucción de un componente se efectuará llamando al método *destoryUI* o *destroyScreen* dependiendo del componente de que se trate. En el caso de componente de tipo UI, también se llamará cuando un UI sea sustituido por otro. La destrucción de un componente supondrá la destrucción de todos los componentes de tipo UI que contenga.
+El evento complementario será **destroy**. Esté método, al igual que *create*, se efectuará una única vez en la vida de un componente. La destrucción de un componente se efectuará llamando al método *destoryUI*, *destroyUIs* o *destroyScreen* dependiendo del componente de que se trate. En el caso de componente de tipo UI, también se llamará cuando un UI sea sustituido por otro. La destrucción de un componente supondrá la destrucción de todos los componentes que contenga.
 
 <a name="awake"></a>El evento **awake** se producirá después del evento *create* y cada vez que cambie el Hash-URL asociado al Screen que se va a visualizar. El método *awake* se llamará en los UIs que compongan el Screen y luego en el propio Screen. <!--TODO preguntar si tiene que tiene que ser así. La primera vez no se está lanzando el evento awake en los UIs-->. Aquí es donde habitualmente asociaremos eventos a nuestra aplicación, reproduciremos vídeo o audio, etc. En la llamada al método *awake* podemos pasar parámetros al componente para variar su comportamiento.
 
@@ -167,8 +167,8 @@ iris.screen(
  function (self) {
  	
   self.create = function () {
-   self.tmpl("welcome.html");
    console.log("Welcome Screen Created");
+   self.tmpl("welcome.html");
   }
 
   self.awake = function () {
@@ -195,9 +195,11 @@ Y el del archivo *welcome.html*:
  <p>This is the initial screen.</p>
 </div>
 ```
-Cuando se ejecute el método *iris.welcome*, Iris creará un objeto de tipo Screen. Este objeto será pasado a la función que recibe el método *iris.screen* definido en el fichero *welcome.js* y se ejecutarán los métodos del ciclo de vida que se hayan definido en esta función. Concretamente, se ejecutarán sucesivamente los métodos *create* y *awake*.
+Cuando se ejecute el método *iris.welcome*, Iris creará un objeto de tipo Screen. Este objeto será pasado a la función que recibe el método *iris.screen* definido en el fichero *welcome.js* y se ejecutarán los métodos del ciclo de vida que se hayan definido en esta función. Concretamente, en nuestro ejemplo, se ejecutarán sucesivamente los métodos *create* y *awake*.
 
-Observe que el método *create* ejecuta una llamada al método **tmpl** que permite cargar en el DOM el contenido del archivo *welcome.html* pasado como parámetro. Los ficheros HTML asociados a componentes de Iris deben tener un único nodo raíz (típicamente un DIV).
+Observe que el método *create* ejecuta una llamada al método **tmpl** que permite cargar en el DOM el contenido del archivo *welcome.html* pasado como parámetro. 
+
+> Los ficheros HTML asociados a componentes de Iris deben tener un único nodo raíz (típicamente un DIV).
 
 Tras ejecutarse los métodos *create* y *awake* se generará y visualizará el DOM siguiente:
 
@@ -226,8 +228,8 @@ Primero creamos el Screen Home con una estructura muy parecida a la anterior.
 iris.screen(
  function (self) {
   self.create = function () {   
-   self.tmpl("home.html");
    console.log("Home Screen Created");
+   self.tmpl("home.html");
   }
   self.awake = function () {   
    console.log("Home Screen Awakened");
@@ -275,7 +277,11 @@ Y dejamos el fichero asociado *welcome.html* de la siguiente manera:
  </div>
 </div>
 ```
-Observe como el método **screen** permite asociar un Hash-URL con un objeto de tipo Screen. El primer parámetro define el elemento de HTML dentro del cual será cargado el Screen cuando su Hash-URL sea invocado. Esta invocación la hacemos al pulsar sobre el enlace que hemos añadido en *welcome.html*. Iris utiliza el valor del atributo *data-id* para asociar el contenedor HTML con el Screen. Este atributo no debe repetirse dentro de un mismo componente.
+Observe como el método **screen** permite asociar un Hash-URL con un objeto de tipo Screen. Este método recibe tres parámetros: El primer parámetro define el elemento de HTML dentro del cual será cargado el Screen cuando su Hash-URL sea invocado; el segundo parámetro es el propio Hash-URL asociado al Screen y el tercero su fichero Javascript de comportamiento. El método Scrren únnicamente registra esta información pero no produce ningún evento del ciclo de vida del Screen.
+
+En nuestro ejemplo, para *navegar* el Screen debemos pulsar sobre el enlace que hemos añadido en *welcome.html* y que contine el Hash-URL del Screen al que queremos ir.
+
+Cuando pulsemos sobre el enlace, Iris buscará un elemento del DOM cuyo atributo *data-id* corresponda con el registrado para el Screen y añadirá el contenido HTML del Screen a este elemento.
 
 El método *create* del Screen Home no se ejecutará hasta que no pulsemos por primera vez sobre el enlace.
 
@@ -283,7 +289,7 @@ Tras pulsar el enlace, el DOM de la página generada por Iris será el siguiente
 
 ```html
 <html>
- <head>
+ <head>..</head>
  <body>
   <div>
    <h1>Welcome Screen</h1>
@@ -300,11 +306,11 @@ Tras pulsar el enlace, el DOM de la página generada por Iris será el siguiente
  </body>
 </html>
 ```
-Es importante observar que el código HTML del Screen se añade dentro del contenedor especificado.  
+Es importante reiterar que el código HTML del Screen se añade dentro del contenedor especificado. 
 
 ##Mostrando un Screen desde Javascript
 
-Podemos conseguir lo mismo que en el apartado anterior desde el código en Javascript asociado al Screen.
+Podemos conseguir lo mismo que en el apartado anterior desde el código en Javascript asociado al Screen Welcome.
 
 Para hacer esto, modifiquemos el código del Screen Welcome:
 
@@ -335,7 +341,7 @@ self.create = function () {
  );
 }
 ```
-Observe como el método **goto** de Iris permite navegar al Hash-URL especificado y que el método **get** recibe el valor del atributo *data-id* del componente que se quiere seleccionar como un objeto JQuery.
+Observe como el método **goto** de Iris permite navegar al Hash-URL especificado y que, para capturar el evento *click* del botón, hemos utiliado el método **get** del componente de Iris que recibe el valor de su atributo *data-id*. Iris buscará un elemento en el DOM del componente con ese *data-id* y lo devolverá como un objeto de JQuery.
 
 ##Mostrando varios screens
 
@@ -407,7 +413,7 @@ Si pulsamos primero sobre el enlace a *#home* y después sobre *#help*, el DOM g
 
 ```html
 <html>
- <head>
+ <head>..</head>
  <body>
   <div>
    <h1>Welcome Screen</h1>
@@ -433,7 +439,7 @@ Si pulsamos primero sobre el enlace a *#home* y después sobre *#help*, el DOM g
 
 Podemos comprobar, consistentemente con lo explicado anteriormente, que el código HTML de los Screens Home y Help ha sido añadido al contenedor pero sólo estará visible el correspondiente al último enlace pulsado, Help en este caso.
 
-La secuencia de eventos producida tras ejecutar la secuencia anterior será:
+La secuencia de eventos producida será:
 
 <pre>
 Welcome Screen Created
@@ -519,7 +525,7 @@ Tras pulsar sobre ambos enlaces el DOM será:
 </html>
 ```
 Es decir, que se verán ambos Screens pero el Hash-URL apuntará a *#help*.
-El problema es que si la secuencia la hacemos al revés, primero pulsamos sobre *#help* y luego sobre *#home*, la apariencia será la misma pero el Hash-URL del navegador ahora será *home*.
+El problema es que si la secuencia la hacemos al revés, primero pulsamos sobre *#help* y luego sobre *#home*, la apariencia será la misma pero el Hash-URL del navegador ahora será *#home*.
 
 Peor será lo que ocurre con los eventos, la secuencia si pulsamos sobre *#home* y sobre *#help* sucesivamente será:
 
@@ -562,7 +568,7 @@ self.screen("screens", "#home", "home.js");
 self.screen("screens", "#help", "home.js");
 ```
 
-El problema surge si analizamos la secuencia de eventos que se genera:
+El problema surge si analizamos la secuencia de eventos que se generan:
 
 <pre>
 Welcome Screen Created
@@ -598,7 +604,7 @@ self.awake = function () {
 
 ##Visualizando UIs
 
-En esta apartado vamos a aprender a trabajar con UIs. Los UIs son componentes reutiizables para definir la interfaz de usuario. Un UI pertenece a un Screen o a otro UI.
+En este apartado vamos a aprender a trabajar con UIs. Los UIs son componentes reutiizables para definir la interfaz de usuario. Un UI pertenece a un Screen o a otro UI.
 
 Los UIs tienen muchas analogías con los Screens por lo que si no lo ha hecho todavía, revise la sección anterior.
 
@@ -630,7 +636,7 @@ iris.ui(
  }
 );
 ```
-La única diferencia que encontramos aquí con respecto a lo explicado en los Screens es que los método se llama *ui* en vez de *screen*.
+La única diferencia que encontramos aquí con respecto a lo explicado en los Screens es que el método se llama **ui** en vez de *screen*.
 
 Tampoco tiene nada especial el fichero *myUI.html*:
 
@@ -669,7 +675,9 @@ self.create = function () {
 }
 ```
 
-Los UIs son componentes no *navegables* y, por lo tanto, su activación tiene que hacerse desde Javascript de forma análoga a como se puede hacer también con los Screens. La principal diferencia con ellos es que no se registran y se cargan simplemente llamando al método *ui* del componente (en este caso del Screen Home). Este método puede recibir cuatro parámetros: el *data-id* del contenedor donde se va a cargar; el fichero Javascript asociado al UI y opcionalmente un objeto de Javascript que se pasará al UI como se explica más adelante; y por último, también de forma opcional, el *template mode* (ver explicación posterior).
+Los UIs son componentes no *navegables* y, por lo tanto, su activación tiene que hacerse desde Javascript de forma análoga a como se puede hacer también con los Screens. La principal diferencia con ellos es que no se registran y se cargan simplemente llamando al método *ui* del componente (en este caso del Screen Home).
+
+Este método puede recibir cuatro parámetros: el *data-id* del contenedor donde se va a cargar; el fichero Javascript asociado al UI y opcionalmente un objeto de Javascript que se pasará al UI como se explica más adelante; y por último, también de forma opcional, el *template mode* (ver explicación posterior).
 
 Es interesante estudiar el DOM que genera Iris tras pulsar el botón y cargar el UI:
 
