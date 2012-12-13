@@ -27,7 +27,7 @@ Las principales características de Iris son:
 
 #¿Por qué Iris?
 
-El conjunto de tecnologías conocido como AJAX están cambiando radicalmente la forma tradicional de construir aplicaciones Web.
+El conjunto de tecnologías conocido como AJAX está cambiando radicalmente la forma tradicional de construir aplicaciones Web.
 
 Desde el punto de vista del desarrollo, el cambio fundamental supone que parte de la lógica de la aplicación, que antes se ejecutaba en el servidor, ahora se realiza en el cliente.
 
@@ -45,13 +45,14 @@ El lenguaje [*Javascript*](http://en.wikipedia.org/wiki/Javascript) se está con
 * Etcétera.
 
 Sin embargo, el mayor peso relativo que está adquiriendo la programación en el *lado del cliente* plantea nuevas dificultades:
-* Por un lado, buena parte del código en [HTML](http://en.wikipedia.org/wiki/Html) ahora se genera dinámicamente desde cliente con *Javascript*. Esto supone una gran ventaja ya que mejora la experiencia de usuario y disminuye la necesidad de interaccionar con el servidor, pero también genera problemas nuevos:
-	* Los buscadores ya no pueden realizar correctamente su trabajo debido a que la aplicación no necesita modificar la [URL](http://en.wikipedia.org/wiki/Url). Por motivos de optimización, los buscadores no analizan el código generado desde *Javascript* (ver [SEO](http://en.wikipedia.org/wiki/Search_Engine_Optimization)).
-	* Por el mismo motivo, ahora es más difícil enlazar a secciones concretas de la aplicación.
-	* Surgen problemas con el almacenamiento temporal en *caché*. Es frecuente que el navegador almacene la información y no vaya a *buscar* los datos al servidor.
-	* Aparecen anomalías en el comportamiento de los botones de delante/atrás. 
-	* Problemas con el análisis estadístico de las páginas visitadas.
-	* Es fácil que se produzcan *filtraciones* de memoria debido a que los objetos creados dinámicamente con Javascript dejen de apuntar a la referencia correcta o, por el contrario, que permanezcan indefinidamente en la memoria.
+* Por un lado, buena parte del código en [HTML](http://en.wikipedia.org/wiki/Html) ahora se genera dinámicamente en el cliente con *Javascript*. Esto supone una gran ventaja ya que mejora la experiencia de usuario y disminuye la necesidad de interaccionar con el servidor, pero también genera problemas nuevos:
+ 
+ * Los buscadores ya no pueden realizar correctamente su trabajo debido a que la aplicación no necesita modificar la [URL](http://en.wikipedia.org/wiki/Url). Por motivos de optimización, los buscadores no analizan el código generado desde *Javascript* (ver [SEO](http://en.wikipedia.org/wiki/Search_Engine_Optimization)).
+ * Por el mismo motivo, ahora es más difícil enlazar a secciones concretas de la aplicación.
+ * Surgen problemas con el almacenamiento temporal en *caché*. Es frecuente que el navegador almacene la información y no vaya a *buscar* los datos al servidor.
+ * Aparecen anomalías en el comportamiento de los botones de delante/atrás. 
+ * Problemas con el análisis estadístico de las páginas visitadas.
+ * Es fácil que se produzcan *filtraciones* de memoria debido a que los objetos creados dinámicamente con Javascript dejen de apuntar a la referencia correcta o, por el contrario, que permanezcan indefinidamente en la memoria.
 
 * Por otro lado, el desplazamiento de parte de la lógica al cliente, tiene como consecuencia que las aplicaciones en *Javascript* alcancen fácilmente varios millares de líneas de código. Esto supone una dificultad de mantenimiento máxime si, como decíamos antes, el código en HTML se genera dinámicamente en el cliente.
 
@@ -59,14 +60,13 @@ Iris está especialmente diseñado para dar respuesta a ambos problemas:
 
 * Con Iris, la navegación se realiza en una sola página. El flujo de navegación se define mediante Hash-URLs como en populares aplicaciones como [Gmail](https://mail.google.com).
 * Iris permite estructurar el código en HTML y en Javascript en pequeños fragmentos. Esto supone importantes ventajas como:
-	* Refuerza la modularidad de la aplicación, la ocultación, la cohesión y el bajo acoplamiento.
-	* Define una clara separación de la vista y su comportamiento.
-	* Mejora el trabajo en equipo permitiendo asignar tareas a distintos roles: analista, programador, diseñador, etc.
-	* Simplifica la definición y la modificación del flujo de navegación.
-	* Elimina o reduce al mínimo la necesidad de generación de código dinámico.
-	* Permite la reutilización de los componentes creados.
-	* Facilita la realización de pruebas, la depuración y el mantenimiento.
-
+ * Refuerza la modularidad de la aplicación, la ocultación, la cohesión y el bajo acoplamiento.
+ * Define una clara separación de la vista y su comportamiento.
+ * Mejora el trabajo en equipo permitiendo asignar tareas a distintos roles: analista, programador, diseñador, etc.
+ * Simplifica la definición y la modificación del flujo de navegación.
+ * Elimina o reduce al mínimo la necesidad de generación de código dinámico.
+ * Permite la reutilización de los componentes creados.
+ * Facilita la realización de pruebas, la depuración y el mantenimiento.
 
 #¿Cómo funciona Iris?
 
