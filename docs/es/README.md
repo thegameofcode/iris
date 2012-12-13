@@ -57,7 +57,7 @@ Sin embargo, el mayor peso relativo que está adquiriendo la programación en el
 
 Iris está especialmente diseñado para dar respuesta a ambos problemas:
 
-* Con Iris, la navegación se realiza en una sóla página. El flujo de navegación se define mediante Hash-URLs como en populares aplicaciones como [Gmail](https://mail.google.com).
+* Con Iris, la navegación se realiza en una sola página. El flujo de navegación se define mediante Hash-URLs como en populares aplicaciones como [Gmail](https://mail.google.com).
 * Iris permite estructurar el código en HTML y en Javascript en pequeños fragmentos. Esto supone importantes ventajas como:
 	* Refuerza la modularidad de la aplicación, la ocultación, la cohesión y el bajo acoplamiento.
 	* Define una clara separación de la vista y su comportamiento.
@@ -70,13 +70,13 @@ Iris está especialmente diseñado para dar respuesta a ambos problemas:
 
 #¿Cómo funciona Iris?
 
-En esta sección se van a presentar los principales componentes de Iris y los métodos para crear, destruir o interaccionar con ellos. No se preocupe si no entiende algunos conceptos, ya que lo único que se pretende en este momento es que se vaya familirarizando con la forma de trabajo de Iris.  Más adelente se propondrán ejemplos de código que le permitirán clarificar y profundizar lo aquí esbozado.
+En esta sección se van a presentar los principales componentes de Iris y los métodos para crear, destruir o interaccionar con ellos. No se preocupe si no entiende algunos conceptos, ya que lo único que se pretende en este momento es que se vaya familiarizando con la forma de trabajo de Iris.  Más adelante se propondrán ejemplos de código que le permitirán clarificar y profundizar lo aquí esbozado.
 
 ##Componentes
 
 La estructura de una aplicación Iris consiste en la creación de varios componentes que interaccionan entre sí.
 
-Cada **componente** permite definir los elementos que conforman la interfaz de usuario. Un compoenete contiene dos elementos fundamentales: La vista o presentación y el comportamiento.
+Cada **componente** permite definir los elementos que conforman la interfaz de usuario. Un componente contiene dos elementos fundamentales: La vista o presentación y el comportamiento.
 
 La **vista** consiste en un fragmento de código en HTML, típicamente un *DIV*, almacenado en un fichero, normalmente con extensión *.html*.
 
@@ -86,7 +86,7 @@ El **comportamiento** es un fragmento de código en Javascript almacenado en un 
 
 Cuando Iris carga un componente, visualiza el código de su fichero HTML asociado y ejecuta su fichero de Javascript según se haya definido en su ciclo de vida (<a href="#ciclo_de_vida">ver más adelante</a>).
 
-El código HTML del componente se inserta en el DOM de la página. La inserción se hace sustituyendo o añadiéndo (según se prefiera) un elemento que se defina en el DOM (ver más adelante).
+El código HTML del componente se inserta en el DOM de la página. La inserción se hace sustituyendo o añadiendo (según se prefiera) un elemento que se defina en el DOM (ver más adelante).
 
 ##Screens y UIs
 
@@ -123,18 +123,18 @@ Podemos ver esto gráficamente:<!--TODO Actualizar gráfico-->
 
 Toda aplicación Iris debe definir un componente inicial que se cargará al principio. Este componente será un <a href="#screen">Screen</a> especial ya que tiene algunas diferencias con lo explicado anteriormente:
 * El Screen de bienvenida no tiene Hash-URL asociado y se carga con el método **welcome** de Iris.
-* A diferencia de lo que ocurre con otros Screens, el componente no puede recibir parámatros en su activación.
+* A diferencia de lo que ocurre con otros Screens, el componente no puede recibir parámetros en su activación.
 * En una aplicación Iris, normalmente, no habrá necesidad de refrescar o de modificar la *URL* sobre la que se carga el Screen de bienvenida.
-* Por lo tanto, tampoco será habital llamar al método *destroy* de este Screen. Es decir, que el ciclo de vida de este Screen se simplifica ya que únicamente se hará una primera llamada al método *create* y una segunda al método *awake*.
+* Por lo tanto, tampoco será necesario llamar al método *destroy* de este Screen. Es decir, que el ciclo de vida de este Screen se simplifica ya que únicamente se hará una primera llamada al método *create* y una segunda al método *awake*.
 * Lo habitual es que el cometido del Screen de bienvenida sea registrar otros Screens y *llamar* al Hash-URL del Screen inical de nuestra aplicación.
 
 #Empezando con Iris
 
 En esta sección vamos proponer ejemplos de código para aclarar y profundizar lo explicado anteriormente y para introducir nuevas capacidades de Iris.
 
-Aquí no se pretende crear una aplicación funcional, sino que se comprenda como se trabaja con Iris. Los ejemplos, por lo tanto, no realizarán ningún trabajo úlil. Si quiere ver como construir una aplicación desde cero, puede consultar la <a href="#paso-a-paso">sección correspondiente</a>.
+Aquí no se pretende crear una aplicación funcional, sino que se comprenda como se trabaja con Iris. Los ejemplos, por lo tanto, no realizarán ningún trabajo útil. Si quiere ver como construir una aplicación desde cero, puede consultar la <a href="#paso-a-paso">sección correspondiente</a>.
 
-Para hacer más sencilla la explicación, todo el código de esta sección se situará un el directorio raiz de la aplicación. No es conveniente hacer esto en una aplciación real. En la sección *<a href="#paso-a-paso">Contruyendo paso a paso una aplicación desde cero</a>* se propone una estructura de directorios más adecuada para trabajar con Iris.
+Para hacer más sencilla la explicación, todo el código de esta sección se situará un el directorio raíz de la aplicación. No es conveniente hacer esto en una aplicación real. En la sección *<a href="#paso-a-paso">Contruyendo paso a paso una aplicación desde cero</a>* se propone una estructura de directorios más adecuada para trabajar con Iris.
 
 ##Instalando Iris
 El primer paso será decidir si queremos trabajar con la versión de [desarrollo](https://raw.github.com/iris-js/iris/master/dist/iris.js) o de [producción](https://raw.github.com/iris-js/iris/master/dist/iris.min.js)<!--TODO revisar enlaces-->y asociarlas a un fichero en HTML.
@@ -630,7 +630,7 @@ iris.ui(
  }
 );
 ```
-La única diferencia que enonctramos aquí con respoecto a lo explicado en los Screens es que los método se llama *ui* en vez de *screen*.
+La única diferencia que encontramos aquí con respecto a lo explicado en los Screens es que los método se llama *ui* en vez de *screen*.
 
 Tampoco tiene nada especial el fichero *myUI.html*:
 
@@ -704,7 +704,7 @@ Obsérvese que el contenedor con *data-id='ui-container'* ha sido reemplazado po
 
 Aunque se puede modificar como explicaremos posteriormente, este es el comportamiento por defecto de los UIs:
 
-> De forma predeterminada, cuando se carga un **UI**, su vista reempleza al contenedor. Por el contrario, cuando se carga un **Screen**, su vista se añade al contenedor.
+> De forma predeterminada, cuando se carga un **UI**, su vista reemplaza al contenedor. Por el contrario, cuando se carga un **Screen**, su vista se añade al contenedor.
 
 Comprender esto es esencial ya que si, por ejemplo, volviéramos a pulsar el botón, se trataría de cargar el UI *myUI* sin éxito debido a que contenedor que le estamos pasando en el método *ui* ya no está presente en el DOM.
 
@@ -744,7 +744,7 @@ Se llama al evento *awake* tanto del UI *myUI* como del Screen *Home* ya que el 
 
 ##UIs contenidos en otros UIs
 
-Un UI puede contener otros UIs. Para probar esto creemos otor UI llamado *innerUI* con los siguientes ficheros:
+Un UI puede contener otros UIs. Para probar esto creemos otro UI llamado *innerUI* con los siguientes ficheros:
 
 En *innerUI.js*:
 
@@ -800,7 +800,7 @@ Y el fichero en el fichero *myUI.html*:
 </div>
 ```
 
-Aquí hay poco que comentar. Tan sólo que los UIs, al igual que los Screens, tienen un método *ui* que permite cargar otros UIs. Obsérvese también que la carga del UI interno se ha realizado directamtente sin utilizar un botón como hicimos en el ejemplo anterior.
+Aquí hay poco que comentar. Tan sólo que los UIs, al igual que los Screens, tienen un método *ui* que permite cargar otros UIs. Obsérvese también que la carga del UI interno se ha realizado directamente sin utilizar un botón como hicimos en el ejemplo anterior.
 
 ##Añadiendo varios UIs a un mismo contenedor
 
@@ -936,11 +936,11 @@ myUI UI Destroyed
 Home Screen Destroyed
 </pre>
 
- <!--TODO Revisar la consistencia de esto ya que la secuencia no parece lógica: ¿Por qué se ejecutan los enventos create y awake del UI entre los eventos create y awake del Screen contenedor-->
+ <!--TODO Revisar la consistencia de esto ya que la secuencia no parece lógica: ¿Por qué se ejecutan los eventos *create* y *awake* del UI entre los eventos create y awake del Screen contenedor-->
 
 ##Destruyendo UIs
 
-Para destruir UIs, Iris dispone de dos métodos: *destroyUI* y *destroyUIs*. Esto métodos son locales al componente que los vaya a destruir a diferancia de *destroyScreen* que es global.
+Para destruir UIs, Iris dispone de dos métodos: *destroyUI* y *destroyUIs*. Esto métodos son locales al componente que los vaya a destruir a diferencia de *destroyScreen* que es global.
 
 Para probar *destroyUI* tendremos el siguiente código:
 
@@ -1012,7 +1012,7 @@ El DOM generado ha eliminado todo el contenido del UI y de su contenedor (*data-
 </html>
 ```
 
-Si descomentamos la línea que asigna el *tmplMode* a *APPEND* en el fichero *myUI.js*, y pulsamos varias veces al botón que crea el UI seguida de una pulsación sobre el que lo destruye, sólo se eliminrá el último UI.
+Si descomentamos la línea que asigna el *tmplMode* a *APPEND* en el fichero *myUI.js*, y pulsamos varias veces al botón que crea el UI seguida de una pulsación sobre el que lo destruye, sólo se eliminará el último UI.
 
 Para eliminar todos los UIs de un contenedor debemos utilizar el método *destroyUIs* como se explica en el siguiente ejemplo:
 
@@ -1092,7 +1092,7 @@ myUI UI Destroyed
 
 <!TODO Esto también funciona pero creo que no debería hacerlo:
 
-Si trabajamos en modo REPLACE en vez de en modo APPEND, el método destroyUIs elimina el UI pero su contenedor (data-id'container') no existe por lo que creo que no debería haberlo hecho
+Si trabajamos en modo REPLACE en vez de en modo APPEND, el método *destroyUIs* elimina el UI pero su contenedor (data-id'container') no existe por lo que creo que no debería haberlo hecho.
 
 -->
 
@@ -1282,5 +1282,19 @@ En *myUI.html*:
 ```
 
 <!--TODO No lo puedo probar porque ya que el evento awake del UI no se lanza. -->
+
+##Método Settings
+
+##Eventos
+
+##Locales y regionales
+
+##Lamadas Ajax y servicios
+
+##Paso a producción
+
+##¿Pruebas?
+
+<!TODO Todavía no he entendido lo que quiere Jonás que haga aquí-->
 
 #<a name="paso-a-paso"></a>Contruyendo paso a paso una aplicación desde cero
