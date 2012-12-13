@@ -661,7 +661,7 @@ En el método *create* del fichero *home.js* tendremos lo siguiente:
 self.create = function () {   
  console.log("Home Screen Created");
  self.tmpl("home.html");
- self.get("myUI-loader").click(
+ self.g	et("myUI-loader").click(
   function() {
    self.ui("ui-container", "myUI.js");
   }
@@ -880,7 +880,7 @@ Y en el método *create* *welcome.js*:
 Observe que tenemos dos botones, uno para ir al Screen Home y otro para destruirlo. Tras pulsar sucesivamente sobre ambos Iris generará el siguiente DOM:
 
 ```html
-<<html>
+<html>
  <head>
  <body>
   <div>
@@ -1215,5 +1215,72 @@ iris.screen(
 ```
 
 ##Paso de parámetros en UIs
+
+De forma análoga a como se hizo en el último ejemplo, los UIs pueden recibir parámetros. Veámoslo con el siguiente ejemplo:
+
+En *welcome.html*:
+
+```html
+<div>
+ <h1>Welcome Screen</h1>
+ <p>This is the initial screen.</p>
+ <button data-id="create-myUI">Create myUI UI</button>
+ <div data-id="ui-container"/>
+</div>
+```
+
+En *welcome.js*:
+
+```js
+//In welcome.js
+iris.screen(
+ function (self) {
+  self.create = function () {
+   console.log("Welcome Screen Created");
+   self.tmpl("welcome.html");
+   var uiNumber = 0;
+   self.get("create-myUI").click(
+    function() {
+     uiNumber++;
+     self.ui("ui-container", "myUI.js", {"uiNumber": uiNumber}, self.APPEND);
+    }
+   )
+  }
+  
+ }
+);
+```
+
+En *myUI.js*:
+
+```js
+//In myUI.js
+
+iris.ui(
+ function (self) {
+ self.create = function () {   
+  console.log("myUI UI Created");  
+  self.tmpl("myUI.html");
+ }
+  
+  self.awake = function (params) {  
+   console.log("myUI UI Awakened");
+   self.get("uiNumber").text("This is the " + params.uiNumber + " muyUI UI.");
+  }
+ }
+);
+```
+
+En *myUI.html*:
+
+```html
+<div>
+ <h1>myUI UI</h1>
+ <p>This is the myUI template.</p>
+ <div data-id="uiNumber"/>
+</div>
+```
+
+<!--TODO No lo puedo probar porque ya que el evento awake del UI no se lanza. -->
 
 #<a name="paso-a-paso"></a>Contruyendo paso a paso una aplicación desde cero
