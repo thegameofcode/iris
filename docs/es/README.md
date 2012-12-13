@@ -22,6 +22,7 @@ Las principales características de Iris son:
 * Únicamente dependendiente de JQuery <!--TODO: Preguntar versión-->.
 * Integrable y totalmente compatible con otros populares *Frameworks* como Backbone o BootStrap <!--TODO: Confirmar y añadir más-->. 
 * Ligero y rápido (<15 KB).
+* Utilización de técnicas de *minificación* de programaas.
 * De código libre (licencia New BSD License. <!--TODO: Poner enlace-->).
 
 #¿Por qué Iris?
@@ -668,7 +669,7 @@ self.create = function () {
 }
 ```
 
-Los UIs son componentes no *navegables* y, por lo tanto, su activación tiene que hacerse desde Javascript de forma análoga a como se puede hacer también con los Screens. La principal diferencia con ellos es que no se registran y se cargan simplemente llamando al método *ui* del componente (en este caso del Screen Home). Este método puede recibir tres parámetros: el *data-id* del contenedor donde se va a cargar; el fichero Javascript asociado al UI y opcionalmente un objeto de Javascript que se pasará al UI como se explica más adelante.
+Los UIs son componentes no *navegables* y, por lo tanto, su activación tiene que hacerse desde Javascript de forma análoga a como se puede hacer también con los Screens. La principal diferencia con ellos es que no se registran y se cargan simplemente llamando al método *ui* del componente (en este caso del Screen Home). Este método puede recibir cuatro parámetros: el *data-id* del contenedor donde se va a cargar; el fichero Javascript asociado al UI y opcionalmente un objeto de Javascript que se pasará al UI como se explica más adelante; y por último, también de forma opcional, el *template mode* (ver explicación posterior).
 
 Es interesante estudiar el DOM que genera Iris tras pulsar el botón y cargar el UI:
 
@@ -819,7 +820,9 @@ self.create = function () {
 
 Este comportamiento es similar al que tienen los Screens. La principal diferencia, que todavía permanece, es que Iris mostrará todos los UIs añadidos a un contenedor, mientras que sólo visualizará un Screen permaneciendo el resto ocultos.
 
-El método *tmplMode* puede recibir la constante *PREPEND* haciendo que los UIs se añadan como primer hijo en vez de como último.
+El método *tmplMode* puede recibir también la constante *PREPEND* haciendo que los UIs se añadan como primer hijo en vez de como último.
+
+Se puede especificar el valor de *tmplMode* en el método *ui* pasándolo como cuarto parámetro.
 
 ##Malas prácticas con UIs
 
@@ -1094,6 +1097,7 @@ Si trabajamos en modo REPLACE en vez de en modo APPEND, el método destroyUIs el
 -->
 
 ##Paso de parámetros en Screens
+
 
 ##Paso de parámetros en UIs
 
