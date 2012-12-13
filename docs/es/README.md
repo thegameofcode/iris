@@ -918,10 +918,23 @@ self.create = function () {
  self.ui("ui-container", "myUI.js"); 
 }
 ```
-Al pulsar sobre los botones *create* y *destroy* sinultáneamente:
+Al pulsar sobre los botones *create* y *destroy* se generará un DOM idéntico al anterior ya que el UI se destruirá junto con el Screen. La secuencia de eventos será la siguiente:
 
+<pre>
+Welcome Screen Created
+Welcome Screen Awakened
+Home Screen Created
+myUI UI Created
+myUI UI Awakened
+Home Screen Awakened
+myUI UI Sleeping
+Home Screen Sleeping
+myUI UI Destroyed
+Home Screen Destroyed
+</pre>
 
- 
+ <!--TODO Revisar la consistencia de esto ya que la secuencia no parece lógica: ¿Por qué se ejecutan los enventos create y awake del UI entre los eventos create y awake del Screen contenedor-->
+
 
 
 ##Paso de parámetros en Screens
