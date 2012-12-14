@@ -1291,6 +1291,20 @@ En *myUI.html*:
 
 <!--TODO No lo puedo probar porque el evento awake del UI no se lanza. -->
 
+<!--TODO Aquí me planteo otro problema que no puedo probar por el tema del awake
+El asunto es el siguiente:
+
+El paso de parámetros a un UI se hace al llamar al método "ui()" se su contenedor (¿hay alguna otra manera de pasar parámetros a un UI?).
+
+Por lo que he comprobado, el método "ui()" siempre llama al método "create()" pero los parámetros se reciben en el "awake()" que se llamará después del "create()". Hasta aquí no hay problema.
+
+Lo que me gustaría probar es que pasa si pasamos un parámetro al UI, después navegamos a otro Screen y volvemos a navegar al Screen del UI para forzar que se vuelva a llamar al método "awake()". ¿Recibirá el parámetro que se le pasó?.
+
+En cualquier caso, ¿no tendría más sentido pasar los parámetros al UI en el método "create()"?.
+-->
+
+<!--TODO 
+
 ##Settings
 
 ##Eventos
@@ -1303,6 +1317,8 @@ En *myUI.html*:
 
 ##¿Pruebas?
 
-<!TODO Todavía no he entendido lo que quiere Jonás que haga aquí-->
+<!--TODO Todavía no he entendido lo que quiere Jonás que haga aquí-->
+
+
 
 #<a name="paso-a-paso"></a>Contruyendo paso a paso una aplicación desde cero
