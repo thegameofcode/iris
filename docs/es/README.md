@@ -7,23 +7,24 @@ Iris es completamente independiente de la tecnología que se utilice en el servi
 #Características de Iris
 
 Las principales características de Iris son:
-* Fuertemente enfocado hacia la construcción de aplicaciones orientadas a objetos.
-* Facilita la organización en ficheros.
-* Basada en el patrón [Presenter-View-Resource](http://blog.nodejitsu.com/scaling-isomorphic-javascript-code#rvp).
-* [Navegación en una sola página](http://itsnat.sourceforge.net/php/spim/spi_manifesto_en.php) usando fragmentos Hash-URL.
-* Motor de plantillas sencillo y eficiente.
-* Soporte multilenguaje realizado 100% en el cliente.
-* Soporte a variaciones regionales de números, monedas, fechas, etc.
-* Funcionamiento desacoplado mediante eventos.
-* Soporte a servicios [REST](http://en.wikipedia.org/wiki/Representational_state_transfer).
-* Soporte para el paso de desarrollo a producción.
-* Independiente del navegador (Chrome, Firefox e Internet Explorer).
-* Independiente del servidor (Apache, Node.js, IIS, GAE, etc).
-* Únicamente dependendiente de JQuery <!--TODO: Preguntar versión-->.
-* Integrable y totalmente compatible con otros populares *Frameworks* como Backbone o BootStrap <!--TODO: Confirmar y añadir más-->. 
+
+* Código libre (licencia New BSD License. <!--TODO: Poner enlace-->)
+* Ejecución 100% en cliente.
 * Ligero y rápido (<15 KB).
-* Utilización de técnicas de *minificación* de programaas.
-* De código libre (licencia New BSD License. <!--TODO: Poner enlace-->).
+* Independiente de servidor (Apache, Node.js, IIS, GAE, etc).
+*Estructura organizada de ficheros.
+* Independiente de navegador (Chrome, Firefox e Internet Explorer; basado en jQuery -1.5 o superior-)
+* Fuertemente enfocado a Aplicaciones Orientadas a Objetos.
+* Orientado a eventos, para la coordinación de elementos.
+* Alta escalabilidad y alta reutilización de código.
+* Patrón Resource-View-Presenter.
+* Soporta cualquier tipo de tecnología de consumo de datos (servicios REST, almacenamiento local, distintas estrategias de caché...).
+* Navegación sin cambiar de página, empleado Hash-URL.
+* Motor de plantillas sencillo y eficiente.
+* Soporte multiidioma y a presentación regional de números, monedas, fechas, etc.
+* Soporte para el paso de desarrollo a producción.
+* Integrable y totalmente compatible con otros populares Frameworks como Backbone o BootStrap <!--TODO: Confirmar y añadir más-->
+* Bien documentado.
 
 #¿Por qué Iris?
 
@@ -109,7 +110,7 @@ Iris establece cuatro transiciones en el ciclo de vida de un componente: *create
 
 Cuando se cree un componente, Iris ejecutará el código asociado a su método **create**. Normalmente aquí cargaremos el código HTML asociado al componente y registraremos los Screens (si el componente es de tipo Screen). Este método sólo se llamará una vez en la vida de un componente. La creación de un Screen se realizará navegando al Hash-URL correspondiente o invocando el método *goto* de Iris. Si un Screen ya se hubiera creado, el método *goto* o escribir su Hash-URL en el navegador hará que Iris *navegue* hacia él provocando el evento *awake* (ver más adelante). La creación de un UI se realizará invocando el método *ui* del componente en el que lo queramos crear. A diferencia de lo que ocurre con los Screens, llamar al método *ui* siempre creará un nuevo UI.
 
-El evento complementario será **destroy**. Esté método, al igual que *create*, se efectuará una única vez en la vida de un componente. La destrucción de un componente se efectuará llamando al método *destoryUI*, *destroyUIs* o *destroyScreen* dependiendo del componente de que se trate. En el caso de componente de tipo UI, también se llamará cuando un UI sea sustituido por otro. La destrucción de un componente supondrá la destrucción de todos los componentes que contenga.
+El evento complementario será **destroy**. Esté método, al igual que *create*, se ejecutará una única vez en la vida de un componente. La destrucción de un componente se efectuará llamando al método *destoryUI*, *destroyUIs* o *destroyScreen* dependiendo del componente de que se trate. En el caso de componente de tipo UI, también se llamará cuando un UI sea sustituido por otro. La destrucción de un componente supondrá la destrucción de todos los componentes que contenga.
 
 <a name="awake"></a>El evento **awake** se producirá después del evento *create* y cada vez que cambie el Hash-URL asociado al Screen que se va a visualizar. El método *awake* se llamará en los UIs que compongan el Screen y luego en el propio Screen. <!--TODO preguntar si tiene que tiene que ser así. La primera vez no se está lanzando el evento awake en los UIs-->. Aquí es donde habitualmente asociaremos eventos a nuestra aplicación, reproduciremos vídeo o audio, etc. En la llamada al método *awake* podemos pasar parámetros al componente para variar su comportamiento.
 
@@ -1291,21 +1292,12 @@ En *myUI.html*:
 
 <!--TODO No lo puedo probar porque el evento awake del UI no se lanza. -->
 
-<!--TODO Aquí me planteo otro problema que no puedo probar por el tema del awake
-El asunto es el siguiente:
 
-El paso de parámetros a un UI se hace al llamar al método "ui()" se su contenedor (¿hay alguna otra manera de pasar parámetros a un UI?).
 
-Por lo que he comprobado, el método "ui()" siempre llama al método "create()" pero los parámetros se reciben en el "awake()" que se llamará después del "create()". Hasta aquí no hay problema.
-
-Lo que me gustaría probar es que pasa si pasamos un parámetro al UI, después navegamos a otro Screen y volvemos a navegar al Screen del UI para forzar que se vuelva a llamar al método "awake()". ¿Recibirá el parámetro que se le pasó?.
-
-En cualquier caso, ¿no tendría más sentido pasar los parámetros al UI en el método "create()"?.
--->
-
-<!--TODO 
 
 ##Settings
+
+
 
 ##Eventos
 
