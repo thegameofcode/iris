@@ -1614,6 +1614,116 @@ iris.destroyEvents(EVENT.MYUIS_DESTROYED, [fnMyUIEvent]);
 
 ##Locales y regionales
 
+Iris permite trabajar con aplicaciones multiidioma. Para definir el idioma con el que trabaja la aplicación utlizamos:
+
+```js
+iris.locale("en_US");
+```
+
+Para conocer el idioma definido:
+
+```js
+iris.locale();
+```
+
+Para definir las traducciones tenemos dos alternativas.
+
+1 Podemos definir las traducciones en el código de Javascript. Por ejemplo:
+
+```js
+iris.translations("en_US", {
+ GRRETING: "Hi!",
+ GRRETINGS: {
+  MORNING: "Good Morning",
+  AFTERNOON: "Good Afternoon",
+  NIGHT: "Good Night"
+ }
+});
+```
+Observe que Iris soporta definiciones de vocablos multinivel.
+
+2 Podemos definir las traducciones en un fichero de *JSON*. Por ejemplo:
+
+```js
+iris.translations("fr-FR", "./lang-FR.json", {"success" : onFRSuccess, "error" : onFRError });
+```
+Observe que a la función *iris.translations* se le debe pasar la ruta al fichero y opcionalmente un objeto de Javascript que contine la la función que se ejecutará en caso de éxito y en caso de error durante la carga.
+
+La defición de los vocablos utilizados en un idioma se puede hacer en una única llamada al método *iris.translations* o en varias. Es decir, que podemos llamar a este método con el mismo parámetro de idioma tantas veces como queramos ya que las definiciones se irán añadiendo.
+
+> En una misma aplicación Iris puede tener varios idiomas definidos. Para un correcto funcionamiento de Iris, el cambio de un idioma a otro requiere que se recargue completamente la aplicación.
+
+Para ver como hacer esto, puede consultar la sección *<a href="#paso-a-paso">Contruyendo paso a paso una aplicación desde cero</a>*.
+
+Para traducir un vocablo, tenemos dos opciones:
+
+1 Hacer la traducción en un fichero de Javascript, por ejemplo:
+
+```js
+iris.translate("GRRETINGS.MORNING");
+```
+
+2 Hacer la traducción en el fichero HTML asociado al componente, por ejemplo:
+
+```html
+<div>
+@@GRRETINGS.MORNING@@
+</div>
+```
+
+Observe que el vocablo hay que rodearlo con un doble símbolo *@*.
+
+Veamos un ejemplo completo:
+
+En *welcome.html*:
+
+```html
+<div>
+ <h1>Welcome Screen</h1>
+ <p>This is the initial screen.</p>
+ Morning Greeting from HTML: @@GRRETINGS.MORNING@@
+</div>
+```
+
+```js
+
+//In welcome.js
+iris.screen(
+
+ function (self) {
+  
+  iris.translations("en_US", {
+   GRRETING: "Hi!",
+   GRRETINGS: {
+    MORNING: "Good Morning",
+    AFTERNOON: "Good Afternonn",
+    NIGHT: "Good Night"
+   }
+  });
+  
+  iris.translations("es_ES", {
+   GRRETING: "Hola",
+   GRRETINGS: {
+    MORNING: "Buenos días",
+    AFTERNOON: "Buenas tardes",
+    NIGHT: "Buenas noches"
+   }
+  });
+  
+  iris.locale("en_ES");
+  
+
+  self.create = function () {
+   console.log("Welcome Screen Created");
+   self.tmpl("welcome.html"); 
+  }
+  
+ }
+ );
+```
+
+
+
 ##Lamadas Ajax y servicios
 
 ##Paso a producción
