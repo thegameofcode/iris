@@ -1632,8 +1632,8 @@ Para definir las traducciones tenemos dos alternativas.
 
 ```js
 iris.translations("en_US", {
- GRRETING: "Hi!",
- GRRETINGS: {
+ GREETING: "Hi!",
+ GREETINGS: {
   MORNING: "Good Morning",
   AFTERNOON: "Good Afternoon",
   NIGHT: "Good Night"
@@ -1660,14 +1660,14 @@ Para traducir un vocablo, tenemos dos opciones:
 1 Hacer la traducción en un fichero de Javascript, por ejemplo:
 
 ```js
-iris.translate("GRRETINGS.MORNING");
+iris.translate("GREETINGS.MORNING");
 ```
 
 2 Hacer la traducción en el fichero HTML asociado al componente, por ejemplo:
 
 ```html
 <div>
-@@GRRETINGS.MORNING@@
+@@GREETINGS.MORNING@@
 </div>
 ```
 
@@ -1681,20 +1681,20 @@ En *welcome.html*:
 <div>
  <h1>Welcome Screen</h1>
  <p>This is the initial screen.</p>
- Morning Greeting from HTML: @@GRRETINGS.MORNING@@
+ Morning Greeting from HTML: @@GREETINGS.MORNING@@
+ </br>
+ Morning Greeting from Javascript: <span data-id="greeting"/>
 </div>
 ```
 
 ```js
-
-//In welcome.js
 iris.screen(
-
- function (self) {
+ function (self) {  
+  iris.locale("es_ES");
   
   iris.translations("en_US", {
-   GRRETING: "Hi!",
-   GRRETINGS: {
+   GREETING: "Hi!",
+   GREETINGS: {
     MORNING: "Good Morning",
     AFTERNOON: "Good Afternonn",
     NIGHT: "Good Night"
@@ -1702,22 +1702,19 @@ iris.screen(
   });
   
   iris.translations("es_ES", {
-   GRRETING: "Hola",
-   GRRETINGS: {
+   GREETING: "Hola",
+   GREETINGS: {
     MORNING: "Buenos días",
     AFTERNOON: "Buenas tardes",
     NIGHT: "Buenas noches"
    }
   });
-  
-  iris.locale("en_ES");
-  
 
   self.create = function () {
    console.log("Welcome Screen Created");
-   self.tmpl("welcome.html"); 
-  }
-  
+   self.tmpl("welcome.html");   
+   self.get("greeting").html(iris.translate("GREETINGS.MORNING"));
+  }  
  }
  );
 ```
