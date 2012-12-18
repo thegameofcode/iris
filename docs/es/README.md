@@ -1414,8 +1414,13 @@ iris.ui(
  }
 );
 ```
+##Trabajando con eventos
 
-##Eventos
+Iris implementa el patrón "Publish–subscribe" para trabajar con eventos. Los eventos en Iris, a diferencia de los de JQuery, no están ligados a ningún objeto del DOM.
+
+Veamos un ejemplo sencillo que consiste en det
+
+
 
 
 
