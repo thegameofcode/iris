@@ -1519,7 +1519,7 @@ Es importante eliminar la suscripción a un evento cuanto esta ya no sea necesar
 iris.off("myUI-created-event", fnMyUICreatedEvent);
 ```
 
-> Para evitar filtraciones d ememoria, en general, si la suscripción a un evento se realiza en el método *awake* de un compomente, la eliminación debe realizarse en el método *sleep* de ese mismo componente; y si la suscripción se realiza en el *create* la eliminación se hará en el *detroy*.
+> Para evitar filtraciones de memoria, en general, si la suscripción a un evento se realiza en el método *awake* de un compomente, la eliminación debe realizarse en el método *sleep* de ese mismo componente; y si la suscripción se realiza en el *create* la eliminación se hará en el *detroy*.
 
 Cuando se notifica que se ha producido un evento, se pueden pasar parámetros a la función que recibe la notificación. Los parámetros pueden ser de cualquier tipo. Si se necesitan pasar varios parámetros se puede hacer *encapsulándolos* en un objeto de Javascript.
 
