@@ -12,7 +12,7 @@ Las principales características de Iris son:
 * Ejecución 100% en cliente.
 * Ligero y rápido (<15 KB).
 * Independiente de servidor (Apache, Node.js, IIS, GAE, etc).
-*Estructura organizada de ficheros.
+* Estructura organizada de ficheros.
 * Independiente de navegador (Chrome, Firefox e Internet Explorer; basado en jQuery -1.5 o superior-)
 * Fuertemente enfocado a Aplicaciones Orientadas a Objetos.
 * Orientado a eventos, para la coordinación de elementos.
@@ -1614,7 +1614,7 @@ iris.destroyEvents(EVENT.MYUIS_DESTROYED, [fnMyUIEvent]);
 
 ##Locales y regionales
 
-Iris permite trabajar con aplicaciones multiidioma. Para definir el idioma con el que trabaja la aplicación utlizamos:
+Iris permite trabajar con aplicaciones **multiidioma**. Para definir el idioma con el que trabaja la aplicación utlizamos:
 
 ```js
 iris.locale("en_US");
@@ -1719,10 +1719,15 @@ iris.screen(
  }
  );
 ```
+Iris tiene capacidad de aplicar formatos de fechas, números y monedas adaptándolos a la variación **regional** que se haya seleccionado.
+
+
 
 
 
 ##Lamadas Ajax y servicios
+
+
 
 ##Paso a producción
 
