@@ -1686,6 +1686,7 @@ En *welcome.html*:
  Morning Greeting from Javascript: <span data-id="greeting"/>
 </div>
 ```
+Y en *welcome.js*:
 
 ```js
 iris.screen(
