@@ -103,6 +103,7 @@ En un Screen podemos registrar otros Screens y visualizarlos al modificar el Has
 
 Un Screen puede contener otros componentes de tipo UI.
 
+En resumen: Los UIs deben pertenecer a otros UIs o a un Screen y no tienen Hash-URL. Los UIs sólo estarán visibles cuando se haya navegado al Screen al que pertenecen. Desde un Screen se puede navegar a otros Screens.
 
 ##<a name="ciclo_de_vida"></a>Ciclo de vida de un componente
 
@@ -1316,14 +1317,107 @@ Para recuperar un atributo:
 self.setting(variable_name);
 ```
 
-Veámoslo con algún ejemplo:
+Veámoslo con un ejemplo:
 
+<!--TODO Estos ejemplo no van a funcionar por el problema con el Awake en UIS-->
 
+En *welcome.html*:
 
+```html
+<div>
+ <h1>Welcome Screen</h1>
+ <p>This is the initial screen.</p>
+ <button data-id="create-myUI">Click create a myUI UI</button>
+ </br> 
+ <button data-id="destroy-myUI">Click to destroy all myUI UIs</button>
+ <div data-id="ui-container"/>
+</div>
+```
 
+En *welcome.js*:
 
+```js
+//In welcome.js
+iris.screen(
+
+ function (self) {
+  
+  var myUINumber = 0;
+
+  self.create = function () {
+   console.log("Welcome Screen Created");
+   self.tmpl("welcome.html"); 
+ 
+   self.get("create-myUI").click(
+    function() {
+     myUINumber++;
+     var ui = self.ui("ui-container", "myUI.js");
+     ui.settings({"number": myUINumber});
+    }
+    );
+
+   self.get("destroy-myUI").click(
+    function() {   
+     self.destroyUIs("ui-container");
+    }
+    );
+  }
+  
+  self.awake = function () {
+   console.log("Welcome Screen Awakened");
+  }
+
+  self.sleep = function () {
+   console.log("Welcome Screen Sleeping"); //Never called
+  }
+
+  self.destroy = function () {
+   console.log("Welcome Screen Destroyed");//Never called
+  }
+
+ }
+
+ );
+```
+
+En *myUI.html*:
+
+```html
+<div>
+ <h1>myUI UI</h1>
+ <p>This is the <span data-id="myUI-number"></span> myUI template.</p>
+</div>
+```
+En *myUI.js*:
+
+```js
+//In myUI.js
+
+iris.ui(
+ function (self) {
+  self.create = function () {
+   console.log("myUI UI Created");
+   self.tmplMode(self.APPEND);
+   self.tmpl("myUI.html");
+  }
+  self.awake = function () {   
+   console.log("myUI UI Awakened");
+   self.get("myUI-number").html(self.setting("number"));
+  }
+  self.sleep = function () {
+   console.log("myUI UI Sleeping");
+  }
+
+  self.destroy = function () {
+   console.log("myUI UI Destroyed");
+  }
+ }
+);
+```
 
 ##Eventos
+
+
 
 ##Locales y regionales
 
