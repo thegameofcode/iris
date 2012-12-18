@@ -1295,9 +1295,9 @@ En *myUI.html*:
 
 ##Paso de parámetros utilizando el método *settings*
 
-Los compoenentes, UIs y Screens, disponen de un método alternativo al anteriormente explicado para pasar parámetros. Consiste en utilizar los métodos *settings* o *setting*.
+Los componentes, UIs y Screens, disponen de un método alternativo al anteriormente explicado para pasar parámetros. Consiste en utilizar los métodos *settings* o *setting*.
 
-El método *settings* permite almacenarcualquier objeto de Javascript en el componente. La sintaxis de este método es:
+El método *settings* permite almacenar cualquier objeto de Javascript en el componente. La sintaxis de este método es:
 
 ```js
 self.settings({...}); //any kind of Javascript object
@@ -1612,9 +1612,9 @@ iris.destroyEvents(EVENT.MYUIS_DESTROYED, [fnMyUIEvent]);
 <!--TODO Sugerencia: QUe el método iris.off permita elimnar todas las funciones en vez de tener que pasar una a una-->
 
 
-##Locales y regionales
+##Utilizando locales y regionales
 
-Iris permite trabajar con aplicaciones **multiidioma**. Para definir el idioma con el que trabaja la aplicación utlizamos:
+Iris permite trabajar con aplicaciones **multiidioma**. Para definir el idioma con el que trabaja la aplicación utilizamos:
 
 ```js
 iris.locale("en_US");
@@ -1647,9 +1647,9 @@ Observe que Iris soporta definiciones de vocablos multinivel.
 ```js
 iris.translations("fr-FR", "./lang-FR.json", {"success" : onFRSuccess, "error" : onFRError });
 ```
-Observe que a la función *iris.translations* se le debe pasar la ruta al fichero y opcionalmente un objeto de Javascript que contine la la función que se ejecutará en caso de éxito y en caso de error durante la carga.
+Observe que a la función *iris.translations* se le debe pasar la ruta al fichero y opcionalmente un objeto de Javascript que contiene la la función que se ejecutará en caso de éxito y en caso de error durante la carga.
 
-La defición de los vocablos utilizados en un idioma se puede hacer en una única llamada al método *iris.translations* o en varias. Es decir, que podemos llamar a este método con el mismo parámetro de idioma tantas veces como queramos ya que las definiciones se irán añadiendo.
+La definición de los vocablos utilizados en un idioma se puede hacer en una única llamada al método *iris.translations* o en varias. Es decir, que podemos llamar a este método con el mismo parámetro de idioma tantas veces como queramos ya que las definiciones se irán añadiendo.
 
 > En una misma aplicación Iris puede tener varios idiomas definidos. Para un correcto funcionamiento de Iris, el cambio de un idioma a otro requiere que se recargue completamente la aplicación.
 
@@ -1723,7 +1723,7 @@ Iris tiene capacidad de aplicar formatos de fechas, números y monedas adaptánd
 
 Veamos un ejemplo de cada uno de ellos.
 
-Para el formateado desde Javascript utlizaremos los siguientes ficheros:
+Para el formateado desde Javascript utilizaremos los siguientes ficheros:
 
 En *welcome.html*:
 
@@ -1906,23 +1906,23 @@ Observe que la aplicación del formato en HTML se realiza de forma parecida a co
 En el formato de fechas podemos utilizar los siguientes códigos:
 
 <pre>
-**a** 'a.m.' or 'p.m.'
-**A** 'AM' or 'PM'
-**b** Month, textual, 3 letters, lowercase. 'jan'
-**d** Day of the month, 2 digits with leading zeros. '01' to '31'
-**D** Day of the week, textual, 3 letters. 'Fri'
-**F** Month, textual, long. 'January'
-**h** Hour, 12-hour format. '01' to '12'
-**H** Hour, 24-hour format. '00' to '23'
-**i** Minutes. '00' to '59'
-**l** Day of the week, textual, long. 'Friday'
-**m** Month, 2 digits with leading zeros. '01' to '12'
-**M** Month, textual, 3 letters. 'Jan'
-**n** Month without leading zeros. '1' to '12'
-**s** Seconds, 2 digits with leading zeros. '00' to '59'
-**U** Seconds since the Unix Epoch (January 1 1970 00:00:00 UTC)
-**y** Year, 2 digits. '99'
-**Y** Year, 4 digits. '1999'
+a 'a.m.' or 'p.m.'
+A 'AM' or 'PM'
+b Month, textual, 3 letters, lowercase. 'jan'
+d Day of the month, 2 digits with leading zeros. '01' to '31'
+DDay of the week, textual, 3 letters. 'Fri'
+F Month, textual, long. 'January'
+h Hour, 12-hour format. '01' to '12'
+H Hour, 24-hour format. '00' to '23'
+i Minutes. '00' to '59'
+l Day of the week, textual, long. 'Friday'
+m Month, 2 digits with leading zeros. '01' to '12'
+M Month, textual, 3 letters. 'Jan'
+n Month without leading zeros. '1' to '12'
+s Seconds, 2 digits with leading zeros. '00' to '59'
+U Seconds since the Unix Epoch (January 1 1970 00:00:00 UTC)
+y Year, 2 digits. '99'
+Y Year, 4 digits. '1999'
 </pre>
 
 ##Lamadas Ajax y servicios
