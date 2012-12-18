@@ -1303,7 +1303,7 @@ El método *settings* permite almacenar cualquier objeto de Javascript en el com
 self.settings({...}); //any kind of Javascript object
 ```
 
-El método *Setting* permite almacenar o recuperar una variable (atributo).
+El método *setting* permite almacenar o recuperar una variable (atributo).
 
 Para almacenar un atributo:
 
@@ -1362,18 +1362,6 @@ iris.screen(
     }
     );
   }
-  
-  self.awake = function () {
-   console.log("Welcome Screen Awakened");
-  }
-
-  self.sleep = function () {
-   console.log("Welcome Screen Sleeping"); //Never called
-  }
-
-  self.destroy = function () {
-   console.log("Welcome Screen Destroyed");//Never called
-  }
 
  }
 
@@ -1403,13 +1391,6 @@ iris.ui(
   self.awake = function () {   
    console.log("myUI UI Awakened");
    self.get("myUI-number").html(self.setting("number"));
-  }
-  self.sleep = function () {
-   console.log("myUI UI Sleeping");
-  }
-
-  self.destroy = function () {
-   console.log("myUI UI Destroyed");
   }
  }
 );
@@ -1521,7 +1502,7 @@ iris.off("myUI-created-event", fnMyUICreatedEvent);
 
 > Para evitar filtraciones de memoria, en general, si la suscripción a un evento se realiza en el método *awake* de un compomente, la eliminación debe realizarse en el método *sleep* de ese mismo componente; y si la suscripción se realiza en el *create* la eliminación se hará en el *detroy*.
 
-Cuando se notifica que se ha producido un evento, se pueden pasar parámetros a la función que recibe la notificación. Los parámetros pueden ser de cualquier tipo. Si se necesitan pasar varios parámetros se puede hacer *encapsulándolos* en un objeto de Javascript.
+Cuando se notifica que se ha producido un evento, se pueden pasar parámetros a la función que recibe la notificación. Los parámetros pueden ser de cualquier tipo. Si se necesitan pasar varios parámetros de deben *encapsular* en un objeto de Javascript.
 
 Vamos a transformar el ejemplo anterior para que haya una única función que maneje los eventos de creación y destrucción del UI. La función recibe un parámetro para discriminar si se trata de un evento o de otro. Aprovechamos el ejemplo para transformar los eventos en variables en lugar usar literales de cadena ya que es una forma más conveniente de trabajar.
 
@@ -1604,7 +1585,7 @@ iris.ui(
 );
 ```
 
-Podemos utilizar el método *iris.destroyEvents* como alternativa al método *iris.off*. Este método recibe el evento y un *array* con las funciones que van a eliminar de la suscripción al evento. Por ejemplo:
+Podemos utilizar el método *iris.destroyEvents* como alternativa al método *iris.off*. Este método recibe el evento y un *array* con las funciones que quieren eliminar de la suscripción al evento. Por ejemplo:
 
 ```js
 iris.destroyEvents(EVENT.MYUIS_DESTROYED, [fnMyUIEvent]);
@@ -1620,7 +1601,7 @@ Iris permite trabajar con aplicaciones **multiidioma**. Para definir el idioma c
 iris.locale("en_US");
 ```
 
-Para conocer el idioma definido:
+Para conocer el idioma que está usando Iris:
 
 ```js
 iris.locale();
@@ -1647,11 +1628,11 @@ Observe que Iris soporta definiciones de vocablos multinivel.
 ```js
 iris.translations("fr-FR", "./lang-FR.json", {"success" : onFRSuccess, "error" : onFRError });
 ```
-Observe que a la función *iris.translations* se le debe pasar la ruta al fichero y opcionalmente un objeto de Javascript que contiene la la función que se ejecutará en caso de éxito y en caso de error durante la carga.
+Observe que a la función *iris.translations* se le debe pasar la ruta al fichero y, opcionalmente, un objeto de Javascript que contiene las funciones que se ejecutarán en caso de éxito y en caso de error durante la carga.
 
 La definición de los vocablos utilizados en un idioma se puede hacer en una única llamada al método *iris.translations* o en varias. Es decir, que podemos llamar a este método con el mismo parámetro de idioma tantas veces como queramos ya que las definiciones se irán añadiendo.
 
-> En una misma aplicación Iris puede tener varios idiomas definidos. Para un correcto funcionamiento de Iris, el cambio de un idioma a otro requiere que se recargue completamente la aplicación.
+> Iris soporta que una aplicación tenga varios idiomas definidos pero, para un correcto funcionamiento de Iris, el cambio de un idioma a otro requiere que se *refresque* la página.
 
 Para ver como hacer esto, puede consultar la sección *<a href="#paso-a-paso">Contruyendo paso a paso una aplicación desde cero</a>*.
 
