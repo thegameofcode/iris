@@ -1418,10 +1418,198 @@ iris.ui(
 
 Iris implementa el patrón "Publish–subscribe" para trabajar con eventos. Los eventos en Iris, a diferencia de los de JQuery, no están ligados a ningún objeto del DOM.
 
-Veamos un ejemplo sencillo que consiste en det
+Veamos un ejemplo sencillo que consiste en contar cuantos UIs de tipo myUI se han creado:
+
+En *welcome.html*:
+
+```html
+<div>
+ <h1>Welcome Screen</h1>
+ <p>This is the initial screen.</p>
+ <button data-id="create-myUI">Click create a myUI UI</button>
+ </br> 
+ <button data-id="destroy-myUI">Click to destroy all myUI UIs</button>
+ </br>
+ The number of myUis is: <span data-id="myUI-number">0</span>
+ </br>
+ <div data-id="ui-container"/>
+</div>
+```
+
+En *welcome.js*:
+
+```js
+//In welcome.js
 
 
+iris.screen(
+ 
+ function (self) {
+  
+  var myUINumber = 0;
+  
+  self.create = function () {
+   console.log("Welcome Screen Created");
+   self.tmpl("welcome.html"); 
+   //The method allows for subscription on an event
+   iris.on("myUI-created-event", fnMyUICreatedEvent);
+   ////When "myUI-created-event" event happens, Iris will call to "fnMyUICreatedEvent" function.
+   iris.on("myUIs-destroy-event", fnMyUIsDestroyEvent);
+   
+   self.get("create-myUI").click(
+    function() {   
+     self.ui("ui-container", "myUI.js");
+    }
+    );
 
+   self.get("destroy-myUI").click(
+    function() {   
+     self.destroyUIs("ui-container");
+     iris.notify("myUIs-destroy-event");
+    }
+    );
+  }
+  
+  function fnMyUICreatedEvent() {
+   myUINumber++;
+   self.get("myUI-number").html(myUINumber);
+  }
+  
+  function fnMyUIsDestroyEvent() {
+   myUINumber = 0;
+   self.get("myUI-number").html(myUINumber);
+  }
+
+ }
+
+ );
+```
+
+En *myUi.html*:
+
+```html
+<div>
+ <h1>myUI UI</h1>
+ <p>This is the myUI template.</p>
+</div>
+```
+
+En *myUI.js*:
+
+```js
+//In myUI.js
+
+iris.ui(
+ function (self) {
+  self.create = function () {
+   console.log("myUI UI Created");
+   self.tmplMode(self.APPEND);
+   self.tmpl("myUI.html");   
+   iris.notify("myUI-created-event"); //This notifies subscribers that the "myUI-created-event" event has occurred 
+  }
+ }
+);
+```
+
+Observe como para suscribirse a un evento, en el método *iris.on*, pasamos una cadena de texto (que representa al evento) y una función que será llamada cuando el evento se produzca. Para notificar que un evento se ha producido, se debe llamar al método *iris.notify*.
+
+Es importante eliminar la suscripción a un evento cuanto esta ya no sea necesaria. Para hacer esto se utiliza el método *iris.off* con la misma sintaxis que *iris.on*. Por ejemplo:
+
+```js
+iris.off("myUI-created-event", fnMyUICreatedEvent);
+```
+
+> Para evitar filtraciones d ememoria, en general, si la suscripción a un evento se realiza en el método *awake* de un compomente, la eliminación debe realizarse en el método *sleep* de ese mismo componente; y si la suscripción se realiza en el *create* la eliminación se hará en el *detroy*.
+
+Cuando se notifica que se ha producido un evento, se pueden pasar parámetros a la función que recibe la notificación. Los parámetros pueden ser de cualquier tipo. Si se necesitan pasar varios parámetros se puede hacer *encapsulándolos* en un objeto de Javascript.
+
+Vamos a transformar el ejemplo anterior para que haya una única función que maneje los eventos de creación y destrucción del UI. La función recibe un parámetro para discriminar si se trata de un evento o de otro. Aprovechamos el ejemplo para transformar los eventos en variables en lugar usar literales de cadena ya que es una forma más conveniente de trabajar.
+
+Los ficheros HTML quedan intactos, las modificaciones únicamente se harán sobre los ficheros de comportamiento.
+
+En *welcome.js*:
+
+```js
+//In welcome.js
+
+EVENT = {
+ MYUI_CREATED: "myUI created",
+ MYUIS_DESTROYED: "myUIs destroyed"
+};
+
+
+iris.screen(
+ 
+ function (self) {
+  
+  var myUINumber = 0;
+  
+  self.create = function () {
+   console.log("Welcome Screen Created");
+   self.tmpl("welcome.html"); 
+   //The method allows for subscription on an event
+   iris.on(EVENT.MYUI_CREATED, fnMyUIEvent);
+   ////When "myUI-created-event" event happens, Iris will call to "fnMyUICreatedEvent" function.
+   iris.on(EVENT.MYUIS_DESTROYED, fnMyUIEvent);
+   
+   self.get("create-myUI").click(
+    function() {   
+     self.ui("ui-container", "myUI.js");
+    }
+    );
+
+   self.get("destroy-myUI").click(
+    function() {   
+     self.destroyUIs("ui-container");     
+     iris.notify(EVENT.MYUIS_DESTROYED, EVENT.MYUIS_DESTROYED);     
+    }
+    );
+  }
+
+  self.destroy = function () {
+   console.log("Welcome Screen Destroyed");
+   //The "iris.off()" method eliminates the subscription to the event.
+   //It uses the same syntax as the "iris.on()" method.
+   iris.off("myUI-created-event", fnMyUICreatedEvent);
+  }
+  
+  function fnMyUIEvent(eventType) {
+   if (eventType === EVENT.MYUI_CREATED) {
+    myUINumber++;
+   } else if (eventType === EVENT.MYUIS_DESTROYED) {
+    myUINumber = 0;
+   }
+   self.get("myUI-number").html(myUINumber);
+  }
+  
+ }
+
+ );
+```
+
+Y en *myUI.js*:
+
+```js
+//In myUI.js
+
+iris.ui(
+ function (self) {
+  self.create = function () {
+   console.log("myUI UI Created");
+   self.tmplMode(self.APPEND);
+   self.tmpl("myUI.html");   
+   iris.notify(EVENT.MYUI_CREATED, EVENT.MYUI_CREATED);
+  }
+ }
+);
+```
+
+Podemos utilizar el método *iris.destroyEvents* como alternativa al método *iris.off*. Este método recibe el evento y un *array* con las funciones que van a eliminar de la suscripción al evento. Por ejemplo:
+
+```js
+iris.destroyEvents(EVENT.MYUIS_DESTROYED, [fnMyUIEvent]);
+```
+<!--TODO Sugerencia: QUe el método iris.off permita elimnar todas las funciones en vez de tener que pasar una a una-->
 
 
 ##Locales y regionales
