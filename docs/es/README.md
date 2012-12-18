@@ -1292,10 +1292,34 @@ En *myUI.html*:
 
 <!--TODO No lo puedo probar porque el evento awake del UI no se lanza. -->
 
+##Paso de parámetros utilizando el método *settings*
+
+Los compoenentes, UIs y Screens, disponen de un método alternativo al anteriormente explicado para pasar parámetros. Consiste en utilizar los métodos *settings* o *setting*.
+
+El método *settings* permite almacenarcualquier objeto de Javascript en el componente. La sintaxis de este método es:
+
+```js
+self.settings({...}); //any kind of Javascript object
+```
+
+El método *Setting* permite almacenar o recuperar una variable (atributo).
+
+Para almacenar un atributo:
+
+```js
+self.setting(variable_name, {...});
+```
+
+Para recuperar un atributo:
+
+```js
+self.setting(variable_name);
+```
+
+Veámoslo con algún ejemplo:
 
 
 
-##Settings
 
 
 
