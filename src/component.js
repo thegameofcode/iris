@@ -243,7 +243,6 @@
         uiInstance.con = p_$container;
         uiInstance.uis = [];
         uiInstance.events = {};
-        uiInstance.cfg = {};
         uiInstance.fileJs = p_jsUrl;
         if(p_templateMode !== undefined) {
             uiInstance._tmplMode = p_templateMode;
@@ -379,7 +378,7 @@
 
 
     var Settable = function() {
-        this.cfg = null;
+        this.cfg = {};
     };
 
     Settable.prototype = new iris.Event();
