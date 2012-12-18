@@ -12,7 +12,7 @@ Las principales características de Iris son:
 * Ejecución 100% en cliente.
 * Ligero y rápido (<15 KB).
 * Independiente de servidor (Apache, Node.js, IIS, GAE, etc).
-*Estructura organizada de ficheros.
+* Estructura organizada de ficheros.
 * Independiente de navegador (Chrome, Firefox e Internet Explorer; basado en jQuery -1.5 o superior-)
 * Fuertemente enfocado a Aplicaciones Orientadas a Objetos.
 * Orientado a eventos, para la coordinación de elementos.
@@ -103,6 +103,7 @@ En un Screen podemos registrar otros Screens y visualizarlos al modificar el Has
 
 Un Screen puede contener otros componentes de tipo UI.
 
+En resumen: Los UIs deben pertenecer a otros UIs o a un Screen y no tienen Hash-URL. Los UIs sólo estarán visibles cuando se haya navegado al Screen al que pertenecen. Desde un Screen se puede navegar a otros Screens.
 
 ##<a name="ciclo_de_vida"></a>Ciclo de vida de un componente
 
@@ -1292,18 +1293,623 @@ En *myUI.html*:
 
 <!--TODO No lo puedo probar porque el evento awake del UI no se lanza. -->
 
+##Paso de parámetros utilizando el método *settings*
+
+Los componentes, UIs y Screens, disponen de un método alternativo al anteriormente explicado para pasar parámetros. Consiste en utilizar los métodos *settings* o *setting*.
+
+El método *settings* permite almacenar cualquier objeto de Javascript en el componente. La sintaxis de este método es:
+
+```js
+self.settings({...}); //any kind of Javascript object
+```
+
+El método *setting* permite almacenar o recuperar una variable (atributo).
+
+Para almacenar un atributo:
+
+```js
+self.setting(variable_name, {...});
+```
+
+Para recuperar un atributo:
+
+```js
+self.setting(variable_name);
+```
+
+Veámoslo con un ejemplo:
+
+<!--TODO Estos ejemplo no van a funcionar por el problema con el Awake en UIS-->
+
+En *welcome.html*:
+
+```html
+<div>
+ <h1>Welcome Screen</h1>
+ <p>This is the initial screen.</p>
+ <button data-id="create-myUI">Click create a myUI UI</button>
+ </br> 
+ <button data-id="destroy-myUI">Click to destroy all myUI UIs</button>
+ <div data-id="ui-container"/>
+</div>
+```
+
+En *welcome.js*:
+
+```js
+//In welcome.js
+iris.screen(
+
+ function (self) {
+  
+  var myUINumber = 0;
+
+  self.create = function () {
+   console.log("Welcome Screen Created");
+   self.tmpl("welcome.html"); 
+ 
+   self.get("create-myUI").click(
+    function() {
+     myUINumber++;
+     var ui = self.ui("ui-container", "myUI.js");
+     ui.settings({"number": myUINumber});
+    }
+    );
+
+   self.get("destroy-myUI").click(
+    function() {   
+     self.destroyUIs("ui-container");
+    }
+    );
+  }
+
+ }
+
+ );
+```
+
+En *myUI.html*:
+
+```html
+<div>
+ <h1>myUI UI</h1>
+ <p>This is the <span data-id="myUI-number"></span> myUI template.</p>
+</div>
+```
+En *myUI.js*:
+
+```js
+//In myUI.js
+
+iris.ui(
+ function (self) {
+  self.create = function () {
+   console.log("myUI UI Created");
+   self.tmplMode(self.APPEND);
+   self.tmpl("myUI.html");
+  }
+  self.awake = function () {   
+   console.log("myUI UI Awakened");
+   self.get("myUI-number").html(self.setting("number"));
+  }
+ }
+);
+```
+##Trabajando con eventos
+
+Iris implementa el patrón "Publish–subscribe" para trabajar con eventos. Los eventos en Iris, a diferencia de los de JQuery, no están ligados a ningún objeto del DOM.
+
+Veamos un ejemplo sencillo que consiste en contar cuantos UIs de tipo myUI se han creado:
+
+En *welcome.html*:
+
+```html
+<div>
+ <h1>Welcome Screen</h1>
+ <p>This is the initial screen.</p>
+ <button data-id="create-myUI">Click create a myUI UI</button>
+ </br> 
+ <button data-id="destroy-myUI">Click to destroy all myUI UIs</button>
+ </br>
+ The number of myUis is: <span data-id="myUI-number">0</span>
+ </br>
+ <div data-id="ui-container"/>
+</div>
+```
+
+En *welcome.js*:
+
+```js
+//In welcome.js
 
 
+iris.screen(
+ 
+ function (self) {
+  
+  var myUINumber = 0;
+  
+  self.create = function () {
+   console.log("Welcome Screen Created");
+   self.tmpl("welcome.html"); 
+   //The method allows for subscription on an event
+   iris.on("myUI-created-event", fnMyUICreatedEvent);
+   ////When "myUI-created-event" event happens, Iris will call to "fnMyUICreatedEvent" function.
+   iris.on("myUIs-destroy-event", fnMyUIsDestroyEvent);
+   
+   self.get("create-myUI").click(
+    function() {   
+     self.ui("ui-container", "myUI.js");
+    }
+    );
 
-##Settings
+   self.get("destroy-myUI").click(
+    function() {   
+     self.destroyUIs("ui-container");
+     iris.notify("myUIs-destroy-event");
+    }
+    );
+  }
+  
+  function fnMyUICreatedEvent() {
+   myUINumber++;
+   self.get("myUI-number").html(myUINumber);
+  }
+  
+  function fnMyUIsDestroyEvent() {
+   myUINumber = 0;
+   self.get("myUI-number").html(myUINumber);
+  }
+
+ }
+
+ );
+```
+
+En *myUi.html*:
+
+```html
+<div>
+ <h1>myUI UI</h1>
+ <p>This is the myUI template.</p>
+</div>
+```
+
+En *myUI.js*:
+
+```js
+//In myUI.js
+
+iris.ui(
+ function (self) {
+  self.create = function () {
+   console.log("myUI UI Created");
+   self.tmplMode(self.APPEND);
+   self.tmpl("myUI.html");   
+   iris.notify("myUI-created-event"); //This notifies subscribers that the "myUI-created-event" event has occurred 
+  }
+ }
+);
+```
+
+Observe como para suscribirse a un evento, en el método *iris.on*, pasamos una cadena de texto (que representa al evento) y una función que será llamada cuando el evento se produzca. Para notificar que un evento se ha producido, se debe llamar al método *iris.notify*.
+
+Es importante eliminar la suscripción a un evento cuanto esta ya no sea necesaria. Para hacer esto se utiliza el método *iris.off* con la misma sintaxis que *iris.on*. Por ejemplo:
+
+```js
+iris.off("myUI-created-event", fnMyUICreatedEvent);
+```
+
+> Para evitar filtraciones de memoria, en general, si la suscripción a un evento se realiza en el método *awake* de un compomente, la eliminación debe realizarse en el método *sleep* de ese mismo componente; y si la suscripción se realiza en el *create* la eliminación se hará en el *detroy*.
+
+Cuando se notifica que se ha producido un evento, se pueden pasar parámetros a la función que recibe la notificación. Los parámetros pueden ser de cualquier tipo. Si se necesitan pasar varios parámetros de deben *encapsular* en un objeto de Javascript.
+
+Vamos a transformar el ejemplo anterior para que haya una única función que maneje los eventos de creación y destrucción del UI. La función recibe un parámetro para discriminar si se trata de un evento o de otro. Aprovechamos el ejemplo para transformar los eventos en variables en lugar usar literales de cadena ya que es una forma más conveniente de trabajar.
+
+Los ficheros HTML quedan intactos, las modificaciones únicamente se harán sobre los ficheros de comportamiento.
+
+En *welcome.js*:
+
+```js
+//In welcome.js
+
+EVENT = {
+ MYUI_CREATED: "myUI created",
+ MYUIS_DESTROYED: "myUIs destroyed"
+};
 
 
+iris.screen(
+ 
+ function (self) {
+  
+  var myUINumber = 0;
+  
+  self.create = function () {
+   console.log("Welcome Screen Created");
+   self.tmpl("welcome.html"); 
+   //The method allows for subscription on an event
+   iris.on(EVENT.MYUI_CREATED, fnMyUIEvent);
+   ////When "myUI-created-event" event happens, Iris will call to "fnMyUICreatedEvent" function.
+   iris.on(EVENT.MYUIS_DESTROYED, fnMyUIEvent);
+   
+   self.get("create-myUI").click(
+    function() {   
+     self.ui("ui-container", "myUI.js");
+    }
+    );
 
-##Eventos
+   self.get("destroy-myUI").click(
+    function() {   
+     self.destroyUIs("ui-container");     
+     iris.notify(EVENT.MYUIS_DESTROYED, EVENT.MYUIS_DESTROYED);     
+    }
+    );
+  }
 
-##Locales y regionales
+  self.destroy = function () {
+   console.log("Welcome Screen Destroyed");
+   //The "iris.off()" method eliminates the subscription to the event.
+   //It uses the same syntax as the "iris.on()" method.
+   iris.off("myUI-created-event", fnMyUICreatedEvent);
+  }
+  
+  function fnMyUIEvent(eventType) {
+   if (eventType === EVENT.MYUI_CREATED) {
+    myUINumber++;
+   } else if (eventType === EVENT.MYUIS_DESTROYED) {
+    myUINumber = 0;
+   }
+   self.get("myUI-number").html(myUINumber);
+  }
+  
+ }
+
+ );
+```
+
+Y en *myUI.js*:
+
+```js
+//In myUI.js
+
+iris.ui(
+ function (self) {
+  self.create = function () {
+   console.log("myUI UI Created");
+   self.tmplMode(self.APPEND);
+   self.tmpl("myUI.html");   
+   iris.notify(EVENT.MYUI_CREATED, EVENT.MYUI_CREATED);
+  }
+ }
+);
+```
+
+Podemos utilizar el método *iris.destroyEvents* como alternativa al método *iris.off*. Este método recibe el evento y un *array* con las funciones que quieren eliminar de la suscripción al evento. Por ejemplo:
+
+```js
+iris.destroyEvents(EVENT.MYUIS_DESTROYED, [fnMyUIEvent]);
+```
+<!--TODO Sugerencia: QUe el método iris.off permita elimnar todas las funciones en vez de tener que pasar una a una-->
+
+
+##Utilizando locales y regionales
+
+Iris permite trabajar con aplicaciones **multiidioma**. Para definir el idioma con el que trabaja la aplicación utilizamos:
+
+```js
+iris.locale("en_US");
+```
+
+Para conocer el idioma que está usando Iris:
+
+```js
+iris.locale();
+```
+
+Para definir las traducciones tenemos dos alternativas.
+
+1 Podemos definir las traducciones en el código de Javascript. Por ejemplo:
+
+```js
+iris.translations("en_US", {
+ GREETING: "Hi!",
+ GREETINGS: {
+  MORNING: "Good Morning",
+  AFTERNOON: "Good Afternoon",
+  NIGHT: "Good Night"
+ }
+});
+```
+Observe que Iris soporta definiciones de vocablos multinivel.
+
+2 Podemos definir las traducciones en un fichero de *JSON*. Por ejemplo:
+
+```js
+iris.translations("fr-FR", "./lang-FR.json", {"success" : onFRSuccess, "error" : onFRError });
+```
+Observe que a la función *iris.translations* se le debe pasar la ruta al fichero y, opcionalmente, un objeto de Javascript que contiene las funciones que se ejecutarán en caso de éxito y en caso de error durante la carga.
+
+La definición de los vocablos utilizados en un idioma se puede hacer en una única llamada al método *iris.translations* o en varias. Es decir, que podemos llamar a este método con el mismo parámetro de idioma tantas veces como queramos ya que las definiciones se irán añadiendo.
+
+> Iris soporta que una aplicación tenga varios idiomas definidos pero, para un correcto funcionamiento de Iris, el cambio de un idioma a otro requiere que se *refresque* la página.
+
+Para ver como hacer esto, puede consultar la sección *<a href="#paso-a-paso">Contruyendo paso a paso una aplicación desde cero</a>*.
+
+Para traducir un vocablo, tenemos dos opciones:
+
+1 Hacer la traducción en un fichero de Javascript, por ejemplo:
+
+```js
+iris.translate("GREETINGS.MORNING");
+```
+
+2 Hacer la traducción en el fichero HTML asociado al componente, por ejemplo:
+
+```html
+<div>
+@@GREETINGS.MORNING@@
+</div>
+```
+
+Observe que el vocablo hay que rodearlo con un doble símbolo *@*.
+
+Veamos un ejemplo completo:
+
+En *welcome.html*:
+
+```html
+<div>
+ <h1>Welcome Screen</h1>
+ <p>This is the initial screen.</p>
+ Morning Greeting from HTML: @@GREETINGS.MORNING@@
+ </br>
+ Morning Greeting from Javascript: <span data-id="greeting"/>
+</div>
+```
+Y en *welcome.js*:
+
+```js
+iris.screen(
+ function (self) {  
+  iris.locale("es_ES");
+  
+  iris.translations("en_US", {
+   GREETING: "Hi!",
+   GREETINGS: {
+    MORNING: "Good Morning",
+    AFTERNOON: "Good Afternonn",
+    NIGHT: "Good Night"
+   }
+  });
+  
+  iris.translations("es_ES", {
+   GREETING: "Hola",
+   GREETINGS: {
+    MORNING: "Buenos días",
+    AFTERNOON: "Buenas tardes",
+    NIGHT: "Buenas noches"
+   }
+  });
+
+  self.create = function () {
+   console.log("Welcome Screen Created");
+   self.tmpl("welcome.html");   
+   self.get("greeting").html(iris.translate("GREETINGS.MORNING"));
+  }  
+ }
+ );
+```
+Iris tiene capacidad de aplicar formatos de fechas, números y monedas adaptándolos a la variación **regional** que se haya seleccionado. Esto se puede hacer desde el código Javascript de un componente o bien desde el código HTML de un componente. En este último caso, los datos a formatear se pasarán en el método *tmpl*.
+
+Veamos un ejemplo de cada uno de ellos.
+
+Para el formateado desde Javascript utilizaremos los siguientes ficheros:
+
+En *welcome.html*:
+
+```html
+<div>
+ <h1>Welcome Screen</h1>
+ <p>This is the initial screen.</p>
+ <div data-id="regionals-from-js"/>
+ </div>
+</div>
+```
+Y en *welcome.js*:
+
+```js
+//In welcome.js
+iris.screen(
+ function (self) {
+  self.create = function () {
+   console.log("Welcome Screen Created");
+   
+   iris.locale(
+    "en_US", {
+     dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+     monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+     dateFormat: "m/d/Y h:i:s",
+     currency: {
+      formatPos: "n",
+      formatNeg: "(n)",
+      decimal: ".",
+      thousand: ",",
+      precision: 2
+     }
+    }
+    );
+     
+   iris.locale(
+    "es_ES", {
+     dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+     monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+     dateFormat: "d/m/Y H:i:s",
+     currency: {
+      formatPos: "n",
+      formatNeg: "-n",
+      decimal: ",",
+      thousand: ".",
+      precision: 2
+     }
+    }
+    );
+
+   iris.locale("en_US");
+   
+   self.tmpl("welcome.html");
+   
+   var s ="Regionals Examples From Javascript";
+   
+   var date = new Date();
+   s += "</br>Default date format: " + iris.date(date);
+   s += "</br>Customized date format: " + iris.date(date, "Y/m/d h:i:s");
+   
+   var discount = "-34.586";
+   s += "</br>Currency format: " + iris.currency(discount);
+   
+   self.get("regionals-from-js").html(s);
+  }
+
+ }
+ );
+```
+
+Para el formateado desde HTML utlizaremos los siguientes ficheros:
+
+En *welcome.html*:
+
+```html
+<div>
+ <h2>Regionals from HTML</h2>
+ <div>
+		<h3>Number</h3>
+		<pre>## price ##</pre>
+		<span>
+			##price##
+		</span>
+	</div>
+ 
+ <div>
+		<h3>Currency</h3>
+		<pre>## price|currency ##</pre>
+		<span>
+			##price|currency##
+		</span>
+	</div>
+ 
+ <div>
+		<h3>Date</h3>
+		<pre>## date|date ##</pre>
+		<span>
+			##date|date##
+		</span>
+	</div>
+
+	<div>
+		<h3>Custom Date</h3>
+		<pre>## date|date(y - m - d) ##</pre>
+		<span>
+			##date|date(y - m - d)##
+		</span>
+	</div>
+
+	<div>
+		<h3>Object Property</h3>
+		<pre>## object.property ##</pre>
+		<span>
+			##object.property##
+		</span>
+	</div>
+ 
+</div>
+```
+
+Y en *welcome.js*:
+
+```js
+//In welcome.js
+iris.screen(
+ function (self) {
+  self.create = function () {
+   console.log("Welcome Screen Created");
+   
+   iris.locale(
+    "en_US", {
+     dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+     monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+     dateFormat: "m/d/Y h:i:s",
+     currency: {
+      formatPos: "n",
+      formatNeg: "(n)",
+      decimal: ".",
+      thousand: ",",
+      precision: 2
+     }
+    }
+    );
+     
+   iris.locale(
+    "es_ES", {
+     dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+     monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+     dateFormat: "d/m/Y H:i:s",
+     currency: {
+      formatPos: "n",
+      formatNeg: "-n",
+      decimal: ",",
+      thousand: ".",
+      precision: 2
+     }
+    }
+    );
+
+   iris.locale("en_US");
+   
+   var params = {
+    "price" : 1499.99,
+    "date" : new Date(),
+    "object" : {
+     "property" : "This is a object property value"
+    }
+   };
+   
+   self.tmpl("welcome.html", params);
+   
+  }
+
+ }
+ );
+```
+
+Observe que la aplicación del formato en HTML se realiza de forma parecida a como se hace la traducción de vocablos pero utilizando el símbolo "#". El formato que se quiere dar se separa del nombre de variable a formatear con el símbolo "|".
+
+En el formato de fechas podemos utilizar los siguientes códigos:
+
+<pre>
+a 'a.m.' or 'p.m.'
+A 'AM' or 'PM'
+b Month, textual, 3 letters, lowercase. 'jan'
+d Day of the month, 2 digits with leading zeros. '01' to '31'
+DDay of the week, textual, 3 letters. 'Fri'
+F Month, textual, long. 'January'
+h Hour, 12-hour format. '01' to '12'
+H Hour, 24-hour format. '00' to '23'
+i Minutes. '00' to '59'
+l Day of the week, textual, long. 'Friday'
+m Month, 2 digits with leading zeros. '01' to '12'
+M Month, textual, 3 letters. 'Jan'
+n Month without leading zeros. '1' to '12'
+s Seconds, 2 digits with leading zeros. '00' to '59'
+U Seconds since the Unix Epoch (January 1 1970 00:00:00 UTC)
+y Year, 2 digits. '99'
+Y Year, 4 digits. '1999'
+</pre>
 
 ##Lamadas Ajax y servicios
+
+
+##Utilidades
 
 ##Paso a producción
 
