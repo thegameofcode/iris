@@ -1906,7 +1906,7 @@ y Year, 2 digits. '99'
 Y Year, 4 digits. '1999'
 </pre>
 
-##Lamadas Ajax y servicios
+##Lamadas Ajax y servicios REST
 
 Iris tiene funciones que son *wrappers* al método *ajax()* de *Jquery*.
 
