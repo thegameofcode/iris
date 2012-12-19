@@ -1908,10 +1908,84 @@ Y Year, 4 digits. '1999'
 
 ##Lamadas Ajax y servicios
 
+Iris tiene funciones que son *wrappers* al método *ajax()* de *Jquery*.
 
-##Utilidades
+La función *ajax* recibe el mismo objeto *settings* que la de JQuery y devuelve al objeto *promise* que retorna JQuery.
+
+Para invocar esta función, ejecuteremos:
+
+```js
+var settings = {...};
+iris.ajax(settings);
+```
+Iris dispone del método *service* que facilita el acceso a servicios *REST*.
+
+En el siguiente ejemplo se explica como podríamos hacer esto:
+
+En primer lugar, creamo el fichero *test.json* con el siguiente contenido:
+
+```js
+{
+ "id" : 1,
+ "title" : "book title"
+}
+```
+En *welcome.html*:
+
+```js
+<div>
+ <h1>Welcome Screen</h1>
+ <p>This is the initial screen.</p>
+ <div data-id="json-container"/>
+</div>
+```
+
+En *welcome.js*:
+
+```js
+//In welcome.js
+var testService = iris.service(function(self){
+    self.load = function (id, success, error) {
+     self.get("./" + id, success, error);
+    };
+
+    self.create = function (params, success, error) {
+     self.post("echo/create", params, success, error);
+    };
+
+    self.update = function (id, params, success, error) {
+     self.put("echo/put/" + id, params, success, error);
+    };
+
+    self.remove = function (id, success, error) {
+     self.del("echo/delete/" + id, success, error);
+    };
+
+ });
+   
+iris.screen(
+ function (self) {
+  self.create = function () {
+   console.log("Welcome Screen Created");
+   
+   self.tmpl("welcome.html");
+   
+   testService.load("test.json", function (json) {
+    self.get("json-container").html(json.title);
+   }, function (p_request, p_textStatus, p_errorThrown) {
+    console.log("Error callback unexpected: " + p_errorThrown);
+   });
+   
+  }
+
+ }
+ );
+```
+
+Observe que hemos llamado al método *iris.service* y asignado su retorno a una variable. El método *iris.service* recibe como parámetro una función que será llamada por Iris pasándole como parámetro un objeto de tipo *Service* creado por Iris. Este objeto dispone de los métodos *get*, *del*, *push* y *post* para acceder a servicios REST y pueden recibir una función de éxito o de error para procesar la respuesta obtenida.
 
 ##Paso a producción
+
 
 ##¿Pruebas?
 
