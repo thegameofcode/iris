@@ -1986,6 +1986,36 @@ Observe que hemos llamado al método *iris.service* y asignado su retorno a una 
 
 ##Paso a producción
 
+<!--TODO Preguntar porque aquí hay algunas cosasen las que tengo dudas-->
+
+Iris tiene una serie de métodos que facilitan el paso de desarrollo a producción y las tareas de depuración.
+
+```js
+iris.baseUri(p_baseUri) //This sets or returns the base directory of the application
+```
+
+```js
+iris.noCache() //This prevents the browser to use the local copy of the data and force to download them from the server.
+////It is useful in developing
+```
+
+```js
+iris.cacheVersion(p_value); //By assigning a different value to this method we can get the cache is completely invalid and force the download of data from the server.
+```
+
+<!--TODO Hablar con Ángel porque no he encontrado en el código fuente de Iris ningún sitio donde realmente se haga uso de los dos métodos anteriores-->
+
+```js
+iris.log(arg1, arg2, arg3, arg4) //This shows in the browser console that is passed as parameter.
+```
+
+
+```js
+iris.enableLog(boolean) //This enables or disables Iris logging messages
+```
+
+<!--Revisar con Ángel porque la implementación del método no creo que tenga sentido-->
+
 
 ##¿Pruebas?
 
