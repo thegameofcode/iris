@@ -30,7 +30,7 @@ iris.screen(function (self) {
 	};
 
 	function createUi () {
-		ui = self.ui("container", "test/component/ui.js", {test:"test"});
+		ui = self.ui("container", "test/component/ui.js", {"setting-param":"setting_value"});
 
 		window.strictEqual(self.uis.length, 1);
 

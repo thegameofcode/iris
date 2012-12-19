@@ -22,6 +22,8 @@
       raises(block, [expected], [message])
   */
 
+  iris.cache(false);
+
   module('Module Component');
 
   asyncTest("Include JS", function() {
@@ -52,11 +54,23 @@
 
   });
 
-  /*asyncTest("Create UI", function() {
+  asyncTest("Create UI", function() {
 
     expect(4);
     iris.notify("create_ui");
     
+  });
+
+  asyncTest("UI Settings", function() {
+
+    expect(3);
+    iris.notify("ui_settings");
+  });
+
+  asyncTest("Nested UI", function() {
+
+    expect(6); // 3 creation + 3 nested callback
+    iris.notify("nested_ui");
   });
 
 
@@ -76,9 +90,8 @@
   asyncTest("Template Lang Values", function() {
 
     expect(1);
-    console.log(1);
     iris.notify("template_langs");
-  });*/
+  });
 
   asyncTest("Destroy Screen", function() {
 

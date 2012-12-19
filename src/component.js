@@ -26,6 +26,11 @@
         
         var screenObj = _instanceScreen(path);
         screenObj.id = "welcome-screen";
+
+        if ( screenObj.cfg === null ) {
+            screenObj.cfg = {};
+        }
+
         screenObj.create();
         screenObj._awake();
         screenObj.show();
@@ -237,20 +242,24 @@
         iris.include(p_jsUrl);
 
         var uiInstance = new UI();
-        _includes[p_jsUrl](uiInstance);
         uiInstance.id = p_uiId;
-        uiInstance.el = {};
-        uiInstance.con = p_$container;
         uiInstance.uis = [];
+        uiInstance.el = {};
         uiInstance.events = {};
-        uiInstance.cfg = {};
+        uiInstance.con = p_$container;
         uiInstance.fileJs = p_jsUrl;
+        
+        _includes[p_jsUrl](uiInstance);
         if(p_templateMode !== undefined) {
             uiInstance._tmplMode = p_templateMode;
         }
 
         p_uiSettings = p_uiSettings === undefined ? {} : p_uiSettings;
         var jqToHash = _jqToHash(p_$container);
+
+        if ( uiInstance.cfg === null ) {
+            uiInstance.cfg = {};
+        }
 
         $.extend(uiInstance.cfg, jqToHash, p_uiSettings);
 
@@ -385,6 +394,10 @@
     Settable.prototype = new iris.Event();
 
     Settable.prototype.settings = function(p_settings) {
+        if ( this.cfg === null ) {
+            this.cfg = {};
+        }
+
         return $.extend(this.cfg, p_settings);
     };
 
@@ -414,6 +427,7 @@
         this.con = null; // JQ container
         this.sleeping = null;
         this.el = null; // cached elements
+        this.events = null;
     };
 
     Component.prototype = new Settable();
