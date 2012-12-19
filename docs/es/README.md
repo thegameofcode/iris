@@ -2016,6 +2016,11 @@ iris.enableLog(boolean) //This enables or disables Iris logging messages
 
 <!--Revisar con Ángel porque la implementación del método no creo que tenga sentido-->
 
+Iris ayuda a la *minificación* de la aplicación. Para reducir el número de ficheros que hay que descargar desde el servidor en una aplicación Iris, podemos *minificar* todos los ficheros *.js* en uno único con la herramienta que queramos (por ejemplo [Grunt](https://github.com/gruntjs/grunt)). Para evitar que Iris tenga que descargarse el fichero del componente y utilice el del archivo *minificado*, debemos indicarle la ruta de acceso al fichero en el método que crea el componente.
+
+POr ejemplo, si el fichero *welcome.js* está en el fichero raíz de la aplicación
+
+<!--TODO No sigo con esto porque en el código fuente creo que ya no se le puede pasar la URL que luego se utiliza para buscar en el archivo minificado con lo que supongo que ya no va a funcionar esta técnica. Preguntar a Ángel-->
 
 ##¿Pruebas?
 
