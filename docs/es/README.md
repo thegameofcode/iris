@@ -685,7 +685,7 @@ Es interesante estudiar el DOM que genera Iris tras pulsar el botón y cargar el
 
 ```html
 <html>
- <head>
+ <head>...</head>
  <body>
   <div>
    <h1>Welcome Screen</h1>
@@ -806,7 +806,7 @@ Y el fichero en el fichero *myUI.html*:
 <div>
  <h1>myUI UI</h1>
  <p>This is the myUI template.</p>
- <div data-id="inner-ui-container"/>
+ <div data-id="inner-ui-container"></div>
 </div>
 ```
 
@@ -861,7 +861,7 @@ div>
  <button data-id="destroy-home-screen">Click to destroy Home Screen</button>
  </br>
  <a href="#help">Gets some help</a>
- <div data-id="container"/>
+ <div data-id="container"></div>
 </div>
 ```
 Y en el método *create* *welcome.js*:
@@ -954,7 +954,7 @@ Para destruir UIs, Iris dispone de dos métodos: *destroyUI* y *destroyUIs*. Est
 
 Para probar *destroyUI* tendremos el siguiente código:
 
-En *welcome.js*:
+En *welcome.html*:
 
 ```html
 <div>
@@ -963,7 +963,7 @@ En *welcome.js*:
  <button data-id="create-myUI">Click create a myUI UI</button>
  </br> 
  <button data-id="destroy-myUI">Click to destroy all myUI UIs</button>
- <div data-id="container"/>
+ <div data-id="container"></div>
 </div>
 ```
 
@@ -1064,7 +1064,7 @@ Tras pulsar tres veces sobre el botón que crea el UI y una vez sobre el que lo 
 
 ```html
 <html>
- <head>
+ <head>...</head>
  <body>
   <div>
    <h1>Welcome Screen</h1>
@@ -1150,7 +1150,7 @@ En *home.html* ponemos un contendor para visualizar el parámetro:
 <div>
  <h1>Home Screen</h1>
  <p>This is the home screen.</p>
- <div data-id="year-parameter"/>
+ <div data-id="year-parameter"></div>
 </div>
 ```
 
@@ -1235,7 +1235,7 @@ En *welcome.html*:
  <h1>Welcome Screen</h1>
  <p>This is the initial screen.</p>
  <button data-id="create-myUI">Create myUI UI</button>
- <div data-id="ui-container"/>
+ <div data-id="ui-container"></div>
 </div>
 ```
 
@@ -1287,7 +1287,7 @@ En *myUI.html*:
 <div>
  <h1>myUI UI</h1>
  <p>This is the myUI template.</p>
- <div data-id="uiNumber"/>
+ <div data-id="uiNumber"></div>
 </div>
 ```
 
@@ -1330,7 +1330,7 @@ En *welcome.html*:
  <button data-id="create-myUI">Click create a myUI UI</button>
  </br> 
  <button data-id="destroy-myUI">Click to destroy all myUI UIs</button>
- <div data-id="ui-container"/>
+ <div data-id="ui-container"></div>
 </div>
 ```
 
@@ -1413,7 +1413,7 @@ En *welcome.html*:
  </br>
  The number of myUis is: <span data-id="myUI-number">0</span>
  </br>
- <div data-id="ui-container"/>
+ <div data-id="ui-container"></div>
 </div>
 ```
 
@@ -1551,7 +1551,7 @@ iris.screen(
    console.log("Welcome Screen Destroyed");
    //The "iris.off()" method eliminates the subscription to the event.
    //It uses the same syntax as the "iris.on()" method.
-   iris.off("myUI-created-event", fnMyUICreatedEvent);
+   iris.off("myUI-created-event", fnMyUIEvent);
   }
   
   function fnMyUIEvent(eventType) {
@@ -1626,9 +1626,22 @@ Observe que Iris soporta definiciones de vocablos multinivel.
 2 Podemos definir las traducciones en un fichero de *JSON*. Por ejemplo:
 
 ```js
-iris.translations("fr-FR", "./lang-FR.json", {"success" : onFRSuccess, "error" : onFRError });
+iris.translations("fr_FR", "./lang-FR.json", {"success" : onFRSuccess, "error" : onFRError });
 ```
 Observe que a la función *iris.translations* se le debe pasar la ruta al fichero y, opcionalmente, un objeto de Javascript que contiene las funciones que se ejecutarán en caso de éxito y en caso de error durante la carga.
+
+El fichero *./lang-FR.json* podría ser el siguiente:
+
+```json
+{
+ "GREETING": "Salut!",
+ "GREETINGS": {
+  "MORNING": "Bonjour",
+  "AFTERNOON": "Bonjour",
+  "NIGHT": "Bonne nuit"
+ }
+}
+```
 
 La definición de los vocablos utilizados en un idioma se puede hacer en una única llamada al método *iris.translations* o en varias. Es decir, que podemos llamar a este método con el mismo parámetro de idioma tantas veces como queramos ya que las definiciones se irán añadiendo.
 
@@ -1712,7 +1725,7 @@ En *welcome.html*:
 <div>
  <h1>Welcome Screen</h1>
  <p>This is the initial screen.</p>
- <div data-id="regionals-from-js"/>
+ <div data-id="regionals-from-js"></div>
  </div>
 </div>
 ```
@@ -1783,44 +1796,44 @@ En *welcome.html*:
 <div>
  <h2>Regionals from HTML</h2>
  <div>
-		<h3>Number</h3>
-		<pre>## price ##</pre>
-		<span>
-			##price##
-		</span>
-	</div>
+   <h3>Number</h3>
+   <pre>## price ##</pre>
+   <span>
+    ##price##
+   </span>
+  </div>
  
  <div>
-		<h3>Currency</h3>
-		<pre>## price|currency ##</pre>
-		<span>
-			##price|currency##
-		</span>
-	</div>
+  <h3>Currency</h3>
+  <pre>## price|currency ##</pre>
+  <span>
+   ##price|currency##
+  </span>
+ </div>
  
  <div>
-		<h3>Date</h3>
-		<pre>## date|date ##</pre>
-		<span>
-			##date|date##
-		</span>
-	</div>
+  <h3>Date</h3>
+  <pre>## date|date ##</pre>
+  <span>
+   ##date|date##
+  </span>
+ </div>
 
-	<div>
-		<h3>Custom Date</h3>
-		<pre>## date|date(y - m - d) ##</pre>
-		<span>
-			##date|date(y - m - d)##
-		</span>
-	</div>
+ <div>
+  <h3>Custom Date</h3>
+  <pre>## date|date(y - m - d) ##</pre>
+  <span>
+   ##date|date(y - m - d)##
+  </span>
+ </div>
 
-	<div>
-		<h3>Object Property</h3>
-		<pre>## object.property ##</pre>
-		<span>
-			##object.property##
-		</span>
-	</div>
+ <div>
+  <h3>Object Property</h3>
+  <pre>## object.property ##</pre>
+  <span>
+   ##object.property##
+  </span>
+ </div>
  
 </div>
 ```
@@ -1891,7 +1904,7 @@ a 'a.m.' or 'p.m.'
 A 'AM' or 'PM'
 b Month, textual, 3 letters, lowercase. 'jan'
 d Day of the month, 2 digits with leading zeros. '01' to '31'
-DDay of the week, textual, 3 letters. 'Fri'
+D Day of the week, textual, 3 letters. 'Fri'
 F Month, textual, long. 'January'
 h Hour, 12-hour format. '01' to '12'
 H Hour, 24-hour format. '00' to '23'
@@ -1906,12 +1919,121 @@ y Year, 2 digits. '99'
 Y Year, 4 digits. '1999'
 </pre>
 
-##Lamadas Ajax y servicios
+##Lamadas Ajax y servicios REST
 
+Iris tiene funciones que son *wrappers* al método *ajax()* de *Jquery*.
 
-##Utilidades
+La función *ajax* recibe el mismo objeto *settings* que la de JQuery y devuelve al objeto *promise* que retorna JQuery.
+
+Para invocar esta función, ejecuteremos:
+
+```js
+var settings = {...};
+iris.ajax(settings);
+```
+Iris dispone del método *service* que facilita el acceso a servicios *REST*.
+
+En el siguiente ejemplo se explica como podríamos hacer esto:
+
+En primer lugar, creamo el fichero *test.json* con el siguiente contenido:
+
+```json
+{
+ "id" : 1,
+ "title" : "book title"
+}
+```
+En *welcome.html*:
+
+```html
+<div>
+ <h1>Welcome Screen</h1>
+ <p>This is the initial screen.</p>
+ <div data-id="json-container"/>
+</div>
+```
+
+En *welcome.js*:
+
+```js
+//In welcome.js
+var testService = iris.service(function(self){
+    self.load = function (id, success, error) {
+     self.get("./" + id, success, error);
+    };
+
+    self.create = function (params, success, error) {
+     self.post("echo/create", params, success, error);
+    };
+
+    self.update = function (id, params, success, error) {
+     self.put("echo/put/" + id, params, success, error);
+    };
+
+    self.remove = function (id, success, error) {
+     self.del("echo/delete/" + id, success, error);
+    };
+
+ });
+   
+iris.screen(
+ function (self) {
+  self.create = function () {
+   console.log("Welcome Screen Created");
+   
+   self.tmpl("welcome.html");
+   
+   testService.load("test.json", function (json) {
+    self.get("json-container").html(json.title);
+   }, function (p_request, p_textStatus, p_errorThrown) {
+    console.log("Error callback unexpected: " + p_errorThrown);
+   });
+   
+  }
+
+ }
+ );
+```
+
+Observe que hemos llamado al método *iris.service* y asignado su retorno a una variable. El método *iris.service* recibe como parámetro una función que será llamada por Iris pasándole como parámetro un objeto de tipo *Service* creado por Iris. Este objeto dispone de los métodos *get*, *del*, *push* y *post* para acceder a servicios REST y pueden recibir una función de éxito o de error para procesar la respuesta obtenida.
 
 ##Paso a producción
+
+<!--TODO Preguntar porque aquí hay algunas cosasen las que tengo dudas-->
+
+Iris tiene una serie de métodos que facilitan el paso de desarrollo a producción y las tareas de depuración.
+
+```js
+iris.baseUri(p_baseUri) //This sets or returns the base directory of the application
+```
+
+```js
+iris.noCache() //This prevents the browser to use the local copy of the data and force to download them from the server.
+////It is useful in developing
+```
+
+```js
+iris.cacheVersion(p_value); //By assigning a different value to this method we can get the cache is completely invalid and force the download of data from the server.
+```
+
+<!--TODO Hablar con Ángel porque no he encontrado en el código fuente de Iris ningún sitio donde realmente se haga uso de los dos métodos anteriores-->
+
+```js
+iris.log(arg1, arg2, arg3, arg4) //This shows in the browser console that is passed as parameter.
+```
+
+
+```js
+iris.enableLog(boolean) //This enables or disables Iris logging messages
+```
+
+<!--Revisar con Ángel porque la implementación del método no creo que tenga sentido-->
+
+Iris ayuda a la *minificación* de la aplicación. Para reducir el número de ficheros que hay que descargar desde el servidor en una aplicación Iris, podemos *minificar* todos los ficheros *.js* en uno único con la herramienta que queramos (por ejemplo [Grunt](https://github.com/gruntjs/grunt)). Para evitar que Iris tenga que descargarse el fichero del componente y utilice el del archivo *minificado*, debemos indicarle la ruta de acceso al fichero en el método que crea el componente.
+
+POr ejemplo, si el fichero *welcome.js* está en el fichero raíz de la aplicación
+
+<!--TODO No sigo con esto porque en el código fuente creo que ya no se le puede pasar la URL que luego se utiliza para buscar en el archivo minificado con lo que supongo que ya no va a funcionar esta técnica. Preguntar a Ángel-->
 
 ##¿Pruebas?
 
