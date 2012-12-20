@@ -1626,9 +1626,22 @@ Observe que Iris soporta definiciones de vocablos multinivel.
 2 Podemos definir las traducciones en un fichero de *JSON*. Por ejemplo:
 
 ```js
-iris.translations("fr-FR", "./lang-FR.json", {"success" : onFRSuccess, "error" : onFRError });
+iris.translations("fr_FR", "./lang-FR.json", {"success" : onFRSuccess, "error" : onFRError });
 ```
 Observe que a la función *iris.translations* se le debe pasar la ruta al fichero y, opcionalmente, un objeto de Javascript que contiene las funciones que se ejecutarán en caso de éxito y en caso de error durante la carga.
+
+El fichero *./lang-FR.json* podría ser el siguiente:
+
+```json
+{
+ "GREETING": "Salut!",
+ "GREETINGS": {
+  "MORNING": "Bonjour",
+  "AFTERNOON": "Bonjour",
+  "NIGHT": "Bonne nuit"
+ }
+}
+```
 
 La definición de los vocablos utilizados en un idioma se puede hacer en una única llamada al método *iris.translations* o en varias. Es decir, que podemos llamar a este método con el mismo parámetro de idioma tantas veces como queramos ya que las definiciones se irán añadiendo.
 
