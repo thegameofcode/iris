@@ -685,7 +685,7 @@ Es interesante estudiar el DOM que genera Iris tras pulsar el botón y cargar el
 
 ```html
 <html>
- <head>
+ <head>...</head>
  <body>
   <div>
    <h1>Welcome Screen</h1>
@@ -806,7 +806,7 @@ Y el fichero en el fichero *myUI.html*:
 <div>
  <h1>myUI UI</h1>
  <p>This is the myUI template.</p>
- <div data-id="inner-ui-container"/>
+ <div data-id="inner-ui-container"></div>
 </div>
 ```
 
@@ -861,7 +861,7 @@ div>
  <button data-id="destroy-home-screen">Click to destroy Home Screen</button>
  </br>
  <a href="#help">Gets some help</a>
- <div data-id="container"/>
+ <div data-id="container"></div>
 </div>
 ```
 Y en el método *create* *welcome.js*:
@@ -954,7 +954,7 @@ Para destruir UIs, Iris dispone de dos métodos: *destroyUI* y *destroyUIs*. Est
 
 Para probar *destroyUI* tendremos el siguiente código:
 
-En *welcome.js*:
+En *welcome.html*:
 
 ```html
 <div>
@@ -963,7 +963,7 @@ En *welcome.js*:
  <button data-id="create-myUI">Click create a myUI UI</button>
  </br> 
  <button data-id="destroy-myUI">Click to destroy all myUI UIs</button>
- <div data-id="container"/>
+ <div data-id="container"></div>
 </div>
 ```
 
@@ -1064,7 +1064,7 @@ Tras pulsar tres veces sobre el botón que crea el UI y una vez sobre el que lo 
 
 ```html
 <html>
- <head>
+ <head>...</head>
  <body>
   <div>
    <h1>Welcome Screen</h1>
@@ -1150,7 +1150,7 @@ En *home.html* ponemos un contendor para visualizar el parámetro:
 <div>
  <h1>Home Screen</h1>
  <p>This is the home screen.</p>
- <div data-id="year-parameter"/>
+ <div data-id="year-parameter"></div>
 </div>
 ```
 
@@ -1235,7 +1235,7 @@ En *welcome.html*:
  <h1>Welcome Screen</h1>
  <p>This is the initial screen.</p>
  <button data-id="create-myUI">Create myUI UI</button>
- <div data-id="ui-container"/>
+ <div data-id="ui-container"></div>
 </div>
 ```
 
@@ -1287,7 +1287,7 @@ En *myUI.html*:
 <div>
  <h1>myUI UI</h1>
  <p>This is the myUI template.</p>
- <div data-id="uiNumber"/>
+ <div data-id="uiNumber"></div>
 </div>
 ```
 
@@ -1330,7 +1330,7 @@ En *welcome.html*:
  <button data-id="create-myUI">Click create a myUI UI</button>
  </br> 
  <button data-id="destroy-myUI">Click to destroy all myUI UIs</button>
- <div data-id="ui-container"/>
+ <div data-id="ui-container"></div>
 </div>
 ```
 
@@ -1413,7 +1413,7 @@ En *welcome.html*:
  </br>
  The number of myUis is: <span data-id="myUI-number">0</span>
  </br>
- <div data-id="ui-container"/>
+ <div data-id="ui-container"></div>
 </div>
 ```
 
@@ -1551,7 +1551,7 @@ iris.screen(
    console.log("Welcome Screen Destroyed");
    //The "iris.off()" method eliminates the subscription to the event.
    //It uses the same syntax as the "iris.on()" method.
-   iris.off("myUI-created-event", fnMyUICreatedEvent);
+   iris.off("myUI-created-event", fnMyUIEvent);
   }
   
   function fnMyUIEvent(eventType) {
@@ -1712,7 +1712,7 @@ En *welcome.html*:
 <div>
  <h1>Welcome Screen</h1>
  <p>This is the initial screen.</p>
- <div data-id="regionals-from-js"/>
+ <div data-id="regionals-from-js"></div>
  </div>
 </div>
 ```
@@ -1783,44 +1783,44 @@ En *welcome.html*:
 <div>
  <h2>Regionals from HTML</h2>
  <div>
-		<h3>Number</h3>
-		<pre>## price ##</pre>
-		<span>
-			##price##
-		</span>
-	</div>
+   <h3>Number</h3>
+   <pre>## price ##</pre>
+   <span>
+    ##price##
+   </span>
+  </div>
  
  <div>
-		<h3>Currency</h3>
-		<pre>## price|currency ##</pre>
-		<span>
-			##price|currency##
-		</span>
-	</div>
+  <h3>Currency</h3>
+  <pre>## price|currency ##</pre>
+  <span>
+   ##price|currency##
+  </span>
+ </div>
  
  <div>
-		<h3>Date</h3>
-		<pre>## date|date ##</pre>
-		<span>
-			##date|date##
-		</span>
-	</div>
+  <h3>Date</h3>
+  <pre>## date|date ##</pre>
+  <span>
+   ##date|date##
+  </span>
+ </div>
 
-	<div>
-		<h3>Custom Date</h3>
-		<pre>## date|date(y - m - d) ##</pre>
-		<span>
-			##date|date(y - m - d)##
-		</span>
-	</div>
+ <div>
+  <h3>Custom Date</h3>
+  <pre>## date|date(y - m - d) ##</pre>
+  <span>
+   ##date|date(y - m - d)##
+  </span>
+ </div>
 
-	<div>
-		<h3>Object Property</h3>
-		<pre>## object.property ##</pre>
-		<span>
-			##object.property##
-		</span>
-	</div>
+ <div>
+  <h3>Object Property</h3>
+  <pre>## object.property ##</pre>
+  <span>
+   ##object.property##
+  </span>
+ </div>
  
 </div>
 ```
@@ -1891,7 +1891,7 @@ a 'a.m.' or 'p.m.'
 A 'AM' or 'PM'
 b Month, textual, 3 letters, lowercase. 'jan'
 d Day of the month, 2 digits with leading zeros. '01' to '31'
-DDay of the week, textual, 3 letters. 'Fri'
+D Day of the week, textual, 3 letters. 'Fri'
 F Month, textual, long. 'January'
 h Hour, 12-hour format. '01' to '12'
 H Hour, 24-hour format. '00' to '23'
@@ -1924,7 +1924,7 @@ En el siguiente ejemplo se explica como podríamos hacer esto:
 
 En primer lugar, creamo el fichero *test.json* con el siguiente contenido:
 
-```js
+```json
 {
  "id" : 1,
  "title" : "book title"
@@ -1932,7 +1932,7 @@ En primer lugar, creamo el fichero *test.json* con el siguiente contenido:
 ```
 En *welcome.html*:
 
-```js
+```html
 <div>
  <h1>Welcome Screen</h1>
  <p>This is the initial screen.</p>
