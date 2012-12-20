@@ -1925,7 +1925,7 @@ Iris tiene funciones que son *wrappers* al método *ajax()* de *Jquery*.
 
 La función *ajax* recibe el mismo objeto *settings* que la de JQuery y devuelve al objeto *promise* que retorna JQuery.
 
-Para invocar esta función, ejecuteremos:
+Para invocar esta función, ejecutaremos:
 
 ```js
 var settings = {...};
@@ -2038,7 +2038,6 @@ POr ejemplo, si el fichero *welcome.js* está en el fichero raíz de la aplicaci
 ##¿Pruebas?
 
 <!--TODO Todavía no he entendido lo que quiere Jonás que haga aquí-->
-
 
 
 #<a name="paso-a-paso"></a>Contruyendo paso a paso una aplicación desde cero
