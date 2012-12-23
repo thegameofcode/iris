@@ -1,10 +1,43 @@
-#¿Qué es Iris?
+#Índice
+* <a href="#what_is_it">¿Qué es Iris?</a><br>
+* <a href="#features">Características de Iris</a><br>
+* <a href="#why">¿Por qué Iris?</a><br>
+* <a href="#how_it_works">¿Cómo funciona Iris?</a><br>
+ * <a href="#components">Componentes</a><br>
+ * <a href="#screens_UIs">Screens y UIs</a></br>
+ * <a href="#life_cycle">Ciclo de vida de un componente</a></br>
+ * <a href="#welcome">Screen de bienvenida</a><br>
+* <a href="#starting">Empezando con Iris</a></br>
+  * <a href="#installing">Instalando Iris</a><br>
+  * <a href="#calling_welcome">Llamando al Screen de bienvenida</a><br>
+  * <a href="#register">Registrando y mostrando un Screen</a><br>
+  * <a href="#showing_screen_js">Mostrando un Screen desde Javascript</a><br>
+  * <a href="#showing_some_screens">Mostrando varios screens</a><br>
+  * <a href="#screens_bad_practices">Malas prácticas en el registro de Screens</a><br>
+  * <a href="#default_screen">Creando un Screen por defecto</a><br>
+  * <a href="#uis">Visualizando UIs</a><br>
+  * <a href="#inner_UIs">UIs contenidos en otros UIs</a><br>
+  * <a href="#some_UIs">Añadiendo varios UIs a un mismo contenedor</a><br>
+  * <a href="#UIs_bad_practices">Malas prácticas con UIs</a><br>
+  * <a href="#Screens_drestroy">Destruyendo Screens</a><br>
+  * <a href="#UIs_drestroy">Destruyendo UIs</a><br>
+  * <a href="#params">Enviando parámetros a un Screen</a><br>
+  * <a href="#ui_params">Paso de parámetros en UIs</a><br>
+  * <a href="#settings">Paso de parámetros utilizando el método *settings*</a><br>
+  * <a href="#events">Trabajando con eventos</a><br>
+  * <a href="#locals">Utilizando locales y regionales</a><br>
+  * <a href="#ajax">Lamadas Ajax y servicios REST</a><br>
+  * <a href="#production">Paso a producción</a><br>
+  * <a href="#unit_test">Pruebas de unidad en Iris</a><br>
+* <a href="#step_by_step">Contruyendo paso a paso una aplicación desde cero</a><br>
+
+#<a name="what_is_it"></a>¿Qué es Iris?
 
 [Iris](https://github.com/iris-js/iris) es un *framework* escrito en Javascript para construir el *front-end* de una aplicación Web que, aplicando distintas técnicas, permite que las aplicaciones sean eficientes, rápidas, estructuradas y modulares.
 
 Iris es completamente independiente de la tecnología que se utilice en el servidor; así, podemos utilizar Iris en aplicaciones basadas en Java, PHP, Python, GAE, .NET, Ruby, etc.
 
-#Características de Iris
+#<a name="features"></a>Características de Iris
 
 Las principales características de Iris son:
 
@@ -26,7 +59,7 @@ Las principales características de Iris son:
 * Integrable y totalmente compatible con otros populares Frameworks como Backbone o BootStrap <!--TODO: Confirmar y añadir más-->
 * Bien documentado.
 
-#¿Por qué Iris?
+#<a name="why"></a>¿Por qué Iris?
 
 El conjunto de tecnologías conocido como AJAX está cambiando radicalmente la forma tradicional de construir aplicaciones Web.
 
@@ -69,11 +102,11 @@ Iris está especialmente diseñado para dar respuesta a ambos problemas:
  * Permite la reutilización de los componentes creados.
  * Facilita la realización de pruebas, la depuración y el mantenimiento.
 
-#¿Cómo funciona Iris?
+#<a name="how_it_works"></a>¿Cómo funciona Iris?
 
 En esta sección se van a presentar los principales componentes de Iris y los métodos para crear, destruir o interaccionar con ellos. No se preocupe si no entiende algunos conceptos, ya que lo único que se pretende en este momento es que se vaya familiarizando con la forma de trabajo de Iris.  Más adelante se propondrán ejemplos de código que le permitirán clarificar y profundizar lo aquí esbozado.
 
-##Componentes
+##<a name="components"></a>Componentes
 
 Iris permite estructurar la aplicación en componentes que interaccionan entre sí.
 
@@ -85,11 +118,11 @@ El **comportamiento** es un fragmento de código en Javascript almacenado en un 
 
 ![Definición de comportamiento](https://raw.github.com/surtich/iris/iris-grunt/docs/images/component_equation.png)
 
-Cuando Iris carga un componente, visualiza el código de su fichero HTML asociado y ejecuta su fichero de Javascript según se haya definido en su ciclo de vida (<a href="#ciclo_de_vida">ver más adelante</a>).
+Cuando Iris carga un componente, visualiza el código de su fichero HTML asociado y ejecuta su fichero de Javascript según se haya definido en su ciclo de vida (<a href="#life_cycle">ver más adelante</a>).
 
 El código HTML del componente se inserta en el DOM de la página. La inserción se hace sustituyendo o añadiendo (según se prefiera) un elemento que se defina en el DOM (ver más adelante).
 
-##Screens y UIs
+##<a name="screens_UIs"></a>Screens y UIs
 
 Iris utiliza dos tipos de componentes principales: Screens y UIs.
 
@@ -105,7 +138,7 @@ Un Screen puede contener otros componentes de tipo UI.
 
 En resumen: Los UIs deben pertenecer a otros UIs o a un Screen y no tienen Hash-URL. Los UIs sólo estarán visibles cuando se haya navegado al Screen al que pertenecen. Desde un Screen se puede navegar a otros Screens.
 
-##<a name="ciclo_de_vida"></a>Ciclo de vida de un componente
+##<a name="life_cycle"></a>Ciclo de vida de un componente
 
 Iris establece cuatro transiciones en el ciclo de vida de un componente: *create*, *awake*, *sleep* y *destroy*. En el fichero Javascript asociado al componente, podemos definir métodos *callbacks* que serán llamados por Iris cuando el evento correspondiente se produzca.
 
@@ -121,7 +154,7 @@ Podemos ver esto gráficamente:<!--TODO Actualizar gráfico-->
 
 ![Ciclo de vida](https://raw.github.com/surtich/iris/iris-grunt/docs/images/iris_life_cycle.png)
 
-##Screen de bienvenida
+##<a name="welcome"></a>Screen de bienvenida
 
 Toda aplicación Iris debe definir un componente inicial que se cargará al principio. Este componente será un <a href="#screen">Screen</a> especial ya que tiene algunas diferencias con lo explicado anteriormente:
 * El Screen de bienvenida no tiene Hash-URL asociado y se carga con el método **welcome** de Iris.
@@ -130,7 +163,7 @@ Toda aplicación Iris debe definir un componente inicial que se cargará al prin
 * Por lo tanto, tampoco será necesario llamar al método *destroy* de este Screen. Es decir, que el ciclo de vida de este Screen se simplifica ya que únicamente se hará una primera llamada al método *create* y una segunda al método *awake*.
 * Lo habitual es que el cometido del Screen de bienvenida sea registrar otros Screens y *llamar* al Hash-URL del Screen inical de nuestra aplicación.
 
-#Empezando con Iris
+#<a name="starting"></a>Empezando con Iris
 
 En esta sección vamos proponer ejemplos de código para aclarar y profundizar lo explicado anteriormente y para introducir nuevas capacidades de Iris.
 
@@ -138,7 +171,7 @@ Aquí no se pretende crear una aplicación funcional, sino que se comprenda como
 
 Para hacer más sencilla la explicación, todo el código de esta sección se situará un el directorio raíz de la aplicación. No es conveniente hacer esto en una aplicación real. En la sección *<a href="#paso-a-paso">Contruyendo paso a paso una aplicación desde cero</a>* se propone una estructura de directorios más adecuada para trabajar con Iris.
 
-##Instalando Iris
+##<a name="installing"></a>Instalando Iris
 El primer paso será decidir si queremos trabajar con la versión de [desarrollo](https://raw.github.com/iris-js/iris/master/dist/iris.js) o de [producción](https://raw.github.com/iris-js/iris/master/dist/iris.min.js)<!--TODO revisar enlaces-->y asociarlas a un fichero en HTML.
 
 ```html
@@ -147,7 +180,7 @@ El primer paso será decidir si queremos trabajar con la versión de [desarrollo
 <script src="iris-0.5.0-SNAPSHOT.js"></script> <!-- TODO Change URL -->
 ```
 
-##Llamando al Screen de bienvenida
+##<a name="calling_welcome"></a>Llamando al Screen de bienvenida
 Desde Javascript, llamamos al método **welcome** de Iris para cargar el fichero de comportamiento del Screen de bienvenida.
 
 ```js
@@ -220,7 +253,7 @@ Si llamáramos varias veces al método *tmpl*, el código HTML se irá añadiend
 <!--TODO Preguntar si esto tiene sentido -->
 <!-- TODO La llamada a tmpl funciona también si se hace en el awake, ¿Tiene algún sentido hacerlo aqui?. Supongo que no por el comentario anterior -->
 
-##Registrando y mostrando un Screen
+##<a name="register"></a>Registrando y mostrando un Screen
 
 Primero creamos el Screen Home con una estructura muy parecida a la anterior.
 
@@ -310,7 +343,7 @@ Tras pulsar el enlace, el DOM de la página generada por Iris será el siguiente
 ```
 Es importante reiterar que el código HTML del Screen se añade dentro del contenedor especificado. 
 
-##Mostrando un Screen desde Javascript
+##<a name="showing_screen_js"></a>Mostrando un Screen desde Javascript
 
 Podemos conseguir lo mismo que en el apartado anterior desde el código en Javascript asociado al Screen Welcome.
 
@@ -345,7 +378,7 @@ self.create = function () {
 ```
 Observe como el método **goto** de Iris permite navegar al Hash-URL especificado y que, para capturar el evento *click* del botón, hemos utiliado el método **get** del componente de Iris que recibe el valor de su atributo *data-id*. Iris buscará un elemento en el DOM del componente con ese *data-id* y lo devolverá como un objeto de JQuery.
 
-##Mostrando varios screens
+##<a name="showing_some_screens"></a>##Mostrando varios screens
 
 En este apartado vamos a crear un tercer Screen llamado Help.
 
@@ -460,7 +493,7 @@ Help Screen Sleeping
 Home Screen Awakened 
 </pre>
 
-##Malas prácticas en el registro de Screens
+##<a name="screens_bad_practices"></a>Malas prácticas en el registro de Screens
 
 <!--TODO IMPORTANTE: Aclarar si lo ue se explica en esta sección son solamentre malas prácticas o si Iris se debería proteger de ellas -->
 
@@ -586,7 +619,7 @@ Como se comprueba fácilmente, se está violando el principio de que el método 
 
 > Debemos evitar asociar el mismo Screen a varios Hash-URLs.
 
-##Creando un Screen por defecto
+##<a name="default_screen"></a>Creando un Screen por defecto
 
 Aunque no es obligatorio, las aplicaciones que usen Iris tendrán normalmente un Screen que se cargará por defecto cuando no se especifique ningún Hash-URL.
 
@@ -604,7 +637,7 @@ self.awake = function () {
 }
 ```
 
-##Visualizando UIs
+##<a name="uis"></a>Visualizando UIs
 
 En este apartado vamos a aprender a trabajar con UIs. Los UIs son componentes reutiizables para definir la interfaz de usuario. Un UI pertenece a un Screen o a otro UI.
 
@@ -752,7 +785,7 @@ Home Screen Awakened
 
 Se llama al evento *awake* tanto del UI *my_ui* como del Screen *Home* ya que el UI ya estaba cargado.
 
-##UIs contenidos en otros UIs
+##<a name="inner_UIs"></a>UIs contenidos en otros UIs
 
 Un UI puede contener otros UIs. Para probar esto creemos otro UI llamado *inner_ui* con los siguientes ficheros:
 
@@ -812,7 +845,7 @@ Y el fichero en el fichero *my_ui.html*:
 
 Aquí hay poco que comentar. Tan sólo que los UIs, al igual que los Screens, tienen un método *ui* que permite cargar otros UIs. Obsérvese también que la carga del UI interno se ha realizado directamente sin utilizar un botón como hicimos en el ejemplo anterior.
 
-##Añadiendo varios UIs a un mismo contenedor
+##<a name="some_UIs"></a>Añadiendo varios UIs a un mismo contenedor
 
 Anteriormente hemos visto que cuando añadimos un UI, su contenedor es reemplazado por la vista del UI. Este comportamiento se puede modificar.
 
@@ -834,7 +867,7 @@ El método *tmplMode* puede recibir también la constante *PREPEND* haciendo que
 
 Se puede especificar el valor de *tmplMode* en el método *ui* pasándolo como cuarto parámetro.
 
-##Malas prácticas con UIs
+##<a name="UIs_bad_practices"></a>Malas prácticas con UIs
 
 > En general, no es una buena idea reutilizar un contenedor de UIs para cargar Screens o viceversa. Aunque Iris puede manejar esta situación, vamos a tener problemas si el método *tmplMode* del UI no está configurado en modo *APPEND* ó *PREPEND* ya que  el modo por defecto, *REPLACE*, impedirá que se carguen los Screens una vez que se haya creado el UI.
 
@@ -844,7 +877,7 @@ Es mejor tener un contenedor para UIs y otro para Screens y no mezclar conceptos
 
 Normalmente cada tipo de UI tendrá su propio contenedor.
 
-##Destruyendo Screens
+##<a name="Screens_drestroy"></a>Destruyendo Screens
 
 Iris dispone del método *destroyScreen* para destruir componentes de tipo Screen.
 
@@ -948,7 +981,7 @@ Home Screen Destroyed
 
  <!--TODO Revisar la consistencia de esto ya que la secuencia no parece lógica: ¿Por qué se ejecutan los eventos *create* y *awake* del UI entre los eventos create y awake del Screen contenedor-->
 
-##Destruyendo UIs
+##<a name="UIs_drestroy"></a>Destruyendo UIs
 
 Para destruir UIs, Iris dispone de dos métodos: *destroyUI* y *destroyUIs*. Esto métodos son locales al componente que los vaya a destruir a diferencia de *destroyScreen* que es global.
 
@@ -1106,7 +1139,8 @@ Si trabajamos en modo REPLACE en vez de en modo APPEND, el método *destroyUIs* 
 
 -->
 
-##Enviando parámetros a un Screen
+##<a name="params"></a>Enviando parámetros a un Screen
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 En esta sección vamos a ver varias formas de que un Screen reciba un parámetro. Los parámetros se pasan a los Screen en el *[Query String](http://en.wikipedia.org/wiki/Query_string)* de la URL.
 
@@ -1224,7 +1258,7 @@ iris.screen(
  );
 ```
 
-##Paso de parámetros en UIs
+##<a name="ui_params"></a>Paso de parámetros en UIs
 
 Los UIs pueden recibir parámetros de forma análoga a como se hizo en el ejercicio anterior. Veámoslo con el siguiente ejemplo:
 
@@ -1293,7 +1327,7 @@ En *my_ui.html*:
 
 <!--TODO No lo puedo probar porque el evento awake del UI no se lanza. -->
 
-##Paso de parámetros utilizando el método *settings*
+##<a name="settings"></a>Paso de parámetros utilizando el método *settings*
 
 Los componentes, UIs y Screens, disponen de un método alternativo al anteriormente explicado para pasar parámetros. Consiste en utilizar los métodos *settings* o *setting*.
 
@@ -1395,7 +1429,7 @@ iris.ui(
  }
 );
 ```
-##Trabajando con eventos
+##<a name="events"></a>Trabajando con eventos
 
 Iris implementa el patrón "Publish–subscribe" para trabajar con eventos. Los eventos en Iris, a diferencia de los de JQuery, no están ligados a ningún objeto del DOM.
 
@@ -1593,7 +1627,7 @@ iris.destroyEvents(EVENT.MY_UIS_DESTROYED, [fn_my_ui_event]);
 <!--TODO Sugerencia: QUe el método iris.off permita elimnar todas las funciones en vez de tener que pasar una a una-->
 
 
-##Utilizando locales y regionales
+##<a name="locals"></a>Utilizando locales y regionales
 
 Iris permite trabajar con aplicaciones **multiidioma**. Para definir el idioma con el que trabaja la aplicación utilizamos:
 
@@ -1924,7 +1958,7 @@ y Year, 2 digits. '99'
 Y Year, 4 digits. '1999'
 </pre>
 
-##Lamadas Ajax y servicios REST
+##<a name="ajax"></a>Lamadas Ajax y servicios REST
 
 Iris tiene funciones que son *wrappers* al método *ajax()* de *JQuery*.
 
@@ -2003,7 +2037,7 @@ iris.screen(
 
 Observe que hemos llamado al método *iris.service* y asignado su retorno a una variable. El método *iris.service* recibe como parámetro una función que será llamada por Iris pasándole como parámetro un objeto de tipo *Service* creado por Iris. Este objeto dispone de los métodos *get*, *del*, *push* y *post* para acceder a servicios REST y pueden recibir una función de éxito o de error para procesar la respuesta obtenida.
 
-##Paso a producción
+##<a name="production"></a>Paso a producción
 
 Iris tiene una serie de métodos que facilitan el paso de desarrollo a producción y las tareas de depuración.
 
@@ -2066,11 +2100,11 @@ iris.ui(
  "my_ui.js");
 ```
 
-##Pruebas de unidad en Iris
+##<a name="unit_test"></a>Pruebas de unidad en Iris
 
 Para probar su correcto funcionamiento y detectar errores, se han realizado pruebas de unidad de todos los métodos de Iris. Las pruebas de unidad se han realizado con la librería [QUnit](http://qunitjs.com/).
 
 Las pruebas de unidad son una fuente adicional para conocer el funcionamiento de Iris. Puede consultar las pruebas realizadas en el directorio [test](https://github.com/iris-js/iris/tree/iris-grunt/test).
 
 
-#<a name="paso-a-paso"></a>Contruyendo paso a paso una aplicación desde cero
+#<a name="step_by_step"></a>Contruyendo paso a paso una aplicación desde cero
