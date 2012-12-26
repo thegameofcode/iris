@@ -2772,7 +2772,7 @@ Observe lo siguiente:
 * Los *UIs* creados contienen un enlace que permite navegar al *Screen* con *Hash-URL* *#products*.
 * Este *Screen* recibe el parámetro *idCategory* para conocer de qué categoría queremos recuperar los productos.
 
-<a name="step_by_step_products"></a>*Screen* Products
+##<a name="step_by_step_products"></a>*Screen* Products
 
 El <a href="#products_img">*Screen* *Products*</a> permite recuperar del servidor los productos de la categoría seleccionada y añadir los que queramos a la lista de la compra.
 
