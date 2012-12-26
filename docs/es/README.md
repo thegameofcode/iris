@@ -2116,17 +2116,17 @@ En esta sección vamos utilizar Iris para construir una sencilla aplicación que
 
 La aplicación va a permitir realizar la lista de la compra de una serie de productos agrupados en categorías. En las siguientes imágenes presentamos las principales pantallas de la aplicación.
 
-*#home:*
-<a name="home_img"></a>![home](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/home.png)
+<a name="home_img"></a>*#home:*
+![home](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/home.png)
 
-*#categories:*
-<a name="categories_img"></a>![categories](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/categories.png)
+<a name="categories_img"></a>*#categories:*
+![categories](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/categories.png)
 
-*#products:*
-<a name="products_img"></a>![products](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/products.png)
+<a name="products_img"></a>*#products:*
+![products](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/products.png)
 
-*#shopping:*
-<a name="shopping_img"></a>![shopping](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/shopping_list.png)
+<a name="shopping_img"></a>*#shopping:*
+![shopping](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/shopping_list.png)
 
 Además de Iris, se ha utilizado [Twitter Bootstrap](http://twitter.github.com/bootstrap/) para *maquetar* la aplicación y [JQuery DataTables](http://www.datatables.net/) para presentar los productos de la lista de la compra. En esta sección no se va a explicar el uso de estas librerías aunque su conocimiento no es esencial para comprender el funcionamiento de la aplicación.
 
