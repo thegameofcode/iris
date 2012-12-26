@@ -2106,5 +2106,19 @@ Para probar su correcto funcionamiento y detectar errores, se han realizado prue
 
 Las pruebas de unidad son una fuente adicional para conocer el funcionamiento de Iris. Puede consultar las pruebas realizadas en el directorio [test](https://github.com/iris-js/iris/tree/iris-grunt/test).
 
-
 #<a name="step_by_step"></a>Contruyendo paso a paso una aplicación desde cero
+
+En esta sección vamos utilizar Iris para construir una sencilla aplicación. La aplicación va a permitir realizar la lista de la compra de una serie de productos agrupados en categorías. En las siguinetes imágenes presentamos las prinicpales pantallas de la aplciación.
+
+*#home:*
+![home](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/home.png)
+
+*#categories:*
+![categories](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/categories.png)
+
+*#products:*
+![products](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/products.png)
+
+*#shopping:*
+![shopping](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/shopping_list.png)
+
