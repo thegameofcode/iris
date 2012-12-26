@@ -30,6 +30,7 @@
   * <a href="#production">Paso a producción</a><br>
   * <a href="#unit_test">Pruebas de unidad en Iris</a><br>
 * <a href="#step_by_step">Contruyendo paso a paso una aplicación desde cero</a><br>
+  * <a href="#directories">Estructura de directorios</a><br>
 
 #<a name="what_is_it"></a>¿Qué es Iris?
 
@@ -2108,7 +2109,9 @@ Las pruebas de unidad son una fuente adicional para conocer el funcionamiento de
 
 #<a name="step_by_step"></a>Contruyendo paso a paso una aplicación desde cero
 
-En esta sección vamos utilizar Iris para construir una sencilla aplicación. La aplicación va a permitir realizar la lista de la compra de una serie de productos agrupados en categorías. En las siguinetes imágenes presentamos las prinicpales pantallas de la aplciación.
+En esta sección vamos utilizar Iris para construir una sencilla aplicación que nos permita comprender como integrar todo lo visto anteriormente.
+
+La aplicación va a permitir realizar la lista de la compra de una serie de productos agrupados en categorías. En las siguientes imágenes presentamos las principales pantallas de la aplicación.
 
 *#home:*
 ![home](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/home.png)
@@ -2121,4 +2124,23 @@ En esta sección vamos utilizar Iris para construir una sencilla aplicación. La
 
 *#shopping:*
 ![shopping](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/shopping_list.png)
+
+Además de Iris, se ha utilizado [Twitter Bootstrap](http://twitter.github.com/bootstrap/) para *maquetar* la aplicación y [JQuery DataTables](http://www.datatables.net/) para presentar los productos de la lista de la compra. En esta sección no se va a explicar el funcionamiento de estas librerías aunque su conocimiento no es esencial para comprender esta sección.
+
+##<a name="directories"></a>Estructura de directorios
+
+En Iris debemos crear un fichero *html* y otro *js* por cada componente. En aplicaciones de tamaño medio/grande, lo normal es que haya decenas e incluso centenares de archivos. Es importante que, desde el principio, definamos una estructura de directorios que nos permita localizar fácilmente cada uno de estos archivos.
+
+Vamos a proponer una estructura determinada aunque cualquier otra que cumpla el propósito anterior será igualmente válida. En nuestro ejemplo vamos a crear un fichero *shopping* para almacenar los componentes de Iris y fuera de este fichero guardaremos, librerías, estilos, imágenes, que no sean específicos de Iris. En el directorio *shopping* vamos almacenar por separado los componentes de tipo *Screen* de los de tipo *UI* creando un directorio para cada tipo. Además vamos a crear subdirectorios para almecenar los  componentes que definen un mismo estado de la aplicación.
+
+En la siguiente imagen vemos la estructura de directorios y los archivos que contienen:
+
+![www_directories](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/www_directories.png)
+
+Más detalladamente, el contenido del directorio *shopping* será el siguiente:
+
+![shopping_directories](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/shopping_directories.png)
+
+Observe que, para hacer más sencillo el ejemplo, se ha creado un directorio *json* que permite cargar los productos y las categorias desde el servidor Web sin depender de ninguna tecnología de servidor.
+
 
