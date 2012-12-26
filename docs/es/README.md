@@ -39,6 +39,7 @@
   * <a href="#step_by_step_shopping">*Screen* Shopping</a><br>
   * <a href="#step_by_step_grunt">Automatizando procesos con *Grunt*</a><br>
   * <a href="#step_by_step_qunit">Pruebas de unidad con *QUnit*</a><br>
+
 #<a name="what_is_it"></a>¿Qué es Iris?
 
 [Iris](https://github.com/iris-js/iris) es un *framework* escrito en Javascript para construir el *front-end* de una aplicación Web que, aplicando distintas técnicas, permite que las aplicaciones sean eficientes, rápidas, estructuradas y modulares.
@@ -2922,5 +2923,9 @@ El fichero de productos para una categoría cualquiera, por ejemplo *category_2.
 La explicación de estos ficheros es similar a la que realizamos para el *UI* *category_list_item*.
 
 ##<a name="step_by_step_shopping"></a>*Screen* Shopping
-##<a name="step_by_step_grunt"></a>Automatizando procesos con *[Grunt](http://gruntjs.com/)*
-##<a name="step_by_step_qunit"></a>Pruebas de unidad con *[QUnit](http://qunitjs.com/)*
+##<a name="step_by_step_grunt"></a>Automatizando procesos con *Grunt*
+*[Grunt](http://gruntjs.com/)* es ...
+
+##<a name="step_by_step_qunit"></a>Pruebas de unidad con *QUnit*
+*[QUnit](http://qunitjs.com/)* es ...
+
