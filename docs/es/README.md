@@ -31,6 +31,8 @@
   * <a href="#unit_test">Pruebas de unidad en Iris</a><br>
 * <a href="#step_by_step">Contruyendo paso a paso una aplicación desde cero</a><br>
   * <a href="#directories">Estructura de directorios</a><br>
+  * <a href="#step_by_step_welcome">*Screen* Welcome</a>
+  * <a href="#step_by_step_home">*Screen* Home</a>
 
 #<a name="what_is_it"></a>¿Qué es Iris?
 
@@ -2114,7 +2116,7 @@ En esta sección vamos utilizar Iris para construir una sencilla aplicación que
 La aplicación va a permitir realizar la lista de la compra de una serie de productos agrupados en categorías. En las siguientes imágenes presentamos las principales pantallas de la aplicación.
 
 *#home:*
-![home](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/home.png)
+<a name="home_img"></a>![home](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/home.png)
 
 *#categories:*
 ![categories](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/categories.png)
@@ -2125,7 +2127,7 @@ La aplicación va a permitir realizar la lista de la compra de una serie de prod
 *#shopping:*
 ![shopping](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/shopping_list.png)
 
-Además de Iris, se ha utilizado [Twitter Bootstrap](http://twitter.github.com/bootstrap/) para *maquetar* la aplicación y [JQuery DataTables](http://www.datatables.net/) para presentar los productos de la lista de la compra. En esta sección no se va a explicar el funcionamiento de estas librerías aunque su conocimiento no es esencial para comprender esta sección.
+Además de Iris, se ha utilizado [Twitter Bootstrap](http://twitter.github.com/bootstrap/) para *maquetar* la aplicación y [JQuery DataTables](http://www.datatables.net/) para presentar los productos de la lista de la compra. En esta sección no se va a explicar el uso de estas librerías aunque su conocimiento no es esencial para comprender el funcionamiento de la aplciación.
 
 ##<a name="directories"></a>Estructura de directorios
 
@@ -2143,4 +2145,225 @@ Más detalladamente, el contenido del directorio *shopping* será el siguiente:
 
 Observe que, para hacer más sencillo el ejemplo, se ha creado un directorio *json* que permite cargar los productos y las categorias desde el servidor Web sin depender de ninguna tecnología de servidor.
 
+##<a name="step_by_step_welcome"></a>*Screen* Welcome
 
+En esta sección vamos a preparar la aplciación para que sea capaz de ejecutar el *Screen* de bienvenida.
+
+Estos son los ficheros necesarios y su contenido:
+
+En *index.html*:
+
+```html
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>iris shopping</title>
+
+        <link type="text/css" rel="stylesheet" href="./css/bootstrap.css">
+        <link type="text/css" rel="stylesheet" href="./css/jquery.dataTables.css">
+        <link type="text/css" rel="stylesheet" href="./css/shopping.css">
+
+        <script type='text/javascript' src='./js/jquery-1.8.3.js'></script>
+        <script type='text/javascript' src='./js/iris-0.5.0-SNAPSHOT.js'></script>
+        <script type='text/javascript' src='./js/bootstrap.js'></script>
+        <script type='text/javascript' src='./js/jquery.dataTables.js'></script>      
+        
+        <script type='text/javascript' src='./js/shopping_list.js'></script>
+        
+        <script type='text/javascript' src='./js/init.js'></script>
+
+    </head>
+    <body>
+    </body>
+</html>
+```
+
+Este fichero contiene la estructura clásica de una página *html*. Objserve que la etiqueta *head* permite importar las hojas de estilo y las librerías y ficheros de *javascript* necesarios.
+
+Centremos nuestra atención en el fichero *init.js*:
+
+```js
+$(document).ready(
+    function () {
+        
+        function _setLang() {    
+            var regExp = /[?&]lang=[a-z][a-z][\-_][A-Z][A-Z]/;
+            var lang = window.location.href.match(regExp);
+            if ( lang !== null) {
+                iris.locale(lang[0].substring(lang[0].length - 5, lang[0].length));
+            } else {
+                iris.locale("en_US"); //Default Lang
+            }
+        }
+            
+        iris.translations("es_ES", {                
+            ERROR: "Se ha producido el siguiente error",
+            JQUERY : {
+                DATATABLES: {
+                    SEARCH: "Buscar",
+                    NEXT: "Siguiente",
+                    PREVIOUS: "Anterior",
+                    SHOW: "Mostrando _MENU_ líneas"
+                }
+            }
+            
+        });
+            
+        iris.translations("en_US", {                
+            ERROR: "There was an error",
+            JQUERY : {
+                DATATABLES: {
+                    SEARCH: "Search",
+                    NEXT: "Next",
+                    PREVIOUS: "Previous",
+                    SHOW: "Show _MENU_ entries"
+                }
+            }
+        });
+
+        _setLang();
+        
+        iris.welcome("shopping/screen/welcome.js");
+                                
+    }
+);
+```
+Observe que lo primero que hacemos en este *script* es cargar algunas de las traducciones que vamos a necesitar. Hemos decidido que cada fichero de Javascript cargue las traducciones que vaya a utilizar. En el caso de *init.js* vamos a cargar las traducciones comunes en toda la aplciación. Una alternativa perfectamente aceptable sería tener un único punto donde cargar las traducciones de toda la aplicación.
+
+Después llamamos a la función *_setLang* que nos permite definir el idioma de la aplicación. El idioma se seleccionará a partir del parámetro *lang* que se haya pasado en el *QeryString* de la *URL*. Si no se ha pasado este parámetro se seleccionará el idioma por defecto.
+
+Por último cargamos el *Screen* Welcome.
+
+En *welcome.js*:
+
+```js
+iris.screen(
+    function (self) {	
+        self.create = function () {
+            
+            function _ajaxPrepare() {
+                $.ajaxPrefilter(function( options, originalOptions, jqXHR ) {            
+                    self.get("screens").hide();
+                    self.get("loading").show();                
+                    jqXHR.always(function() {
+                        self.get("loading").hide();
+                        self.get("screens").show();
+                    });            
+                });                
+            }
+            
+            function _createScreens() {
+                self.screen("screens", "#home", "shopping/screen/home.js");
+                self.screen("screens", "#lang", "shopping/screen/lang/lang.js");
+                self.screen("screens", "#categories", "shopping/screen/products/categories.js");
+                self.screen("screens", "#products", "shopping/screen/products/products.js");            
+                self.screen("screens", "#shopping", "shopping/screen/list/shopping.js");
+            }
+        
+            function _changeLang(link) {
+                var regExp = /[?&]lang=[a-z][a-z][\-_][A-Z][A-Z]/;
+                var lang = window.location.href.match(regExp);
+                var url = window.location.href;
+                if ( lang === null) {
+                    lang = "lang=" + link.data("lang");
+                    if (window.location.href.match(/[?]/)) {
+                        lang = "&" + lang;                            
+                    } else {
+                        lang = "?" + lang;
+                    }
+                    url += lang;
+                } else {
+                    var first = lang[0].substr(0,6);
+                    url = window.location.href.replace(regExp, first + link.data("lang"));                       
+                }
+                    
+                window.location.href = url;
+                window.location.reload(true);
+            }
+            
+            
+            iris.translations("es_ES", {    
+                LOADING: "Cargando...",
+                MENU: {
+                    WELCOME: "Ejemplo de lista de la compra",
+                    HOME: "Incio",
+                    PRODUCTS: "Productos",
+                    SHOPPING_LIST:"Lista de la compra"
+                }
+            });
+            
+            iris.translations("en_US", {
+                LOADING: "Loading...",
+                MENU: {
+                    WELCOME: "Shopping List Example",
+                    HOME: "Home",
+                    PRODUCTS: "Products",
+                    SHOPPING_LIST: "Shopping List"
+                }
+            });
+            
+            
+            self.tmpl("shopping/screen/welcome.html");
+            
+            _ajaxPrepare();
+            
+            _createScreens();
+            
+            $("[data-lang]").click(
+                function (event) {
+                    _changeLang($(this));
+                    event.preventDefault();
+                }
+                );
+            
+            
+            if ( !document.location.hash ) {                
+                iris.goto("#home"); //Default page
+            }
+        };
+    } , "shopping/screen/welcome.js");
+
+```
+Lo más relevante de este fichero es:
+* La función *_ajaxPrepare* permite poner un texto *cargando...* cada vez que se efectúa una llamada *AJAX*.
+* La función *_createScreens* registra los *screens* de la aplicación.
+* La función _changeLang* recarga la aplicación añadiendo el código del idioma que se haya seleccionado como un parámetro del *QuerySstring*.
+* El *Hash-URL* *#home* es la página por defecto de la aplciación.
+
+Finalmente, el fichero *welcome.html* contendrá:
+
+```html
+<div class="container">
+    <div class="navbar navbar-inverse">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a class="brand" href="#home">@@MENU.WELCOME@@</a>
+                <div class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li><a href="#home">@@MENU.HOME@@</a></li>
+                        <li><a href="#categories">@@MENU.PRODUCTS@@</a></li>
+                        <li><a href="#shopping">@@MENU.SHOPPING_LIST@@</a></li>                        
+                    </ul>
+                    <ul class="nav pull-right">
+                        <li><a href="#lang" data-lang="es_ES"><i class="icon-spain-flag"></i></a></li>
+                        <li><a href="#lang" data-lang="en_US"><i class="icon-united-kingdom-flag"></i></a></li>
+                    </ul>
+                </div><!--/.nav-collapse -->
+            </div>
+        </div>
+    </div>
+    <div class="divContainer">
+        <div data-id="loading" class="divElement loading">@@LOADING@@</div>
+        <div class="container divElement" data-id="screens"/>        
+    </div>
+</div>
+```
+
+Observe en este archivo se definen los menús en *Bootstrap* para acceder a las distintas secciones de la aplicación. En lugar de colocar los textos directamente, se utiliza la sintaxis de Iris para permitir localizalos en los ficheros de traducción. En la esquina superior derecha, <a href="#home_img">ver imagen</a>, se sitúan iconos para cambiar el idioma. Por último hay un contenedor donde se cargarán los *screens* de la aplicación.
+
+##<a name="step_by_step_home"></a>*Home* Welcome
