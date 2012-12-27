@@ -25,7 +25,9 @@ window.iris = iris;
 
         _hasConsole = ( window.console && window.console.log );
 
-        _logEnabled = urlContains("localhost", "127.0.0.1");
+        var isLocalEnv = urlContains("localhost", "127.0.0.1");
+        _logEnabled = isLocalEnv;
+        _cache = !isLocalEnv;
     }
 
     function urlContains () {
@@ -86,7 +88,7 @@ window.iris = iris;
         if ( arguments.length > 0 ) {
             _cache = !urlContains(arguments);
         } else {
-            return _logEnabled;
+            return !_cache;
         }
     };
 

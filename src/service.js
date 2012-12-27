@@ -17,7 +17,14 @@
             "dataType": (type ? type : "json"),
             "async": true,
             "success": f_success,
-            "error": f_error // function (p_request, p_textStatus, p_errorThrown)
+            "error": function (p_request, p_textStatus, p_errorThrown) {
+
+                iris.notify(iris.SERVICE_ERROR, {req: p_request, status: p_textStatus, error: p_errorThrown});
+
+                if ( f_error !== undefined ) {
+                    f_error();
+                }
+            }
         });
     };
 

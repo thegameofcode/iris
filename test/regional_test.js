@@ -27,6 +27,8 @@
   module('Module Regional');
 
   test("Regional Test", function() {
+    //stop();
+
     var testRegional = {
       dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
       monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
@@ -41,12 +43,13 @@
     };
 
     iris.locale("locale-test", testRegional);
-
     iris.locale("locale-test");
+
+    //strictEqual(iris.locale(), "locale-test", "The locale must be locale-test because it's the first regional set");
 
     deepEqual(iris.regional(), testRegional);
 
-
+    //start();
   });
 
 }(jQuery));

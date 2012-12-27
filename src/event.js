@@ -84,6 +84,6 @@
     // Iris custom events
     //
     iris.BEFORE_NAVIGATION = "iris_before_navigation";
-
+    iris.SERVICE_ERROR = "iris_service_error";
 
 })(jQuery);

@@ -66,7 +66,7 @@
 
   test("Currency format", function() {
 
-    var amount = 1234.56;
+    var amount = 1234.559;
     iris.locale("es_ES");
     var formatted = iris.currency(amount);
     strictEqual(formatted, "1.234,56", "Currency Spanish Format");
@@ -75,6 +75,30 @@
     iris.locale("en_US");
     formatted = iris.currency(amount);
     strictEqual(formatted, "1,234.56", "Currency USA Format");
+
+  });
+
+  test("Currency with custom format", function() {
+
+    iris.locale(
+      "custom-locale", {
+        dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+        monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+        dateFormat: "d/m/Y H:i:s",
+        currency: {
+            formatPos: "n",
+            formatNeg: "-n",
+            decimal: ",",
+            thousand: ".",
+            precision: 0
+        }
+    });
+
+    iris.locale("custom-locale");
+
+    var amount = 34.818;
+    var formatted = iris.currency(amount);
+    strictEqual(formatted, "35", "Precision zero");
 
   });
 
