@@ -91,14 +91,21 @@
         var decimal = val % 1;
         var num = String(Math.abs(val - decimal));
 
-        decimal = String(Math.abs(decimal).toFixed(settings.precision));
-        decimal = decimal.substr(2);
+        if ( settings.precision === 0 ) {
+            num = parseInt(val.toFixed(), 10);
 
-        for(var i = 0; i < Math.floor((num.length - (1 + i)) / 3); i++) {
-            num = num.substring(0, num.length - (4 * i + 3)) + settings.thousand + num.substring(num.length - (4 * i + 3));
+        } else {
+            decimal = String(Math.abs(decimal).toFixed(settings.precision));
+            decimal = decimal.substr(2);
+
+            for(var i = 0; i < Math.floor((num.length - (1 + i)) / 3); i++) {
+                num = num.substring(0, num.length - (4 * i + 3)) + settings.thousand + num.substring(num.length - (4 * i + 3));
+            }
+
+            num = num + settings.decimal + decimal;
         }
 
-        return format.replace("n", num + settings.decimal + decimal);
+        return format.replace("n", num);
     };
 
     iris.val = function (p_obj, p_label) {
