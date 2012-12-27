@@ -43,16 +43,28 @@
     strictEqual(translated, "??TEST.LABEL??", "Should get a non created value");
 
   });
-
+  
   asyncTest("Lang Load Test", function() {
     expect(3);
 
     iris.translations("fr-FR", "/test/service/lang.json", {"success" : onSuccess, "error" : onError });
   });
 
-  function onSuccess () {
+  asyncTest("Lang Load Test", function() {
+    expect(3);
 
-    iris.locale("fr-FR");
+    iris.translations("fr-FR2", "http://localhost:8080/test/service/lang.json", {"success" : onSuccess, "error" : onError });
+  });
+  
+  asyncTest("Lang Load Test", function() {
+    expect(3);
+
+    iris.translations("fr-FR3", "test/service/lang.json", {"success" : onSuccess, "error" : onError });
+  });
+
+  function onSuccess (locale) {
+      
+    iris.locale(locale);
     var translated = iris.translate("LANG-TEST");
     strictEqual(translated, "LANG-TEST-VALUE", "Should get a lang value");
 

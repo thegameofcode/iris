@@ -22,6 +22,11 @@
     }
 
     function _loadTranslations(p_locale, p_uri, p_settings) {
+        
+        if (p_uri.indexOf("http") !== 0) {
+            p_uri = iris.baseUri() + p_uri
+        }
+        
         iris.log("[translations]", p_locale, p_uri);
 
         var ajaxSettings = {
