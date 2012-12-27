@@ -88,7 +88,7 @@ window.iris = iris;
         if ( arguments.length > 0 ) {
             _cache = !urlContains(arguments);
         } else {
-            return _logEnabled;
+            return !_cache;
         }
     };
 
