@@ -9,6 +9,10 @@
             }
             $.extend(_regional[p_locale], p_regional);
 
+            if ( _locale === undefined ) {
+                _locale = p_locale;
+            }
+
         } else if ( p_locale !== undefined ) {
             _locale = p_locale;
 
