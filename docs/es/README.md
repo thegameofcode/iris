@@ -2117,6 +2117,8 @@ Las pruebas de unidad son una fuente adicional para conocer el funcionamiento de
 
 En esta sección vamos utilizar Iris para construir una sencilla aplicación que nos permita comprender como integrar todo lo visto anteriormente.
 
+Puede descargase  la aplicación en el siguiente [enlace](https://github.com/surtich/iris/blob/iris-grunt/docs/iris-shopping.tar.gz?raw=true).
+
 La aplicación va a permitir realizar la lista de la compra de una serie de productos agrupados en categorías. En las siguientes imágenes presentamos las principales pantallas de la aplicación.
 
 <a name="home_img"></a>*#home:*
@@ -2353,10 +2355,10 @@ Finalmente, el fichero *welcome.html* contendrá:
                         <li><a href="#shopping">@@MENU.SHOPPING_LIST@@</a></li>                        
                     </ul>
                     <ul class="nav pull-right">
-                        <li><a href="#lang" data-lang="es_ES"><i class="icon-spain-flag"></i></a></li>
-                        <li><a href="#lang" data-lang="en_US"><i class="icon-united-kingdom-flag"></i></a></li>
+                        <li><a href="#" data-lang="es_ES"><i class="icon-spain-flag"></i></a></li>
+                        <li><a href="#" data-lang="en_US"><i class="icon-united-kingdom-flag"></i></a></li>
                     </ul>
-                </div><!--/.nav-collapse -->
+                </div>
             </div>
         </div>
     </div>
@@ -3202,8 +3204,8 @@ Y en *product_shopping_list_item.html*:
 ```
 
 ##<a name="step_by_step_grunt"></a>Automatizando procesos con *Grunt*
-*[Grunt](http://gruntjs.com/)* es ...
+*[Grunt](http://gruntjs.com/)* es ...proximamente.
 
 ##<a name="step_by_step_qunit"></a>Pruebas de unidad con *QUnit*
-*[QUnit](http://qunitjs.com/)* es ...
+*[QUnit](http://qunitjs.com/)* es ...proximamente.
 
