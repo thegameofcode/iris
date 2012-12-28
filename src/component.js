@@ -581,7 +581,7 @@
         for(var f = 0, F = this.uis.length; f < F; f++) {
             ui = this.uis[f];
 
-            if(ui.con.selector === contSelector) {
+            if ( ui.con.selector.indexOf(contSelector) !== -1 ) {
                 this.uis.splice(f--, 1);
                 F--;
 
