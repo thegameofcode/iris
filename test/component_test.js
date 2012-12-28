@@ -49,7 +49,7 @@
   asyncTest("Navigate To Screen", function() {
     
     expect(3);
-
+    
     iris.goto("#screen");
 
   });

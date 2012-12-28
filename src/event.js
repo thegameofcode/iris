@@ -3,6 +3,10 @@
 
     // static object to store all app callbacks
     var _events = {};
+    
+    function _init() {
+        _events = {};
+    }
 
     iris.on = function (p_eventName, f_func) {
         if ( !_events.hasOwnProperty(p_eventName) ) {
@@ -85,5 +89,7 @@
     //
     iris.BEFORE_NAVIGATION = "iris_before_navigation";
     iris.SERVICE_ERROR = "iris_service_error";
+    
+    iris.init(_init);
 
 })(jQuery);

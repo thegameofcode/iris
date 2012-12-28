@@ -44,19 +44,19 @@
 
   });
   
-  asyncTest("Lang Load Test", function() {
+  asyncTest("Lang Load Relative URL Test", function() {
     expect(3);
 
     iris.translations("fr-FR", "/test/service/lang.json", {"success" : onSuccess, "error" : onError });
   });
 
-  asyncTest("Lang Load Test", function() {
+  asyncTest("Lang Load Absolute URL Test", function() {
     expect(3);
 
     iris.translations("fr-FR2", "http://localhost:8080/test/service/lang.json", {"success" : onSuccess, "error" : onError });
   });
   
-  asyncTest("Lang Load Test", function() {
+  asyncTest("Lang Load Relative URL Test", function() {
     expect(3);
 
     iris.translations("fr-FR3", "test/service/lang.json", {"success" : onSuccess, "error" : onError });

@@ -895,7 +895,7 @@ Podemos probarlo con el siguiente código:
 En *welcome.html*:
 
 ```html
-div>
+<div>
  <h1>Welcome Screen</h1>
  <p>This is the initial screen.</p>
  <button data-id="create_home_screen">Click create a Home Screen</button>

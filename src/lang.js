@@ -2,7 +2,9 @@
 
     var _translations = {};
 
-
+    function _init() {
+        _translations = {};
+    }
     //
     // Private
     //
@@ -24,7 +26,7 @@
     function _loadTranslations(p_locale, p_uri, p_settings) {
         
         if (p_uri.indexOf("http") !== 0) {
-            p_uri = iris.baseUri() + p_uri
+            p_uri = iris.baseUri() + p_uri;
         }
         
         iris.log("[translations]", p_locale, p_uri);
@@ -88,5 +90,7 @@
         }
         return (value) ? value : "??" + p_label + "??";
     };
+    
+    iris.init(_init);
 
 })(jQuery);
