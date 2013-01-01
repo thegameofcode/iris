@@ -61,7 +61,7 @@
     
     
     asyncTest("Test Destory #home after goto #home, then goto #help", function() {
-        window.expect(2);
+        window.expect(3);
         
         iris.deferred_main.done(
             function() {
@@ -140,7 +140,7 @@
         
 
     asyncTest("Test Destory #home after goto #home, then goto #home2, then goto #help", function() {
-        window.expect(3);
+        window.expect(5);
         
         iris.deferred_main.done(
             function() {
@@ -175,7 +175,7 @@
     );
         
     asyncTest("Test Destory #home after goto #home, then goto #home2, then goto #home3, then goto #help", function() {
-        window.expect(4);
+        window.expect(7);
         
         iris.deferred_main.done(
             function() {
@@ -218,7 +218,7 @@
         
     
     asyncTest("Test goto #home after destroy #home", function() {
-        window.expect(3);
+        window.expect(4);
         
         iris.deferred_main.done(
             function() {
@@ -278,7 +278,7 @@
         iris.deferred_home3.done(
             function() {
                 setTimeout(function () {
-                    window.throws(function() {
+                    window.throws(function() {                        
                         iris.destroyScreen("#home");
                     },"It is impossible to destroy the parent screen");
                     window.start();

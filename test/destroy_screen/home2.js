@@ -24,6 +24,12 @@ iris.screen(
             iris.deferred_home2.resolve();
         };
         
+        self.sleep = function () {
+            window.console.log("Home2 Screen asleep");
+            window.ok(true, "Home2 Screen asleep");
+        };
+        
+        
         self.destroy = function () {
             window.console.log("Home2 Screen Destroyed");
             window.ok(true, "Home2 Screen Destroyed");

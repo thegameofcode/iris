@@ -25,6 +25,11 @@ iris.screen(
             iris.deferred_home.resolve();
         };
         
+        self.sleep = function () {
+            window.console.log("Home Screen asleep");
+            window.ok(true, "Home Screen asleep");
+        };
+        
         self.destroy = function () {
             window.console.log("Home Screen Destroyed");
             window.ok(true, "Home Screen Destroyed");

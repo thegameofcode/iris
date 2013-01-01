@@ -334,32 +334,25 @@
         return screenObj;
     }
 
-    function _destroyScreen(p_screenPath) {
+    function _destroyScreen(p_screenPath, skipDestroyInnerScreens) {
         
         function checkHierarchy() {
             var rdo = true;
             if (_prevHash !== "") {
                 var containerToDelete = _screen[p_screenPath].get().parent();
                 var currentContainer = _screen[_prevHash].get().parent();
-                rdo = containerToDelete === undefined || currentContainer === undefined || (p_screenPath !== _prevHash && containerToDelete.find(currentContainer).get(0) === undefined);
+                rdo = containerToDelete === undefined || currentContainer === undefined || (p_screenPath !== _prevHash && containerToDelete.find(currentContainer).size() === 0);
             }
             return rdo;
         }
         
         function destroyInnersScreens() {
-            
-            var containers = _screen[p_screenPath].get().find("[data-id]");
-            
-            for (var i = 0; i < containers. length ; i++) {
-                var containerId = "[data-id=" + $(containers.get(i)).data("id") + "]";                
-                for (var hashUrl in _screenContainer) {
-                    var selector = _screenContainer[hashUrl].selector;
-                    if (selector !== undefined && selector === containerId) {
-                        delete _screenUrl[hashUrl];                                                
-                        delete _screenContainer[hashUrl];
-                        _destroyScreen(hashUrl);
-                        break;
-                    }
+            for (var hashUrl in _screenContainer) {
+                var selector = _screenContainer[hashUrl].selector;
+                if (selector !== "" && _screen[p_screenPath].get().find(selector).size() !== 0) {
+                    delete _screenUrl[hashUrl];                                                
+                    delete _screenContainer[hashUrl];
+                    _destroyScreen(hashUrl, true);
                 }
             }
         }
@@ -369,6 +362,9 @@
                 throw "Can not delete the current Screen, nor the father of the current Screen";
             }
             destroyInnersScreens();
+            if (skipDestroyInnerScreens !== true) {
+                
+            }
             
             var contextId = _screen[p_screenPath].get().parent().data("screen_context");
             
