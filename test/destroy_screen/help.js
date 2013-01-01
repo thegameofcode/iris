@@ -14,7 +14,10 @@ iris.screen(
         
         self.awake = function () {
             window.console.log("Help Screen Awaked");
-            iris.deferred_help.resolve();
+            if (iris.deferred_help !== undefined) {
+                iris.deferred_help.resolve();
+            }
+            
         };
     }
     

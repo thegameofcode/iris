@@ -362,9 +362,6 @@
                 throw "Can not delete the current Screen, nor the father of the current Screen";
             }
             destroyInnersScreens();
-            if (skipDestroyInnerScreens !== true) {
-                
-            }
             
             var contextId = _screen[p_screenPath].get().parent().data("screen_context");
             
@@ -613,18 +610,23 @@
     };
 
     Component.prototype.ui = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
-        
         for (var hashUrl in _screenContainer) {
             if ("[data-id=" + p_id + "]" === _screenContainer[hashUrl].selector) {
                 throw "You can not use the " + p_id + " container to store an UI if It has already been registered as a Screen container.";
             }
         }
-        
         var $container = this.get(p_id);
-        if($container.size() === 1) {
+        
+        if($container !== undefined && $container.size() === 1) {
             var uiInstance = _instanceUI($container, $container.data("id"), p_jsUrl, p_uiSettings, p_templateMode);
+            if (uiInstance._tmplMode === undefined || uiInstance._tmplMode === uiInstance.REPLACE) {
+                this.el[p_id] = undefined;
+            }
             this.uis[this.uis.length] = uiInstance;
+            
             return uiInstance;
+        } else {
+            throw "The container does not exist or has been replaced.";
         }
     };
 

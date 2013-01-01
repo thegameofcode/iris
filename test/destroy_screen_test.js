@@ -40,6 +40,14 @@
         iris.deferred_home3 = new $.Deferred();
     }
     
+    function destroyDeferred() {
+        iris.deferred_main = undefined;
+        iris.deferred_home = undefined;
+        iris.deferred_help = undefined;
+        iris.deferred_home2 = undefined;
+        iris.deferred_home3 = undefined;
+    }
+    
     function gotoMain() {
         iris.welcome("test/destroy_screen/welcome.js");
         iris.goto("#main");
@@ -49,12 +57,14 @@
     
     module( "Module Destroy Screen", {
         setup: function() {
+            window.location.hash = "";
             iris.init();
             clearBody();
             createDeferred();
             gotoMain();
         },
         teardown: function () {
+            destroyDeferred();
         }
     });
     
@@ -207,6 +217,48 @@
             function() {
                 setTimeout(function () {
                     iris.destroyScreen("#home");    
+                    window.start();
+                }, 10);
+            }
+            );
+        
+        
+    }
+    );
+        
+        asyncTest("Test Destory #home2 after goto #home, then goto #home2, then goto #home3, then goto #home", function() {
+        window.expect(6);
+        
+        iris.deferred_main.done(
+            function() {
+                iris.goto("#home");
+            }
+            );
+        
+        iris.deferred_home.done(
+            function() {
+                iris.goto("#home2");
+            }
+            );
+        
+        
+        iris.deferred_home2.done(
+            function() {
+                iris.goto("#home3");
+            }
+            );
+        
+        iris.deferred_home3.done(
+            function() {
+                iris.goto("#help");
+            }
+            );
+        
+        
+        iris.deferred_help.done(
+            function() {
+                setTimeout(function () {
+                    iris.destroyScreen("#home2");    
                     window.start();
                 }, 10);
             }

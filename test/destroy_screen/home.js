@@ -17,12 +17,14 @@ iris.screen(
                     iris.goto("#home2");
                 }
                 );
-            window.ok(true, "Home Screen Creared");
+            window.ok(true, "Home Screen Created");
         };
         
         self.awake = function () {
             window.console.log("Home Screen Awaked");
-            iris.deferred_home.resolve();
+            if (iris.deferred_home !== undefined) {
+                iris.deferred_home.resolve();
+            }
         };
         
         self.sleep = function () {
