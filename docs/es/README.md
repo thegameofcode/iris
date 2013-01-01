@@ -387,6 +387,8 @@ self.create = function () {
 ```
 Observe como el método **goto** de Iris permite navegar al Hash-URL especificado y que, para capturar el evento *click* del botón, hemos utiliado el método **get** del componente de Iris que recibe el valor de su atributo *data-id*. Iris buscará un elemento en el DOM del componente con ese *data-id* y lo devolverá como un objeto de JQuery.
 
+Si al método *get* no se le pasara ningún argumento, Iris devolvería el objeto JQuery que corresponda con el elemento raíz del componente.
+
 ##<a name="showing_some_screens"></a>Mostrando varios screens
 
 En este apartado vamos a crear un tercer Screen llamado Help.
@@ -885,6 +887,8 @@ Es mejor tener un contenedor para UIs y otro para Screens y no mezclar conceptos
 > Podemos reutilizar un contenedor para almacenar UIs de distinto tipo pero hay que tener mucho cuidado con la definición que se haga en el método *tmplMode* en cada uno de los UIs.
 
 Normalmente cada tipo de UI tendrá su propio contenedor.
+
+> Debemos evitar utilizar el atributo *id* de las etiquetas de *HTML* y en su lugar utilizar *data-id*, debido a que, al ser los UIs componentes reutilizables, normalmente habrá varios de ellos en la misma página y el atributo *id* debe ser único.
 
 ##<a name="Screens_drestroy"></a>Destruyendo Screens
 

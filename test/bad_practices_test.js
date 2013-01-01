@@ -30,15 +30,15 @@
             irisGeneratedCode.remove();
         }
     }
-    iris.init(clearBody);
     
     module( "Module Bad Practices", {
         setup: function() {
             iris.init();
+            clearBody();
         }
     });
     
-    test("Check if It prevents multiple calls to the method iris.welcome()", function() {       
+    test("Check if It prevents multiple calls to the method iris.welcome()", function() {
         iris.welcome("test/bad_practices/welcome.js");
         
         window.throws(function () {

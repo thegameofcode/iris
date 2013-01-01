@@ -335,14 +335,50 @@
     }
 
     function _destroyScreen(p_screenPath) {
+        
+        function checkHierarchy() {
+            var rdo = true;
+            if (_prevHash !== "") {
+                var containerToDelete = _screen[p_screenPath].get().parent();
+                var currentContainer = _screen[_prevHash].get().parent();
+                rdo = containerToDelete === undefined || currentContainer === undefined || (p_screenPath !== _prevHash && containerToDelete.find(currentContainer).get(0) === undefined);
+            }
+            return rdo;
+        }
+        
+        function destroyInnersScreens() {
+            
+            var containers = _screen[p_screenPath].get().find("[data-id]");
+            
+            for (var i = 0; i < containers. length ; i++) {
+                var containerId = "[data-id=" + $(containers.get(i)).data("id") + "]";                
+                for (var hashUrl in _screenContainer) {
+                    var selector = _screenContainer[hashUrl].selector;
+                    if (selector !== undefined && selector === containerId) {
+                        delete _screenUrl[hashUrl];                                                
+                        delete _screenContainer[hashUrl];
+                        _destroyScreen(hashUrl);
+                        break;
+                    }
+                }
+            }
+        }
+        
         if(_screen.hasOwnProperty(p_screenPath)) {
+            if (!checkHierarchy()) {
+                throw "Can not delete the current Screen, nor the father of the current Screen";
+            }
+            destroyInnersScreens();
+            
             var contextId = _screen[p_screenPath].get().parent().data("screen_context");
+            
             if(_lastScreen[contextId] === _screen[p_screenPath]) {
                 delete _lastScreen[contextId];
             }
             _screen[p_screenPath]._destroy();
             _screen[p_screenPath].get().remove();
             delete _screen[p_screenPath];
+            
         } else {
             iris.log("Error removing the screen \"" + p_screenPath + "\", path not found.");
         }
@@ -483,7 +519,6 @@
         for ( var eventName in this.events ) {
             iris.destroyEvents(eventName, this.events[eventName]);
         }
-
         this.destroy();
 
         this.uis = null;
