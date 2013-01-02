@@ -32,11 +32,20 @@
         LABEL: "VALUE"
       }
     });
+    
+    iris.translations("en_US", {
+      TEST: {
+        LABEL: "VALUE2"
+      }
+    });
 
     iris.locale("es_ES");
 
     var translated = iris.translate("TEST.LABEL");
     strictEqual(translated, "VALUE", "Should get a lang value");
+    
+    translated = iris.translate("TEST.LABEL", "en_US");
+    strictEqual(translated, "VALUE2", "Should get a lang value in non default locale");
 
     iris.locale("locale_not_loaded");
     translated = iris.translate("TEST.LABEL");

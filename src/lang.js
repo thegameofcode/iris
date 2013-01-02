@@ -73,9 +73,15 @@
         }
     };
 
-    iris.translate = function (p_label) {
+    iris.translate = function (p_label, p_locale) {
         var value;
-        var locale = iris.locale();
+        var locale = null;
+        if (p_locale !== undefined) {
+            locale = p_locale;
+        } else {
+            locale = iris.locale();
+        }
+        
         var logPrefix = "[translate]";
         if(_translations.hasOwnProperty(locale)) {
             value = iris.val(_translations[locale], p_label);
