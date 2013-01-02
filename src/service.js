@@ -9,7 +9,7 @@
         var type = this.setting("type");
         var path = this.setting("path");
 
-        iris.ajax({
+        return iris.ajax({
             "url": (path ? path : "") + p_path,
             "type": p_method,
             "data": p_params,
@@ -29,19 +29,19 @@
     };
 
     Service.prototype.get = function(p_path, f_success, f_error) {
-        this.ajax("GET", p_path, null, f_success, f_error);
+        return this.ajax("GET", p_path, null, f_success, f_error);
     };
 
     Service.prototype.del = function(p_path, f_success, f_error) {
-        this.ajax("DELETE", p_path, null, f_success, f_error);
+        return this.ajax("DELETE", p_path, null, f_success, f_error);
     };
 
     Service.prototype.put = function(p_path, p_params, f_success, f_error) {
-        this.ajax("PUT", p_path, p_params, f_success, f_error);
+        return this.ajax("PUT", p_path, p_params, f_success, f_error);
     };
 
     Service.prototype.post = function(p_path, p_params, f_success, f_error) {
-        this.ajax("POST", p_path, p_params, f_success, f_error);
+        return this.ajax("POST", p_path, p_params, f_success, f_error);
     };
 
     iris.service = function (f_service) {
