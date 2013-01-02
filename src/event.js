@@ -24,7 +24,11 @@
     iris.off = function (p_eventName, f_func){
         var callbacks = _events[p_eventName];
         if ( callbacks ){
-            callbacks.splice(callbacks.indexOf(f_func), 1);
+            if (f_func !== undefined) {
+                callbacks.splice(callbacks.indexOf(f_func), 1);
+            } else {
+                delete _events[p_eventName];
+            }
         }
     };
 
