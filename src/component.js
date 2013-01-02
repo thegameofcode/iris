@@ -281,7 +281,8 @@
         $.extend(uiInstance.cfg, jqToHash, p_uiSettings);
 
         uiInstance.create(jqToHash, p_uiSettings);
-
+        uiInstance._awake(p_uiSettings);
+        
         return uiInstance;
     }
 
@@ -491,11 +492,13 @@
     };
 
     Component.prototype._awake = function(p_params) {
-        for(var f = 0, F = this.uis.length; f < F; f++) {
-            this.uis[f]._awake();
-        }
         this.sleeping = false;
         this.awake(p_params);
+        for(var f = 0, F = this.uis.length; f < F; f++) {
+            if (this.uis[f].sleeping !== false) {
+                this.uis[f]._awake();
+            }
+        }
     };
 
     Component.prototype._destroy = function() {

@@ -22,8 +22,8 @@ iris.screen(
         
         self.awake = function () {
             window.console.log("Home Screen Awaked");
-            if (iris.deferred_home !== undefined) {
-                iris.deferred_home.resolve();
+            if (window.deferred && window.deferred.home !== undefined) {
+                window.deferred.home.resolve();
             }
         };
         

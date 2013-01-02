@@ -23,6 +23,8 @@
   */
  
     iris.cache(false);
+    
+    
 
     function clearBody() {
         var irisGeneratedCode = $("#start_iris").nextAll();
@@ -33,19 +35,16 @@
     
     
     function createDeferred() {
-        iris.deferred_main = new $.Deferred();
-        iris.deferred_home = new $.Deferred();
-        iris.deferred_help = new $.Deferred();
-        iris.deferred_home2 = new $.Deferred();
-        iris.deferred_home3 = new $.Deferred();
+        window.deferred = {};
+        window.deferred.main = new $.Deferred();
+        window.deferred.home = new $.Deferred();
+        window.deferred.help = new $.Deferred();
+        window.deferred.home2 = new $.Deferred();
+        window.deferred.home3 = new $.Deferred();
     }
     
     function destroyDeferred() {
-        iris.deferred_main = undefined;
-        iris.deferred_home = undefined;
-        iris.deferred_help = undefined;
-        iris.deferred_home2 = undefined;
-        iris.deferred_home3 = undefined;
+        window.deferred = {};
     }
     
     function gotoMain() {
@@ -70,22 +69,22 @@
     
     
     
-    asyncTest("Test Destory #home after goto #home, then goto #help", function() {
+    asyncTest("Test Destroy #home after goto #home, then goto #help", function() {
         window.expect(3);
         
-        iris.deferred_main.done(
+        window.deferred.main.done(
             function() {
                 iris.goto("#home");
             }
             );
         
-        iris.deferred_home.done(
+        window.deferred.home.done(
             function() {
                 iris.goto("#help");
             }
             );
             
-        iris.deferred_help.done(
+        window.deferred.help.done(
             function() {
                 setTimeout(function () {
                     iris.destroyScreen("#home");
@@ -98,18 +97,18 @@
     }
     );
     
-    asyncTest("Test Destory #home after goto #help", function() {
+    asyncTest("Test Destroy #home after goto #help", function() {
       
         window.expect(0);
         
-        iris.deferred_main.done(
+        window.deferred.main.done(
             function() {
                 iris.goto("#help");
             }
             );
         
         
-        iris.deferred_help.done(
+        window.deferred.help.done(
             function() {
                 setTimeout(function () {
                     iris.destroyScreen("#home");
@@ -122,18 +121,18 @@
     }
     );
         
-    asyncTest("Test Destory #home after goto #home", function() {
+    asyncTest("Test Destroy #home after goto #home", function() {
       
         window.expect(2);
         
-        iris.deferred_main.done(
+        window.deferred.main.done(
             function() {
                 iris.goto("#home");
             }
             );
         
         
-        iris.deferred_home.done(
+        window.deferred.home.done(
             function() {
                 setTimeout(function () {
                     window.throws(function() {
@@ -149,29 +148,29 @@
     );
         
 
-    asyncTest("Test Destory #home after goto #home, then goto #home2, then goto #help", function() {
+    asyncTest("Test Destroy #home after goto #home, then goto #home2, then goto #help", function() {
         window.expect(5);
         
-        iris.deferred_main.done(
+        window.deferred.main.done(
             function() {
                 iris.goto("#home");
             }
             );
         
-        iris.deferred_home.done(
+        window.deferred.home.done(
             function() {
                 iris.goto("#home2");
             }
             );
         
         
-        iris.deferred_home2.done(
+        window.deferred.home2.done(
             function() {
                 iris.goto("#help");
             }
             );
             
-        iris.deferred_help.done(
+        window.deferred.help.done(
             function() {
                 setTimeout(function () {
                     iris.destroyScreen("#home");    
@@ -184,36 +183,36 @@
     }
     );
         
-    asyncTest("Test Destory #home after goto #home, then goto #home2, then goto #home3, then goto #help", function() {
+    asyncTest("Test Destroy #home after goto #home, then goto #home2, then goto #home3, then goto #help", function() {
         window.expect(7);
         
-        iris.deferred_main.done(
+        window.deferred.main.done(
             function() {
                 iris.goto("#home");
             }
             );
         
-        iris.deferred_home.done(
+        window.deferred.home.done(
             function() {
                 iris.goto("#home2");
             }
             );
         
         
-        iris.deferred_home2.done(
+        window.deferred.home2.done(
             function() {
                 iris.goto("#home3");
             }
             );
         
-        iris.deferred_home3.done(
+        window.deferred.home3.done(
             function() {
                 iris.goto("#help");
             }
             );
         
         
-        iris.deferred_help.done(
+        window.deferred.help.done(
             function() {
                 setTimeout(function () {
                     iris.destroyScreen("#home");    
@@ -226,36 +225,36 @@
     }
     );
         
-        asyncTest("Test Destory #home2 after goto #home, then goto #home2, then goto #home3, then goto #home", function() {
+        asyncTest("Test Destroy #home2 after goto #home, then goto #home2, then goto #home3, then goto #home", function() {
         window.expect(6);
         
-        iris.deferred_main.done(
+        window.deferred.main.done(
             function() {
                 iris.goto("#home");
             }
             );
         
-        iris.deferred_home.done(
+        window.deferred.home.done(
             function() {
                 iris.goto("#home2");
             }
             );
         
         
-        iris.deferred_home2.done(
+        window.deferred.home2.done(
             function() {
                 iris.goto("#home3");
             }
             );
         
-        iris.deferred_home3.done(
+        window.deferred.home3.done(
             function() {
                 iris.goto("#help");
             }
             );
         
         
-        iris.deferred_help.done(
+        window.deferred.help.done(
             function() {
                 setTimeout(function () {
                     iris.destroyScreen("#home2");    
@@ -272,26 +271,26 @@
     asyncTest("Test goto #home after destroy #home", function() {
         window.expect(4);
         
-        iris.deferred_main.done(
+        window.deferred.main.done(
             function() {
                 iris.goto("#home");
             }
             );
         
-        iris.deferred_home.done(
+        window.deferred.home.done(
             function() {
                 iris.goto("#help");
             }
             );
        
-        iris.deferred_home2.done(
+        window.deferred.home2.done(
             function() {
                 window.ok(window.location.hash === "#home2", "We are in #home2");
             }
             );
        
         
-        iris.deferred_help.done(
+        window.deferred.help.done(
             function() {
                 setTimeout(function () {                    
                     iris.destroyScreen("#home");
@@ -303,23 +302,23 @@
     }
     );
 
-    asyncTest("Test Destory #home after goto #home, then goto #home2, then goto #home3", function() {
+    asyncTest("Test Destroy #home after goto #home, then goto #home2, then goto #home3", function() {
         window.expect(2);
         
-        iris.deferred_main.done(
+        window.deferred.main.done(
             function() {
                 iris.goto("#home");
             }
             );
         
-        iris.deferred_home.done(
+        window.deferred.home.done(
             function() {
                 iris.goto("#home2");
             }
             );
         
         
-        iris.deferred_home2.done(
+        window.deferred.home2.done(
             function() {
                 iris.goto("#home3");
             }
@@ -327,7 +326,7 @@
         
         
         
-        iris.deferred_home3.done(
+        window.deferred.home3.done(
             function() {
                 setTimeout(function () {
                     window.throws(function() {                        
@@ -340,7 +339,5 @@
         
     }
     );
-        
-  
 
 }(jQuery));

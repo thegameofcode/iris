@@ -14,7 +14,9 @@ iris.screen(
         
         self.awake = function () {
             window.console.log("Home3 Screen Awaked");
-            iris.deferred_home3.resolve();
+            if (window.deferred && window.deferred.home3) {
+                window.deferred.home3.resolve();
+            }
         };
         
         self.sleep = function () {
