@@ -387,7 +387,9 @@ self.create = function () {
 ```
 Observe como el método **goto** de Iris permite navegar al Hash-URL especificado y que, para capturar el evento *click* del botón, hemos utiliado el método **get** del componente de Iris que recibe el valor de su atributo *data-id*. Iris buscará un elemento en el DOM del componente con ese *data-id* y lo devolverá como un objeto de JQuery.
 
-##<a name="showing_some_screens"></a>##Mostrando varios screens
+Si al método *get* no se le pasara ningún argumento, Iris devolvería el objeto JQuery que corresponda con el elemento raíz del componente.
+
+##<a name="showing_some_screens"></a>Mostrando varios screens
 
 En este apartado vamos a crear un tercer Screen llamado Help.
 
@@ -886,6 +888,8 @@ Es mejor tener un contenedor para UIs y otro para Screens y no mezclar conceptos
 
 Normalmente cada tipo de UI tendrá su propio contenedor.
 
+> Debemos evitar utilizar el atributo *id* de las etiquetas de *HTML* y en su lugar utilizar *data-id*, debido a que, al ser los UIs componentes reutilizables, normalmente habrá varios de ellos en la misma página y el atributo *id* debe ser único.
+
 ##<a name="Screens_drestroy"></a>Destruyendo Screens
 
 Iris dispone del método *destroyScreen* para destruir componentes de tipo Screen.
@@ -895,7 +899,7 @@ Podemos probarlo con el siguiente código:
 En *welcome.html*:
 
 ```html
-div>
+<div>
  <h1>Welcome Screen</h1>
  <p>This is the initial screen.</p>
  <button data-id="create_home_screen">Click create a Home Screen</button>
@@ -2117,6 +2121,8 @@ Las pruebas de unidad son una fuente adicional para conocer el funcionamiento de
 
 En esta sección vamos utilizar Iris para construir una sencilla aplicación que nos permita comprender como integrar todo lo visto anteriormente.
 
+Puede descargase  la aplicación en el siguiente [enlace](https://github.com/surtich/iris/blob/iris-grunt/docs/iris-shopping.tar.gz?raw=true).
+
 La aplicación va a permitir realizar la lista de la compra de una serie de productos agrupados en categorías. En las siguientes imágenes presentamos las principales pantallas de la aplicación.
 
 <a name="home_img"></a>*#home:*
@@ -2258,7 +2264,6 @@ iris.screen(
             
             function _createScreens() {
                 self.screen("screens", "#home", "shopping/screen/home.js");
-                self.screen("screens", "#lang", "shopping/screen/lang/lang.js");
                 self.screen("screens", "#categories", "shopping/screen/products/categories.js");
                 self.screen("screens", "#products", "shopping/screen/products/products.js");            
                 self.screen("screens", "#shopping", "shopping/screen/list/shopping.js");
@@ -2354,10 +2359,10 @@ Finalmente, el fichero *welcome.html* contendrá:
                         <li><a href="#shopping">@@MENU.SHOPPING_LIST@@</a></li>                        
                     </ul>
                     <ul class="nav pull-right">
-                        <li><a href="#lang" data-lang="es_ES"><i class="icon-spain-flag"></i></a></li>
-                        <li><a href="#lang" data-lang="en_US"><i class="icon-united-kingdom-flag"></i></a></li>
+                        <li><a href="#" data-lang="es_ES"><i class="icon-spain-flag"></i></a></li>
+                        <li><a href="#" data-lang="en_US"><i class="icon-united-kingdom-flag"></i></a></li>
                     </ul>
-                </div><!--/.nav-collapse -->
+                </div>
             </div>
         </div>
     </div>
@@ -2923,9 +2928,288 @@ El fichero de productos para una categoría cualquiera, por ejemplo *category_2.
 La explicación de estos ficheros es similar a la que realizamos para el *UI* *category_list_item*.
 
 ##<a name="step_by_step_shopping"></a>*Screen* Shopping
+
+El <a href="#shopping_img">*Screen* *Shopping*</a> permite permite gestionar la cesta de la compra marcando aquellos productos que se han comprado. 
+
+Los ficheros de este *Screen* son:
+
+En *shopping.js*:
+
+```js
+iris.screen(
+    function (self) {
+        
+        self.create = function () {
+            iris.translations("es_ES", {                
+                SHOPPING_LIST: {
+                    EMPTY: "La cesta está vacía.",
+                    REFRESH: "Actualizar",
+                    REMOVE_ALL: "Borrar todos",
+                    CHECK_ALL: "Marcar todos",
+                    UNCHECK_ALL: "Desmarcar todos",
+                    INVERT_ALL: "Invertir",
+                    REMOVE_PURCHASED: "Borrar marcados",
+                    ORDER: "Orden",
+                    PRODUCT: "Producto",
+                    ACTION: "Acción",
+                    BUY: "Cambiar estado",
+                    REMOVE: "Borrar"
+                }
+            });
+            
+            iris.translations("en_US", {                
+                SHOPPING_LIST: {
+                    EMPTY: "The Shopping list is empty.",
+                    REFRESH: "Refresh",
+                    REMOVE_ALL: "Remove All",
+                    CHECK_ALL: "Check All",
+                    UNCHECK_ALL: "Uncheck All",
+                    INVERT_ALL: "Invert checks",
+                    REMOVE_PURCHASED: "Remove purchased",
+                    ORDER: "Order",
+                    PRODUCT: "Product",
+                    ACTION: "Action",
+                    BUY: "Change state",
+                    REMOVE: "Remove"
+                }
+            });
+            
+            self.tmpl("shopping/screen/list/shopping.html");            
+            _asignEvents();
+        };
+                
+        self.awake = function (params) {
+            _inflate();
+        };
+        
+        function _asignEvents() {
+            iris.on(model.event.PRODUCTS.REMOVE, _changeVisibilityShoppingTable);
+            iris.on(model.event.SHOPPING.CHANGE_STATE, _changeStateButtons);            
+            
+            self.get("btn_refresh").on("click", function () {
+                _inflate();
+            }
+            );
+                
+            self.get("btn_remove_all").on("click", function () {
+                iris.notify(model.event.SHOPPING.REMOVE_ALL);
+                _inflate();
+            }
+            );
+                
+            self.get("btn_check_all").on("click", function () {
+                iris.notify(model.event.SHOPPING.CHECK_ALL);
+                _inflate();
+            }
+            );
+                
+            self.get("btn_uncheck_all").on("click", function () {
+                iris.notify(model.event.SHOPPING.UNCHECK_ALL);
+                _inflate();
+            }
+            );
+                
+            self.get("btn_invert_check").on("click", function () {
+                iris.notify(model.event.SHOPPING.INVERT_CHECK);
+                _inflate();
+            }
+            );
+                
+            self.get("btn_remove_checked").on("click", function () {
+                iris.notify(model.event.SHOPPING.REMOVE_CHECKED);
+                _inflate();
+            }
+            );
+             
+        }
+        
+        function _inflate() {
+            self.destroyUIs("shoppingList_products");
+            _destroyShoppingTable();
+            _loadShoppingProducts();
+            _createShoppingTable();
+            _changeVisibilityShoppingTable();
+        }
+                        
+        function _loadShoppingProducts() {
+            var products = model.shoppingList.getSortedShoppingProducts();
+            if (products.length > 0) {                
+                $.each(products,
+                    function(index, product) {
+                        var ui = self.ui("shoppingList_products", "shopping/ui/list/product_shopping_list_item.js", {
+                            "product": product
+                        });
+                        
+                        ui.get("remove").on("click",
+                            function () {
+                                var idProduct = ui.setting("product").idProduct;
+                                var table = self.get("shopping_table");
+                                var row = $(this).closest("tr").get(0);
+                                table.fnDeleteRow(table.fnGetPosition(row));
+                                self.destroyUI(ui);
+                                iris.notify(model.event.PRODUCTS.REMOVE, idProduct);
+                            }
+                            );
+                                
+                        ui.get("buy").on("click",
+                            function () {
+                                var idProduct = ui.setting("product").idProduct;
+                                ui.get("order").toggleClass("purchased");
+                                ui.get("nameProduct").toggleClass("purchased");
+                                ui.get("icon-shopping-cart").toggleClass("icon-shopping-cart icon-shopping-cart-remove");
+                                iris.notify(model.event.SHOPPING.CHANGE_STATE, idProduct);                            
+                            }
+                            );
+                        if (product.purchased === true) {
+                            ui.get("order").addClass("purchased");
+                            ui.get("nameProduct").addClass("purchased");
+                            ui.get("icon-shopping-cart").removeClass("icon-shopping-cart").addClass("icon-shopping-cart-remove");
+                        }
+                    }
+                    );
+            }
+        }
+        
+        function _destroyShoppingTable() {
+            var table = self.get("shopping_table");
+            if (table.hasOwnProperty("fnClearTable")) {
+                table.fnClearTable();
+                table.fnDestroy();
+            }
+        }
+        
+        function _createShoppingTable() {
+            var table = self.get("shopping_table");            
+            table.dataTable(
+            {
+                "bPaginate": true,
+                "bInfo" : false,
+                "bAutoWidth": false,
+                "oLanguage": {
+                    "sSearch": iris.translate("JQUERY.DATATABLES.SEARCH") + ":",
+                    "sZeroRecords": iris.translate("SHOPPING_LIST.EMPTY"),
+                    "sLengthMenu": iris.translate("JQUERY.DATATABLES.SHOW"),
+                    "oPaginate": {
+                        "sNext": iris.translate("JQUERY.DATATABLES.NEXT"),
+                        "sPrevious": iris.translate("JQUERY.DATATABLES.PREVIOUS")
+                    }
+                },
+                "aoColumnDefs": [
+                {
+                    "bSortable": false, 
+                    "aTargets": [ 2 ]
+                },
+                {
+                    "sType": "html" , 
+                    "aTargets": [0]
+                }
+                ],
+                "aaSorting": []
+            }   
+            );
+        }
+        
+        function _changeVisibilityShoppingTable() {
+            var products = model.shoppingList.getSortedShoppingProducts();
+            if (products.length > 0) {
+                self.get("div_shopping").show();
+                self.get("msg").hide();
+                _changeStateButtons();
+            } else {
+                self.get("div_shopping").hide();
+                self.get("msg").show();
+            }
+        }
+        
+        function _changeStateButtons() {            
+            self.get("btn_check_all").toggleClass("disabled", !model.shoppingList.hasNoPurchasedProducts());
+            self.get("btn_uncheck_all").toggleClass("disabled", !model.shoppingList.hasPurchasedProducts());
+            self.get("btn_remove_checked").toggleClass("disabled", !model.shoppingList.hasPurchasedProducts());            
+        }
+    
+        self.destroy = function () {
+            iris.off(model.event.PRODUCTS.REMOVE, _changeVisibilityShoppingTable);
+            iris.off(model.event.SHOPPING.CHANGE_STATE, _changeStateButtons);                
+        };
+        
+    },"shopping/screen/list/shopping.js");
+```
+
+Y en *shopping.html*:
+
+```html
+<div class="container">  
+    <div data-id="msg">@@SHOPPING_LIST.EMPTY@@</div>
+    <div data-id="div_shopping">
+        <div class="control-group">  
+            <form class="well">
+                <button type="button" class="btn" data-id="btn_refresh"><i class="icon-refresh"></i>@@SHOPPING_LIST.REFRESH@@</button>
+                <button type="button" class="btn btn-danger" data-id="btn_remove_all"><i class="icon-trash icon-white"></i>@@SHOPPING_LIST.REMOVE_ALL@@</button>
+                <button type="button" class="btn btn-success" data-id="btn_check_all"><i class="icon-shopping-cart icon-white"></i>@@SHOPPING_LIST.CHECK_ALL@@</button>
+                <button type="button" class="btn btn-info" data-id="btn_uncheck_all"><i class="icon-shopping-cart-remove"></i>@@SHOPPING_LIST.UNCHECK_ALL@@</button>
+                <button type="button" class="btn btn-primary" data-id="btn_invert_check"><i class="icon-shopping-cart-invert"></i>@@SHOPPING_LIST.INVERT_ALL@@</button>
+                <button type="button" class="btn btn-warning" data-id="btn_remove_checked"><i class="icon-shopping-cart-remove-checked"></i>@@SHOPPING_LIST.REMOVE_PURCHASED@@</button>
+            </form>
+        </div>
+        <table class="table table-striped table-bordered"  data-id="shopping_table">
+            <thead>
+                <tr>            
+                    <th>@@SHOPPING_LIST.ORDER@@</th>
+                    <th>@@SHOPPING_LIST.PRODUCT@@</th>
+                    <th>@@SHOPPING_LIST.ACTION@@</th>            
+                </tr>
+            </thead>
+            <tbody data-id="shoppingList_products">
+
+            </tbody>
+        </table>
+    </div>
+</div>
+```
+
+Estos son los puntos más relevantes de estos ficheros:
+
+* La función *_asignEvents* asigna la pulsación de los botones del *screen* a eventos de Iris para actuar sobre el modelo. También registra eventos de Iris lanzados desde el modelo.
+* La función *_loadShoppingProducts* carga en el *tbody* de la tabla *shopping_table* los productos de la lista de la compra. Los productos que no se hayan comprado todavía aparecen primero ordenados por su *idProduct*. Con cada producto se pueden realizar dos acciones: comprar y borrar de la lista. Este función gestiona la pulsación sobre los botones que efectúan estas acciones. Por último, esta función asigna los estilos adecuados cuando un producto ha sido comprado.
+* La función *_destroyShoppingTable* elimina la tabla de la lista de la compra.
+* La función *_createShoppingTable* determina las columnas que se van a mostrar en la tabla de la lista de la compra, el sistema de *paginación* y las columnas por las que se puede realizar ordenación.
+* La función *_changeVisibilityShoppingTable* oculta la tabla de la lista de la compra cuando no hay ningún producto.
+* La función *_changeStateButtons* habilita o deshabilita los botones del encabezado de la tabla de la lista de la compra en función de que se puedan o no pulsar.
+
+Por último el *ui* *product_shopping_list_item* contiene los productos de la lista de la compra que se van a cargar en la tabla anterior. Los ficheros utilizados son los siguientes:
+
+En *product_shopping_list_item.js*:
+
+```js
+iris.ui(function(self) {	
+    self.create = function() {
+        self.tmplMode(self.APPEND);
+        var product = self.setting("product");                
+        self.tmpl("shopping/ui/list/product_shopping_list_item.html", product);
+    };	
+}, "shopping/ui/list/product_shopping_list_item.js");
+```
+
+Y en *product_shopping_list_item.html*:
+
+```html
+<tr>  	
+    <td>
+        <span data-id="order">##order##</span>
+    </td>
+    <td>
+        <span data-id="nameProduct">##nameProduct##</span>
+    </td>
+    <td>
+        <button type="button" class="btn" data-id="buy" title="@@SHOPPING_LIST.BUY@@"><i data-id="icon-shopping-cart" class="icon-shopping-cart"></i></button>
+        <button type="button" class="btn" data-id="remove" title="@@SHOPPING_LIST.REMOVE@@"><i class="icon-trash"></i></button>		
+    </td>
+</tr>
+```
+
 ##<a name="step_by_step_grunt"></a>Automatizando procesos con *Grunt*
-*[Grunt](http://gruntjs.com/)* es ...
+*[Grunt](http://gruntjs.com/)* es ...proximamente.
 
 ##<a name="step_by_step_qunit"></a>Pruebas de unidad con *QUnit*
-*[QUnit](http://qunitjs.com/)* es ...
+*[QUnit](http://qunitjs.com/)* es ...proximamente.
 

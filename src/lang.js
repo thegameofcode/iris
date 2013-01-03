@@ -2,7 +2,9 @@
 
     var _translations = {};
 
-
+    function _init() {
+        _translations = {};
+    }
     //
     // Private
     //
@@ -22,6 +24,11 @@
     }
 
     function _loadTranslations(p_locale, p_uri, p_settings) {
+        
+        if (p_uri.indexOf("http") !== 0) {
+            p_uri = iris.baseUri() + p_uri;
+        }
+        
         iris.log("[translations]", p_locale, p_uri);
 
         var ajaxSettings = {
@@ -66,9 +73,15 @@
         }
     };
 
-    iris.translate = function (p_label) {
+    iris.translate = function (p_label, p_locale) {
         var value;
-        var locale = iris.locale();
+        var locale = null;
+        if (p_locale !== undefined) {
+            locale = p_locale;
+        } else {
+            locale = iris.locale();
+        }
+        
         var logPrefix = "[translate]";
         if(_translations.hasOwnProperty(locale)) {
             value = iris.val(_translations[locale], p_label);
@@ -83,5 +96,7 @@
         }
         return (value) ? value : "??" + p_label + "??";
     };
+    
+    iris.init(_init);
 
 })(jQuery);

@@ -6,10 +6,11 @@ iris.screen(function (self) {
 	self.create = function() {
 
 		self.tmpl("test/component/screen.html");
-
+  
 		iris.on("create_ui", createUi);
 		self.on("destroy_ui", destroyUi);
 
+   
 		// check screen properties
 		window.strictEqual(self.id, "#screen");
 		window.strictEqual(self.fileJs, "test/component/screen.js");

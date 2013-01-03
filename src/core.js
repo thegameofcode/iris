@@ -10,7 +10,8 @@ window.iris = iris;
         _cache,
         _cacheVersion,
         _hasConsole,
-        _logEnabled;
+        _logEnabled,
+        _init_functions = [];
 
     //
     // Private
@@ -28,6 +29,9 @@ window.iris = iris;
         var isLocalEnv = urlContains("localhost", "127.0.0.1");
         _logEnabled = isLocalEnv;
         _cache = !isLocalEnv;
+        for (var i in _init_functions) {
+            (_init_functions[i])();
+        }
     }
 
     function urlContains () {
@@ -91,8 +95,16 @@ window.iris = iris;
             return !_cache;
         }
     };
-
-
+    
+    iris.init = function (fn_init) {
+        if (typeof fn_init === "function") {
+            _init_functions.push(fn_init);
+        } else if (fn_init === undefined) {
+            init();
+        }
+    };
+    
+    
     init();
 
 })(jQuery);

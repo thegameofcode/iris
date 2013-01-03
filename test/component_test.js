@@ -3,7 +3,7 @@
 /*global notDeepEqual:false, strictEqual:false, notStrictEqual:false, raises:false*/
 (function($) {
 
-  /*
+    /*
     ======== A Handy Little QUnit Reference ========
     http://docs.jquery.com/QUnit
 
@@ -22,81 +22,87 @@
       raises(block, [expected], [message])
   */
 
-  iris.cache(false);
+    iris.cache(false);
 
-  module('Module Component');
+    module('Module Component');
 
-  asyncTest("Include JS", function() {
+    asyncTest("Include JS", function() {
 
-    // for lang values test
-    iris.translations("test",{"TEST":"lang_val"});
-    iris.locale("test");
+        // for lang values test
+        iris.translations("test",{
+            "TEST":"lang_val"
+        });
+        iris.locale("test");
 
-    expect(1);
+        expect(1);
 
-    iris.include("test/component/include_test.js");
+        iris.include("test/component/include_test.js");
 
-  });
+    });
 
-  asyncTest("Welcome Screen", function() {
+    asyncTest("Welcome Screen", function() {
 
-    expect(4);
+        expect(4);
 
-    iris.welcome("test/component/welcome.js");
+        iris.welcome("test/component/welcome.js");
 
-  });
+    });
 
-  asyncTest("Navigate To Screen", function() {
+    asyncTest("Navigate To Screen", function() {
     
-    expect(3);
-
-    iris.goto("#screen");
-
-  });
-
-  asyncTest("Create UI", function() {
-
-    expect(4);
-    iris.notify("create_ui");
+        expect(3);
     
-  });
+        iris.goto("#screen");
 
-  asyncTest("UI Settings", function() {
+    });
 
-    expect(3);
-    iris.notify("ui_settings");
-  });
+    asyncTest("Create UI", function() {
 
-  asyncTest("Nested UI", function() {
-
-    expect(6); // 3 creation + 3 nested callback
-    iris.notify("nested_ui");
-  });
-
-
-  asyncTest("Destroy UI", function() {
+        expect(4);
+        iris.notify("create_ui");
     
-    expect(1);
+    });
 
-    iris.notify("destroy_ui");
-  });
+    asyncTest("UI Settings", function() {
 
-  asyncTest("Template Params", function() {
+        expect(3);
+        iris.notify("ui_settings");
+    });
 
-    expect(1);
-    iris.notify("template_params");
-  });
+    asyncTest("Nested UI", function() {
 
-  asyncTest("Template Lang Values", function() {
+        expect(6); // 3 creation + 3 nested callback
+        iris.notify("nested_ui");
+    });
 
-    expect(1);
-    iris.notify("template_langs");
-  });
 
-  asyncTest("Destroy Screen", function() {
+    asyncTest("Destroy UI", function() {
+    
+        expect(1);
 
-    expect(1);
-    iris.destroyScreen("#screen");
-  });
+        iris.notify("destroy_ui");
+    });
+
+    asyncTest("Template Params", function() {
+
+        expect(1);
+        iris.notify("template_params");
+    });
+
+    asyncTest("Template Lang Values", function() {
+
+        expect(1);
+        iris.notify("template_langs");
+    });
+
+    asyncTest("Destroy Screen", function() {
+
+        expect(1);
+        
+        window.throws(function() {
+            iris.destroyScreen("#screen");
+        },"Fail. It is impossible remove the current screen.");
+        window.start();
+    });
 
 }(jQuery));

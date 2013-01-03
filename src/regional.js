@@ -1,6 +1,11 @@
 (function() {
 
     var _locale, _regional = {};
+    
+    function _init() {
+        _locale = {};
+        _regional = {};
+    }
 
     iris.locale = function (p_locale, p_regional) {
         if ( typeof p_regional === "object" ) {
@@ -35,6 +40,8 @@
             throw "[regional] for locale '" + _locale + "' not found";
         }
     };
+    
+    iris.init(_init);
 
 
 })();

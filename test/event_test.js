@@ -45,8 +45,25 @@
       iris.notify("duplicated-event");
 
   });
-
+  
+  test("Off all functions Test", function () {
+      expect(3);
+      
+      iris.on("off-all-functions", onEvent);
+      iris.on("off-all-functions", onEvent2);
+      iris.notify("off-all-functions");
+      iris.off("off-all-functions");
+      iris.notify("off-all-functions");
+      iris.on("off-all-functions", onEvent);
+      iris.notify("off-all-functions");
+  });
+  
+  
   function onEvent () {
+    ok(true);
+  }
+  
+  function onEvent2 () {
     ok(true);
   }
 
