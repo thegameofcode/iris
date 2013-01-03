@@ -32,27 +32,48 @@
         LABEL: "VALUE"
       }
     });
+    
+    iris.translations("en_US", {
+      TEST: {
+        LABEL: "VALUE2"
+      }
+    });
 
     iris.locale("es_ES");
 
     var translated = iris.translate("TEST.LABEL");
     strictEqual(translated, "VALUE", "Should get a lang value");
+    
+    translated = iris.translate("TEST.LABEL", "en_US");
+    strictEqual(translated, "VALUE2", "Should get a lang value in non default locale");
 
     iris.locale("locale_not_loaded");
     translated = iris.translate("TEST.LABEL");
     strictEqual(translated, "??TEST.LABEL??", "Should get a non created value");
 
   });
-
-  asyncTest("Lang Load Test", function() {
+  
+  asyncTest("Lang Load Relative URL Test", function() {
     expect(3);
 
     iris.translations("fr-FR", "/test/service/lang.json", {"success" : onSuccess, "error" : onError });
   });
 
-  function onSuccess () {
+  asyncTest("Lang Load Absolute URL Test", function() {
+    expect(3);
 
-    iris.locale("fr-FR");
+    iris.translations("fr-FR2", "http://localhost:8080/test/service/lang.json", {"success" : onSuccess, "error" : onError });
+  });
+  
+  asyncTest("Lang Load Relative URL Test", function() {
+    expect(3);
+
+    iris.translations("fr-FR3", "test/service/lang.json", {"success" : onSuccess, "error" : onError });
+  });
+
+  function onSuccess (locale) {
+      
+    iris.locale(locale);
     var translated = iris.translate("LANG-TEST");
     strictEqual(translated, "LANG-TEST-VALUE", "Should get a lang value");
 

@@ -6,7 +6,7 @@ iris.screen(function (self) {
 
 		self.tmpl("test/component/welcome.html", {param:PARAM_VAL});
 
-		self.screen("screens", "#screen", "test/component/screen.js");
+		self.screens("screens",  [{"#screen": "test/component/screen.js"}]);
 
 		self.on("template_params", templateParams);
 		self.on("template_langs", templateLangs);

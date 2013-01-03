@@ -1,16 +1,33 @@
 (function($) {
 
     var _screen = {},
-        _screenUrl = {},
-        _screenContainer = {},
-        _lastScreen = {},
-        _prevHash = "",
-        _includes = {},
-        _lastIncludePath, _head = $("head").get(0),
-        _welcomeCreated = false,
-        _gotoCancelled = false;
+    _screenUrl = {},
+    _screenContainer = {},
+    _lastScreen = {},
+    _prevHash = "",
+    _includes = {},
+    _lastIncludePath, _head = $("head").get(0),
+    _welcomeCreated = false,
+    _gotoCancelled = false;
+    
+    function _init() {
+        _screen = {};
+        _screenUrl = {};
+        _screenContainer = {};
+        _lastScreen = {};
+        _prevHash = "";
+        _includes = {};
+        _lastIncludePath = undefined;
+        _head = $("head").get(0);
+        _welcomeCreated = false;
+        _gotoCancelled = false;        
+    }
 
     function _welcome(p_jsUrl) {
+        
+        if (_welcomeCreated === true) {
+            throw "The Welcome Screen already exists.";
+        }
 
         if ( window.console && window.console.log ) {
             window.console.log("[iris] noCache[" + iris.noCache() + "] enableLog[" + iris.enableLog() + "]");
@@ -67,11 +84,11 @@
         }
 
         var prev = _prevHash.split("/"),
-            curr = document.location.hash.split("/"),
-            prevPath = "",
-            currPath = "",
-            pathWithoutParams, hasRemainingChilds = false,
-            i;
+        curr = document.location.hash.split("/"),
+        prevPath = "",
+        currPath = "",
+        pathWithoutParams, hasRemainingChilds = false,
+        i;
 
         // Check if all screen.canSleep() are true
         if(_prevHash !== "") {
@@ -144,8 +161,8 @@
 
     function _navGetParams(p_hashPart) {
         var params = {},
-            regex = /([\.\w_\-]*)=([^&]*)/g,
-            matches = regex.exec(p_hashPart);
+        regex = /([\.\w_\-]*)=([^&]*)/g,
+        matches = regex.exec(p_hashPart);
 
         while(matches) {
             params[matches[1]] = decodeURIComponent(matches[2]);
@@ -195,23 +212,23 @@
                 }
 
                 iris.ajax(ajaxSettings)
-                    .done(function(p_data) {
-                        _lastIncludePath = p_uiFile;
+                .done(function(p_data) {
+                    _lastIncludePath = p_uiFile;
 
-                        if(isHtml) {
-                            _includes[p_uiFile] = _parseLangTags(p_data);
-                        } else {
-                            var script = document.createElement("script");
-                            script.language = "javascript";
-                            script.type = "text/javascript";
-                            script.text = p_data;
-                            _head.appendChild(script);
-                        }
+                    if(isHtml) {
+                        _includes[p_uiFile] = _parseLangTags(p_data);
+                    } else {
+                        var script = document.createElement("script");
+                        script.language = "javascript";
+                        script.type = "text/javascript";
+                        script.text = p_data;
+                        _head.appendChild(script);
+                    }
 
-                    }).fail(function(p_err) {
-                        delete _includes[fileUrl];
-                        throw "error [" + p_err.status + "] loading file '" + fileUrl + "'";
-                    });
+                }).fail(function(p_err) {
+                    delete _includes[fileUrl];
+                    throw "error [" + p_err.status + "] loading file '" + fileUrl + "'";
+                });
             }
         }
     }
@@ -264,7 +281,8 @@
         $.extend(uiInstance.cfg, jqToHash, p_uiSettings);
 
         uiInstance.create(jqToHash, p_uiSettings);
-
+        uiInstance._awake(p_uiSettings);
+        
         return uiInstance;
     }
 
@@ -308,20 +326,53 @@
         screenObj.con = _screenContainer[p_screenPath];
         screenObj.fileJs = jsUrl;
 
+        screenObj.screensCalled = false;
+        
         _screen[p_screenPath] = screenObj;
+        
+        
 
         return screenObj;
     }
 
-    function _destroyScreen(p_screenPath) {
+    function _destroyScreen(p_screenPath, skipDestroyInnerScreens) {
+        
+        function checkHierarchy() {
+            var rdo = true;
+            if (_prevHash !== "") {
+                var containerToDelete = _screen[p_screenPath].get().parent();
+                var currentContainer = _screen[_prevHash].get().parent();
+                rdo = containerToDelete === undefined || currentContainer === undefined || (p_screenPath !== _prevHash && containerToDelete.find(currentContainer).size() === 0);
+            }
+            return rdo;
+        }
+        
+        function destroyInnersScreens() {
+            for (var hashUrl in _screenContainer) {
+                var selector = _screenContainer[hashUrl].selector;
+                if (selector !== "" && _screen[p_screenPath].get().find(selector).size() !== 0) {
+                    delete _screenUrl[hashUrl];                                                
+                    delete _screenContainer[hashUrl];
+                    _destroyScreen(hashUrl, true);
+                }
+            }
+        }
+        
         if(_screen.hasOwnProperty(p_screenPath)) {
+            if (!checkHierarchy()) {
+                throw "Can not delete the current Screen, nor the father of the current Screen";
+            }
+            destroyInnersScreens();
+            
             var contextId = _screen[p_screenPath].get().parent().data("screen_context");
+            
             if(_lastScreen[contextId] === _screen[p_screenPath]) {
                 delete _lastScreen[contextId];
             }
             _screen[p_screenPath]._destroy();
             _screen[p_screenPath].get().remove();
             delete _screen[p_screenPath];
+            
         } else {
             iris.log("Error removing the screen \"" + p_screenPath + "\", path not found.");
         }
@@ -330,7 +381,7 @@
     function _showScreen(p_screenPath, p_params) {
 
         if(!_screenContainer.hasOwnProperty(p_screenPath)) {
-            throw "'" + p_screenPath + "' must be registered using self.screen()";
+            throw "'" + p_screenPath + "' must be registered using self.screens()";
         } else {
             if(!_screen.hasOwnProperty(p_screenPath)) {
                 var screenObj = _instanceScreen(p_screenPath);
@@ -354,8 +405,8 @@
 
     function _tmplParse(p_html, p_data, p_htmlUrl) {
         var result = p_html,
-            formatLabel, value, regExp = /##([0-9A-Za-z_\.]+)(?:\|(date|currency)(?:\(([^\)]+)\))*)?##/g,
-            matches = regExp.exec(p_html);
+        formatLabel, value, regExp = /##([0-9A-Za-z_\.]+)(?:\|(date|currency)(?:\(([^\)]+)\))*)?##/g,
+        matches = regExp.exec(p_html);
 
         while(matches) {
             value = iris.val(p_data, matches[1]);
@@ -364,14 +415,14 @@
                 formatLabel = matches[2];
                 if(formatLabel) {
                     switch(formatLabel) {
-                    case "date":
-                        value = iris.date(value, matches[3]);
-                        break;
-                    case "currency":
-                        value = iris.currency(value);
-                        break;
-                    default:
-                        iris.log("Unknow template format label '" + formatLabel + "' in '" + p_htmlUrl + "'");
+                        case "date":
+                            value = iris.date(value, matches[3]);
+                            break;
+                        case "currency":
+                            value = iris.currency(value);
+                            break;
+                        default:
+                            iris.log("Unknow template format label '" + formatLabel + "' in '" + p_htmlUrl + "'");
                     }
                 }
             } else {
@@ -441,11 +492,13 @@
     };
 
     Component.prototype._awake = function(p_params) {
-        for(var f = 0, F = this.uis.length; f < F; f++) {
-            this.uis[f]._awake();
-        }
         this.sleeping = false;
         this.awake(p_params);
+        for(var f = 0, F = this.uis.length; f < F; f++) {
+            if (this.uis[f].sleeping !== false) {
+                this.uis[f]._awake();
+            }
+        }
     };
 
     Component.prototype._destroy = function() {
@@ -462,7 +515,6 @@
         for ( var eventName in this.events ) {
             iris.destroyEvents(eventName, this.events[eventName]);
         }
-
         this.destroy();
 
         this.uis = null;
@@ -470,6 +522,12 @@
     };
 
     Component.prototype._tmpl = function(p_htmlUrl, p_params, p_mode) {
+        
+        if (this.template !== null) {
+            throw "The _tmpl() method has already been called for this component.";
+        }
+        
+        
         this.fileTmpl = p_htmlUrl;
 
         // TODO
@@ -527,8 +585,8 @@
 
             if(!this.el.hasOwnProperty(p_id)) {
                 var id = "[data-id=" + p_id + "]",
-                    filter = this.template.filter(id),
-                    $element = null;
+                filter = this.template.filter(id),
+                $element = null;
 
                 if(filter.length > 0) {
                     $element = filter;
@@ -555,11 +613,23 @@
     };
 
     Component.prototype.ui = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
+        for (var hashUrl in _screenContainer) {
+            if ("[data-id=" + p_id + "]" === _screenContainer[hashUrl].selector) {
+                throw "You can not use the " + p_id + " container to store an UI if It has already been registered as a Screen container.";
+            }
+        }
         var $container = this.get(p_id);
-        if($container.size() === 1) {
+        
+        if($container !== undefined && $container.size() === 1) {
             var uiInstance = _instanceUI($container, $container.data("id"), p_jsUrl, p_uiSettings, p_templateMode);
+            if (uiInstance._tmplMode === undefined || uiInstance._tmplMode === uiInstance.REPLACE) {
+                this.el[p_id] = undefined;
+            }
             this.uis[this.uis.length] = uiInstance;
+            
             return uiInstance;
+        } else {
+            throw "The container does not exist or has been replaced.";
         }
     };
 
@@ -640,21 +710,100 @@
         this._tmpl(p_htmlUrl, p_params, this.APPEND);
     };
 
-    Screen.prototype.screen = function(p_containerId, p_screenPath, p_jsUrl) {
-        var $cont = this.get(p_containerId);
+    Screen.prototype.screens = function(p_containerId, p_screens) {
 
-        if($cont.data("screen_context") === undefined) {
-
-            // Set a unique screen context id to the screen container
-            // like: #path/to/screen|containerid
-            $cont.data("screen_context", this.id + "|" + p_containerId);
+        var ERRORS = {
+            NO_TEMPLATE: "Before running the screen() method It should be called the tmpl() method",
+            BAD_FORMAT: "p_screens must be an Array of {\"#hash\",\"file.js\"} objects",
+            NO_UNIQUE_HASH: "There is a repeated hashUrl",
+            NO_UNIQUE_URL: "There is a repeated jsUrl",
+            MULTIPLE_CALLED: "self.screens() method can only be called once per screen"
+        };
+        
+        var error = null;
+        
+        function checkFormat() {
+            
+            //Check p_screens format
+            if (Object.prototype.toString.call(p_screens) !== "[object Array]") {
+                error = ERRORS.BAD_FORMAT;
+            } else {
+                for (var i in p_screens) {
+                    var screen = p_screens[i];
+                    if (typeof screen === "object") {
+                        var firstIteration = true;
+                        for (var screenPath in screen) {
+                            var j;
+                            if (!firstIteration || typeof screenPath !== "string" || screenPath.indexOf("#") !== 0 || screenPath === "#" || typeof screen[screenPath] !== "string") {
+                                error = ERRORS.BAD_FORMAT;
+                            }
+                            firstIteration = false;
+                        }
+                    } else {
+                        error = ERRORS.BAD_FORMAT;
+                    }
+                }
+            }
         }
-
-        _screenUrl[p_screenPath] = p_jsUrl;
-        _screenContainer[p_screenPath] = $cont;
+        
+        
+                
+        if (this.screensCalled) {
+            error = ERRORS.MULTIPLE_CALLED;
+        } else if (this.template === null){
+            error = ERRORS.NO_TEMPLATE;
+        } else {
+            checkFormat();
+        }
+        
+        if (error === null){
+            var $cont = this.get(p_containerId);
+        
+            if($cont.data("screen_context") === undefined) {
+                // Set a unique screen context id to the screen container
+                // like: #path/to/screen|containerid
+                $cont.data("screen_context", this.id + "|" + p_containerId);
+            }    
+            this.screensCalled = true;
+            for (var i in p_screens) {
+                var screen = p_screens[i];
+                for (var screenHash in screen) {
+                    var hashUrl = null;
+                    if (error === null) {
+                        for (hashUrl in _screenUrl) {
+                            var jsUrl = _screenUrl[hashUrl];
+                            if (jsUrl === screen[screenHash]) {
+                                error = ERRORS.NO_UNIQUE_URL + ": " + jsUrl;
+                                break;      
+                            }
+                        }
+                        
+                        if (error === null) {
+                            for (hashUrl in _screenContainer) {
+                                if (hashUrl === screenHash) {
+                                    error = ERRORS.NO_UNIQUE_HASH + ": " + screenHash;
+                                    break;      
+                                }
+                            }   
+                        }
+                        
+                        if (error === null) {
+                            _screenUrl[screenHash] = screen[screenHash];                                                
+                            _screenContainer[screenHash] = $cont;
+                        }
+                    }
+                    break;
+                        
+                }
+            }
+        } 
+        
+        if (error !== null) {
+            throw error;
+        }
     };
-
     
+    iris.init(_init);
     
     iris.include = _includeFiles;
     iris.screen = _registerScreen;
@@ -662,6 +811,7 @@
     iris.welcome = _welcome;
     iris.goto = _goto;
     iris.ui = _registerUI;
+    
 
 
 
