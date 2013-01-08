@@ -51,7 +51,7 @@ Iris es completamente independiente de la tecnología que se utilice en el servi
 
 Las principales características de Iris son:
 
-* Código libre (licencia New BSD License. <!--TODO: Poner enlace-->)
+* Código libre ([licencia New BSD License](https://raw.github.com/iris-js/iris/iris-grunt/LICENSE-New-BSD)).
 * Ejecución 100% en cliente.
 * Ligero y rápido (<15 KB).
 * Independiente de servidor (Apache, Node.js, IIS, GAE, etc).
@@ -66,7 +66,7 @@ Las principales características de Iris son:
 * Motor de plantillas sencillo y eficiente.
 * Soporte multiidioma y presentación regional de números, monedas, fechas, etc.
 * Soporte para el paso de desarrollo a producción.
-* Integrable y totalmente compatible con otros populares Frameworks como Backbone o BootStrap <!--TODO: Confirmar y añadir más-->
+* Integrable y totalmente compatible con otros populares Frameworks como Backbone o BootStrap.
 * Bien documentado.
 
 #<a name="why"></a>¿Por qué Iris?
@@ -126,7 +126,7 @@ La **vista** consiste en un fragmento de código en HTML, típicamente un *DIV*,
 
 El **comportamiento** es un fragmento de código en Javascript almacenado en un fichero, típicamente con extensión *.js*. Cuando un componente se activa (<a href="#awake">ver más adelante</a>), puede recibir parámetros que permiten modificar su comportamiento.
 
-![Definición de comportamiento](https://raw.github.com/surtich/iris/iris-grunt/docs/images/component_equation.png)
+![Definición de comportamiento](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/component_equation.png)
 
 Cuando Iris carga un componente, visualiza el código de su fichero HTML asociado y ejecuta su fichero de Javascript según se haya definido en su ciclo de vida (<a href="#life_cycle">ver más adelante</a>).
 
@@ -160,7 +160,7 @@ El evento complementario será **destroy**. Esté método, al igual que *create*
 
 Por último, el evento **sleep** es el complementario de *awake*, y se efectuará primero sobre los UIs contenidos en el Screen y luego en el propio Screen cada vez que se produzca un cambio en el Hash-URL que suponga su ocultamiento. No debemos olvidar desactivar los eventos o detener otras tareas, como la reproducción de componentes multimedia, que hayamos iniciado en el evento *awake*. Antes de que se llame al método *destroy* de un componente, se efectuará la llamada a *sleep*.
 
-Podemos ver esto gráficamente:<!--TODO Actualizar gráfico-->
+Podemos ver esto gráficamente:
 
 ![Ciclo de vida](https://raw.github.com/surtich/iris/iris-grunt/docs/images/iris_life_cycle.png)
 
@@ -182,7 +182,7 @@ Aquí no se pretende crear una aplicación funcional, sino que se comprenda como
 Para hacer más sencilla la explicación, todo el código de esta sección se situará un el directorio raíz de la aplicación. No es conveniente hacer esto en una aplicación real. En la sección *<a href="#paso-a-paso">Construyendo paso a paso una aplicación desde cero</a>* se propone una estructura de directorios más adecuada para trabajar con Iris.
 
 ##<a name="installing"></a>Instalando Iris
-El primer paso será decidir si queremos trabajar con la versión de [desarrollo](https://raw.github.com/iris-js/iris/master/dist/iris.js) o de [producción](https://raw.github.com/iris-js/iris/master/dist/iris.min.js)<!--TODO revisar enlaces-->y asociarlas a un fichero en HTML.
+El primer paso será decidir si queremos trabajar con la versión de [desarrollo](https://raw.github.com/iris-js/iris/master/dist/iris.js) o de [producción](https://raw.github.com/iris-js/iris/master/dist/iris.min.js)<!-- TODO revisar enlaces -->y asociarlas a un fichero en HTML.
 
 ```html
 <!-- In index.html -->
@@ -824,7 +824,7 @@ Se puede especificar el valor de *tmplMode* en el método *ui* pasándolo como c
 
 > Iris no permite que cargar un UI en un contenedor registrado para un Screen.
 
-Por ejemplo, el siguiente código poducirá un error:
+Por ejemplo, el siguiente código producirá un error:
 
 ```js
 self.create = function () {
@@ -891,7 +891,7 @@ self.create = function () {
 };
 ```
  
-Observe que tenemos dos botones, uno para ir al Screen Home y otro para destruirlo. Si pulsamos primero sobre el botón que nos llava al Screen Home, luego sobre el enlace que nos lleva al Screen Help y luego sobre el botón que destruye el Screen Home, obtendremos el siguiente DOM:
+Observe que tenemos dos botones, uno para ir al Screen Home y otro para destruirlo. Si pulsamos primero sobre el botón que nos lleva al Screen Home, luego sobre el enlace que nos lleva al Screen Help y luego sobre el botón que destruye el Screen Home, obtendremos el siguiente DOM:
 
 ```html
 <html>
@@ -1035,7 +1035,7 @@ iris.screen(
     }
 );
 ```
-Observe que estando en el hash-URL *#inner_home*, si pulsamos el botón de destruir el Screen Home, Iris da un error diciéndo que no podemos destruir el padre del Screen actual.
+Observe que estando en el hash-URL *#inner_home*, si pulsamos el botón de destruir el Screen Home, Iris da un error indicando que no podemos destruir el padre del Screen actual.
 
 Si navegamos a *#help*, podremos destruir el Screen Home. Como decíamos antes, la destrucción del Screen Home no eliminará su registro, sin embargo sí se eliminará el registro del Screen Inner_home. Para volver a navegar a #inner_home debemos navegar previamente #home; se volverá a llamar al método *create* del Screen Home que volverá a registrar el Screen Inner_Home permitiéndonos navegar a él.
 
@@ -2139,7 +2139,7 @@ iris.baseUri(p_baseUri) //This sets or returns the base directory of the applica
 ```
 
 ```js
-iris.cache(boolean) //True, if you want Iris use the cache browser (This prevents the browser to use the local copy of the data and force to download them from the server). False if you want the opposite
+iris.cache(boolean) //True, if you want Iris use the cache browser (This prevents the browser to use the local copy of the data and force to download them from the server). False if you want the opposite.
 ```
 
 ```js
@@ -2181,7 +2181,7 @@ iris.welcome("welcome.js");
 
 Observe que se le ha pasado un parámetro adicional al método *iris.screen*. Este parámetro tiene que coincidir exactamente con el parámetro que se pasa al método *iris.welcome*. Si se pasa este parámetro adicional, cuando se vaya a crear el Screen, Iris buscará si ya hay cargado en memoria un método que corresponda a este *Screen* en lugar de cargarlo desde el servidor. Y, por lo tanto, se utilizará el fichero *minificado* si se dispone de él.
 
-La misma técnica se utilizará cuando se cree un *Screen* al navegar a él por primera vez o cuando se llame al método *goto* para crear un *UI*. En este último caso, deberemos definir el *UI* con el parámetro adicional que permite a Iris localizarlo. Por ejemplo, si el *UI* *my_ui* está en el directorio raíz:
+La misma técnica se utilizará cuando se cree un *Screen* al navegar a él por primera vez o cuando se llame al método *goto* para crear un *Screen*. De la misma forma, en los UIs deberemos definir el *UI* con el parámetro adicional que permite a Iris localizarlo. Por ejemplo, si el *UI* *my_ui* está en el directorio raíz:
 
 ```js
 //In my_ui.js
@@ -2201,21 +2201,21 @@ Las pruebas de unidad son una fuente adicional para conocer el funcionamiento de
 
 En esta sección vamos utilizar Iris para construir una sencilla aplicación que nos permita comprender como integrar todo lo visto anteriormente.
 
-Puede descargase  la aplicación en el siguiente [enlace](https://github.com/surtich/iris/blob/iris-grunt/docs/iris-shopping.tar.gz?raw=true).
+Puede descargase la aplicación en el siguiente [enlace](https://github.com/surtich/iris/blob/iris-grunt/docs/iris-shopping.tar.gz?raw=true).
 
 La aplicación va a permitir realizar la lista de la compra de una serie de productos agrupados en categorías. En las siguientes imágenes presentamos las principales pantallas de la aplicación.
 
 <a name="home_img"></a>*#home:*
-![home](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/home.png)
+![home](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/shopping_list/home.png)
 
 <a name="categories_img"></a>*#categories:*
-![categories](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/categories.png)
+![categories](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/shopping_list/categories.png)
 
 <a name="products_img"></a>*#products:*
-![products](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/products.png)
+![products](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/shopping_list/products.png)
 
 <a name="shopping_img"></a>*#shopping:*
-![shopping](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/shopping_list.png)
+![shopping](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/shopping_list/shopping_list.png)
 
 Además de Iris, se ha utilizado [Twitter Bootstrap](http://twitter.github.com/bootstrap/) para *maquetar* la aplicación y [JQuery DataTables](http://www.datatables.net/) para presentar los productos de la lista de la compra. En esta sección no se va a explicar el uso de estas librerías aunque su conocimiento no es esencial para comprender el funcionamiento de la aplicación.
 
@@ -2223,17 +2223,17 @@ Además de Iris, se ha utilizado [Twitter Bootstrap](http://twitter.github.com/b
 
 En Iris debemos crear un fichero *html* y otro *js* por cada componente. En aplicaciones de tamaño medio/grande, lo normal es que haya decenas e incluso centenares de archivos. Es importante que, desde el principio, definamos una estructura de directorios que nos permita localizar fácilmente cada uno de estos archivos.
 
-Vamos a proponer una estructura determinada aunque cualquier otra que cumpla el propósito anterior será igualmente válida. En nuestro ejemplo, vamos a crear un fichero *shopping* para almacenar los componentes de Iris y fuera de este fichero guardaremos, librerías, estilos, imágenes, que no sean específicos de Iris. En el directorio *shopping* vamos almacenar por separado los componentes de tipo *Screen* de los de tipo *UI* creando un directorio para cada tipo. Además vamos a crear subdirectorios para almacenar los  componentes que definen un mismo estado de la aplicación.
+Vamos a proponer una estructura determinada aunque cualquier otra que cumpla el propósito anterior será igualmente válida. En nuestro ejemplo, vamos a crear un fichero *shopping* para almacenar los componentes de Iris y fuera de este fichero guardaremos, librerías, estilos, imágenes, que no sean específicos de Iris. En el directorio *shopping* vamos almacenar por separado los componentes de tipo *Screen* de los de tipo *UI*, creando un directorio para cada tipo. Además vamos a crear subdirectorios para almacenar los  componentes que definen un mismo estado de la aplicación.
 
 En la siguiente imagen vemos la estructura de directorios y los archivos que contienen:
 
-![www_directories](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/www_directories.png)
+![www_directories](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/shopping_list/www_directories.png)
 
 Más detalladamente, el contenido del directorio *shopping* será el siguiente:
 
-![shopping_directories](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/shopping_directories.png)
+![shopping_directories](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/shopping_list/shopping_directories.png)
 
-Observe que, para hacer más sencillo el ejemplo, se ha creado un directorio *json* que permite cargar los productos y las categorías desde el servidor Web sin depender de ninguna tecnología de servidor.
+Observe que, para hacer más sencillo el ejemplo, se ha creado un directorio *json* que permite cargar los productos y las categorías desde el servidor Web sin depender de ninguna tecnología de servidor. En una aplicación real, normalmente los productos estarían almacenados en una base de datos.
 
 ##<a name="step_by_step_welcome"></a>*Screen* Welcome
 
@@ -2318,7 +2318,7 @@ $(document).ready(
     }
 );
 ```
-Observe que lo primero que hacemos en este *script* es cargar algunas de las traducciones que vamos a necesitar. Hemos decidido que cada fichero de Javascript cargue las traducciones que vaya a utilizar. En el caso de *init.js* vamos a cargar las traducciones comunes en toda la aplicación. Una alternativa perfectamente aceptable sería tener un único punto donde cargar las traducciones de toda la aplicación.
+Observe que lo primero que hacemos en este *script* es cargar algunas de las traducciones que vamos a necesitar. Hemos decidido que cada fichero de Javascript cargue las traducciones que vaya a utilizar. En el caso de *init.js* vamos a cargar las traducciones comunes en toda la aplicación. Una alternativa perfectamente aceptable sería tener un único punto donde definiríamos todas las traducciones de la aplicación. Otra posible solución sería almacenar las traducciones en una base de datos y recuperarlas mediante un objeto *JSON*.
 
 Después llamamos a la función *_setLang* que nos permite definir el idioma de la aplicación. El idioma se seleccionará a partir del parámetro *lang* que se haya pasado en el *Query String* de la *URL*. Si no se ha pasado este parámetro se seleccionará el idioma por defecto.
 
@@ -2458,7 +2458,7 @@ Finalmente, el fichero *welcome.html* contendrá:
 </div>
 ```
 
-Observe en este archivo se definen los menús con *Bootstrap* para acceder a las distintas secciones de la aplicación. En lugar de colocar los textos descriptivos de los menús directamente, se utiliza la sintaxis de Iris para permitir localizarlos en los ficheros de traducción. En la esquina superior derecha, <a href="#home_img">ver imagen</a>, se sitúan iconos para cambiar el idioma. Por último, hay un contenedor donde se cargarán los *screens* de la aplicación.
+Observe que en este archivo se definen los menús con *Bootstrap* para acceder a las distintas secciones de la aplicación. En lugar de colocar los textos descriptivos de los menús directamente, se utiliza la sintaxis de Iris para permitir localizarlos en los ficheros de traducción. En la esquina superior derecha, <a href="#home_img">ver imagen</a>, se sitúan iconos para cambiar el idioma. Por último, hay un contenedor donde se cargarán los *screens* de la aplicación.
 
 ##<a name="step_by_step_home"></a>*Screen* Home
 
@@ -2823,7 +2823,7 @@ Y en *categories.html*:
 </div>  
 ```
 
-Observe que cómo llamamos al método *model.service.app.getCategories* para recuperar las categorías desde el servidor. Cuando hayamos recuperado las categorías, iterativamente cargamos el *UI* *category_list_item* pasándole cada categoría como parámetro en el contenedor *list_categories*.
+Observe que llamamos al método *model.service.app.getCategories* para recuperar las categorías desde el servidor. Cuando hayamos recuperado las categorías, iterativamente cargamos el *UI* *category_list_item* pasándole cada categoría como parámetro en el contenedor *list_categories*.
 
 El *UI* *category_list_item* tendrá los siguientes ficheros:
 
@@ -2965,7 +2965,7 @@ En *products.html*:
 Los más interesante de estos ficheros lo resumimos en los siguientes puntos:
 
 * A diferencia de lo que hicimos con las categorías, la carga de los productos la realizamos en el método *awake* en vez de en el *create*.
-* La razón para hacer esto es que necesitamos reutilizar el contenedor *list_products* cuando cambiamos la categoría seleccionada.
+* El motivo por el que hacemos esto es que necesitamos reutilizar el contenedor *list_products* cuando cambiamos la categoría seleccionada.
 * El método *awake* debe, por lo tanto, destruir los productos que haya en el contenedor antes de cargar los de la categoría seleccionada.
 * La carga de los productos se hace, de forma similar a como lo hicimos con las categorías, en el *UI* *product_list_item*.
 * Hemos utilizado el método *on* de JQuery para que cuando se pulse sobre algún producto, se añada o se elimine el producto de la lista de la compra. Este método de *JQuery* tiene la ventaja de que el evento se va a asociar incluso a aquellos elementos que todavía no existan en la interfaz de usuario.
@@ -3255,7 +3255,7 @@ Y en *shopping.html*:
 Estos son los puntos más relevantes de estos ficheros:
 
 * La función *_asignEvents* asigna la pulsación de los botones del *screen* a eventos de Iris para actuar sobre el modelo. También registra eventos de Iris lanzados desde el modelo.
-* La función *_loadShoppingProducts* carga en el *tbody* de la tabla *shopping_table* los productos de la lista de la compra. Los productos que no se hayan comprado todavía aparecen primero ordenados por su *idProduct*. Con cada producto se pueden realizar dos acciones: comprar y borrar de la lista. Este función gestiona la pulsación sobre los botones que efectúan estas acciones. Por último, esta función asigna los estilos adecuados cuando un producto ha sido comprado.
+* La función *_loadShoppingProducts* carga en el *tbody* de la tabla *shopping_table* los productos de la lista de la compra. Los productos que no se hayan comprado todavía aparecen primero ordenados por su *idProduct*. Con cada producto se pueden realizar dos acciones: comprar y borrar de la lista. Esta función gestiona la pulsación sobre los botones que efectúan estas acciones. Por último, se asignan los estilos adecuados cuando un producto ha sido comprado.
 * La función *_destroyShoppingTable* elimina la tabla de la lista de la compra.
 * La función *_createShoppingTable* determina las columnas que se van a mostrar en la tabla de la lista de la compra, el sistema de *paginación* y las columnas por las que se puede realizar ordenación.
 * La función *_changeVisibilityShoppingTable* oculta la tabla de la lista de la compra cuando no hay ningún producto.
@@ -3293,9 +3293,9 @@ Y en *product_shopping_list_item.html*:
 ```
 
 ##<a name="step_by_step_grunt"></a>Automatizando procesos con *Grunt*
-*[Grunt](http://gruntjs.com/)* es ...proximamente.
+*[Grunt](http://gruntjs.com/)* es ...próximamente.
 
 ##<a name="step_by_step_qunit"></a>Pruebas de unidad con *QUnit*
-*[QUnit](http://qunitjs.com/)* es ...proximamente.
+*[QUnit](http://qunitjs.com/)* es ...próximamente.
 
 
