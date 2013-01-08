@@ -2343,10 +2343,15 @@ iris.screen(
             }
             
             function _createScreens() {
-                self.screen("screens", "#home", "shopping/screen/home.js");
-                self.screen("screens", "#categories", "shopping/screen/products/categories.js");
-                self.screen("screens", "#products", "shopping/screen/products/products.js");            
-                self.screen("screens", "#shopping", "shopping/screen/list/shopping.js");
+                self.screens("screens", [{
+                    "#home": "shopping/screen/home.js"
+                }, {
+                    "#categories": "shopping/screen/products/categories.js"
+                }, {
+                    "#products": "shopping/screen/products/products.js"
+                },{
+                    "#shopping": "shopping/screen/list/shopping.js"
+                }]);
             }
         
             function _changeLang(link) {
