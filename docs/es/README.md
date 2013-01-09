@@ -3525,32 +3525,32 @@ En *iris.json* podemos definir las variables que queramos que use *Grunt*:
 
 ```js
 {
-  "name": "ShoppingList",
-  "title": "ShoppingList Example",
-  "description": "This is a simple example of using Iris.",
-  "version": "0.0.1-SNAPSHOT",
-  "homepage": "http://localhost:8080",
-  "author": {
-    "name": "Iris",
-    "url": "https://github.com/iris-js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/iris-js/iris.git"
-  },
-  "bugs": {
-    "url": "https://github.com/iris-js/iris/issues"
-  },
-  "licenses": [
-    {
-      "type": "New-BSD",
-      "url": "https://github.com/iris-js/iris.git/blob/master/LICENSE-New-BSD"
-    }
-  ],
-  "dependencies": {
-    "jquery": "1.5.1"
-  },
-  "keywords": []
+    "name": "ShoppingList",
+    "title": "ShoppingList Example",
+    "description": "This is a simple example of using Iris.",
+    "version": "0.0.1-SNAPSHOT",
+    "homepage": "http://localhost:8080",
+    "author": {
+        "name": "Iris",
+        "url": "https://github.com/iris-js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/iris-js/iris.git"
+    },
+    "bugs": {
+        "url": "https://github.com/iris-js/iris/issues"
+    },
+    "licenses": [
+        {
+            "type": "New-BSD",
+            "url": "https://github.com/iris-js/iris.git/blob/master/LICENSE-New-BSD"
+        }
+    ],
+    "dependencies": {
+        "jquery": "1.5.1"
+    },
+    "keywords": []
 }
 ```
 
@@ -3625,7 +3625,6 @@ module.exports = function(grunt) {
 
     grunt.registerTask('test', 'lint qunit');
 };
-
 ```
 
 Si queremos validar el código, debemos abrir un terminal y, estando en el directorio al que pertenece *grunt.js*, ejecutar:
