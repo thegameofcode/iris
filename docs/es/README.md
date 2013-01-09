@@ -197,10 +197,10 @@ Desde Javascript, llamamos al método **welcome** de Iris para cargar el fichero
 ```js
 //In any Javascrit file or in a "<script>" section of an HTML file ... 
 $(document).ready(
- function () {
-  iris.baseUri("./"); //It sets de base directory of the application
-  iris.welcome("welcome.js"); //It loads the behavior file of the welcome Screen
- }
+    function () {
+         iris.baseUri("./"); //It sets de base directory of the application
+         iris.welcome("welcome.js"); //It loads the behavior file of the welcome Screen
+    }
 );
 ```
 
@@ -210,26 +210,26 @@ El fichero *welcome.js* antes referido tendrá la siguiente estructura:
 //In welcome.js
 iris.screen(
 	
- function (self) {
+    function (self) {
  
-  self.create = function () {
-   console.log("Welcome Screen Created");
-   self.tmpl("welcome.html");
-  };
+        self.create = function () {
+            console.log("Welcome Screen Created");
+            self.tmpl("welcome.html");
+        };
 
-  self.awake = function () {
-   console.log("Welcome Screen Awakened");
-  };
+        self.awake = function () {
+            console.log("Welcome Screen Awakened");
+        };
 		
-  self.sleep = function () {
-   console.log("Welcome Screen Sleeping"); //Never called
-  };
+        self.sleep = function () {
+            console.log("Welcome Screen Sleeping"); //Never called
+        };
   
-  self.destroy = function () {
-   console.log("Welcome Screen Destroyed");//Never called
-  };
+        self.destroy = function () {
+            console.log("Welcome Screen Destroyed");//Never called
+        };
   
- }
+    }
  
 );
 ```
@@ -387,8 +387,7 @@ self.create = function () {
     //The get method returns de JQuery element associated with the data-id parameter
     self.get("goto_home").click( function() {
         iris.goto("#home"); //It browses to the Hash-URL
-    }
-    );
+    });
 };
 ```
 Observe como el método **goto** de Iris permite navegar al Hash-URL especificado y que, para capturar el evento *click* del botón, hemos utiliado el método **get** del componente de Iris que recibe el valor de su atributo *data-id*. Iris buscará un elemento en el DOM del componente con ese *data-id* y lo devolverá como un objeto de JQuery.
@@ -407,23 +406,23 @@ Los ficheros asociados serán los habituales:
 //In help.js
 
 iris.screen(
- function (self) {
-  self.create = function () {   
-   self.tmpl("help.html");
-   console.log("Help Screen Created");
-  };
-  self.awake = function () {   
-   console.log("Help Screen Awakened");
-  };
+    function (self) {
+        self.create = function () {   
+            self.tmpl("help.html");
+            console.log("Help Screen Created");
+        };
+        self.awake = function () {   
+            console.log("Help Screen Awakened");
+        };
 		
-  self.sleep = function () {
-   console.log("Help Screen Sleeping");
-  };
+        self.sleep = function () {
+            console.log("Help Screen Sleeping");
+        };
   
-  self.destroy = function () {
-   console.log("Help Screen Destroyed");
-  };
- }
+        self.destroy = function () {
+            console.log("Help Screen Destroyed");
+        };
+    }
 );
 ```
 
@@ -607,22 +606,22 @@ En my_ui.js:
 //In my_ui.js
 
 iris.ui(
- function (self) {
-  self.create = function () {
-   console.log("my_ui UI Created");
-   self.tmpl("my_ui.html");
-  }
-  self.awake = function () {   
-   console.log("my_ui UI Awakened");
-  }
-  self.sleep = function () {
-   console.log("my_ui UI Sleeping");
-  }
+    function (self) {
+        self.create = function () {
+            console.log("my_ui UI Created");
+            self.tmpl("my_ui.html");
+        };
+        self.awake = function () {   
+            console.log("my_ui UI Awakened");
+        }
+        self.sleep = function () {
+            console.log("my_ui UI Sleeping");
+        };
   
-  self.destroy = function () {
-   console.log("my_ui UI Destroyed");
-  }
- }
+        self.destroy = function () {
+            console.log("my_ui UI Destroyed");
+        };
+    }
 );
 ```
 La única diferencia que encontramos aquí con respecto a lo explicado en los Screens es que el método se llama **ui** en vez de *screen*.
@@ -661,7 +660,7 @@ self.create = function () {
         function() {
             self.ui("ui_container", "my_ui.js");
         }
-        );   
+    );   
 };
 ```
 
@@ -807,9 +806,9 @@ Para mostrar como hacer esto, modifiquemos el método *create* del UI *my_ui*:
 
 ```js
 self.create = function () {   
- console.log("my_ui UI Created");
- self.tmplMode(self.APPEND);
- self.tmpl("my_ui.html");
+    console.log("my_ui UI Created");
+    self.tmplMode(self.APPEND);
+    self.tmpl("my_ui.html");
 };
 ```
 
@@ -961,7 +960,7 @@ Home Screen Destroyed
 
 > No se puede destruir el Screen actual. Es decir, no se puede destruir el Screen asociado al hash-URL que esté mostrando el navegador.
 
-Es decir que si, por ejemplo, estamos en el hash-URL #home, no podemos destruir el Screen Home. Puede probarlo tratando de destruir el Screen Home sin cambiar a *#help*.
+Si, por ejemplo, estamos en el hash-URL #home, no podemos destruir el Screen Home. Puede probarlo tratando de destruir el Screen Home sin cambiar a *#help*.
 
 > Tampoco se puede destruir un Screen si el hash-URL actual pertenece a la jerarquía del Screen que se quiere destruir.
 
@@ -1432,7 +1431,6 @@ En *welcome.js*:
 
 ```js
 //In welcome.js
-//In welcome.js
 iris.screen(
 
     function (self) {
@@ -1716,12 +1714,12 @@ Para definir las traducciones tenemos dos alternativas.
 
 ```js
 iris.translations("en_US", {
- GREETING: "Hi!",
- GREETINGS: {
-  MORNING: "Good Morning",
-  AFTERNOON: "Good Afternoon",
-  NIGHT: "Good Night"
- }
+    GREETING: "Hi!",
+    GREETINGS: {
+        MORNING: "Good Morning",
+        AFTERNOON: "Good Afternoon",
+        NIGHT: "Good Night"
+    }
 });
 ```
 Observe que Iris soporta definiciones de vocablos multinivel.
@@ -1737,12 +1735,12 @@ El fichero *./lang_FR.json* podría ser el siguiente:
 
 ```json
 {
- "GREETING": "Salut!",
- "GREETINGS": {
-  "MORNING": "Bonjour",
-  "AFTERNOON": "Bonjour",
-  "NIGHT": "Bonne nuit"
- }
+    "GREETING": "Salut!",
+    "GREETINGS": {
+        "MORNING": "Bonjour",
+        "AFTERNOON": "Bonjour",
+        "NIGHT": "Bonne nuit"
+    }
 }
 ```
 
@@ -1771,7 +1769,7 @@ iris.translate("GREETINGS.MORNING", "es_ES");
 
 ```html
 <div>
-@@GREETINGS.MORNING@@
+    @@GREETINGS.MORNING@@
 </div>
 ```
 
@@ -1783,11 +1781,11 @@ En *welcome.html*:
 
 ```html
 <div>
- <h1>Welcome Screen</h1>
- <p>This is the initial screen.</p>
- Morning Greeting from HTML: @@GREETINGS.MORNING@@
- </br>
- Morning Greeting from Javascript: <span data-id="greeting"/>
+    <h1>Welcome Screen</h1>
+    <p>This is the initial screen.</p>
+    Morning Greeting from HTML: @@GREETINGS.MORNING@@
+    </br>
+    Morning Greeting from Javascript: <span data-id="greeting"/>
 </div>
 ```
 Y en *welcome.js*:
@@ -1899,7 +1897,7 @@ iris.screen(
 La función *iris.regional* permite conocer el valor regional que está utilizando Iris. Por ejemplo para saber los nombres de los días de la semana, usaremos:
 
 ```js
-iris.regional("dayNames")
+iris.regional("dayNames");
 ```
 
 Para el formateado desde HTML utilizaremos los siguientes ficheros:
@@ -2107,7 +2105,7 @@ iris.screen(
                 console.log("Error callback unexpected: " + p_errorThrown);
             });
    
-        }
+        };
 
     }
 );
@@ -3301,7 +3299,7 @@ Y en *product_shopping_list_item.html*:
 
 ##<a name="step_by_step_qunit"></a>Pruebas unitarias con *QUnit*
 
-*[QUnit](http://qunitjs.com/)* es una librería para realizar [pruebas unitarias[(http://es.wikipedia.org/wiki/Prueba_unitaria) que pertenece al proyecto [JQuery](http://jquery.com/).
+*[QUnit](http://qunitjs.com/)* es una librería para realizar [pruebas unitarias](http://es.wikipedia.org/wiki/Prueba_unitaria) que pertenece al proyecto [JQuery](http://jquery.com/).
 
 Con *QUnit* podemos realizar tanto pruebas síncronas como asíncronas así como probar eventos de la interfaz de usuario.
 
@@ -3310,6 +3308,7 @@ Con *QUnit* podemos realizar tanto pruebas síncronas como asíncronas así como
 Las pruebas de unidad deben ser atómicas, es decir, que una prueba no debe depender de los resultados o de las acciones realizadas en otra prueba de unidad. Para facilitar esto, *QUnit* tiene la posibilidad de asociar a cada módulo las funciones *setup* y *teardown* y en ellas definir lo que queremos que se haga antes y después de cada test, respectivamente.
 
 El módulo para probar el modelo lo almacenamos en el fichero *model_test.js*:
+
 Nota: No se ha realizado una prueba exhaustiva sino que se trata de un simple ejemplo para comprender el funcionamiento de *QUnit*.
 
 ```js
