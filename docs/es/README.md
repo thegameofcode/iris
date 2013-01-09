@@ -38,8 +38,9 @@
   * <a href="#step_by_step_caterogies">*Screen* Categories</a><br>
   * <a href="#step_by_step_products">*Screen* Products</a><br>
   * <a href="#step_by_step_shopping">*Screen* Shopping</a><br>
+  * <a href="#step_by_step_qunit">Pruebas unitarias con *QUnit*</a><br>
   * <a href="#step_by_step_grunt">Automatizando procesos con *Grunt*</a><br>
-  * <a href="#step_by_step_qunit">Pruebas de unidad con *QUnit*</a><br>
+  
 
 #<a name="what_is_it"></a>¿Qué es Iris?
 
@@ -697,7 +698,7 @@ Es interesante estudiar el DOM que genera Iris tras pulsar el botón y cargar el
 </html>
 ```
 
-Obsérve que el contenedor con *data-id='ui_container'* ha sido reemplazado por el contenido del fichero *my_ui.html*.
+Observe que el contenedor con *data-id='ui_container'* ha sido reemplazado por el contenido del fichero *my_ui.html*.
 
 Aunque se puede modificar, como explicaremos posteriormente, este es el comportamiento por defecto de los UIs:
 
@@ -2282,7 +2283,7 @@ $(document).ready(
             if ( lang !== null) {
                 iris.locale(lang[0].substring(lang[0].length - 5, lang[0].length));
             } else {
-                iris.locale("en_US"); //Default Lang
+                iris.locale("en_US");
             }
         }
             
@@ -2313,7 +2314,10 @@ $(document).ready(
 
         _setLang();
         
-        iris.welcome("shopping/screen/welcome.js");
+        
+        iris.baseUri(".");
+        iris.enableLog("localhost");
+        iris.welcome("/shopping/screen/welcome.js");
                                 
     }
 );
@@ -2344,13 +2348,13 @@ iris.screen(
             
             function _createScreens() {
                 self.screens("screens", [{
-                    "#home": "shopping/screen/home.js"
+                    "#home": "/shopping/screen/home.js"
                 }, {
-                    "#categories": "shopping/screen/products/categories.js"
+                    "#categories": "/shopping/screen/products/categories.js"
                 }, {
-                    "#products": "shopping/screen/products/products.js"
+                    "#products": "/shopping/screen/products/products.js"
                 },{
-                    "#shopping": "shopping/screen/list/shopping.js"
+                    "#shopping": "/shopping/screen/list/shopping.js"
                 }]);
             }
         
@@ -2397,7 +2401,7 @@ iris.screen(
             });
             
             
-            self.tmpl("shopping/screen/welcome.html");
+            self.tmpl("/shopping/screen/welcome.html");
             
             _ajaxPrepare();
             
@@ -2415,8 +2419,7 @@ iris.screen(
                 iris.goto("#home"); //Default page
             }
         };
-    } , "shopping/screen/welcome.js");
-
+    } , "/shopping/screen/welcome.js");
 ```
 Lo más relevante de este fichero es:
 * La función *_ajaxPrepare* permite poner un texto *cargando...* cada vez que se efectúa una llamada *AJAX*.
@@ -2486,9 +2489,9 @@ iris.screen(
                 }
             });
             
-            self.tmpl("shopping/screen/home.html");
+            self.tmpl("/shopping/screen/home.html");
         };
-    }, "shopping/screen/home.js");
+    }, "/shopping/screen/home.js");
 ```
 
 En *home.html*:
@@ -2529,7 +2532,7 @@ var model = {};
         }
     };
 
-    function init () {
+    function _init () {
         model.shoppingList = new model.ShoppingList();
         iris.on(model.event.PRODUCTS.REMOVE, model.shoppingList.removeShoppingProduct);
         iris.on(model.event.PRODUCTS.ADD, model.shoppingList.addShoppingProduct);
@@ -2542,8 +2545,7 @@ var model = {};
         
     }
     
-    function destroy () {
-        model.shoppingList = null;
+    function _destroy () {
         iris.off(model.event.PRODUCTS.REMOVE, model.shoppingList.removeShoppingProduct);
         iris.off(model.event.PRODUCTS.ADD, model.shoppingList.addShoppingProduct);
         iris.off(model.event.SHOPPING.CHANGE_STATE, model.shoppingList.changeStateShoppingProduct);        
@@ -2552,8 +2554,12 @@ var model = {};
         iris.off(model.event.SHOPPING.UNCHECK_ALL, model.shoppingList.uncheckAll);        
         iris.off(model.event.SHOPPING.INVERT_CHECK, model.shoppingList.invertCheck);  //Cuando un evento no existe no de ningún aviso, Me he vuelto loco porque no sabía que pasaba
         iris.off(model.event.SHOPPING.REMOVE_CHECKED, model.shoppingList.removePurchased);
-        
+        model.shoppingList = null;
     }
+    
+    model.init = _init;
+    model.destroy = _destroy;
+    
     
     model.ShoppingList =  function () {    
        
@@ -2734,6 +2740,7 @@ var model = {};
     
     
     model.ShoppingProduct = function (idProduct, nameProduct, purchased) {
+        this.order = -1;
         this.idProduct = idProduct;
         this.nameProduct = nameProduct;
         
@@ -2751,7 +2758,7 @@ var model = {};
     
     model.service = iris.service(function(self){
         self.load = function (path, success, error) {
-            self.get(path, success, error);
+            self.get(iris.baseUri() + path, success, error);
         };
     });
     
@@ -2759,15 +2766,15 @@ var model = {};
     model.service.app = (function() {
         return {
             getCategories: function(success, error) {
-                model.service.load("json/categories.json", success, error);
+                model.service.load("/json/categories.json", success, error);
             },
             getProducts: function(idCategory, success, error) {
-                model.service.load("json/category_" + idCategory + ".json", success, error);
+                model.service.load("/json/category_" + idCategory + ".json", success, error);
             }
         };
     })();
     
-    init();
+    model.init();
     
 })(jQuery);
 ```
@@ -2793,7 +2800,7 @@ iris.screen(
         function _inflate(categories) {
             $.each(categories,
                 function(index, category) {						
-                    self.ui("list_categories", "shopping/ui/products/category_list_item.js", {
+                    self.ui("list_categories", "/shopping/ui/products/category_list_item.js", {
                         "category": category
                     });
                 }
@@ -2801,12 +2808,12 @@ iris.screen(
         }
         
         self.create = function () {
-            self.tmpl("shopping/screen/products/categories.html");
+            self.tmpl("/shopping/screen/products/categories.html");
             model.service.app.getCategories(_inflate);
         };
 
         
-    }, "shopping/screen/products/categories.js");
+    }, "/shopping/screen/products/categories.js");
 ```
 
 Y en *categories.html*:
@@ -2834,9 +2841,9 @@ iris.ui(function(self) {
     self.create = function() {
         var category = self.setting("category");
         self.tmplMode(self.APPEND);
-        self.tmpl("shopping/ui/products/category_list_item.html", category);
+        self.tmpl("/shopping/ui/products/category_list_item.html", category);
     };	
-}, "shopping/ui/products/category_list_item.js");
+}, "/shopping/ui/products/category_list_item.js");
 ```
 
 En *category_list_item.html*:
@@ -2894,7 +2901,7 @@ iris.screen(
                 }
             });
             
-            self.tmpl("shopping/screen/products/products.html");
+            self.tmpl("/shopping/screen/products/products.html");
             _msg = self.get("msg");
             
             $("[data-id='list_products']").on("change", "input[type='checkbox']", function (event) {
@@ -2925,7 +2932,7 @@ iris.screen(
                         } else {
                             product.checked = "";
                         }
-                        self.ui("list_products", "shopping/ui/products/product_list_item.js", {
+                        self.ui("list_products", "/shopping/ui/products/product_list_item.js", {
                             "product": product
                         });
                     }
@@ -2942,7 +2949,7 @@ iris.screen(
                     );
             }
         };
-    }, "shopping/screen/products/products.js");
+    }, "/shopping/screen/products/products.js");
 ```
 
 En *products.html*:
@@ -2981,9 +2988,9 @@ iris.ui(function(self) {
     self.create = function() {  
         self.tmplMode(self.APPEND);
         var product = self.setting("product");                
-        self.tmpl("shopping/ui/products/product_list_item.html", product);
+        self.tmpl("/shopping/ui/products/product_list_item.html", product);
     };
-}, "shopping/ui/products/product_list_item.js");
+}, "/shopping/ui/products/product_list_item.js");
 ```
 
 Y en *product_list_item.html*:
@@ -3059,7 +3066,7 @@ iris.screen(
                 }
             });
             
-            self.tmpl("shopping/screen/list/shopping.html");            
+            self.tmpl("/shopping/screen/list/shopping.html");            
             _asignEvents();
         };
                 
@@ -3121,7 +3128,7 @@ iris.screen(
             if (products.length > 0) {                
                 $.each(products,
                     function(index, product) {
-                        var ui = self.ui("shoppingList_products", "shopping/ui/list/product_shopping_list_item.js", {
+                        var ui = self.ui("shoppingList_products", "/shopping/ui/list/product_shopping_list_item.js", {
                             "product": product
                         });
                         
@@ -3217,7 +3224,7 @@ iris.screen(
             iris.off(model.event.SHOPPING.CHANGE_STATE, _changeStateButtons);                
         };
         
-    },"shopping/screen/list/shopping.js");
+    },"/shopping/screen/list/shopping.js");
 ```
 
 Y en *shopping.html*:
@@ -3270,9 +3277,9 @@ iris.ui(function(self) {
     self.create = function() {
         self.tmplMode(self.APPEND);
         var product = self.setting("product");                
-        self.tmpl("shopping/ui/list/product_shopping_list_item.html", product);
+        self.tmpl("/shopping/ui/list/product_shopping_list_item.html", product);
     };	
-}, "shopping/ui/list/product_shopping_list_item.js");
+}, "/shopping/ui/list/product_shopping_list_item.js");
 ```
 
 Y en *product_shopping_list_item.html*:
@@ -3292,10 +3299,356 @@ Y en *product_shopping_list_item.html*:
 </tr>
 ```
 
+##<a name="step_by_step_qunit"></a>Pruebas unitarias con *QUnit*
+
+*[QUnit](http://qunitjs.com/)* es una librería para realizar [pruebas unitarias[(http://es.wikipedia.org/wiki/Prueba_unitaria) que pertenece al proyecto [JQuery](http://jquery.com/).
+
+Con *QUnit* podemos realizar tanto pruebas síncronas como asíncronas así como probar eventos de la interfaz de usuario.
+
+*QUnit* permite agrupar las pruebas en módulos. En nuestro ejemplo vamos a crear dos módulos, uno para probar el modelo y otro para probar la interfaz de usuario.
+
+Las pruebas de unidad deben ser atómicas, es decir, que una prueba no debe depender de los resultados o de las acciones realizadas en otra prueba de unidad. Para facilitar esto, *QUnit* tiene la posibilidad de asociar a cada módulo las funciones *setup* y *teardown* y en ellas definir lo que queremos que se haga antes y después de cada test, respectivamente.
+
+El módulo para probar el modelo lo almacenamos en el fichero *model_test.js*:
+Nota: No se ha realizado una prueba exhaustiva sino que se trata de un simple ejemplo para comprender el funcionamiento de *QUnit*.
+
+```js
+(function($) {
+
+    iris.cache(false);
+    iris.enableLog("localhost");
+
+    function clearBody() {
+        var irisGeneratedCode = $("#start_iris").nextAll();
+        if (irisGeneratedCode !== undefined) {
+            irisGeneratedCode.remove();
+        }
+    }
+    
+    
+    module( "Model Test", {
+        setup: function() {
+            model.init();
+            iris.baseUri("../www");
+        },
+        teardown: function () {
+            model.destroy();
+            clearBody();
+        }
+    });
+    
+    test("Test addShoppingProduct() method", function() {
+        model.shoppingList.addShoppingProduct({
+            "idProduct":1 , 
+            "nameProduct":"Carrots"
+        });
+        model.shoppingList.addShoppingProduct({
+            "idProduct":15 , 
+            "nameProduct":"Bacon"
+        });
+        window.ok(model.shoppingList.getShoppingProducts().length === 2, "Two Prodcuts added to the Shopping List");
+    }
+    );
+        
+    test("Test removeShoppingProduct() method", function() {
+        model.shoppingList.addShoppingProduct({
+            "idProduct":1 , 
+            "nameProduct":"Carrots"
+        });
+        model.shoppingList.addShoppingProduct({
+            "idProduct":15 , 
+            "nameProduct":"Bacon"
+        });
+        
+        model.shoppingList.removeShoppingProduct(1);
+        model.shoppingList.removeShoppingProduct(20);
+        
+        window.ok(model.shoppingList.getShoppingProducts().length === 1, "One product removed from the Shopping List");
+    }
+    );
+        
+    test("Test getShoppingProduct() method", function() {
+        model.shoppingList.addShoppingProduct({
+            "idProduct":1 , 
+            "nameProduct":"Carrots"
+        });
+        model.shoppingList.addShoppingProduct({
+            "idProduct":15 , 
+            "nameProduct":"Bacon"
+        });
+        
+        
+        window.ok(model.shoppingList.getShoppingProduct(15).nameProduct === "Bacon", "Bacon product retrieved from the Shoppiing List");
+        window.ok(model.shoppingList.getShoppingProduct(20) === null, "The idProduct 20 is not in the Shopping List");
+    }
+    );
+        
+    test("Test changeStateShoppingProduct() method", function() {
+        model.shoppingList.addShoppingProduct({
+            "idProduct":1 , 
+            "nameProduct":"Carrots"
+        });
+        model.shoppingList.addShoppingProduct({
+            "idProduct":15 , 
+            "nameProduct":"Bacon"
+        });
+        
+        model.shoppingList.changeStateShoppingProduct(15);
+        
+        window.ok(model.shoppingList.getShoppingProduct(15).purchased === true, "Bacon has been purchased");
+        
+        model.shoppingList.changeStateShoppingProduct(15);
+        
+        window.ok(model.shoppingList.getShoppingProduct(15).purchased === false, "Bacon has not been purchased");
+    }
+    );
+        
+    
+
+    asyncTest("Test getCategories() Method", function() {
+        window.expect(1);
+        model.service.app.getCategories(
+            function(categories) {
+                window.ok(categories.length === 4, "Categories retrieved");
+                window.start();
+            }
+            );
+    }
+    );
+        
+    asyncTest("Test getProducts() Method", function() {
+        window.expect(1);
+        model.service.app.getProducts(1,
+            function(products) {
+                window.ok(products.length === 5, "Products retrieved");
+                window.start();
+            }
+            );
+    }
+    );
+
+    
+}(jQuery));
+```
+Observe que para realizar un test síncrono hay que llamar a la función *test* de *QUnit* y, de forma similar, a la función *asyncTest* cuando el test sea asíncrono. Los dos últimos casos de prueba del ejemplo deben ser asíncronos ya que estamos recuperando datos de una *URL*. Los test asíncronos no comienzan a ejecutarse hasta que no se llame a la función *start*. La función *expect* indica el número de test que se deben pasan exitosamente para que *QUnit* considere el caso de prueba como positivo.
+
+Las pruebas sobre la interfaz de usuario las incluimos en el fichero *view_test.js*.
+Nota: Al igual que las anteriores, se trata de un simple ejemplo demostrativo del funcionamiento de *QUnit*.
+
+```js
+(function($) {
+ 
+    iris.cache(false);
+    iris.enableLog("localhost");
+
+    function clearBody() {
+        var irisGeneratedCode = $("#start_iris").nextAll();
+        if (irisGeneratedCode !== undefined) {
+            irisGeneratedCode.remove();
+        }
+    }
+    
+    
+    module( "View Test", {
+        setup: function() {            
+            iris.init();
+            iris.baseUri("../www");
+            model.init();
+            iris.welcome("/shopping/screen/welcome.js");
+        },
+        teardown: function () {
+            model.destroy();
+            window.location.hash ="";
+        //clearBody();
+        }
+    });
+    
+    asyncTest("Test add products to the Shopping List", function() {
+        var products = [];
+        window.expect(1);
+        
+        model.service.app.getProducts(2,
+            function(data) {
+                products = data;
+            }
+            );
+        
+        iris.goto("#products?idCategory=2");
+                
+        window.setTimeout(function() {
+            $("input[type='checkbox']", "[data-id='list_products']").trigger('click');
+            window.ok(model.shoppingList.getShoppingProducts().length === products.length, "All products in idCaterory=2 are selected");
+            window.start();
+        }, 500);
+    }
+    );
+        
+        
+        
+    asyncTest("Test check product", function() {
+        var products = [];
+        window.expect(1);
+        
+        model.service.app.getProducts(2,
+            function(data) {
+                products = data;
+            }
+            );
+        
+        iris.goto("#products?idCategory=2");
+                
+        window.setTimeout(function() {
+            $("input[type='checkbox']", "[data-id='list_products']").trigger('click');
+            iris.goto("#shopping");
+            
+            window.setTimeout(function () {
+                $("button[data-id='buy']").first().trigger("click");
+                model.ShoppingList.prototype.removePurchased();
+                window.ok(model.shoppingList.getShoppingProducts().length === products.length - 1, "Removed 1 purchased product");
+                window.start();
+            }, 500);
+        }, 500);
+    }
+    );
+        
+}(jQuery));
+```
+
+Observe que después de llamar al método *goto* de *Iris*, hemos tenido que provocar una espera con la función *setTimeout* de *Javascript* ya que la vista se tiene que refrescar antes de que podamos simular eventos en ella.
+
 ##<a name="step_by_step_grunt"></a>Automatizando procesos con *Grunt*
-*[Grunt](http://gruntjs.com/)* es ...próximamente.
 
-##<a name="step_by_step_qunit"></a>Pruebas de unidad con *QUnit*
-*[QUnit](http://qunitjs.com/)* es ...próximamente.
+*[Grunt](http://gruntjs.com/)* es una librería de *Javascript* que permite automatizar todo tipo de tareas como: validar el código, ejecutar pruebas de unidad, compactar y *minificar* la aplicación, arrancar un servidor [Node.js](http://nodejs.org/) y desplegar la aplicación en él, etc.
 
+Los ficheros de configuración de *Grunt* de la aplicación son:
 
+En *iris.json* podemos definir las variables que queramos que use *Grunt*:
+
+```js
+{
+  "name": "ShoppingList",
+  "title": "ShoppingList Example",
+  "description": "This is a simple example of using Iris.",
+  "version": "0.0.1-SNAPSHOT",
+  "homepage": "http://localhost:8080",
+  "author": {
+    "name": "Iris",
+    "url": "https://github.com/iris-js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/iris-js/iris.git"
+  },
+  "bugs": {
+    "url": "https://github.com/iris-js/iris/issues"
+  },
+  "licenses": [
+    {
+      "type": "New-BSD",
+      "url": "https://github.com/iris-js/iris.git/blob/master/LICENSE-New-BSD"
+    }
+  ],
+  "dependencies": {
+    "jquery": "1.5.1"
+  },
+  "keywords": []
+}
+```
+
+Y en *grunt.js* definimos y configuramos las tareas que queramos automatizar:
+
+```js
+/*global module:false*/
+module.exports = function(grunt) {
+
+    // Project configuration.
+    grunt.initConfig({
+        pkg: '<json:iris.json>',
+        meta: {
+            banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
+        '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
+        '<%= pkg.homepage ? "* " + pkg.homepage + "\n" : "" %>' +
+        '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
+        ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */'
+        },
+        concat: {
+            dist: {
+                src: ['<banner:meta.banner>', '<file_strip_banner:src/<%= pkg.name %>.js>'],
+                dest: 'dist/<%= pkg.name %>.js'
+            }
+        },
+        min: {
+            dist: {
+                src: ['<banner:meta.banner>', '<config:concat.dist.dest>'],
+                dest: 'dist/<%= pkg.name %>.min.js'
+            }
+        },
+        qunit: {
+            files: ['test/**/*.html']
+        },
+        lint: {
+            files: ['grunt.js', ' www/js/iris-0.5.0-SNAPSHOT.js', 'www/js/init.js', 'www/js/shopping_list.js', 'www/shopping/**/*.js', 'test/**/*.js']
+        },
+        watch: {
+            files: '<config:lint.files>',
+            tasks: 'lint qunit'
+        },
+        jshint: {
+            options: {
+                curly: true,
+                eqeqeq: true,
+                immed: true,
+                latedef: true,
+                newcap: true,
+                noarg: true,
+                sub: true,
+                undef: true,
+                boss: true,
+                eqnull: true,
+                browser: true
+            },
+            globals: {
+                jQuery: true,
+                iris: true,
+                $: true,
+                model: true
+            }
+        },
+        uglify: {},
+        server: {
+            port:8081,
+            base: "./"
+        }
+    });
+
+    // Default task.    
+    grunt.registerTask('default', 'lint server watch');
+
+    grunt.registerTask('test', 'lint qunit');
+};
+
+```
+
+Si queremos validar el código, debemos abrir un terminal y, estando en el directorio al que pertenece *grunt.js*, ejecutar:
+
+```
+grunt lint
+```
+
+Para desplegar nuestra aplicación en un servidor de *Node.js* debemos asegurarnos que lo tenemos instalado en el sistema y ejecutar:
+
+```
+grunt server watch
+```
+
+Observe que hay una tarea por defecto que nos permite ejecutar las dos anteriores escribiendo simplemente:
+
+```
+grunt
+```
+
+Por último, para realizar las pruebas desde el terminal y no tener que abrir el navegador, debemos instalar primero [PhantomJS](http://phantomjs.org/) y luego ejecutar:
+
+```
+grunt test
+```
