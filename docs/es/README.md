@@ -2134,15 +2134,15 @@ function fn_generic_service_error (request, status, error) {
 Iris tiene una serie de métodos que facilitan el paso de desarrollo a producción y las tareas de depuración.
 
 ```js
-iris.baseUri(p_baseUri) //This sets or returns the base directory of the application
+iris.baseUri(p_baseUri); //This sets or returns the base directory of the application
 ```
 
 ```js
-iris.cache(boolean) //True, if you want Iris use the cache browser (This prevents the browser to use the local copy of the data and force to download them from the server). False if you want the opposite.
+iris.cache(boolean); //True, if you want Iris use the cache browser (This prevents the browser to use the local copy of the data and force to download them from the server). False if you want the opposite.
 ```
 
 ```js
-iris.noCache() //If no arguments are passed, returns the cache policy.
+iris.noCache(); //If no arguments are passed, returns the cache policy.
 //You can pass it the servers that you do not want them to use the browser cache. For example iris.noCache ("wwww", "localhost");
 ```
 
@@ -2151,7 +2151,7 @@ iris.cacheVersion(p_value); //By assigning a different value to this method we c
 ```
 
 ```js
-iris.log(arg1, arg2, arg3, arg4) //This shows in the browser console that is passed as parameter.
+iris.log(arg1, arg2, arg3, arg4); //This shows in the browser console that is passed as parameter.
 ```
 
 
@@ -2167,9 +2167,9 @@ Por ejemplo, si el fichero *welcome.js* está en el fichero raíz de la aplicaci
 ```js
 //In welcome.js
 iris.screen(
- function (self) {
-  ...
- }, "welcome.js");
+    function (self) {
+        ...
+    }, "welcome.js");
 ```
 
 Y la llamada que crea el Screen *welcome* sería:
@@ -2185,9 +2185,9 @@ La misma técnica se utilizará cuando se cree un *Screen* al navegar a él por 
 ```js
 //In my_ui.js
 iris.ui(
- function (self) {
-  ...
- }, "my_ui.js");
+    function (self) {
+       ...
+    }, "my_ui.js");
 ```
 
 ##<a name="unit_test"></a>Pruebas de unidad en Iris
