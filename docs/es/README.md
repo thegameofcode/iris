@@ -3519,6 +3519,13 @@ Observe que después de llamar al método *goto* de *Iris*, hemos tenido que pro
 
 *[Grunt](http://gruntjs.com/)* es una librería de *Javascript* que permite automatizar todo tipo de tareas como: validar el código, ejecutar pruebas de unidad, compactar y *minificar* la aplicación, arrancar un servidor [Node.js](http://nodejs.org/) y desplegar la aplicación en él, etc.
 
+Para utilizar *Grunt* previamente hay que instalar [Node.js](http://nodejs.org/) y después instalar *Grunt* con el siguiente comando ejecutado desde el terminal:
+
+```
+npm install -g grunt
+```
+
+
 Los ficheros de configuración de *Grunt* de la aplicación son:
 
 En *iris.json* podemos definir las variables que queramos que use *Grunt*:
