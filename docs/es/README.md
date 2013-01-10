@@ -25,7 +25,7 @@
   * <a href="#params">Enviando parámetros a un Screen</a><br>
   * <a href="#ui_params">Paso de parámetros en UIs</a><br>
   * <a href="#settings">Paso de parámetros utilizando el método *settings*</a><br>
-  * <a href="#tmpl_settings">Paso de parámetros en el méttomo *tmpl*</a><br>
+  * <a href="#tmpl_settings">Paso de parámetros en el método *tmpl*</a><br>
   * <a href="#events">Trabajando con eventos</a><br>
   * <a href="#locals">Utilizando locales y regionales</a><br>
   * <a href="#ajax">Llamadas Ajax y servicios REST</a><br>
@@ -1493,9 +1493,11 @@ iris.ui(
 
 Observe como utilizamos el método *self.setting* para recuperar el valor de la variable.
 
-<a name="tmpl_settings"></a>Paso de parámetros en el méttomo *tmpl*
+##<a name="tmpl_settings"></a>Paso de parámetros en el método *tmpl*
 
-En *welcome.js*:
+Podemos pasar parámetros a la vista a través del método *tmpl*. Para hacerlo, debemos añadir un segundo parámetro a este método. Este parámetro será un objeto con los nombres de variables que queramos pasar y sus valores.
+
+Por ejemplo, en *welcome.js*:
 
 ```js
 //In welcome.js
@@ -1511,8 +1513,9 @@ iris.screen(
 
 );
 ```
+Para recuperar el valor de un parámetro, en la vista, pondremos su nombre entre símbolos *##*.
 
-En *welcome.html*:
+Por ejemplo, en *welcome.html*:
 
 ```html
 <div>
