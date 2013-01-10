@@ -25,6 +25,7 @@
   * <a href="#params">Enviando parámetros a un Screen</a><br>
   * <a href="#ui_params">Paso de parámetros en UIs</a><br>
   * <a href="#settings">Paso de parámetros utilizando el método *settings*</a><br>
+  * <a href="#tmpl_settings">Paso de parámetros en el méttomo *tmpl*</a><br>
   * <a href="#events">Trabajando con eventos</a><br>
   * <a href="#locals">Utilizando locales y regionales</a><br>
   * <a href="#ajax">Llamadas Ajax y servicios REST</a><br>
@@ -1491,6 +1492,34 @@ iris.ui(
 ```
 
 Observe como utilizamos el método *self.setting* para recuperar el valor de la variable.
+
+<a name="tmpl_settings"></a>Paso de parámetros en el méttomo *tmpl*
+
+En *welcome.js*:
+
+```js
+//In welcome.js
+iris.screen(
+
+    function (self) {
+        self.create = function () {
+            console.log("Welcome Screen Created");
+            self.tmpl("welcome.html",{"name":"John"}); 
+        };
+
+    }
+
+);
+```
+
+En *welcome.html*:
+
+```html
+<div>
+    <h1>Welcome Screen</h1>
+    <p>The name is ##name##</p>
+</div>
+```
 
 ##<a name="events"></a>Trabajando con eventos
 
