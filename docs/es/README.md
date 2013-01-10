@@ -41,6 +41,7 @@
   * <a href="#step_by_step_shopping">*Screen* Shopping</a><br>
   * <a href="#step_by_step_qunit">Pruebas unitarias con *QUnit*</a><br>
   * <a href="#step_by_step_grunt">Automatizando procesos con *Grunt*</a><br>
+  * <a href="#step_by_step_change">Modificando la aplicación</a><br>
   
 
 #<a name="what_is_it"></a>¿Qué es Iris?
@@ -2229,7 +2230,7 @@ Las pruebas de unidad son una fuente adicional para conocer el funcionamiento de
 
 En esta sección vamos utilizar Iris para construir una sencilla aplicación que nos permita comprender como integrar todo lo visto anteriormente.
 
-Puede descargase la aplicación en el siguiente [enlace](https://github.com/surtich/iris/blob/iris-grunt/docs/iris-shopping.tar.gz?raw=true).
+Puede descargar la aplicación en el siguiente [enlace](https://github.com/surtich/iris/blob/iris-grunt/docs/iris-shopping.tar.gz?raw=true).
 
 La aplicación va a permitir realizar la lista de la compra de una serie de productos agrupados en categorías. En las siguientes imágenes presentamos las principales pantallas de la aplicación.
 
@@ -3686,3 +3687,251 @@ Por último, para realizar las pruebas desde el terminal y no tener que abrir el
 ```
 grunt test
 ```
+
+##<a name="step_by_step_change"></a>Modificando la aplicación
+
+En esta sección vamos a discutir que cambios son necesarios en la aplicación para que los productos se seleccionen en la misma pantalla en la que se cargan las categorías tal y como se muestra en la siguiente imagen:
+
+![categories2](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/categories2.png)
+
+El problema que se nos plantea es que, en la aplicación actual, los productos se cargan a través del Screen *#products* y, sin embargo, cada categoría se carga en el UI *category_list_item* desde la que se navega al Screen *#products* pasándole el *idCategory* correspondiente. Iris no permite registrar un Screen dentro de un UI por lo que no podremos cargar el Screen *#products* en el UI *category_list_item*.
+
+Vamos a discutir tres soluciones aunque sólo la última será correcta:
+
+1 Para evitar el problema podríamos tratar de transformar el UI *category_list_item* en un Screen y así registrar el Screen *#products* en este Screen. Claramente esta no es una buena idea ya que entonces no bastaría con un único Screen *#category_list_item* sino que necesitaríamos un Screen diferente para cada categoría y tendríamos que tener un fichero *html* y otro *js* por cada categoría lo que supondría una redundancia inaceptable. Pero es que además, como sólo se puede ver un Screen a la vez, sólo se podrá visualizar una única categoría con lo que ni siquiera llegaríamos a conseguir nuestro propósito.
+
+2 Otra solución consistiría en que el Screen "*categories*, que actualmente carga las categorías mediante el UI *category_list_item*, registre el Screen *#products* en un contenedor propio (actualmente este Screen lo registra *#welcome*). De esta forma, cuando naveguemos a *#products*, no se ocultarán las categorías que se han cargado mediante el Screen *#categories*.  Efectivamente esto funcionará como se ha descrito ya que Iris mantiene visible la rama de la jerarquía de hash-URLs por la que se está navegando. El inconveniente será que necesitamos que los productos se muestren **debajo** de la categoría que se ha seleccionado y que, como el contenedor donde carguemos "#products" debe ser único, no podremos conseguir esto de forma sencilla. Además será imposible ver a la vez los productos de dos o más categorías.
+
+3 La solución correcta y más sencilla consistirá en eliminar el Screen *#products* y cargar en el UI *category_list_item*, los UIs *product_list_item* que, a su vez, cargan los productos de cada categoría. De esta forma, almacenamos en un UI un conjunto de UIs y evitamos la limitación que se nos planteaba de que un UI registre un Screen. Lógicamente, el trabajo que se hacía en el Screen *#products* habrá que hacerlo en otro sitio; en nuestro caso lo repartiremos entre el Screen *#categories* y los UIs *category_list_item* y *product_list_item*.
+
+Vamos a ver los cambios necesarios para implementar la solución propuesta.
+
+En primer lugar, debemos borrar los ficheros *products.js* y *products.html* del directorio *screen/products*.
+
+En *welcome.js* debemos eliminar el registro de "#products"; para ello modificamos la función *_createScreens()*:
+
+```js
+function _createScreens() {
+    self.screens("screens", [{
+        "#home": "/shopping/screen/home.js"
+    }, {
+        "#categories": "/shopping/screen/products/categories.js"
+    },{
+        "#shopping": "/shopping/screen/list/shopping.js"
+    }]);
+}
+```
+
+En el fichero eliminado, *products.js*,  detectábamos cuando se pulsaba sobre un producto para añadirlo o eliminarlo de la *lista de la compra*. Esta función la podemos realizar en *product_list_item.js* sin apenas modificar su código:
+
+```js
+//In product_list_item.js
+iris.ui(function(self) {	
+    self.create = function() {  
+        self.tmplMode(self.APPEND);
+        var product = self.setting("product");                
+        self.tmpl("/shopping/ui/products/product_list_item.html", product);
+        self.get("product").change(function (event) {
+            if (this.checked) {
+                iris.notify(model.event.PRODUCTS.ADD, {
+                    idProduct:product.idProduct, 
+                    nameProduct:product.nameProduct
+                });
+            } else {
+                iris.notify(model.event.PRODUCTS.REMOVE, product.idProduct);
+            }
+        });
+    };
+}, "/shopping/ui/products/product_list_item.js");
+```
+
+Otra cosa que hacíamos en *products.js* era cargar los productos en el UI *product_list_item*, esta tarea se la vamos a asignar a *category_list_item.js* que quedará de la siguiente forma:
+
+```js
+//In category_list_item.js
+iris.ui(function(self) {	
+    self.create = function() {
+        
+        function _inflate(products) {
+            $.each(products,
+                function(index, product) {
+                    self.ui("list_products", "/shopping/ui/products/product_list_item.js", {
+                        "product": product
+                    });
+                }
+                );
+        }
+        
+        var category = self.setting("category");
+        self.tmplMode(self.APPEND);
+        self.tmpl("/shopping/ui/products/category_list_item.html", category);
+        
+        model.service.app.getProducts(category.idCategory, _inflate);
+        
+    };	
+    
+}, "/shopping/ui/products/category_list_item.js");
+```
+Observe que se llama al método *model.service.app.getProducts* directamente sin esperar a que se pulse sobre la categoría. Probablemente esto sea inadecuado si hubiera muchos productos. Se ha hecho así para simplificar la lógica de la aplicación. Una solución mejor sería cargar los productos de una categoría cuando se pulse sobre ella y almacenarlos en memoria para que, si se vuelve a pulsar, no haya que cargarlos de nuevo.
+
+Finalmente modificamos *categories.js* para que marque los productos que están en la lista de la compra. Este trabajo antes se hacía en *products.js*.
+
+```js
+//In categories.js
+iris.screen(
+    function (self) {
+        
+        function _inflate(categories) {
+            $.each(categories,
+                function(index, category) {						
+                    self.ui("list_categories", "/shopping/ui/products/category_list_item.js", {
+                        "category": category
+                    });
+                }
+                );
+        }
+        
+        function _check() {
+            $("[data-product]").prop('checked', false);
+            var products = model.shoppingList.getShoppingProducts();
+            if (products.length > 0) {                
+                $.each(products,
+                    function(index, product) {
+                        var checkbox = $("[data-product="+ product.idProduct + "]");
+                        if (checkbox.size() > 0) {
+                            checkbox.prop('checked', true);
+                        }
+                    }
+                    );
+            }
+        }
+        
+        self.create = function () {
+            self.tmpl("/shopping/screen/products/categories.html");
+            model.service.app.getCategories(_inflate);
+        };
+        
+        self.awake = function () {
+            _check();
+        };
+        
+    }, "/shopping/screen/products/categories.js");
+```
+
+Ahora habría que modificar los ficheros *html* asociados. Se han hecho algunos cambios en su estructura y en los estilos para utilizar el efecto *[accordion](http://twitter.github.com/bootstrap/javascript.html#collapse)* que proporciona *BootStrap*. Este efecto nos permite que sólo se puedan ver los productos de una categoría a la vez, colapsando con una animación los productos de la categoría anterior.
+
+En *categories.html*:
+
+```html
+<div class="accordion" id="accordion_categories" data-id="list_categories">
+</div>
+
+```
+
+En *category_list_item.html*:
+
+```html
+<div class="accordion-group">
+    <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion_categories" href="#collapse_category_##idCategory##" data-id="category">
+            ##nameCategory##
+        </a>
+    </div>
+    <div id="collapse_category_##idCategory##" class="accordion-body collapse">
+        <div data-id="list_products" class="accordion-inner"></div>
+    </div>
+</div>
+```
+
+Y en *product_list_item.html*:
+
+```html
+<label class="checkbox">
+    <input data-id="product" type="checkbox" data-product="##idProduct##">##nameProduct##
+</label> 
+```
+
+Por último debemos hacer una pequeña modificación en el fichero de pruebas unitarias *view_test.js*:
+
+```js
+(function($) {
+
+iris.cache(false);
+    iris.enableLog("localhost");
+
+    function clearBody() {
+        var irisGeneratedCode = $("#start_iris").nextAll();
+        if (irisGeneratedCode !== undefined) {
+            irisGeneratedCode.remove();
+        }
+    }
+    
+    
+    module( "View Test", {
+        setup: function() {            
+            iris.init();
+            iris.baseUri("../www");
+            model.init();
+            iris.welcome("/shopping/screen/welcome.js");
+        },
+        teardown: function () {
+            model.destroy();
+            window.location.hash ="";
+            clearBody();
+        }
+    });
+    
+    asyncTest("Test add products to the Shopping List", function() {
+        var products = [];
+        window.expect(1);
+        
+        model.service.app.getProducts(2,
+            function(data) {
+                products = data;
+            }
+            );
+        
+        iris.goto("#categories");
+                
+        window.setTimeout(function() {
+            $("input[type='checkbox']", "#collapse_category_2").trigger('click');
+            window.ok(model.shoppingList.getShoppingProducts().length === products.length, "All products in idCaterory=2 are selected");
+            window.start();
+        }, 500);
+    }
+    );
+        
+        
+        
+    asyncTest("Test check product", function() {
+        var products = [];
+        window.expect(1);
+        
+        model.service.app.getProducts(2,
+            function(data) {
+                products = data;
+            }
+            );
+        
+        iris.goto("#categories");
+                
+        window.setTimeout(function() {
+            $("input[type='checkbox']", "#collapse_category_2").trigger('click');
+            iris.goto("#shopping");
+            
+            window.setTimeout(function () {
+                $("button[data-id='buy']").first().trigger("click");
+                model.ShoppingList.prototype.removePurchased();
+                window.ok(model.shoppingList.getShoppingProducts().length === products.length - 1, "Removed 1 purchased product");
+                window.start();
+            }, 500);
+        }, 500);
+    }
+    );
+        
+}(jQuery));
+```
+
+La modificación consiste en cambiar la llamada a *#products* por *#categories* y en cambiar la forma de seleccionar los *checkbox*.
+
+Puede descargar la aplicación modificada en el siguiente [enlace](https://github.com/surtich/iris/blob/iris-grunt/docs/iris-shopping2.tar.gz?raw=true).
