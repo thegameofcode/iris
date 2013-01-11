@@ -13,6 +13,7 @@
   * <a href="#register">Registrando y mostrando un Screen</a><br>
   * <a href="#showing_screen_js">Mostrando un Screen desde Javascript</a><br>
   * <a href="#showing_some_screens">Mostrando varios screens</a><br>
+  * <a href="#showing_some_inner_screens">Screens que registran otros screens</a><br>
   * <a href="#screens_bad_practices">Malas prácticas en el registro de Screens</a><br>
   * <a href="#default_screen">Creando un Screen por defecto</a><br>
   * <a href="#uis">Visualizando UIs</a><br>
@@ -513,6 +514,142 @@ Si volvemos a pulsa sobre el enlace a *#home*, se producirán los eventos adicio
 Help Screen Sleeping
 Home Screen Awakened 
 </pre>
+
+##<a name="showing_some_inner_screens"></a>Screens que registran otros screens</a>
+
+Un Screen puede registrar otros *screens*. Cuando navegamos al screen *interno*, el screen *padre* no se oculta a diferencia de lo que ocurre cuando navegamos a un Screen *hermano*. Es decir, que Iris visualiza toda la jerarquía de los *screens* por los que estemos navegando. Cuando cambiamos de *rama*, Iris oculta toda la *rama* anterior.
+
+Podemos comprender esto mejor con un ejemplo. Para ello creamos el Screen *Inner Home*.
+
+En *inner_home.js*:
+
+```js
+//In inner_home.js
+iris.screen(
+    function (self) {
+        self.create = function () {   
+            self.tmpl("inner_home.html");
+            console.log("Inner_home Screen Created");
+        };
+        self.awake = function () {   
+            console.log("Inner_home Screen Awakened");
+        };
+		
+        self.sleep = function () {
+            console.log("Inner_home Screen Sleeping");
+        };
+  
+        self.destroy = function () {
+            console.log("Inner_home Screen Destroyed");
+        };
+    }
+);
+```
+
+En *inner_home.html*:
+
+```html
+<div>
+    <h1>Inner Home Screen</h1>
+    <p>This is the Inner Home screen.</p>
+</div>
+```
+
+El registro lo hacemos en el Screen Home.
+
+En *home.js*:
+
+```js
+//In home.js
+iris.screen(
+    function (self) {
+        self.create = function () {   
+            console.log("Home Screen Created");
+            self.tmpl("home.html");
+            self.screens("inner_home_container", [{
+                "#inner_home": "inner_home.js"
+            }]);
+        };
+        self.awake = function () {   
+            console.log("Home Screen Awakened");
+        };
+
+        self.sleep = function () {
+            console.log("Home Screen Sleeping");
+        };
+
+        self.destroy = function () {
+            console.log("Home Screen Destroyed");
+        };
+    }
+    );
+```
+
+En *home.html*:
+
+```html
+<div>
+    <h1>Home Screen</h1>
+    <p>This is the home screen.</p>
+    <a href="#inner_home">Click to go to Inner Home Screen</a>
+    <div data-id="inner_home_container"></div>
+</div>
+```
+
+El fichero *welcome.js* queda inalterado:
+
+```js
+//In welcome.js
+iris.screen(
+
+    function (self) {
+
+        self.create = function () {
+            console.log("Welcome Screen Created");
+            self.tmpl("welcome.html");
+            self.screens("screens", [{
+                "#home": "home.js"
+            },{
+                "#help": "help.js"
+            }]);
+        }
+
+        self.awake = function () {
+            console.log("Welcome Screen Awakened");
+        };
+
+    }
+
+    );
+```
+
+Tampoco es necesario modificar *welcome.html*:
+
+```html
+<div>
+    <h1>Welcome Screen</h1>
+    <p>This is the initial screen.</p>
+    <a href="#home">Click to go to Home Screen</a>
+    </br>
+    <a href="#help">Click to gets some help</a>
+    <div data-id="screens">
+        Here is where Iris will load all the Screens
+    </div>
+</div>
+```
+
+Si navegamos a "#home" y luego a "#inner_home", la secuencia de eventos que se produce es la que podríamos esperar:
+
+<pre>
+Welcome Screen Created
+Welcome Screen Awakened
+Home Screen Created
+Home Screen Awakened
+Inner_home Screen Created
+Inner_home Screen Awakened 
+</pre>
+
+TODO: Hay problemas en el ciclo de vida. Cuando se arreglen se completará esta sección
 
 ##<a name="screens_bad_practices"></a>Malas prácticas en el registro de Screens
 
@@ -3700,9 +3837,9 @@ Vamos a discutir tres soluciones aunque sólo la última será correcta:
 
 1 Para evitar el problema podríamos tratar de transformar el UI *category_list_item* en un Screen y así registrar el Screen *#products* en este Screen. Claramente esta no es una buena idea ya que entonces no bastaría con un único Screen *#category_list_item* sino que necesitaríamos un Screen diferente para cada categoría y tendríamos que tener un fichero *html* y otro *js* por cada categoría lo que supondría una redundancia inaceptable. Pero es que además, como sólo se puede ver un Screen a la vez, sólo se podrá visualizar una única categoría con lo que ni siquiera llegaríamos a conseguir nuestro propósito.
 
-2 Otra solución consistiría en que el Screen "*categories*, que actualmente carga las categorías mediante el UI *category_list_item*, registre el Screen *#products* en un contenedor propio (actualmente este Screen lo registra *#welcome*). De esta forma, cuando naveguemos a *#products*, no se ocultarán las categorías que se han cargado mediante el Screen *#categories*.  Efectivamente esto funcionará como se ha descrito ya que Iris mantiene visible la rama de la jerarquía de hash-URLs por la que se está navegando. El inconveniente será que necesitamos que los productos se muestren **debajo** de la categoría que se ha seleccionado y que, como el contenedor donde carguemos "#products" debe ser único, no podremos conseguir esto de forma sencilla. Además será imposible ver a la vez los productos de dos o más categorías.
+2 Otra solución consistiría en que el Screen *#categories*, que actualmente carga las categorías mediante el UI *category_list_item*, registre el Screen *#products* en un contenedor propio (actualmente este Screen lo registra *#welcome*). De esta forma, cuando naveguemos a *#products*, no se ocultarán las categorías que se han cargado mediante el Screen *#categories*.  Efectivamente esto funcionará como se ha descrito ya que Iris mantiene visible la rama de la jerarquía de los hash-URLs por la que se está navegando. El inconveniente será que necesitamos que los productos se muestren **debajo** de la categoría que se ha seleccionado y que, como el contenedor donde carguemos "#products" debe ser único, no podremos conseguir esto de forma sencilla. Además será imposible ver a la vez los productos de dos o más categorías.
 
-3 La solución correcta y más sencilla consistirá en eliminar el Screen *#products* y cargar en el UI *category_list_item*, los UIs *product_list_item* que, a su vez, cargan los productos de cada categoría. De esta forma, almacenamos en un UI un conjunto de UIs y evitamos la limitación que se nos planteaba de que un UI registre un Screen. Lógicamente, el trabajo que se hacía en el Screen *#products* habrá que hacerlo en otro sitio; en nuestro caso lo repartiremos entre el Screen *#categories* y los UIs *category_list_item* y *product_list_item*.
+3 La solución correcta y más sencilla consistirá en eliminar el Screen *#products* y cargar en el UI *category_list_item*, los UIs *product_list_item* que, a su vez, cargan los productos de cada categoría. De esta forma, almacenamos en un UI, un conjunto de UIs y evitamos la limitación que se nos planteaba de que un UI registre un Screen. Lógicamente, el trabajo que se hacía en el Screen *#products* habrá que hacerlo en otro sitio; en nuestro caso lo repartiremos entre el Screen *#categories* y los UIs *category_list_item* y *product_list_item*.
 
 Vamos a ver los cambios necesarios para implementar la solución propuesta.
 
@@ -3722,7 +3859,7 @@ function _createScreens() {
 }
 ```
 
-En el fichero eliminado, *products.js*,  detectábamos cuando se pulsaba sobre un producto para añadirlo o eliminarlo de la *lista de la compra*. Esta función la podemos realizar en *product_list_item.js* sin apenas modificar su código:
+En el fichero eliminado, *products.js*,  detectábamos cuando se pulsaba sobre un producto para añadirlo o eliminarlo a/de la *lista de la compra*. Esto lo podemos realizar en *product_list_item.js* sin apenas modificar el código original:
 
 ```js
 //In product_list_item.js
@@ -3745,7 +3882,7 @@ iris.ui(function(self) {
 }, "/shopping/ui/products/product_list_item.js");
 ```
 
-Otra cosa que hacíamos en *products.js* era cargar los productos en el UI *product_list_item*, esta tarea se la vamos a asignar a *category_list_item.js* que quedará de la siguiente forma:
+Otra cosa que hacíamos en *products.js* era cargar los productos en el UI *product_list_item*. Esta tarea se la vamos a asignar a *category_list_item.js* que quedará de la siguiente forma:
 
 ```js
 //In category_list_item.js
@@ -3772,7 +3909,7 @@ iris.ui(function(self) {
     
 }, "/shopping/ui/products/category_list_item.js");
 ```
-Observe que se llama al método *model.service.app.getProducts* directamente sin esperar a que se pulse sobre la categoría. Probablemente esto sea inadecuado si hubiera muchos productos. Se ha hecho así para simplificar la lógica de la aplicación. Una solución mejor sería cargar los productos de una categoría cuando se pulse sobre ella y almacenarlos en memoria para que, si se vuelve a pulsar, no haya que cargarlos de nuevo.
+Observe que se llama al método *model.service.app.getProducts* directamente sin esperar a que se pulse sobre la categoría. Si hubiera muchos productos, esto sería inadecuado. Se ha hecho así para simplificar la lógica de la aplicación. Una solución mejor sería cargar los productos de una categoría cuando se pulse sobre ella y almacenarlos en memoria para que, si se vuelve a pulsar, no haya que cargarlos de nuevo.
 
 Finalmente modificamos *categories.js* para que marque los productos que están en la lista de la compra. Este trabajo antes se hacía en *products.js*.
 
@@ -3818,7 +3955,7 @@ iris.screen(
     }, "/shopping/screen/products/categories.js");
 ```
 
-Ahora habría que modificar los ficheros *html* asociados. Se han hecho algunos cambios en su estructura y en los estilos para utilizar el efecto *[accordion](http://twitter.github.com/bootstrap/javascript.html#collapse)* que proporciona *BootStrap*. Este efecto nos permite que sólo se puedan ver los productos de una categoría a la vez, colapsando con una animación los productos de la categoría anterior.
+Ahora habría que modificar los ficheros *html* asociados. Se han hecho algunos cambios en su estructura y en los estilos para utilizar el efecto *[accordion](http://twitter.github.com/bootstrap/javascript.html#collapse)* que proporciona *BootStrap*. Este efecto nos permite que sólo se vean los productos de una categoría a la vez, colapsando con una animación los productos de la categoría anterior.
 
 En *categories.html*:
 
@@ -3851,7 +3988,7 @@ Y en *product_list_item.html*:
 </label> 
 ```
 
-Por último debemos hacer una pequeña modificación en el fichero de pruebas unitarias *view_test.js*:
+Por último, debemos hacer una pequeña modificación en el fichero de pruebas unitarias *view_test.js*:
 
 ```js
 (function($) {
@@ -3932,6 +4069,6 @@ iris.cache(false);
 }(jQuery));
 ```
 
-La modificación consiste en cambiar la llamada a *#products* por *#categories* y en cambiar la forma de seleccionar los *checkbox*.
+La modificación consiste en reemplazar la llamada a *#products* por *#categories* y en cambiar la forma de seleccionar los *checkbox*.
 
 Puede descargar la aplicación modificada en el siguiente [enlace](https://github.com/surtich/iris/blob/iris-grunt/docs/iris-shopping2.tar.gz?raw=true).
