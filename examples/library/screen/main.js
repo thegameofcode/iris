@@ -7,7 +7,7 @@ iris.Screen(function(self) {
 		self.AddScreen("screens", "#authors", "library/screen/authors.js");
 		
 		if ( !document.location.hash ) {
-		    iris.Goto("#books");
+		    iris.navigate("#books");
 		}
 	}
 

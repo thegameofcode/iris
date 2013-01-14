@@ -58,7 +58,7 @@
 
   test("Date format", function() {
     iris.locale("es_ES");
-    var date = "1331954654564";
+    var date = 1331954654564;
     var formatted = iris.date(date, "d/m/y h:i:s");
     strictEqual(formatted, "17/03/12 04:24:14", "Custom DateFormat");
 

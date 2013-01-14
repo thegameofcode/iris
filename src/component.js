@@ -1,32 +1,44 @@
 (function($) {
 
-    var _screen = {},
-    _screenUrl = {},
-    _screenContainer = {},
-    _lastScreen = {},
-    _prevHash = "",
-    _includes = {},
-    _lastIncludePath, _head = $("head").get(0),
-    _welcomeCreated = false,
-    _gotoCancelled = false;
+    var _screen,
+    _screenJsUrl,
+    _screenContainer,
+    _jsUrlScreens,
+    _lastScreen,
+    _prevHash,
+    _includes,
+    _lastIncludePath,
+    _head,
+    _welcomeCreated,
+    _gotoCancelled;
     
     function _init() {
-        _screen = {};
-        _screenUrl = {};
+
+        // _screenJsUrl["#hash"] return the js-url associated with #hash
+        _screenJsUrl = {};
+
+        // _screenContainer["#hash"] return the parent container associated with #hash
         _screenContainer = {};
+
+        // _screen["#hash"] return the screen instance
+        _screen = {};
+
+        // _jsUrlScreens["/path/to/file.js"] indicates if a js-URL has been used by some screen
+        _jsUrlScreens = {};
+
         _lastScreen = {};
         _prevHash = "";
         _includes = {};
         _lastIncludePath = undefined;
         _head = $("head").get(0);
         _welcomeCreated = false;
-        _gotoCancelled = false;        
+        _gotoCancelled = false;
     }
 
     function _welcome(p_jsUrl) {
         
         if (_welcomeCreated === true) {
-            throw "The Welcome Screen already exists.";
+            throw "the welcome screen already exists";
         }
 
         if ( window.console && window.console.log ) {
@@ -38,7 +50,7 @@
         _welcomeCreated = true;
 
         var path = "";
-        _screenUrl[path] = p_jsUrl;
+        _screenJsUrl[path] = p_jsUrl;
         _screenContainer[path] = $(document.body);
         
         var screenObj = _instanceScreen(path);
@@ -66,7 +78,6 @@
     }
 
     function _goto(p_hashUri) {
-        _prevHash = document.location.hash;
         document.location.hash = p_hashUri; // Trigger hashchange event, then execute _onHashChange()
     }
 
@@ -87,7 +98,8 @@
         curr = document.location.hash.split("/"),
         prevPath = "",
         currPath = "",
-        pathWithoutParams, hasRemainingChilds = false,
+        pathWithoutParams,
+        hasRemainingChilds = false,
         i;
 
         // Check if all screen.canSleep() are true
@@ -109,7 +121,7 @@
         prevPath = "";
 
         // Hide screens and its childs that are not showed
-        if(prev.length > curr.length) {
+        if(prev.length >= curr.length) {
 
             for(i = 0; i < prev.length; i++) {
                 prevPath += prev[i] + "/";
@@ -121,7 +133,6 @@
                 if(hasRemainingChilds || currPath !== prevPath) {
                     hasRemainingChilds = true;
                     pathWithoutParams = _removeURLParams(prevPath);
-
                     _screen[pathWithoutParams]._sleep();
                     _screen[pathWithoutParams].hide();
                 }
@@ -313,7 +324,7 @@
 
     function _instanceScreen(p_screenPath) {
 
-        var jsUrl = _screenUrl[p_screenPath];
+        var jsUrl = _screenJsUrl[p_screenPath];
         _include(jsUrl);
 
         var screenObj = new Screen();
@@ -325,53 +336,52 @@
         screenObj.events = {};
         screenObj.con = _screenContainer[p_screenPath];
         screenObj.fileJs = jsUrl;
-
-        screenObj.screensCalled = false;
         
         _screen[p_screenPath] = screenObj;
-        
-        
 
         return screenObj;
     }
 
-    function _destroyScreen(p_screenPath, skipDestroyInnerScreens) {
+    function _destroyScreen(p_screenPath) {
         
         function checkHierarchy() {
             var rdo = true;
             if (_prevHash !== "") {
+                var currentHash = document.location.hash;
                 var containerToDelete = _screen[p_screenPath].get().parent();
-                var currentContainer = _screen[_prevHash].get().parent();
-                rdo = containerToDelete === undefined || currentContainer === undefined || (p_screenPath !== _prevHash && containerToDelete.find(currentContainer).size() === 0);
+                var currentContainer = _screen[currentHash].get().parent();
+                rdo = containerToDelete === undefined || currentContainer === undefined || (p_screenPath !== currentHash && containerToDelete.find(currentContainer).size() === 0);
             }
             return rdo;
         }
         
-        function destroyInnersScreens() {
-            for (var hashUrl in _screenContainer) {
-                var selector = _screenContainer[hashUrl].selector;
-                if (selector !== "" && _screen[p_screenPath].get().find(selector).size() !== 0) {
-                    delete _screenUrl[hashUrl];                                                
-                    delete _screenContainer[hashUrl];
-                    _destroyScreen(hashUrl, true);
-                }
-            }
-        }
-        
         if(_screen.hasOwnProperty(p_screenPath)) {
+
+            var screenToDestroy = _screen[p_screenPath];
+
+
             if (!checkHierarchy()) {
                 throw "Can not delete the current Screen, nor the father of the current Screen";
             }
-            destroyInnersScreens();
-            
-            var contextId = _screen[p_screenPath].get().parent().data("screen_context");
-            
-            if(_lastScreen[contextId] === _screen[p_screenPath]) {
-                delete _lastScreen[contextId];
+
+            // destroy child screens
+            if ( screen.screenChilds !== undefined ) {
+                for (var i = 0; i < screen.screenChilds.length; i++ ) {
+                    _destroyScreen(screen.screenChilds[i]);
+                }
             }
-            _screen[p_screenPath]._destroy();
-            _screen[p_screenPath].get().remove();
+            
+            /*var contextId = screenToDestroy.get().parent().data("screen_context");
+            
+            if(_lastScreen[contextId] === screenToDestroy) {
+                delete _lastScreen[contextId];
+            }*/
+            screenToDestroy._destroy();
+            screenToDestroy.get().remove();
+            delete _jsUrlScreens[_screenJsUrl[p_screenPath]];
             delete _screen[p_screenPath];
+            delete _screenJsUrl[p_screenPath];
+            delete _screenContainer[p_screenPath];
             
         } else {
             iris.log("Error removing the screen \"" + p_screenPath + "\", path not found.");
@@ -390,16 +400,16 @@
             }
 
             var currentScreen = _screen[p_screenPath];
-            var contextId = currentScreen.get().parent().data("screen_context");
+            /*var contextId = currentScreen.get().parent().data("screen_context");
             if(_lastScreen.hasOwnProperty(contextId)) {
                 var lastScreen = _lastScreen[contextId];
                 lastScreen._sleep();
                 lastScreen.hide();
-            }
+            }*/
             currentScreen._awake(p_params ? p_params : {});
             currentScreen.show();
 
-            _lastScreen[contextId] = currentScreen;
+            //_lastScreen[contextId] = currentScreen;
         }
     }
 
@@ -524,7 +534,7 @@
     Component.prototype._tmpl = function(p_htmlUrl, p_params, p_mode) {
         
         if (this.template !== null) {
-            throw "The _tmpl() method has already been called for this component.";
+            throw "self.tmpl() has already been called in '" + this.fileJs + "'";
         }
         
         
@@ -612,12 +622,7 @@
         return this.template;
     };
 
-    Component.prototype.ui = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
-        for (var hashUrl in _screenContainer) {
-            if ("[data-id=" + p_id + "]" === _screenContainer[hashUrl].selector) {
-                throw "You can not use the " + p_id + " container to store an UI if It has already been registered as a Screen container.";
-            }
-        }
+    Component.prototype._ui = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
         var $container = this.get(p_id);
         
         if($container !== undefined && $container.size() === 1) {
@@ -698,13 +703,31 @@
         this._tmpl(p_htmlUrl, p_params, this._tmplMode);
     };
 
+    UI.prototype.ui = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
+        return this._ui(p_id, p_jsUrl, p_uiSettings, p_templateMode);
+    };
+
 
     //
     // SCREEN
     //
-    var Screen = function() {};
+    var Screen = function() {
+        this.screenConId = null;
+
+        // array that contains all child screens hashes
+        //this.screenChilds = undefined;
+    };
 
     Screen.prototype = new Component();
+
+    Screen.prototype.ui = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
+
+        if ( p_id === this.screenConId ) {
+            throw "'" + p_id + "' has already been registered as a screen container";
+        }
+
+        return this._ui(p_id, p_jsUrl, p_uiSettings, p_templateMode);
+    };
 
     Screen.prototype.tmpl = function(p_htmlUrl, p_params) {
         this._tmpl(p_htmlUrl, p_params, this.APPEND);
@@ -712,94 +735,46 @@
 
     Screen.prototype.screens = function(p_containerId, p_screens) {
 
-        var ERRORS = {
-            NO_TEMPLATE: "Before running the screen() method It should be called the tmpl() method",
-            BAD_FORMAT: "p_screens must be an Array of {\"#hash\",\"file.js\"} objects",
-            NO_UNIQUE_HASH: "There is a repeated hashUrl",
-            NO_UNIQUE_URL: "There is a repeated jsUrl",
-            MULTIPLE_CALLED: "self.screens() method can only be called once per screen"
-        };
-        
-        var error = null;
-        
-        function checkFormat() {
-            
-            //Check p_screens format
-            if (Object.prototype.toString.call(p_screens) !== "[object Array]") {
-                error = ERRORS.BAD_FORMAT;
-            } else {
-                for (var i in p_screens) {
-                    var screen = p_screens[i];
-                    if (typeof screen === "object") {
-                        var firstIteration = true;
-                        for (var screenPath in screen) {
-                            var j;
-                            if (!firstIteration || typeof screenPath !== "string" || screenPath.indexOf("#") !== 0 || screenPath === "#" || typeof screen[screenPath] !== "string") {
-                                error = ERRORS.BAD_FORMAT;
-                            }
-                            firstIteration = false;
-                        }
-                    } else {
-                        error = ERRORS.BAD_FORMAT;
-                    }
-                }
-            }
-        }
-        
-        
-                
-        if (this.screensCalled) {
-            error = ERRORS.MULTIPLE_CALLED;
+        this.screenConId = p_containerId;
+
+        if (this.hasOwnProperty("screenChilds")) {
+            throw "Multiple calls to self.screens() are not allowed: " + this.id;
+
         } else if (this.template === null){
-            error = ERRORS.NO_TEMPLATE;
+            throw "self.tmpl() must be called before self.screens(): " + this.id;
+
         } else {
-            checkFormat();
-        }
-        
-        if (error === null){
             var $cont = this.get(p_containerId);
-        
-            if($cont.data("screen_context") === undefined) {
+/*
+            // TODO Check if screen_context is now neccesary
+            if ( $cont.data("screen_context") === undefined ) {
                 // Set a unique screen context id to the screen container
                 // like: #path/to/screen|containerid
                 $cont.data("screen_context", this.id + "|" + p_containerId);
-            }    
-            this.screensCalled = true;
-            for (var i in p_screens) {
-                var screen = p_screens[i];
-                for (var screenHash in screen) {
-                    var hashUrl = null;
-                    if (error === null) {
-                        for (hashUrl in _screenUrl) {
-                            var jsUrl = _screenUrl[hashUrl];
-                            if (jsUrl === screen[screenHash]) {
-                                error = ERRORS.NO_UNIQUE_URL + ": " + jsUrl;
-                                break;      
-                            }
-                        }
-                        
-                        if (error === null) {
-                            for (hashUrl in _screenContainer) {
-                                if (hashUrl === screenHash) {
-                                    error = ERRORS.NO_UNIQUE_HASH + ": " + screenHash;
-                                    break;      
-                                }
-                            }   
-                        }
-                        
-                        if (error === null) {
-                            _screenUrl[screenHash] = screen[screenHash];                                                
-                            _screenContainer[screenHash] = $cont;
-                        }
-                    }
-                    break;
-                        
-                }
             }
-        } 
-        
-        if (error !== null) {
-            throw error;
+*/
+            this.screenChilds = [];
+
+            for ( var i=0; i < p_screens.length; i++ ) {
+
+                var screen = p_screens[i];
+                var hashUrl = screen[0];
+                var js = screen[1];
+
+                if ( _jsUrlScreens.hasOwnProperty(js) ) {
+                    throw "[self.screens] js-URL repeated '" + js + "': " + this.id;
+                }
+
+                if ( _screenContainer.hasOwnProperty(hashUrl) ) {
+                    throw "[self.screens] hash-URL repeated  '" + hashUrl + "' in " + this.fileJs;
+                }
+
+                _screenJsUrl[hashUrl] = js;
+                _screenContainer[hashUrl] = $cont;
+                _jsUrlScreens[js] = true;
+
+                this.screenChilds[i] = hashUrl;
+            }
         }
     };
     
@@ -809,7 +784,7 @@
     iris.screen = _registerScreen;
     iris.destroyScreen = _destroyScreen;
     iris.welcome = _welcome;
-    iris.goto = _goto;
+    iris.navigate = _goto;
     iris.ui = _registerUI;
     
 
@@ -820,6 +795,8 @@
     iris.Component = Component;
     iris.UI = UI;
     iris.Screen = Screen;
+
+    _init();
 
 
 })(jQuery);

@@ -32,7 +32,7 @@ module.exports = function(grunt) {
       }
     },
     qunit: {
-      all: ['http://localhost:8080/test/iris.html']
+      all: ['http://localhost:8080/test/iris.html'/*, 'http://localhost:8080/test/iris2.html'*/]
     },
     lint: {
       files: [/*'grunt.js',*/ 'src/**/*.js', 'test/**/*.js']

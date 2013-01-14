@@ -12,9 +12,9 @@ iris.screen(function (self) {
 
    
 		// check screen properties
-		window.strictEqual(self.id, "#screen");
-		window.strictEqual(self.fileJs, "test/component/screen.js");
-		window.strictEqual(self.uis.length, 0);
+		window.strictEqual(self.id, "#screen", "Compare screen properties: id");
+		window.strictEqual(self.fileJs, "test/component/screen.js", "Compare screen properties: fileJs");
+		window.strictEqual(self.uis.length, 0, "Compare screen properties: uis length");
 
 
 		window.start();

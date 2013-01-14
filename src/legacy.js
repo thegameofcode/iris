@@ -246,7 +246,7 @@
     iris.util.Serialize = _Serialize;
     
     /** @deprecated */
-    iris.Goto = iris.goto;
+    iris.navigate = iris.navigate;
     
     /** @deprecated */
     iris.AddOn = function (f_addon){

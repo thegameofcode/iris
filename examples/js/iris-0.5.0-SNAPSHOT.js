@@ -1084,7 +1084,7 @@ window.iris = iris;
     iris.screen = _registerScreen;
     iris.destroyScreen = _destroyScreen;
     iris.welcome = _welcome;
-    iris.goto = _goto;
+    iris.navigate = _goto;
     iris.ui = _registerUI;
 
 

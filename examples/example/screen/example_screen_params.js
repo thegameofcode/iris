@@ -21,8 +21,8 @@ iris.Screen(function(self) {
 		
 		var uri = "#screen-parameters/child-screen?parameter=" + encodeURIComponent(_$ParamValue.val());
 		
-		_$CodeExample.text("iris.Goto('" + uri + "');");
+		_$CodeExample.text("iris.navigate('" + uri + "');");
 		
-		iris.Goto(uri);
+		iris.navigate(uri);
 	}
 });

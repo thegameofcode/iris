@@ -380,7 +380,7 @@ self.create = function () {
  self.screen("screens", "#home", "home.js");
  //The get method returns de JQuery element associated with the data-id parameter
  self.get("goto_home").click( function() {
-   iris.goto("#home"); //It browes to the Hash-URL
+   iris.navigate("#home"); //It browes to the Hash-URL
  }
  );
 }
@@ -641,7 +641,7 @@ Para hacer esto simplemente incluiremos el siguiente código en el método *awak
 self.awake = function () {
  ...
  if ( !document.location.hash ) {                
-  iris.goto("#home"); //Default Screen
+  iris.navigate("#home"); //Default Screen
 
  }
  ...
@@ -921,7 +921,7 @@ Y en el método *create* *welcome.js*:
  
  self.get("create_home_screen").click(
   function() {   
-   iris.goto("#home");
+   iris.navigate("#home");
   }
  );
 
@@ -1263,7 +1263,7 @@ iris.screen(
    self.screen("screens", "#help", "help.js");   
    self.get("goto_home").click(
     function() {
-     iris.goto("#home?year=" + (new Date().getFullYear())); //Send the current year instead a fixed value
+     iris.navigate("#home?year=" + (new Date().getFullYear())); //Send the current year instead a fixed value
     }
    )
   }
@@ -2327,7 +2327,7 @@ iris.screen(
             
             
             if ( !document.location.hash ) {                
-                iris.goto("#home"); //Default page
+                iris.navigate("#home"); //Default page
             }
         };
     } , "shopping/screen/welcome.js");
