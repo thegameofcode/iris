@@ -58,12 +58,16 @@
     }
 
     iris.date = function (p_date, p_format) {
+        if ( p_date === null ) {
+            return "";
+        }
+        
         if(!p_format) {
             p_format = iris.regional("dateFormat");
         }
 
         if(typeof p_date !== "object") {
-            p_date = new Date(Number(p_date));
+            p_date = new Date(p_date);
         }
 
         var dateFormat = "";
