@@ -10,6 +10,8 @@ iris.screen(
                 ["#home", "test/bad_practices/home.js"],
                 ["#help", "test/bad_practices/home.js"]
             ]);
+
+            window.start();
         };
 
     }

@@ -58,12 +58,12 @@
         setup: function() {
             window.location.hash = "";
             iris.init();
-            clearBody();
             createDeferred();
             gotoMain();
         },
         teardown: function () {
             destroyDeferred();
+            clearBody();
         }
     });
     
@@ -80,12 +80,14 @@
         
         window.deferred.home.done(
             function() {
+                iris.log("home DONE");
                 iris.navigate("#help"); // +1 Home Screen asleep
             }
             );
             
         window.deferred.help.done(
             function() {
+            iris.log("help DONE");
                 setTimeout(function () {
                     iris.destroyScreen("#home"); // +1 Home Screen Destroyed
                     window.start();
@@ -264,13 +266,8 @@
         
     }
     );
-        
-    
-    /*
 
-TODO Can I catch an exception after navigate: "Uncaught '#home' must be registered using self.screens()" 
-
-    asyncTest("Test goto #home after destroy #home", function() {
+    /*asyncTest("Test goto #home after destroy #home", function() {
         window.expect(4);
         
         window.deferred.main.done(
@@ -294,18 +291,20 @@ TODO Can I catch an exception after navigate: "Uncaught '#home' must be register
         
         window.deferred.help.done(
             function() {
-                setTimeout(function () {                    
                     iris.destroyScreen("#home");
 
-                    iris.navigate("#home");
-
-
-                    window.start();
-                }, 10);
+                    try {
+                            iris.navigate("#home"); // real async call
+                        } catch (e) {
+                            start();
+                        }
+                    
             }
             );
     }
     );*/
+
+    
 
     asyncTest("Test Destroy #home after goto #home, then goto #home2, then goto #home3", function() {
         window.expect(4);

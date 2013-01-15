@@ -19,19 +19,14 @@ iris.screen(function (self) {
 		window.strictEqual(self.fileJs, "test/component/welcome.js", "Compare welcom screen properties: self.fileJs");
 		window.strictEqual(self.uis.length, 0, "Compare welcom screen properties: self.uis.length");
 
-		window.start();
-
 	};
 
 	function templateLangs () {
-		
 		window.strictEqual(self.get("lang_values").text(), iris.translate("TEST"));
-		window.start();
 	}
 
 	function templateParams () {
 		window.strictEqual(self.get("param").text(), PARAM_VAL);
-		window.start();
 	}
 
 });

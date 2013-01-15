@@ -3,8 +3,6 @@
 /*global notDeepEqual:false, strictEqual:false, notStrictEqual:false, raises:false*/
 (function($) {
 
-  var iris = window.iris;
-
   /*
     ======== A Handy Little QUnit Reference ========
     http://docs.jquery.com/QUnit
@@ -24,7 +22,21 @@
       raises(block, [expected], [message])
   */
 
-  module('Module Regional');
+  module('Module Regional', {
+      setup: function() {
+          iris.init();
+      },
+      teardown: function () {
+          clearBody();
+      }
+  });
+
+  function clearBody() {
+      var irisGeneratedCode = $("#start_iris").nextAll();
+      if (irisGeneratedCode !== undefined) {
+          irisGeneratedCode.remove();
+      }
+  }
 
   test("Regional Test", function() {
     //stop();

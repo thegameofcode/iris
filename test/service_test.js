@@ -3,31 +3,50 @@
 /*global notDeepEqual:false, strictEqual:false, notStrictEqual:false, raises:false*/
 (function($) {
 
-  module('Module Service');
-
-  var testService = iris.service(function(self){
-
-      self.path = "http://localhost:8080/";
-
-      self.settings({path : "http://localhost:8080/"});
-
-      self.load = function (id, success, error) {
-        self.get("test/service/" + id, success, error);
-      };
-
-      self.create = function (params, success, error) {
-        self.post("echo/create", params, success, error);
-      };
-
-      self.update = function (id, params, success, error) {
-        self.put("echo/put/" + id, params, success, error);
-      };
-
-      self.remove = function (id, success, error) {
-        self.del("echo/delete/" + id, success, error);
-      };
-
+  module('Module Service', {
+      setup: function() {
+          iris.init();
+          createService();
+      },
+      teardown: function () {
+          clearBody();
+      }
   });
+
+  var testService;
+
+  function createService () {
+    testService = iris.service(function(self){
+
+        self.path = "http://localhost:8080/";
+
+        self.settings({path : "http://localhost:8080/"});
+
+        self.load = function (id, success, error) {
+          self.get("test/service/" + id, success, error);
+        };
+
+        self.create = function (params, success, error) {
+          self.post("echo/create", params, success, error);
+        };
+
+        self.update = function (id, params, success, error) {
+          self.put("echo/put/" + id, params, success, error);
+        };
+
+        self.remove = function (id, success, error) {
+          self.del("echo/delete/" + id, success, error);
+        };
+
+    });
+  }
+
+  function clearBody() {
+      var irisGeneratedCode = $("#start_iris").nextAll();
+      if (irisGeneratedCode !== undefined) {
+          irisGeneratedCode.remove();
+      }
+  }
 
 
   asyncTest("Service Get Success", function () {

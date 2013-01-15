@@ -12,11 +12,11 @@ iris.ui(function (self) {
 		self.tmplMode(self.APPEND);
 		self.tmpl("test/component/ui.html");
 
-		window.strictEqual(self.id, "container");
-		window.strictEqual(self.fileJs, "test/component/ui.js");
+		window.strictEqual(self.id, "container", "UI Creation: check id");
+		window.strictEqual(self.fileJs, "test/component/ui.js", "UI Creation: check fileJs");
 
 		var label = self.get("label");
-		window.strictEqual(label.size(), 1);
+		window.strictEqual(label.size(), 1, "UI Creation: check self.get");
 
 		self.on("ui_settings", onUISettings);
 
@@ -27,21 +27,17 @@ iris.ui(function (self) {
 	};
 
 	function onUISettings () {
-		window.strictEqual(self.setting("default-param"), "default_value");
-		window.strictEqual(self.setting("template-param"), "template_value");
-		window.strictEqual(self.setting("setting-param"), "setting_value");
-
-		window.start();
+		window.strictEqual(self.setting("default-param"), "default_value", "UI Settings: check default value");
+		window.strictEqual(self.setting("template-param"), "template_value", "UI Settings: check template value");
+		window.strictEqual(self.setting("setting-param"), "setting_value", "UI Settings: check setting param value");
 	}
 
 	self.onNestedUI = function () {
 		var ui = self.ui("container", "test/component/ui.js", {nested:true, "setting-param":"nested_value"});
 
-		window.strictEqual(ui.setting("default-param"), "default_value");
-		window.strictEqual(ui.setting("template-param"), "overridden_val");
-		window.strictEqual(ui.setting("setting-param"), "nested_value");
-
-		window.start();
+		window.strictEqual(ui.setting("default-param"), "default_value", "UI Nested Settings: check default value");
+		window.strictEqual(ui.setting("template-param"), "overridden_val", "UI Nested Settings: check default value");
+		window.strictEqual(ui.setting("setting-param"), "nested_value", "UI Nested Settings: check default value");
 	};
 
 });

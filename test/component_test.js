@@ -33,12 +33,10 @@
 
     module('Module Component', {
         setup: function() {
-            console.log("***************");
             iris.init();
         },
         teardown: function () {
             clearBody();
-            console.log("***************");
         }
     });
 
@@ -55,6 +53,8 @@
 
         iris.welcome("test/component/welcome.js");
 
+        window.start();
+
     });
 
     asyncTest("Navigate To Screen", function() {
@@ -64,6 +64,10 @@
         iris.welcome("test/component/welcome.js"); // + 4
         iris.navigate("#screen"); // +3
 
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            window.start();
+        });
+
     });
 
     asyncTest("Create UI", function() {
@@ -71,43 +75,62 @@
         expect(11);
 
         iris.welcome("test/component/welcome.js"); // + 4
+
+        // this will make a real async call
         iris.navigate("#screen"); // +3
 
-        iris.notify("create_ui"); // + 4
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.notify("create_ui"); // + 4
+            start();
+        });
     
     });
 
     asyncTest("UI Settings", function() {
 
-        expect(10);
+        expect(14);
 
         iris.welcome("test/component/welcome.js"); // + 4
         iris.navigate("#screen"); // +3
 
-        stop();
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.notify("create_ui"); // + 4
 
-        iris.notify("ui_settings"); // +3
+            iris.notify("ui_settings"); // +3
+            start();
+        });
+
     });
 
     asyncTest("Nested UI", function() {
 
-        expect(13);
+        expect(17);
 
         iris.welcome("test/component/welcome.js"); // + 4
         iris.navigate("#screen"); // +3
 
-        iris.notify("nested_ui"); // 3 creation + 3 nested callback
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.notify("create_ui"); // + 4
+
+            iris.notify("nested_ui"); // 3 creation + 3 nested callback
+            start();
+        });
     });
 
 
     asyncTest("Destroy UI", function() {
     
-        expect(8);
+        expect(12);
 
         iris.welcome("test/component/welcome.js"); // + 4
         iris.navigate("#screen"); // +3
 
-        iris.notify("destroy_ui"); // +1
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.notify("create_ui"); // + 4
+
+            iris.notify("destroy_ui"); // +1
+            start();
+        });
     });
 
     asyncTest("Template Params", function() {
@@ -117,7 +140,11 @@
         iris.welcome("test/component/welcome.js"); // + 4
         iris.navigate("#screen"); // +3
 
-        iris.notify("template_params"); // +1
+        iris.on(iris.AFTER_NAVIGATION, function () {
+
+            iris.notify("template_params"); // +1
+            start();
+        });
     });
 
     asyncTest("Template Lang Values", function() {
@@ -127,7 +154,10 @@
         iris.welcome("test/component/welcome.js"); // + 4
         iris.navigate("#screen"); // +3
 
-        iris.notify("template_langs"); // +1
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.notify("template_langs"); // +1
+            start();
+        });
     });
 
     asyncTest("Destroy Screen", function() {
@@ -136,12 +166,15 @@
 
         iris.welcome("test/component/welcome.js"); // + 4
         iris.navigate("#screen"); // +3
-        
-        window.throws(function() {
-            iris.destroyScreen("#screen");
-        },"Fail. It is impossible remove the current screen.");
 
-        window.start();
+        iris.on(iris.AFTER_NAVIGATION, function () {
+        
+            window.throws(function() {
+                iris.destroyScreen("#screen");
+            },"Fail. It is impossible remove the current screen.");
+
+            start();
+        });
     });
 
 }(jQuery));
