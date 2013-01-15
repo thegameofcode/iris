@@ -22,11 +22,29 @@
       raises(block, [expected], [message])
   */
 
-  module('Module Core');
+  module('Module Core', {
+      setup: function() {
+          iris.init();
+      },
+      teardown: function () {
+          clearBody();
+      }
+  });
+
+  function clearBody() {
+      var irisGeneratedCode = $("#start_iris").nextAll();
+      if (irisGeneratedCode !== undefined) {
+          irisGeneratedCode.remove();
+      }
+  }
 
 
   test("Get Base URI", function() {
+    stop();
+
     strictEqual(iris.baseUri(), "http://localhost:8080/", "Should get a dev URL");
+
+    start();
   });
 
 }(jQuery));

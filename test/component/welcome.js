@@ -4,32 +4,29 @@ iris.screen(function (self) {
 
 	self.create = function() {
 
+		iris.translations("test-lang-into-tmpl", {"TEST" : "TEST"});
+		iris.locale("test-lang-into-tmpl");
 		self.tmpl("test/component/welcome.html", {param:PARAM_VAL});
 
-		self.screens("screens",  [{"#screen": "test/component/screen.js"}]);
+		self.screens("screens",  [["#screen", "test/component/screen.js"]]);
 
 		self.on("template_params", templateParams);
 		self.on("template_langs", templateLangs);
 
 		// check screen properties
-		window.strictEqual(self.id, "welcome-screen");
-		window.deepEqual(self.con, $(document.body));
-		window.strictEqual(self.fileJs, "test/component/welcome.js");
-		window.strictEqual(self.uis.length, 0);
-
-		window.start();
+		window.strictEqual(self.id, "welcome-screen", "Compare welcom screen properties: self.id");
+		window.deepEqual(self.con, $(document.body), "Compare welcom screen properties: self.con");
+		window.strictEqual(self.fileJs, "test/component/welcome.js", "Compare welcom screen properties: self.fileJs");
+		window.strictEqual(self.uis.length, 0, "Compare welcom screen properties: self.uis.length");
 
 	};
 
 	function templateLangs () {
-		window.console.log(0);
 		window.strictEqual(self.get("lang_values").text(), iris.translate("TEST"));
-		window.start();
 	}
 
 	function templateParams () {
 		window.strictEqual(self.get("param").text(), PARAM_VAL);
-		window.start();
 	}
 
 });

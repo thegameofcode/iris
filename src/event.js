@@ -8,13 +8,13 @@
         _events = {};
     }
 
-    iris.on = function (p_eventName, f_func) {
+     iris.on = function (p_eventName, f_func) {
         if ( !_events.hasOwnProperty(p_eventName) ) {
             _events[p_eventName] = [];
         }
 
         var callbacks = _events[p_eventName];
-        var index = callbacks.indexOf(f_func);
+        var index = $.inArray(f_func, callbacks);
         if ( index === -1 ) {
             callbacks.push(f_func);
         }
@@ -22,10 +22,9 @@
     };
 
     iris.off = function (p_eventName, f_func){
-        var callbacks = _events[p_eventName];
-        if ( callbacks ){
+        if ( _events.hasOwnProperty(p_eventName) ){
             if (f_func !== undefined) {
-                callbacks.splice(callbacks.indexOf(f_func), 1);
+                _events[p_eventName].splice($.inArray(f_func, _events[p_eventName]), 1);
             } else {
                 delete _events[p_eventName];
             }
@@ -33,6 +32,10 @@
     };
 
     iris.notify = function (p_eventName, p_data){
+        if ( p_eventName === undefined ) {
+            throw "[notify] event name parameter is not defined";
+        }
+        
         if ( _events[p_eventName] ) {
             var callbacks = _events[p_eventName];
             for ( var i=0; i < callbacks.length; i++ ) {
@@ -45,7 +48,7 @@
         var callbacks = _events[p_eventName];
         if ( callbacks ) {
             for ( var i=0; i < p_callbacks.length; i++ ) {
-                callbacks.splice(callbacks.indexOf(p_callbacks[i]), 1);
+                callbacks.splice($.inArray(p_callbacks[i], callbacks), 1);
             }
         }
     };
@@ -65,7 +68,7 @@
         }
 
         var callbacks = this.events[p_eventName];
-        if ( callbacks.indexOf(f_func) === -1 ) {
+        if ( $.inArray(f_func, callbacks) === -1 ) {
             callbacks.push(f_func);
             iris.on(p_eventName, f_func);
         }
@@ -76,7 +79,7 @@
         var callbacks = this.events[p_eventName];
 
         if ( callbacks ) {
-            var index = callbacks.indexOf(f_func);
+            var index = $.inArray(f_func, callbacks);
 
             if ( index !== -1 ) {
                 callbacks.splice(index, 1);
@@ -92,6 +95,7 @@
     // Iris custom events
     //
     iris.BEFORE_NAVIGATION = "iris_before_navigation";
+    iris.AFTER_NAVIGATION = "iris_after_navigation";
     iris.SERVICE_ERROR = "iris_service_error";
     
     iris.init(_init);

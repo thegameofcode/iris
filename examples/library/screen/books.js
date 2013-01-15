@@ -12,7 +12,7 @@ iris.Screen(
 			self.AddScreen("screens", "#books/edit", "library/screen/book_edit.js");
 
 			if ( document.location.hash == "#books" ) {
-				iris.Goto("#books/edit");
+				iris.navigate("#books/edit");
 			}
 		}
 		
@@ -25,7 +25,7 @@ iris.Screen(
 		}
 		
 		function _GotoEdit () {
-			iris.Goto("#books/edit?t=Title&a=Author")
+			iris.navigate("#books/edit?t=Title&a=Author")
 		}
 		
 	}

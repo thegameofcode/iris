@@ -44,7 +44,7 @@ iris.screen(
 </div>
 ```
 
-3 - Register the new screen in its parent class (**self.screen()**), eg *welcome-screen.js*, and navigate to it (**iris.goto()**):
+3 - Register the new screen in its parent class (**self.screen()**), eg *welcome-screen.js*, and navigate to it (**iris.navigate()**):
 ```javascript
 iris.screen(
 	function (self) {
@@ -53,7 +53,7 @@ iris.screen(
 			console.log("Welcome Screen Created");
 
 			self.screen("screen_container", "#other-screen", "other-screen.js");
-			iris.goto("#other-screen");
+			iris.navigate("#other-screen");
 		}
 	}
 );

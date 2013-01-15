@@ -22,7 +22,21 @@
       raises(block, [expected], [message])
   */
 
-  module('Module Event');
+  function clearBody() {
+      var irisGeneratedCode = $("#start_iris").nextAll();
+      if (irisGeneratedCode !== undefined) {
+          irisGeneratedCode.remove();
+      }
+  }
+
+  module('Module Event', {
+      setup: function() {
+          iris.init();
+      },
+      teardown: function () {
+          clearBody();
+      }
+  });
 
   test("Event Test", function () {
       expect(1);
@@ -51,20 +65,24 @@
       
       iris.on("off-all-functions", onEvent);
       iris.on("off-all-functions", onEvent2);
-      iris.notify("off-all-functions");
+
+      iris.notify("off-all-functions"); // +2
+
       iris.off("off-all-functions");
-      iris.notify("off-all-functions");
+      
+      iris.notify("off-all-functions"); // 0
+
       iris.on("off-all-functions", onEvent);
-      iris.notify("off-all-functions");
+      iris.notify("off-all-functions"); // +1
   });
   
   
   function onEvent () {
-    ok(true);
+    ok(true, "On event callback");
   }
   
   function onEvent2 () {
-    ok(true);
+    ok(true, "On event2 callback");
   }
 
 }(jQuery));

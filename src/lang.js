@@ -65,11 +65,11 @@
     // Public
     //
 
-    iris.translations = function (p_label, p_value, p_settings) {
+    iris.translations = function (p_locale, p_value, p_settings) {
         if(typeof p_value === "object") {
-            _addTranslations(p_label, p_value);
+            _addTranslations(p_locale, p_value);
         } else {
-            _loadTranslations(p_label, p_value, p_settings);
+            _loadTranslations(p_locale, p_value, p_settings);
         }
     };
 

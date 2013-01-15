@@ -32,7 +32,7 @@ iris.Screen(
 		}
 		
 		function _GotoEdit () {
-			iris.Goto("#authors/edit?t=Title&a=Author")
+			iris.navigate("#authors/edit?t=Title&a=Author")
 		}
 		
 	}

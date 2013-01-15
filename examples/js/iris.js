@@ -1067,7 +1067,7 @@ var iris = (function () {
          * If the component is a screen, this is called automatically 
          * after self.Awake() when iris navigates.
          * 
-         * See {@link iris.Goto} for more details.
+         * See {@link iris.navigate} for more details.
          * @function
          */
         _Self.Show = function () {
@@ -1082,7 +1082,7 @@ var iris = (function () {
          * after self.Sleep() when iris navigates to other screen. Is called too 
          * when a new screen is created.
          * 
-         * See {@link iris.Goto} for more details.
+         * See {@link iris.navigate} for more details.
          * @function
          */
         _Self.Hide = function () {
@@ -1421,8 +1421,8 @@ var iris = (function () {
         
         /**
          * Add a new screen.
-         * You can navigate to this using <code>iris.Goto</code>.
-         * See {@link iris.Goto} for more details.
+         * You can navigate to this using <code>iris.navigate</code>.
+         * See {@link iris.navigate} for more details.
          * @function
          * @param {JQuery} p_containerId Screen container <code>data-id</code>
          * @param {String} p_screenPath Screen URL path
@@ -1434,7 +1434,7 @@ var iris = (function () {
          *   , "screen/book_edit.js"
          * );
          * 
-         * iris.Goto("#books/edit");
+         * iris.navigate("#books/edit");
          */
         _Self.AddScreen = function _ScreenAdd (p_containerId, p_screenPath, p_jsUrl) {
             var $cont = _Self.$Get(p_containerId);
@@ -1989,16 +1989,16 @@ var iris = (function () {
      * @param p_hashUri {String} Hash URL
      * @example
      * 
-     * iris.Goto("#home/section/subsection");
+     * iris.navigate("#home/section/subsection");
      *
      * // Call with screen parameters
-     * iris.Goto("#home/section?id=5&name=example%20name/subsection");
+     * iris.navigate("#home/section?id=5&name=example%20name/subsection");
      * 
      * // Remember encode param values
      * var email = encodeURIComponent("user@example.com");
-     * iris.Goto("#home/section?email=" + email);
+     * iris.navigate("#home/section?email=" + email);
      */
-    _Iris.Goto = _Goto;
+    _iris.navigate = _Goto;
     
     /**
      * Register a AddOn object.

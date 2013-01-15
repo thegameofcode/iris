@@ -10,39 +10,31 @@ iris.screen(function (self) {
 		iris.on("create_ui", createUi);
 		self.on("destroy_ui", destroyUi);
 
-   
 		// check screen properties
-		window.strictEqual(self.id, "#screen");
-		window.strictEqual(self.fileJs, "test/component/screen.js");
-		window.strictEqual(self.uis.length, 0);
+		window.strictEqual(self.id, "#screen", "Compare screen properties: id");
+		window.strictEqual(self.fileJs, "test/component/screen.js", "Compare screen properties: fileJs");
+		window.strictEqual(self.uis.length, 0, "Compare screen properties: uis length");
 
 
-		window.start();
+		//window.start();
 
 	};
 
 	self.destroy = function () {
-		// to prevent memory leaks
-		self.off("create_ui", createUi);
-		self.off("destroy_ui", destroyUi);
-
 		window.ok(true);
-		window.start();
 	};
 
 	function createUi () {
+
 		ui = self.ui("container", "test/component/ui.js", {"setting-param":"setting_value"});
 
 		window.strictEqual(self.uis.length, 1);
-
-		window.start();
 	}
 
 	function destroyUi () {
 		self.destroyUI(ui);
 
 		window.strictEqual(self.uis.length, 0);
-		window.start();
 	}
 
 });

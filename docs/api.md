@@ -36,7 +36,7 @@ Iris exposes all of its methods and properties on the `iris` object.
 ### iris.screen
 ### iris.destroyScreen
 ### iris.welcome
-### iris.goto
+### iris.navigate
 ### iris.ui
 ### iris.instanceUI
 ### iris.instanceScreen

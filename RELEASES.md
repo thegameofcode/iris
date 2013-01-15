@@ -17,7 +17,7 @@ _Creation date: 2012-01-12_
 
 
  * [0.4.5] 2012-11-03
- 		[fix] Prevent multiple calls to hashchange event handler when welcome screen calls to iris.Goto() on create phase
+ 		[fix] Prevent multiple calls to hashchange event handler when welcome screen calls to iris.navigate() on create phase
 		[upd] Code refactoring to suppress JS validation warnings. All JSHint validations whitout strict mode are passed. (http://www.jshint.com/)
 		[fix] DateFormat bug with month names (https://github.com/intelygenz/iris/issues/22)
 		[new] iris.net.CacheVersion (https://github.com/intelygenz/iris/issues/23) 

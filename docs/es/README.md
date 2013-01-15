@@ -2581,7 +2581,7 @@ iris.screen(
             
             
             if ( !document.location.hash ) {                
-                iris.goto("#home"); //Default page
+                iris.navigate("#home"); //Default page
             }
         };
     } , "/shopping/screen/welcome.js");

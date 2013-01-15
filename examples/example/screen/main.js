@@ -13,7 +13,7 @@ iris.Screen(function(self) {
 		self.AddScreen("screens", "#nested-uis", "example/screen/example_nested_uis.js");
 
 		if ( !document.location.hash ) {
-			iris.Goto("#instance");
+			iris.navigate("#instance");
 		}
 	}
 });

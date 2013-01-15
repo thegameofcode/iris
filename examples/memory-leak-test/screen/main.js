@@ -68,7 +68,7 @@ iris.screen(function(self) {
 			else {
 				id = "#screen_" + f++;
 				self.AddScreen("screens", id, "screen/example_instance.js");
-				iris.Goto(id);
+				iris.navigate(id);
 				
 				iris.D("   Added screen=",id)
 			}

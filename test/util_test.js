@@ -22,49 +22,72 @@
       raises(block, [expected], [message])
   */
 
-  module('Module Util');
-
-  iris.locale(
-      "en_US", {
-          dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-          monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-          dateFormat: "m/d/Y h:i:s",
-          currency: {
-              formatPos: "n",
-              formatNeg: "(n)",
-              decimal: ".",
-              thousand: ",",
-              precision: 2
-          }
+  module('Module Util', {
+      setup: function() {
+          iris.init();
+          createLocales();
+      },
+      teardown: function () {
+          clearBody();
       }
-  );
+  });
 
-  iris.locale(
-      "es_ES", {
-          dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
-          monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
-          dateFormat: "d/m/Y H:i:s",
-          currency: {
-              formatPos: "n",
-              formatNeg: "-n",
-              decimal: ",",
-              thousand: ".",
-              precision: 2
-          }
+  function createLocales () {
+
+    iris.locale(
+        "en_US", {
+            dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+            dateFormat: "m/d/Y h:i:s",
+            currency: {
+                formatPos: "n",
+                formatNeg: "(n)",
+                decimal: ".",
+                thousand: ",",
+                precision: 2
+            }
+        }
+    );
+
+    iris.locale(
+        "es_ES", {
+            dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+            monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+            dateFormat: "d/m/Y H:i:s",
+            currency: {
+                formatPos: "n",
+                formatNeg: "-n",
+                decimal: ",",
+                thousand: ".",
+                precision: 2
+            }
+        }
+    );
+
+  }
+
+  function clearBody() {
+      var irisGeneratedCode = $("#start_iris").nextAll();
+      if (irisGeneratedCode !== undefined) {
+          irisGeneratedCode.remove();
       }
-  );
-
+  }
 
 
   test("Date format", function() {
+    stop();
+
     iris.locale("es_ES");
-    var date = "1331954654564";
+    var date = 1331954654564;
     var formatted = iris.date(date, "d/m/y h:i:s");
     strictEqual(formatted, "17/03/12 04:24:14", "Custom DateFormat");
+
+    start();
 
   });
 
   test("Currency format", function() {
+    stop();
 
     var amount = 1234.559;
     iris.locale("es_ES");
@@ -76,9 +99,12 @@
     formatted = iris.currency(amount);
     strictEqual(formatted, "1,234.56", "Currency USA Format");
 
+    start();
+
   });
 
   test("Currency with custom format", function() {
+    stop();
 
     iris.locale(
       "custom-locale", {
@@ -100,12 +126,18 @@
     var formatted = iris.currency(amount);
     strictEqual(formatted, "35", "Precision zero");
 
+    start();
+
   });
 
   test("Get Object Value", function() {
+    stop();
+
     var test = {p1:{p2:{p3:"value"}}};
     var value = iris.val(test, "p1.p2.p3");
     strictEqual(value, "value", "Object value should be the same");
+
+    start();
   });
 
 }(jQuery));

@@ -49,7 +49,7 @@
     
     function gotoMain() {
         iris.welcome("test/destroy_screen/welcome.js");
-        iris.goto("#main");
+        iris.navigate("#main");
         
     }
     
@@ -58,12 +58,12 @@
         setup: function() {
             window.location.hash = "";
             iris.init();
-            clearBody();
             createDeferred();
             gotoMain();
         },
         teardown: function () {
             destroyDeferred();
+            clearBody();
         }
     });
     
@@ -74,26 +74,26 @@
         
         window.deferred.main.done(
             function() {
-                iris.goto("#home");
+                iris.navigate("#home"); // +1 Home Screen Created
             }
             );
         
         window.deferred.home.done(
             function() {
-                iris.goto("#help");
+                iris.log("home DONE");
+                iris.navigate("#help"); // +1 Home Screen asleep
             }
             );
             
         window.deferred.help.done(
             function() {
+            iris.log("help DONE");
                 setTimeout(function () {
-                    iris.destroyScreen("#home");
+                    iris.destroyScreen("#home"); // +1 Home Screen Destroyed
                     window.start();
-                }, 10);
+                }, 100);
             }
-            );
-        
-        
+        );
     }
     );
     
@@ -103,7 +103,7 @@
         
         window.deferred.main.done(
             function() {
-                iris.goto("#help");
+                iris.navigate("#help");
             }
             );
         
@@ -127,7 +127,7 @@
         
         window.deferred.main.done(
             function() {
-                iris.goto("#home");
+                iris.navigate("#home");
             }
             );
         
@@ -149,31 +149,31 @@
         
 
     asyncTest("Test Destroy #home after goto #home, then goto #home2, then goto #help", function() {
-        window.expect(5);
+        window.expect(4);
         
         window.deferred.main.done(
             function() {
-                iris.goto("#home");
+                iris.navigate("#home"); // +1 Home Screen Created
             }
             );
         
         window.deferred.home.done(
             function() {
-                iris.goto("#home2");
+                iris.navigate("#home2"); // +1 Home Screen asleep
             }
             );
         
         
         window.deferred.home2.done(
             function() {
-                iris.goto("#help");
+                iris.navigate("#help"); // +1 Home2 Screen asleep
             }
             );
             
         window.deferred.help.done(
             function() {
                 setTimeout(function () {
-                    iris.destroyScreen("#home");    
+                    iris.destroyScreen("#home"); // +1 Home Screen Destroyed
                     window.start();
                 }, 10);
             }
@@ -184,30 +184,30 @@
     );
         
     asyncTest("Test Destroy #home after goto #home, then goto #home2, then goto #home3, then goto #help", function() {
-        window.expect(7);
+        window.expect(5);
         
         window.deferred.main.done(
             function() {
-                iris.goto("#home");
+                iris.navigate("#home"); // +1 Home Screen Created
             }
             );
         
         window.deferred.home.done(
             function() {
-                iris.goto("#home2");
+                iris.navigate("#home2"); // +1 Home Screen asleep
             }
             );
         
         
         window.deferred.home2.done(
             function() {
-                iris.goto("#home3");
+                iris.navigate("#home3"); // +1 Home2 Screen asleep
             }
             );
         
         window.deferred.home3.done(
             function() {
-                iris.goto("#help");
+                iris.navigate("#help"); // +1 Home3 Screen asleep
             }
             );
         
@@ -215,7 +215,49 @@
         window.deferred.help.done(
             function() {
                 setTimeout(function () {
-                    iris.destroyScreen("#home");    
+                    iris.destroyScreen("#home"); // +1 Home Screen Destroyed
+                    window.start();
+                }, 100);
+            }
+            );
+        
+        
+    }
+    );
+        
+    asyncTest("Test Destroy #home2 after goto #home, then goto #home2, then goto #home3, then goto #home", function() {
+        window.expect(5);
+        
+        window.deferred.main.done(
+            function() {
+                iris.navigate("#home"); // +1 Home Screen Created
+            }
+            );
+        
+        window.deferred.home.done(
+            function() {
+                iris.navigate("#home2"); // +1 Home Screen asleep
+            }
+            );
+        
+        
+        window.deferred.home2.done(
+            function() {
+                iris.navigate("#home3"); // +1 Home2 Screen asleep
+            }
+            );
+        
+        window.deferred.home3.done(
+            function() {
+                iris.navigate("#help"); // +1 Home3 Screen asleep
+            }
+            );
+        
+        
+        window.deferred.help.done(
+            function() {
+                setTimeout(function () {
+                    iris.destroyScreen("#home2"); // +1 Home2 Screen Destroyed
                     window.start();
                 }, 10);
             }
@@ -224,62 +266,19 @@
         
     }
     );
-        
-        asyncTest("Test Destroy #home2 after goto #home, then goto #home2, then goto #home3, then goto #home", function() {
-        window.expect(6);
-        
-        window.deferred.main.done(
-            function() {
-                iris.goto("#home");
-            }
-            );
-        
-        window.deferred.home.done(
-            function() {
-                iris.goto("#home2");
-            }
-            );
-        
-        
-        window.deferred.home2.done(
-            function() {
-                iris.goto("#home3");
-            }
-            );
-        
-        window.deferred.home3.done(
-            function() {
-                iris.goto("#help");
-            }
-            );
-        
-        
-        window.deferred.help.done(
-            function() {
-                setTimeout(function () {
-                    iris.destroyScreen("#home2");    
-                    window.start();
-                }, 10);
-            }
-            );
-        
-        
-    }
-    );
-        
-    
-    asyncTest("Test goto #home after destroy #home", function() {
+
+    /*asyncTest("Test goto #home after destroy #home", function() {
         window.expect(4);
         
         window.deferred.main.done(
             function() {
-                iris.goto("#home");
+                iris.navigate("#home");
             }
             );
         
         window.deferred.home.done(
             function() {
-                iris.goto("#help");
+                iris.navigate("#help");
             }
             );
        
@@ -292,35 +291,40 @@
         
         window.deferred.help.done(
             function() {
-                setTimeout(function () {                    
                     iris.destroyScreen("#home");
-                    iris.goto("#home");
-                    window.start();
-                }, 10);
+
+                    try {
+                            iris.navigate("#home"); // real async call
+                        } catch (e) {
+                            start();
+                        }
+                    
             }
             );
     }
-    );
+    );*/
+
+    
 
     asyncTest("Test Destroy #home after goto #home, then goto #home2, then goto #home3", function() {
-        window.expect(2);
+        window.expect(4);
         
         window.deferred.main.done(
             function() {
-                iris.goto("#home");
+                iris.navigate("#home"); // +1 Home Screen Created
             }
             );
         
         window.deferred.home.done(
             function() {
-                iris.goto("#home2");
+                iris.navigate("#home2"); // +1 Home Screen asleep
             }
             );
         
         
         window.deferred.home2.done(
             function() {
-                iris.goto("#home3");
+                iris.navigate("#home3"); // +1 Home2 Screen asleep
             }
             );
         
@@ -329,10 +333,13 @@
         window.deferred.home3.done(
             function() {
                 setTimeout(function () {
+
                     window.throws(function() {                        
                         iris.destroyScreen("#home");
-                    },"It is impossible to destroy the parent screen");
+                    },"It is impossible to destroy the parent screen"); // +1 It is impossible to destroy the parent screen
+
                     window.start();
+
                 }, 10);
             }
             );

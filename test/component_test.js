@@ -24,16 +24,23 @@
 
     iris.cache(false);
 
-    module('Module Component');
+    function clearBody() {
+        var irisGeneratedCode = $("#start_iris").nextAll();
+        if (irisGeneratedCode !== undefined) {
+            irisGeneratedCode.remove();
+        }
+    }
+
+    module('Module Component', {
+        setup: function() {
+            iris.init();
+        },
+        teardown: function () {
+            clearBody();
+        }
+    });
 
     asyncTest("Include JS", function() {
-
-        // for lang values test
-        iris.translations("test",{
-            "TEST":"lang_val"
-        });
-        iris.locale("test");
-
         expect(1);
 
         iris.include("test/component/include_test.js");
@@ -46,63 +53,128 @@
 
         iris.welcome("test/component/welcome.js");
 
+        window.start();
+
     });
 
     asyncTest("Navigate To Screen", function() {
     
-        expect(3);
+        expect(7);
     
-        iris.goto("#screen");
+        iris.welcome("test/component/welcome.js"); // + 4
+        iris.navigate("#screen"); // +3
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            window.start();
+        });
 
     });
 
     asyncTest("Create UI", function() {
 
-        expect(4);
-        iris.notify("create_ui");
+        expect(11);
+
+        iris.welcome("test/component/welcome.js"); // + 4
+
+        // this will make a real async call
+        iris.navigate("#screen"); // +3
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.notify("create_ui"); // + 4
+            start();
+        });
     
     });
 
     asyncTest("UI Settings", function() {
 
-        expect(3);
-        iris.notify("ui_settings");
+        expect(14);
+
+        iris.welcome("test/component/welcome.js"); // + 4
+        iris.navigate("#screen"); // +3
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.notify("create_ui"); // + 4
+
+            iris.notify("ui_settings"); // +3
+            start();
+        });
+
     });
 
     asyncTest("Nested UI", function() {
 
-        expect(6); // 3 creation + 3 nested callback
-        iris.notify("nested_ui");
+        expect(17);
+
+        iris.welcome("test/component/welcome.js"); // + 4
+        iris.navigate("#screen"); // +3
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.notify("create_ui"); // + 4
+
+            iris.notify("nested_ui"); // 3 creation + 3 nested callback
+            start();
+        });
     });
 
 
     asyncTest("Destroy UI", function() {
     
-        expect(1);
+        expect(12);
 
-        iris.notify("destroy_ui");
+        iris.welcome("test/component/welcome.js"); // + 4
+        iris.navigate("#screen"); // +3
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.notify("create_ui"); // + 4
+
+            iris.notify("destroy_ui"); // +1
+            start();
+        });
     });
 
     asyncTest("Template Params", function() {
 
-        expect(1);
-        iris.notify("template_params");
+        expect(8);
+
+        iris.welcome("test/component/welcome.js"); // + 4
+        iris.navigate("#screen"); // +3
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+
+            iris.notify("template_params"); // +1
+            start();
+        });
     });
 
     asyncTest("Template Lang Values", function() {
 
-        expect(1);
-        iris.notify("template_langs");
+        expect(8);
+
+        iris.welcome("test/component/welcome.js"); // + 4
+        iris.navigate("#screen"); // +3
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.notify("template_langs"); // +1
+            start();
+        });
     });
 
     asyncTest("Destroy Screen", function() {
 
-        expect(1);
+        expect(8);
+
+        iris.welcome("test/component/welcome.js"); // + 4
+        iris.navigate("#screen"); // +3
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
         
-        window.throws(function() {
-            iris.destroyScreen("#screen");
-        },"Fail. It is impossible remove the current screen.");
-        window.start();
+            window.throws(function() {
+                iris.destroyScreen("#screen");
+            },"Fail. It is impossible remove the current screen.");
+
+            start();
+        });
     });
 
 }(jQuery));

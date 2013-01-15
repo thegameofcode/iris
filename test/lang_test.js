@@ -22,7 +22,21 @@
       raises(block, [expected], [message])
   */
 
-  module('Module Lang');
+  module('Module Lang', {
+      setup: function() {
+          iris.init();
+      },
+      teardown: function () {
+          clearBody();
+      }
+  });
+
+  function clearBody() {
+      var irisGeneratedCode = $("#start_iris").nextAll();
+      if (irisGeneratedCode !== undefined) {
+          irisGeneratedCode.remove();
+      }
+  }
 
 
   test("Lang Test", function() {

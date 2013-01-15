@@ -57,35 +57,35 @@
     
     asyncTest("Create my_ui directly in screen.create() method", function() {        
         window.expect(2);
-        iris.goto("#main");
+        iris.navigate("#main");
         
     }
     );
         
     asyncTest("Create my_ui directly in screen.awake() method", function() {        
         window.expect(2);
-        iris.goto("#main2");
+        iris.navigate("#main2");
     }
     );
         
     asyncTest("Create my_ui from button_click event", function() {        
         window.expect(2);
-        iris.goto("#main3");
+        iris.navigate("#main3");
     }
     );
         
     asyncTest("Create my_ui with an inner UI", function() {        
         window.expect(8);
-        iris.goto("#main4");
+        iris.navigate("#main4");
     }
     );
         
     asyncTest("Testing sleep UI event", function() {        
         window.expect(6);
-        iris.goto("#main5");
+        iris.navigate("#main5");
         window.deferred.main.done(
             function() {
-                iris.goto("#help");
+                iris.navigate("#help");
             }
             );
     }
@@ -93,16 +93,16 @@
         
     asyncTest("Testing destroy UI event", function() {        
         window.expect(8);
-        iris.goto("#main6");
+        iris.navigate("#main6");
     }
     );
         
     asyncTest("Testing sleep and destroy events when destroyScreen() method is called", function() {        
         window.expect(8);
-        iris.goto("#main5");
+        iris.navigate("#main5");
         window.deferred.main.done(
             function() {
-                iris.goto("#help2");
+                iris.navigate("#help2");
             }
             );
                 
