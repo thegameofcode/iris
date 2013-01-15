@@ -202,15 +202,13 @@
     // INCLUDE
     //
 
-    function _includeFiles() {
-        for(var f = 0, F = arguments.length; f < F; f++) {
-            _include(arguments[f]);
-        }
-    }
+    function _include(p_uiFile, p_value) {
 
-    function _include(p_uiFile) {
+        if ( p_value !== undefined ) {
+            _includes[p_uiFile] = p_value;
+            
+        } else if(!_includes.hasOwnProperty(p_uiFile)) {
 
-        if(!_includes.hasOwnProperty(p_uiFile)) {
             _includes[p_uiFile] = true;
 
             var fileUrl = p_uiFile.indexOf("http") === 0 ? p_uiFile : iris.baseUri() + p_uiFile;
@@ -276,7 +274,10 @@
     // UI
     //
 
-    function _registerUI(f_ui) {
+    function _registerUI(f_ui, path) {
+        if ( path !== undefined ) {
+            _lastIncludePath = path;
+        }
         _includes[_lastIncludePath] = f_ui;
     }
 
@@ -306,7 +307,7 @@
         $.extend(uiInstance.cfg, jqToHash, p_uiSettings);
 
         uiInstance.create(jqToHash, p_uiSettings);
-        uiInstance._awake(p_uiSettings);
+        uiInstance._awake();
         
         return uiInstance;
     }
@@ -332,7 +333,10 @@
     // SCREEN
     //
 
-    function _registerScreen(f_screen) {
+    function _registerScreen(f_screen, path) {
+        if ( path !== undefined ) {
+            _lastIncludePath = path;
+        }
         _includes[_lastIncludePath] = f_screen;
     }
 
@@ -794,7 +798,7 @@
     
     iris.init(_init);
     
-    iris.include = _includeFiles;
+    iris.include = _include;
     iris.screen = _registerScreen;
     iris.destroyScreen = _destroyScreen;
     iris.welcome = _welcome;

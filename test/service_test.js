@@ -6,40 +6,11 @@
   module('Module Service', {
       setup: function() {
           iris.init();
-          createService();
       },
       teardown: function () {
           clearBody();
       }
   });
-
-  var testService;
-
-  function createService () {
-    testService = iris.service(function(self){
-
-        self.path = "http://localhost:8080/";
-
-        self.settings({path : "http://localhost:8080/"});
-
-        self.load = function (id, success, error) {
-          self.get("test/service/" + id, success, error);
-        };
-
-        self.create = function (params, success, error) {
-          self.post("echo/create", params, success, error);
-        };
-
-        self.update = function (id, params, success, error) {
-          self.put("echo/put/" + id, params, success, error);
-        };
-
-        self.remove = function (id, success, error) {
-          self.del("echo/delete/" + id, success, error);
-        };
-
-    });
-  }
 
   function clearBody() {
       var irisGeneratedCode = $("#start_iris").nextAll();
@@ -52,7 +23,7 @@
   asyncTest("Service Get Success", function () {
       expect(2);
 
-      testService.load("test.json", function (json) {
+      iris.service("test/service/service.js").load("test.json", function (json) {
           strictEqual(1, json.id);
           strictEqual("book title", json.title);
           start();
@@ -66,7 +37,7 @@
   asyncTest("Service Get Error", function () {
       expect(1);
 
-      testService.load("no_valid", function (json) {
+      iris.service("test/service/service.js").load("no_valid", function (json) {
           ok(false, "Success callback unexpected: " + json);
           start();
       }, function (p_request, p_textStatus, p_errorThrown) {
@@ -89,7 +60,7 @@
         "data" : params
       };
 
-      testService.update(id, params, function (json) {
+      iris.service("test/service/service.js").update(id, params, function (json) {
           deepEqual(json, expectedResponse, "the json response is not valid");
           start();
       }, function (p_request, p_textStatus, p_errorThrown) {
@@ -111,7 +82,7 @@
         "data" : params
       };
       
-      testService.create(params, function (json) {
+      iris.service("test/service/service.js").create(params, function (json) {
           deepEqual(json, expectedResponse, "the json response is not valid");
           start();
       }, function (p_request, p_textStatus, p_errorThrown) {
@@ -131,7 +102,7 @@
         "url":"/echo/delete/" + id
       };
 
-      testService.remove(id, function (json) {
+      iris.service("test/service/service.js").remove(id, function (json) {
           deepEqual(json, expectedResponse, "the json response is not valid");
           start();
       }, function (p_request, p_textStatus, p_errorThrown) {

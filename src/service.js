@@ -1,5 +1,11 @@
 (function() {
 
+    var services;
+
+    function init () {
+        services = {};
+    }
+
     var Service = function() {};
 
     Service.prototype = new iris.Settable();
@@ -41,12 +47,29 @@
         return this.ajax("POST", p_path, p_params, f_success, f_error);
     };
 
-    iris.service = function (f_service) {
-        var serv = new Service();
-        serv.cfg = {};
-        serv.settings({ type: "json", path: "" });
-        f_service(serv);
-        return serv;
+    iris.service = function (serviceOrPath, path) {
+
+        if ( typeof serviceOrPath === "string" ) {
+
+            // serviceOrPath == path
+           iris.include(serviceOrPath);
+           return services[serviceOrPath];
+
+        } else {
+
+            // serviceOrPath == service
+
+            var serv = new Service();
+            serv.cfg = {};
+            serv.settings({ type: "json", path: "" });
+            serviceOrPath(serv);
+
+            services[path] = serv;
+            iris.include(path, true);
+        }
+
     };
+
+    init();
 
 })();
