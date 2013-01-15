@@ -4,13 +4,14 @@
     _screenJsUrl,
     _screenContainer,
     _jsUrlScreens,
-    _lastScreen,
+//    _lastScreen,
     _prevHash,
     _includes,
     _lastIncludePath,
     _head,
     _welcomeCreated,
-    _gotoCancelled;
+    _gotoCancelled,
+    _lastFullHash;
     
     function _init() {
 
@@ -26,13 +27,17 @@
         // _jsUrlScreens["/path/to/file.js"] indicates if a js-URL has been used by some screen
         _jsUrlScreens = {};
 
-        _lastScreen = {};
+//        _lastScreen = {};
         _prevHash = "";
         _includes = {};
         _lastIncludePath = undefined;
         _head = $("head").get(0);
         _welcomeCreated = false;
         _gotoCancelled = false;
+        _lastFullHash = "#";
+
+        $(window).off("hashchange");
+        document.location.href = window.location.href.split('#')[0] + "#";
     }
 
     function _welcome(p_jsUrl) {
@@ -73,7 +78,7 @@
                 _onHashChange();
             }
 
-            $(window).bind("hashchange", _onHashChange);
+            $(window).on("hashchange", _onHashChange);
         }
     }
 
@@ -83,11 +88,18 @@
 
     function _onHashChange() {
 
+        // http://stackoverflow.com/questions/4106702/change-hash-without-triggering-a-hashchange-event#fggij
+        if ( _lastFullHash === document.location.hash ) {
+            return false;
+        }
+
         if(!_welcomeCreated) {
             throw "set the first screen using iris.welcome()";
         }
 
         iris.notify(iris.BEFORE_NAVIGATION);
+
+        _lastFullHash = document.location.hash;
 
         if(_gotoCancelled) {
             _gotoCancelled = false;
@@ -160,6 +172,8 @@
         }
 
         _prevHash = _removeLastSlash(currPath);
+
+        iris.notify(iris.AFTER_NAVIGATION);
     }
 
     function _removeURLParams(p_url) {
