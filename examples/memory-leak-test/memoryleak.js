@@ -3,6 +3,6 @@ $(document).ready(
 
         iris.baseUri(iris.baseUri() + "examples/memory-leak-test/");
 
-		iris.welcome("screen/main.js");
+		iris.welcome("screen/welcome.js");
 	}
 );
