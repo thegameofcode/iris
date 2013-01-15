@@ -83,13 +83,13 @@
         }
     });*/
     
-    asyncTest("Check if iris prevents multiple calls to the self.screens() method", function() {
+    /*asyncTest("Check if iris prevents multiple calls to the self.screens() method", function() {
         
         iris.welcome("test/bad_practices/welcome_screens_calls.js");
 
     });
     
-    /*asyncTest("Check it is impossible to register twice the same Hash-URL", function() {
+    asyncTest("Check it is impossible to register twice the same Hash-URL", function() {
 
         window.throws(function () {
             iris.welcome("test/bad_practices/welcome_same_jsurl.js");

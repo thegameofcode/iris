@@ -56,7 +56,6 @@
     
     module( "Module Destroy Screen", {
         setup: function() {
-            window.location.hash = "";
             iris.init();
             createDeferred();
             gotoMain();

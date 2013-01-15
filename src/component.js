@@ -74,6 +74,7 @@
             throw "hashchange event unsupported";
         } else {
 
+            //if(document.location.hash !== undefined && document.location.hash !== "#") {
             if(document.location.hash) {
                 _onHashChange();
             }
@@ -99,14 +100,14 @@
 
         iris.notify(iris.BEFORE_NAVIGATION);
 
-        _lastFullHash = document.location.hash;
+        
 
         if(_gotoCancelled) {
             _gotoCancelled = false;
             return false;
         }
 
-        var prev = _prevHash.split("/"),
+        /*var prev = _prevHash.split("/"),
         curr = document.location.hash.split("/"),
         prevPath = "",
         currPath = "",
@@ -116,22 +117,76 @@
 
         // Check if all screen.canSleep() are true
         if(_prevHash !== "") {
-            for(i = 0; i < prev.length; i++) {
+            
+        }
+        prevPath = "";*/
 
-                if(prev[i] !== "") {
-                    prevPath += prev[i] + "/";
-                    pathWithoutParams = _removeURLParams(prevPath);
+        var curr = document.location.hash.replace("#", "").split("/"), i, screenPath;
 
-                    if(_screen.hasOwnProperty(pathWithoutParams) && _screen[pathWithoutParams].canSleep() === false) {
-                        _gotoCancelled = true;
-                        document.location.hash = _prevHash;
-                        return false;
-                    }
+        _lastFullHash = document.location.hash;
+
+        
+
+        var firstDiffNode = 0;
+        if ( _prevHash !== undefined ) {
+
+            // check if can sleep
+            var prevPath = "";
+            for ( i = 0; i < _prevHash.length; i++ ) {
+                screenPath = _getScreenPath(_prevHash, i);
+                if( _screen[screenPath].canSleep() === false ) {
+                    _gotoCancelled = true;
+                    document.location.hash = _lastFullHash;
+                    return false;
                 }
             }
-        }
-        prevPath = "";
 
+            // get firstDiffNode
+            for ( i = 0; i < curr.length; i++ ) {
+                if ( _prevHash[i] === undefined || _prevHash[i] !== curr[i] ) {
+                    firstDiffNode = i;
+                    break;
+                }
+                
+            }
+
+            // hide previous screens
+            for ( i = _prevHash.length - 1; i >= firstDiffNode; i-- ) {
+                var screenToSleep = _screen[ _getScreenPath(_prevHash, i) ];
+                screenToSleep._sleep();
+                screenToSleep.hide();
+            }
+        }
+
+        // show new screens
+        for ( i = firstDiffNode; i < curr.length; i++ ) {
+
+            screenPath = _getScreenPath(curr, i);
+
+            if ( !_screenContainer.hasOwnProperty(screenPath) ) {
+                throw "'" + screenPath + "' must be registered using self.screens()";
+            } else {
+                if(!_screen.hasOwnProperty(screenPath)) {
+                    var screenObj = _instanceScreen(screenPath);
+                    screenObj.create();
+                    screenObj.hide();
+                }
+
+                var screenParams = _navGetParams(curr[i]);
+
+                var currentScreen = _screen[screenPath];
+                currentScreen._awake(screenParams);
+                currentScreen.show();
+            }
+
+        }
+
+
+        _prevHash = curr;
+
+
+
+/*
         // Hide screens and its childs that are not showed
         if(prev.length >= curr.length) {
 
@@ -171,7 +226,10 @@
             }
         }
 
+
+
         _prevHash = _removeLastSlash(currPath);
+*/
 
         iris.notify(iris.AFTER_NAVIGATION);
     }
@@ -195,6 +253,14 @@
         }
 
         return params;
+    }
+
+    function _getScreenPath (paths, pos) {
+        var path = "#";
+        for(var i = 0; i <= pos; i++) {
+            path += _removeURLParams( paths[i] + "/" );
+        }
+        return _removeLastSlash(path);
     }
 
 
@@ -403,31 +469,6 @@
             
         } else {
             iris.log("Error removing the screen \"" + p_screenPath + "\", path not found.");
-        }
-    }
-
-    function _showScreen(p_screenPath, p_params) {
-
-        if(!_screenContainer.hasOwnProperty(p_screenPath)) {
-            throw "'" + p_screenPath + "' must be registered using self.screens()";
-        } else {
-            if(!_screen.hasOwnProperty(p_screenPath)) {
-                var screenObj = _instanceScreen(p_screenPath);
-                screenObj.create();
-                screenObj.hide();
-            }
-
-            var currentScreen = _screen[p_screenPath];
-            /*var contextId = currentScreen.get().parent().data("screen_context");
-            if(_lastScreen.hasOwnProperty(contextId)) {
-                var lastScreen = _lastScreen[contextId];
-                lastScreen._sleep();
-                lastScreen.hide();
-            }*/
-            currentScreen._awake(p_params ? p_params : {});
-            currentScreen.show();
-
-            //_lastScreen[contextId] = currentScreen;
         }
     }
 
