@@ -1,8 +1,10 @@
 (function() {
 
-    var _locale, _regional = {};
+    var _locale, _regional;
     
     function _init() {
+        window.console.log("Initializating regional module");
+
         _locale = {};
         _regional = {};
     }
@@ -41,7 +43,8 @@
         }
     };
     
-    iris.init(_init);
+    _init();
 
+    iris.on("iris-reset", _init);
 
 })();

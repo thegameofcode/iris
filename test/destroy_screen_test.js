@@ -56,7 +56,7 @@
     
     module( "Module Destroy Screen", {
         setup: function() {
-            iris.init();
+            iris.notify("iris-reset");
             createDeferred();
             gotoMain();
         },

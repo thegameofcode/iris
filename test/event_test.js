@@ -31,7 +31,7 @@
 
   module('Module Event', {
       setup: function() {
-          iris.init();
+          iris.notify("iris-reset");
       },
       teardown: function () {
           clearBody();

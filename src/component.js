@@ -14,6 +14,8 @@
     
     function _init() {
 
+        window.console.log("Initializating component module");
+
         // _screenJsUrl["#hash"] return the js-url associated with #hash
         _screenJsUrl = {};
 
@@ -36,6 +38,8 @@
 
         $(window).off("hashchange");
         document.location.href = window.location.href.split('#')[0] + "#";
+
+        iris.on("iris-reset", _init);
     }
 
     function _welcome(p_jsUrl) {
@@ -88,7 +92,7 @@
     function _onHashChange() {
 
         // http://stackoverflow.com/questions/4106702/change-hash-without-triggering-a-hashchange-event#fggij
-        if ( _lastFullHash === document.location.hash ) {
+        if ( _lastFullHash === document.location.hash || document.location.hash === "#" ) {
             return false;
         }
 
@@ -754,8 +758,6 @@
             }
         }
     };
-    
-    iris.init(_init);
     
     iris.include = _include;
     iris.screen = _registerScreen;

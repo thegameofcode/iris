@@ -47,7 +47,7 @@
             window.location.hash = "";
             clearBody();
             createDeferred();
-            iris.init();
+            iris.notify("iris-reset");
             iris.welcome("test/ui_life_cycle/welcome.js");
         },
         teardown: function () {

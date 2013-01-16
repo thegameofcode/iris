@@ -2,7 +2,9 @@
 
     var services;
 
-    function init () {
+    function _init () {
+        window.console.log("Initializating service module");
+
         services = {};
     }
 
@@ -70,6 +72,8 @@
 
     };
 
-    init();
+    _init();
+
+    iris.on("iris-reset", _init);
 
 })();
