@@ -5,6 +5,7 @@
     _screenContainer,
     _jsUrlScreens,
     _prevHash,
+    _prevHashString,
     _includes,
     _lastIncludePath,
     _head,
@@ -13,8 +14,6 @@
     _lastFullHash;
     
     function _init() {
-
-        window.console.log("Initializating component module");
 
         // _screenJsUrl["#hash"] return the js-url associated with #hash
         _screenJsUrl = {};
@@ -37,7 +36,8 @@
         _lastFullHash = "";
 
         $(window).off("hashchange");
-        document.location.href = window.location.href.split('#')[0] + "#";
+        //document.location.href = window.location.href.split('#')[0] + "#";
+        document.location.hash = "#";
 
         iris.on("iris-reset", _init);
     }
@@ -56,12 +56,12 @@
 
         _welcomeCreated = true;
 
-        var path = "";
+        var path = "#";
         _screenJsUrl[path] = p_jsUrl;
         _screenContainer[path] = $(document.body);
         
         var screenObj = _instanceScreen(path);
-        screenObj.id = "welcome-screen";
+        screenObj.id = "#";
 
         if ( screenObj.cfg === null ) {
             screenObj.cfg = {};
@@ -91,8 +91,22 @@
 
     function _onHashChange() {
 
+        // when a screen cannot sleep then window.history.back() & and finish navegation process
+        if(_gotoCancelled) {
+            _gotoCancelled = false;
+            iris.notify(iris.AFTER_NAVIGATION);
+            return false;
+        }
+
+        // when document.location.href is [http://localhost:8080/#] then document.location.hash is [] (empty string)
+        // to avoid the use of empty strings and prevent mistakes, we replace it by #. (# == welcome-screen)
+        var hash = document.location.hash;
+        if ( hash === "" ) {
+            hash = "#";
+        }
+
         // http://stackoverflow.com/questions/4106702/change-hash-without-triggering-a-hashchange-event#fggij
-        if ( _lastFullHash === document.location.hash || document.location.hash === "#" ) {
+        if ( _lastFullHash === hash ) {
             return false;
         }
 
@@ -101,34 +115,13 @@
         }
 
         iris.notify(iris.BEFORE_NAVIGATION);
-
         
+        var curr = hash.split("/"), i, screenPath;
+        _lastFullHash = hash;
 
-        if(_gotoCancelled) {
-            _gotoCancelled = false;
-            return false;
-        }
-
-
-        var curr = document.location.hash.replace("#", "").split("/"), i, screenPath;
-
-        _lastFullHash = document.location.hash;
-
-        
 
         var firstDiffNode = 0;
         if ( _prevHash !== undefined ) {
-
-            // check if can sleep
-            var prevPath = "";
-            for ( i = 0; i < _prevHash.length; i++ ) {
-                screenPath = _getScreenPath(_prevHash, i);
-                if( _screen[screenPath].canSleep() === false ) {
-                    _gotoCancelled = true;
-                    document.location.hash = _lastFullHash;
-                    return false;
-                }
-            }
 
             // get firstDiffNode
             for ( i = 0; i < curr.length; i++ ) {
@@ -137,6 +130,18 @@
                     break;
                 }
                 
+            }
+
+            // check if can sleep
+            for ( i = _prevHash.length-1; i >= firstDiffNode; i-- ) {
+
+                screenPath = _getScreenPath(_prevHash, i);
+
+                if( _screen[screenPath].canSleep() === false ) {
+                    _gotoCancelled = true;
+                    document.location.href = _prevHashString;
+                    return false;
+                }
             }
 
             // hide previous screens
@@ -158,7 +163,6 @@
                 if(!_screen.hasOwnProperty(screenPath)) {
                     var screenObj = _instanceScreen(screenPath);
                     screenObj.create();
-                    screenObj.hide();
                 }
 
                 var screenParams = _navGetParams(curr[i]);
@@ -170,8 +174,8 @@
 
         }
 
-
         _prevHash = curr;
+        _prevHashString = hash;
         iris.notify(iris.AFTER_NAVIGATION);
     }
 
@@ -197,11 +201,11 @@
     }
 
     function _getScreenPath (paths, pos) {
-        var path = "#";
+        var path = "";
         for(var i = 0; i <= pos; i++) {
-            path += _removeURLParams( paths[i] + "/" );
+            path += "/" + _removeURLParams( paths[i] );
         }
-        return _removeLastSlash(path);
+        return path.substr(1);
     }
 
 

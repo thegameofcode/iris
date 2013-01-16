@@ -11,7 +11,6 @@ window.iris = iris;
     var _events;
     
     function _init() {
-        window.console.log("Initializating event module");
 
         _events = {};
 

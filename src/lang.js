@@ -3,8 +3,6 @@
     var _translations;
 
     function _init() {
-        window.console.log("Initializating lang module");
-
         _translations = {};
     }
 

@@ -12,8 +12,6 @@
     //
     function _init() {
 
-        window.console.log("Initializating core module");
-
         if ( typeof jQuery === "undefined" ) {
             throw "jQuery " + _JQ_MIN_VER + "+ previous load required";
         } else if($().jquery < _JQ_MIN_VER) {

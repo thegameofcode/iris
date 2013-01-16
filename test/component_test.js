@@ -33,12 +33,10 @@
 
     module('Module Component', {
         setup: function() {
-            iris.log("INIT.............................");
             iris.notify("iris-reset");
         },
         teardown: function () {
             clearBody();
-            iris.log("TEARDOWN.............................");
         }
     });
 

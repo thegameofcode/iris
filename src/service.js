@@ -3,8 +3,6 @@
     var services;
 
     function _init () {
-        window.console.log("Initializating service module");
-
         services = {};
     }
 

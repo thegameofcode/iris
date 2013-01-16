@@ -3,8 +3,6 @@
     var _locale, _regional;
     
     function _init() {
-        window.console.log("Initializating regional module");
-
         _locale = {};
         _regional = {};
     }
