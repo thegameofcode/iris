@@ -4,7 +4,6 @@
     _screenJsUrl,
     _screenContainer,
     _jsUrlScreens,
-//    _lastScreen,
     _prevHash,
     _includes,
     _lastIncludePath,
@@ -27,14 +26,13 @@
         // _jsUrlScreens["/path/to/file.js"] indicates if a js-URL has been used by some screen
         _jsUrlScreens = {};
 
-//        _lastScreen = {};
-        _prevHash = "";
+        _prevHash = undefined;
         _includes = {};
         _lastIncludePath = undefined;
         _head = $("head").get(0);
         _welcomeCreated = false;
         _gotoCancelled = false;
-        _lastFullHash = "#";
+        _lastFullHash = "";
 
         $(window).off("hashchange");
         document.location.href = window.location.href.split('#')[0] + "#";
@@ -50,7 +48,7 @@
             window.console.log("[iris] noCache[" + iris.noCache() + "] enableLog[" + iris.enableLog() + "]");
         }
 
-        iris.include(p_jsUrl); // TODO Must be async
+        iris.include(p_jsUrl);
 
         _welcomeCreated = true;
 
@@ -107,19 +105,6 @@
             return false;
         }
 
-        /*var prev = _prevHash.split("/"),
-        curr = document.location.hash.split("/"),
-        prevPath = "",
-        currPath = "",
-        pathWithoutParams,
-        hasRemainingChilds = false,
-        i;
-
-        // Check if all screen.canSleep() are true
-        if(_prevHash !== "") {
-            
-        }
-        prevPath = "";*/
 
         var curr = document.location.hash.replace("#", "").split("/"), i, screenPath;
 
@@ -183,54 +168,6 @@
 
 
         _prevHash = curr;
-
-
-
-/*
-        // Hide screens and its childs that are not showed
-        if(prev.length >= curr.length) {
-
-            for(i = 0; i < prev.length; i++) {
-                prevPath += prev[i] + "/";
-
-                if(curr[i]) {
-                    currPath += curr[i] + "/";
-                }
-
-                if(hasRemainingChilds || currPath !== prevPath) {
-                    hasRemainingChilds = true;
-                    pathWithoutParams = _removeURLParams(prevPath);
-                    _screen[pathWithoutParams]._sleep();
-                    _screen[pathWithoutParams].hide();
-                }
-            }
-        }
-
-        // Show child screens
-        prevPath = "";
-        currPath = "";
-        hasRemainingChilds = false;
-        for(i = 0; i < curr.length; i++) {
-            currPath += curr[i] + "/";
-
-            if(prev[i]) {
-                prevPath += prev[i] + "/";
-            }
-
-            if(hasRemainingChilds || currPath !== prevPath) {
-                hasRemainingChilds = true;
-
-                pathWithoutParams = _removeURLParams(currPath);
-                _showScreen(pathWithoutParams, _navGetParams(curr[i]));
-
-            }
-        }
-
-
-
-        _prevHash = _removeLastSlash(currPath);
-*/
-
         iris.notify(iris.AFTER_NAVIGATION);
     }
 
@@ -378,8 +315,6 @@
         return uiInstance;
     }
 
-    // @private
-
     function _jqToHash(p_$obj) {
         var hash = {};
         var attrs = p_$obj.get(0).attributes;
@@ -455,11 +390,6 @@
                 }
             }
             
-            /*var contextId = screenToDestroy.get().parent().data("screen_context");
-            
-            if(_lastScreen[contextId] === screenToDestroy) {
-                delete _lastScreen[contextId];
-            }*/
             screenToDestroy._destroy();
             screenToDestroy.get().remove();
             delete _jsUrlScreens[_screenJsUrl[p_screenPath]];
@@ -499,7 +429,6 @@
             }
 
             result = result.replace(matches[0], value);
-
             matches = regExp.exec(p_html);
         }
 
@@ -600,10 +529,10 @@
         this.fileTmpl = p_htmlUrl;
 
         // TODO
-        if(typeof p_htmlUrl === "undefined") {
-            this.template = this.con;
-            return this.template;
-        }
+        //if(typeof p_htmlUrl === "undefined") {
+        //    this.template = this.con;
+        //    return this.template;
+        //}
         //
         iris.include(p_htmlUrl);
 
@@ -772,9 +701,6 @@
     //
     var Screen = function() {
         this.screenConId = null;
-
-        // array that contains all child screens hashes
-        //this.screenChilds = undefined;
     };
 
     Screen.prototype = new Component();
@@ -804,14 +730,6 @@
 
         } else {
             var $cont = this.get(p_containerId);
-/*
-            // TODO Check if screen_context is now neccesary
-            if ( $cont.data("screen_context") === undefined ) {
-                // Set a unique screen context id to the screen container
-                // like: #path/to/screen|containerid
-                $cont.data("screen_context", this.id + "|" + p_containerId);
-            }
-*/
             this.screenChilds = [];
 
             for ( var i=0; i < p_screens.length; i++ ) {
@@ -845,11 +763,10 @@
     iris.welcome = _welcome;
     iris.navigate = _goto;
     iris.ui = _registerUI;
-    
 
-
-
-    // TODO Should be no public?
+    //
+    // Classes
+    //
     iris.Settable = Settable;
     iris.Component = Component;
     iris.UI = UI;
