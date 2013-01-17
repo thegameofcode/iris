@@ -14,7 +14,7 @@ iris.screen(function (self) {
 		self.on("template_langs", templateLangs);
 
 		// check screen properties
-		window.strictEqual(self.id, "welcome-screen", "Compare welcom screen properties: self.id");
+		window.strictEqual(self.id, "#", "Compare welcom screen properties: self.id");
 		window.deepEqual(self.con, $(document.body), "Compare welcom screen properties: self.con");
 		window.strictEqual(self.fileJs, "test/component/welcome.js", "Compare welcom screen properties: self.fileJs");
 		window.strictEqual(self.uis.length, 0, "Compare welcom screen properties: self.uis.length");

@@ -1,11 +1,20 @@
 
+var iris = {};
+
+// Expose iris to the global object
+window.iris = iris;
+
+
 (function ($) {
 
     // static object to store all app callbacks
-    var _events = {};
+    var _events;
     
     function _init() {
+
         _events = {};
+
+        iris.on("iris-reset", _init);
     }
 
      iris.on = function (p_eventName, f_func) {
@@ -98,6 +107,6 @@
     iris.AFTER_NAVIGATION = "iris_after_navigation";
     iris.SERVICE_ERROR = "iris_service_error";
     
-    iris.init(_init);
+    _init();
 
 })(jQuery);

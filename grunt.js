@@ -13,7 +13,7 @@ module.exports = function(grunt) {
     },
     concat: {
       dist: {
-        src: ['<banner:meta.banner>', 'src/core.js', 'src/event.js', 'src/lang.js', 'src/regional.js', 'src/util.js', 'src/component.js', 'src/service.js'],
+        src: ['<banner:meta.banner>', 'src/event.js', 'src/core.js', 'src/lang.js', 'src/regional.js', 'src/util.js', 'src/component.js', 'src/service.js'],
         dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.js'
       },
       legacy: {

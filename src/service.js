@@ -2,7 +2,7 @@
 
     var services;
 
-    function init () {
+    function _init () {
         services = {};
     }
 
@@ -70,6 +70,8 @@
 
     };
 
-    init();
+    _init();
+
+    iris.on("iris-reset", _init);
 
 })();

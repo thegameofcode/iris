@@ -1,8 +1,3 @@
-var iris = {};
-
-// Expose iris to the global object
-window.iris = iris;
-
 (function($) {
 
     var _JQ_MIN_VER = 1.5,
@@ -10,13 +5,12 @@ window.iris = iris;
         _cache,
         _cacheVersion,
         _hasConsole,
-        _logEnabled,
-        _init_functions = [];
+        _logEnabled;
 
     //
     // Private
     //
-    function init() {
+    function _init() {
 
         if ( typeof jQuery === "undefined" ) {
             throw "jQuery " + _JQ_MIN_VER + "+ previous load required";
@@ -29,9 +23,8 @@ window.iris = iris;
         var isLocalEnv = urlContains("localhost", "127.0.0.1");
         _logEnabled = isLocalEnv;
         _cache = !isLocalEnv;
-        for (var i in _init_functions) {
-            (_init_functions[i])();
-        }
+
+        iris.on("iris-reset", _init);
     }
 
     function urlContains (args) {
@@ -96,15 +89,7 @@ window.iris = iris;
         }
     };
     
-    iris.init = function (fn_init) {
-        if (typeof fn_init === "function") {
-            _init_functions.push(fn_init);
-        } else if (fn_init === undefined) {
-            init();
-        }
-    };
     
-    
-    init();
+    _init();
 
 })(jQuery);

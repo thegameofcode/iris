@@ -1,14 +1,14 @@
 (function($) {
 
-    var _translations = {};
+    var _translations;
 
     function _init() {
         _translations = {};
     }
+
     //
     // Private
     //
-    
     function _addTranslations(p_locale, p_data) {
         iris.log("[translations]", p_locale, p_data);
 
@@ -64,7 +64,6 @@
     //
     // Public
     //
-
     iris.translations = function (p_locale, p_value, p_settings) {
         if(typeof p_value === "object") {
             _addTranslations(p_locale, p_value);
@@ -97,6 +96,6 @@
         return (value) ? value : "??" + p_label + "??";
     };
     
-    iris.init(_init);
+    _init();
 
 })(jQuery);

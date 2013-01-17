@@ -1,6 +1,6 @@
 (function() {
 
-    var _locale, _regional = {};
+    var _locale, _regional;
     
     function _init() {
         _locale = {};
@@ -41,7 +41,8 @@
         }
     };
     
-    iris.init(_init);
+    _init();
 
+    iris.on("iris-reset", _init);
 
 })();

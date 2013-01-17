@@ -43,7 +43,7 @@
         setup: function() {
             window.location.hash = "";
             clearBody();
-            iris.init();
+            iris.notify("iris-reset");
         //createDeferred();
         },
         teardown: function () {

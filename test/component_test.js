@@ -33,7 +33,7 @@
 
     module('Module Component', {
         setup: function() {
-            iris.init();
+            iris.notify("iris-reset");
         },
         teardown: function () {
             clearBody();
@@ -175,6 +175,14 @@
 
             start();
         });
+    });
+
+    asyncTest("Test Bindings", function() {
+
+        expect(6);
+
+        iris.welcome("test/component/bindings.js");
+    
     });
 
 }(jQuery));

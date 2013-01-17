@@ -33,7 +33,7 @@
     
     module( "Module Bad Practices", {
         setup: function() {
-            iris.init();
+            iris.notify("iris-reset");
         },teardown: function () {
             clearBody();
         }
@@ -50,7 +50,7 @@
 
         start();
 
-        /*iris.init();
+        /*iris.notify("iris-reset");
 
         try {
             iris.welcome("test/bad_practices/welcome.js");
@@ -66,15 +66,15 @@
         window.throws(function () {
             iris.welcome("test/bad_practices/welcome2.js");
         }, "Thrown an exception when We use the old format");
-        iris.init();
+        iris.notify("iris-reset");
         window.throws(function () {
             iris.welcome("test/bad_practices/welcome3.js");
         }, "Thrown an exception when We use array of Strings");
-        iris.init();
+        iris.notify("iris-reset");
         window.throws(function () {
             iris.welcome("test/bad_practices/welcome4.js");
         }, "Thrown an exception when We use bad hash format");
-        iris.init();
+        iris.notify("iris-reset");
         try {
             iris.welcome("test/bad_practices/welcome5.js");
             window.ok(true, "Correct format");
@@ -83,13 +83,13 @@
         }
     });*/
     
-    asyncTest("Check if iris prevents multiple calls to the self.screens() method", function() {
+    /*asyncTest("Check if iris prevents multiple calls to the self.screens() method", function() {
         
         iris.welcome("test/bad_practices/welcome_screens_calls.js");
 
     });
     
-    /*asyncTest("Check it is impossible to register twice the same Hash-URL", function() {
+    asyncTest("Check it is impossible to register twice the same Hash-URL", function() {
 
         window.throws(function () {
             iris.welcome("test/bad_practices/welcome_same_jsurl.js");
