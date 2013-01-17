@@ -179,7 +179,7 @@
 
     asyncTest("Test Bindings", function() {
 
-        expect(6);
+        expect(7);
 
         iris.welcome("test/component/bindings.js");
     

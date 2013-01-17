@@ -3,7 +3,7 @@ $(document).ready(
 	    //iris.on(iris.BEFORE_NAVIGATION, onBeforeNav);
 	    //iris.on(iris.AFTER_NAVIGATION, onAfterNav);
 
-	    iris.baseUri(iris.baseUri() + "examples/library/")
+	    iris.baseUri(iris.baseUri() + "examples/library/");
 		
 		iris.welcome("screen/welcome.js");
 	}
