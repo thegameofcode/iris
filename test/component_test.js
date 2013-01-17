@@ -177,4 +177,12 @@
         });
     });
 
+    asyncTest("Test Bindings", function() {
+
+        expect(6);
+
+        iris.welcome("test/component/bindings.js");
+    
+    });
+
 }(jQuery));

@@ -36,7 +36,6 @@
         _lastFullHash = "";
 
         $(window).off("hashchange");
-        //document.location.href = window.location.href.split('#')[0] + "#";
         document.location.hash = "#";
 
         iris.on("iris-reset", _init);
@@ -535,36 +534,65 @@
         
         
         this.fileTmpl = p_htmlUrl;
-
-        // TODO
-        //if(typeof p_htmlUrl === "undefined") {
-        //    this.template = this.con;
-        //    return this.template;
-        //}
-        //
         iris.include(p_htmlUrl);
 
         var tmplHtml = p_params ? _tmplParse(_includes[p_htmlUrl], p_params, p_htmlUrl) : _includes[p_htmlUrl];
-        var $tmpl = $(tmplHtml);
+        var tmpl = $(tmplHtml);
 
-        this.template = $tmpl;
-        if($tmpl.size() > 1) {
+        this.template = tmpl;
+        if(tmpl.size() > 1) {
             throw "'" + p_htmlUrl + "' must have only one root node";
         }
         switch(p_mode) {
             case this.APPEND:
-                this.con.append($tmpl);
+                this.con.append(tmpl);
                 break;
             case this.REPLACE:
-                this.con.replaceWith($tmpl);
+                this.con.replaceWith(tmpl);
                 break;
             case this.PREPEND:
-                this.con.prepend($tmpl);
+                this.con.prepend(tmpl);
                 break;
             default:
                 throw "Unknown template mode '" + p_mode + "'";
         }
 
+        // create bind-components map
+        this.bind = {};
+        var bindings = this.bind;
+        $("[data-bind]", tmpl).each(function(){
+            var el = $(this);
+            var bindId = el.data("bind");
+
+            if ( !bindings.hasOwnProperty(bindId) ) {
+                bindings[bindId] = [];
+            }
+            bindings[bindId].push(el);
+        });
+
+    };
+
+    Component.prototype.inflate = function(data) {
+        if ( this.bind === undefined ) {
+            throw "[self.inflate] first set a html node with a data-bind attribute";
+        } else {
+            var bindId, value, elements, nodeName, i;
+            for ( bindId in this.bind ) {
+                value = iris.val(data, bindId);
+                if ( value !== undefined ) {
+                    elements = this.bind[bindId];
+
+                    for ( i = 0; i < elements.length; i++ ) {
+                        nodeName = elements[i].prop("nodeName").toLowerCase();
+                        if ( nodeName === "input" || nodeName === "textarea" ) {
+                            elements[i].val(value);
+                        } else {
+                            elements[i].html(value);
+                        }
+                    }
+                }
+            } 
+        }
     };
 
     // Check if the template is set (https://github.com/intelygenz/iris/issues/19)
