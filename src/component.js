@@ -165,10 +165,12 @@
                 }
 
                 var screenParams = _navGetParams(curr[i]);
-
                 var currentScreen = _screen[screenPath];
-                currentScreen._awake(screenParams);
-                currentScreen.show();
+
+                if ( screenPath !== "#" ) {
+                    currentScreen._awake(screenParams);
+                    currentScreen.show();
+                }
             }
 
         }
@@ -576,24 +578,57 @@
         if ( this.bind === undefined ) {
             throw "[self.inflate] first set a html node with a data-bind attribute";
         } else {
-            var bindId, value, elements, nodeName, i;
+            var bindId, value, elements, nodeName, i, format, el;
+
+iris.log("----->", this.bind);
+
             for ( bindId in this.bind ) {
                 value = iris.val(data, bindId);
                 if ( value !== undefined ) {
                     elements = this.bind[bindId];
 
+iris.log("id = " + bindId, elements);
+
                     for ( i = 0; i < elements.length; i++ ) {
-                        nodeName = elements[i].prop("nodeName").toLowerCase();
+                        el = elements[i];
+                        format = el.data("format");
+
+iris.log("     format="+format);
+
+                        //if ( format !== undefined ) {
+                            switch ( format ) {
+                                case "date":
+                                    value = iris.date(value, format);
+
+iris.log("     date -> "+format);
+
+                                    break;
+                                case "currency":
+
+iris.log("     currency -> "+format + " , " + value);
+
+                                    value = iris.currency(value, format);
+                                    break;
+                            }
+                        //}
+
+iris.log("         format["+format+"] el["+el+"] value["+value+"]");
+
+                        nodeName = el.prop("nodeName").toLowerCase();
                         if ( nodeName === "input" || nodeName === "textarea" ) {
-                            elements[i].val(value);
+                            el.val(value);
                         } else {
-                            elements[i].html(value);
+                            el.text(value);
                         }
                     }
                 }
             } 
         }
     };
+
+    function _getFormattedVal(val, format) {
+        
+    }
 
     // Check if the template is set (https://github.com/intelygenz/iris/issues/19)
     Component.prototype._checkTmpl = function() {

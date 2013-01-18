@@ -104,7 +104,7 @@
 
     asyncTest("Navigate to a screen at level 3 and do history back", function() {
 
-        expect(16);
+        expect(15);
 
         iris.welcome("test/advanced_navigation/welcome.js"); // +1 create, +1 awake
 
@@ -116,11 +116,11 @@
         iris.on(iris.AFTER_NAVIGATION, function () {
 
             if ( document.location.hash === navigationHash ) {
-                window.history.back(); // return to #, then +3 of canSleep, +3 sleep, +1 awake #
+                window.history.back(); // return to #, then +3 of canSleep, +3 sleep
 
             } else if ( document.location.hash === "" ) {
                 // +1
-                strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #screen1,[awake] #screen1,[create] #screen1/screen1_1,[awake] #screen1/screen1_1,[create] #screen1/screen1_1/screen1_1_1,[awake] #screen1/screen1_1/screen1_1_1,[canSleep] #screen1/screen1_1/screen1_1_1,[canSleep] #screen1/screen1_1,[canSleep] #screen1,[sleep] #screen1/screen1_1/screen1_1_1,[sleep] #screen1/screen1_1,[sleep] #screen1,[awake] #", "The navigation map is correct");
+                strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #screen1,[awake] #screen1,[create] #screen1/screen1_1,[awake] #screen1/screen1_1,[create] #screen1/screen1_1/screen1_1_1,[awake] #screen1/screen1_1/screen1_1_1,[canSleep] #screen1/screen1_1/screen1_1_1,[canSleep] #screen1/screen1_1,[canSleep] #screen1,[sleep] #screen1/screen1_1/screen1_1_1,[sleep] #screen1/screen1_1,[sleep] #screen1", "The navigation map is correct");
                 start();
             }
 

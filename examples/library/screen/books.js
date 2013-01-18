@@ -1,30 +1,30 @@
-iris.Screen(
+iris.screen(
 	function (self) {
 		
-		self.Create = function () {
-			self.Template("library/screen/books.html");
+		self.create = function () {
+			self.tmpl("screen/books.html");
 			
-			var $btnEdit = self.$Get("btn_edit");
-			$btnEdit.click(_GotoEdit)
+			var $btnEdit = self.get("btn_edit");
+			$btnEdit.click(gotoSleep)
 			
-			var btnEdit = self.InstanceUI("btn_edit", "example/ui/button.js", {"onClick" : _GotoEdit});
+			//var btnEdit = self.ui("btn_edit", "example/ui/button.js", {"onClick" : gotoSleep});
 			
-			self.AddScreen("screens", "#books/edit", "library/screen/book_edit.js");
+			self.screens("screens", [["#books/edit", "screen/book_edit.js"]]);
 
 			if ( document.location.hash == "#books" ) {
 				iris.navigate("#books/edit");
 			}
 		}
 		
-		self.Awake = function () {
-			iris.D("AWAKE BOOK LIST")
+		self.awake = function () {
+			iris.log("AWAKE BOOK LIST")
 		}
 		
-		self.Sleep = function () {
-			iris.D("SLEEP BOOK LIST")
+		self.sleep = function () {
+			iris.log("SLEEP BOOK LIST")
 		}
 		
-		function _GotoEdit () {
+		function gotoSleep () {
 			iris.navigate("#books/edit?t=Title&a=Author")
 		}
 		

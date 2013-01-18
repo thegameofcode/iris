@@ -1,16 +1,16 @@
-iris.Screen(
+iris.screen(
 	 function (self) {
 		
-		self.Create = function () {
-			self.Template("library/screen/author_details.html");
+		self.create = function () {
+			self.tmpl("screen/author_details.html");
 		}
 		
-		self.Awake = function (p_params) {
-			iris.D("AWAKE AUTHOR DETAILS", p_params)
+		self.awake = function (p_params) {
+			iris.log("AWAKE AUTHOR DETAILS", p_params)
 		}
 		
-		self.Sleep = function () {
-			iris.D("SLEEP AUTHOR DETAILS")
+		self.sleep = function () {
+			iris.log("SLEEP AUTHOR DETAILS")
 		}
 	}
 );
