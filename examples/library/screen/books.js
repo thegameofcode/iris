@@ -9,7 +9,7 @@ iris.screen(
 			
 			//var btnEdit = self.ui("btn_edit", "example/ui/button.js", {"onClick" : gotoSleep});
 			
-			self.screens("screens", [["#books/edit", "screen/book_edit.js"]]);
+			self.screens("screens", [["edit", "screen/book_edit.js"]]);
 
 			if ( document.location.hash == "#books" ) {
 				iris.navigate("#books/edit");

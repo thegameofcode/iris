@@ -60,7 +60,7 @@
         _screenContainer[path] = $(document.body);
         
         var screenObj = _instanceScreen(path);
-        screenObj.id = "#";
+        screenObj.id = path;
 
         if ( screenObj.cfg === null ) {
             screenObj.cfg = {};
@@ -175,6 +175,7 @@
 
         }
 
+        // set navigation variables to the next hashchange event
         _prevHash = curr;
         _prevHashString = hash;
         iris.notify(iris.AFTER_NAVIGATION);
@@ -364,7 +365,7 @@
         screenObj.events = {};
         screenObj.con = _screenContainer[p_screenPath];
         screenObj.fileJs = jsUrl;
-        
+
         _screen[p_screenPath] = screenObj;
 
         return screenObj;
@@ -389,7 +390,7 @@
 
 
             if (!checkHierarchy()) {
-                throw "Can not delete the current Screen, nor the father of the current Screen";
+                throw "Cannot delete the current screen or its parents";
             }
 
             // destroy child screens
@@ -800,6 +801,10 @@
 
                 var screen = p_screens[i];
                 var hashUrl = screen[0];
+                if ( hashUrl.indexOf("#") !== 0 ) {
+                    hashUrl = ( this.id == "#") ? "#" +  hashUrl : this.id + "/" + hashUrl;
+                }
+
                 var js = screen[1];
 
                 if ( _jsUrlScreens.hasOwnProperty(js) ) {

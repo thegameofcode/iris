@@ -9,7 +9,7 @@ iris.screen(
 			//self.ui("btn_edit", "example/ui/button.js", {"onClick" : gotoSleep});
 			self.get("btn_edit").on("click", gotoSleep);
 			
-			self.screens("edit", [["#authors/edit", "screen/author_edit.js"]]);
+			self.screens("edit", [["edit", "screen/author_edit.js"]]);
 			
 			_$CanSleep = self.get("input_cansleep");
 		}

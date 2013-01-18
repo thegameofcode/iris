@@ -5,8 +5,8 @@ iris.screen(function(self) {
 		self.tmpl("screen/welcome.html");
 
 		self.screens("screens",[
-			["#books", "screen/books.js"],
-			["#authors", "screen/authors.js"]
+			["books", "screen/books.js"],
+			["authors", "screen/authors.js"]
 		]);
 
 		if ( !document.location.hash ) {

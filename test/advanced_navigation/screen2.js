@@ -9,8 +9,8 @@ iris.screen(function (self) {
 		self.tmpl("test/advanced_navigation/empty.html");
 
 		self.screens("screens", [
-			["#screen2/screen2_1", "test/advanced_navigation/screen2_1.js"],
-			["#screen2/screen2_2", "test/advanced_navigation/screen2_2.js"]
+			["screen2_1", "test/advanced_navigation/screen2_1.js"],
+			["screen2_2", "test/advanced_navigation/screen2_2.js"]
 		]);
 
 	};
