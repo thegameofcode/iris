@@ -1,10 +1,10 @@
-iris.Screen(function(self) {
+iris.screen(function(self) {
 	
-	self.Create = function() {
-		self.Template("example/screen/example_screen_params_child.html");
+	self.create = function() {
+		self.tmpl("screen/example_screen_params_child.html");
 	}
 	
-	self.Awake = function(p_params) {
-		self.$Get("screen_param").text(p_params["parameter"]);
+	self.awake = function(params) {
+		self.get("screen_param").text(params["parameter"]);
 	}
 });

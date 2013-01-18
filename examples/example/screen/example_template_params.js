@@ -1,6 +1,6 @@
-iris.Screen(function(self) {
+iris.screen(function(self) {
 
-	self.Create = function() {
+	self.create = function() {
 		
 		var params = {
 			 "price" : 1499.99
@@ -10,6 +10,6 @@ iris.Screen(function(self) {
 			}
 		};
 		
-		self.Template("example/screen/example_template_params.html", params);
+		self.tmpl("screen/example_template_params.html", params);
 	}
 });

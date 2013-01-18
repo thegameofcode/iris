@@ -3,9 +3,9 @@
 
 <p>You can see a real example in this page:</p>
 
-<p>1. Use <code>self.Template(p_htmlUri, p_params)</code></p>
+<p>1. Use <code>self.tmpl(p_htmlUri, params)</code></p>
 	<pre>
-self.Create = function() {
+self.create = function() {
 	var params = {
 		 "price" : 1499.99
 		,"date" : new Date()
@@ -13,7 +13,7 @@ self.Create = function() {
 			"property" : "This is a object property value"
 		}
 	};
-	self.Template("example/screen/example_template_params.html", params);
+	self.tmpl("screen/example_template_params.html", params);
 }</pre>
 	
 	<p>2. See how these parameters are printed:</p>
