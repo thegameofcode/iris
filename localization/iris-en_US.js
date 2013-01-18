@@ -11,4 +11,4 @@ iris.locale(
             precision: 2
         }
     }
-};
+);
