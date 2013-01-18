@@ -373,23 +373,15 @@
 
     function _destroyScreen(p_screenPath) {
         
-        function checkHierarchy() {
-            var rdo = true;
-            if (_prevHash !== "") {
-                var currentHash = document.location.hash;
-                var containerToDelete = _screen[p_screenPath].get().parent();
-                var currentContainer = _screen[currentHash].get().parent();
-                rdo = containerToDelete === undefined || currentContainer === undefined || (p_screenPath !== currentHash && containerToDelete.find(currentContainer).size() === 0);
-            }
-            return rdo;
-        }
-        
         if(_screen.hasOwnProperty(p_screenPath)) {
 
             var screenToDestroy = _screen[p_screenPath];
 
+            if ( p_screenPath === "#" ) {
+                throw "Welcome screen cannot be deleted";
+            }
 
-            if (!checkHierarchy()) {
+            if ( p_screenPath.indexOf(document.location.hash) === 0 ) {
                 throw "Cannot delete the current screen or its parents";
             }
 
@@ -802,7 +794,7 @@
                 var screen = p_screens[i];
                 var hashUrl = screen[0];
                 if ( hashUrl.indexOf("#") !== 0 ) {
-                    hashUrl = ( this.id == "#") ? "#" +  hashUrl : this.id + "/" + hashUrl;
+                    hashUrl = ( this.id === "#") ? "#" +  hashUrl : this.id + "/" + hashUrl;
                 }
 
                 var js = screen[1];
