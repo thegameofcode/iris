@@ -15,21 +15,21 @@ module.exports = function(grunt) {
       dist: {
         src: ['<banner:meta.banner>', 'src/event.js', 'src/core.js', 'src/lang.js', 'src/regional.js', 'src/util.js', 'src/component.js', 'src/service.js'],
         dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.js'
-      },
+      }/*,
       legacy: {
         src: ['<config:concat.dist.dest>', 'src/legacy.js'],
         dest: 'dist/<%= pkg.name %>-legacy-<%= pkg.version %>.js'
-      }
+      }*/
     },
     min: {
       dist: {
         src: ['<banner:meta.banner>', '<config:concat.dist.dest>'],
         dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.min.js'
-      },
+      }/*,
       legacy: {
         src: ['<banner:meta.banner>', '<config:concat.legacy.dest>'],
         dest: 'dist/<%= pkg.name %>-legacy-<%= pkg.version %>.min.js'
-      }
+      }*/
     },
     qunit: {
       all: ['http://localhost:8080/test/iris.html']
