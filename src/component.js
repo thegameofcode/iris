@@ -135,7 +135,6 @@
             for ( i = _prevHash.length-1; i >= firstDiffNode; i-- ) {
 
                 screenPath = _getScreenPath(_prevHash, i);
-
                 if( _screen[screenPath].canSleep() === false ) {
                     _gotoCancelled = true;
                     document.location.href = _prevHashString;
@@ -381,7 +380,7 @@
                 throw "Welcome screen cannot be deleted";
             }
 
-            if ( p_screenPath.indexOf(document.location.hash) === 0 ) {
+            if ( (p_screenPath.indexOf(document.location.hash) === 0) || (document.location.hash.indexOf(p_screenPath) === 0) ) {
                 throw "Cannot delete the current screen or its parents";
             }
 
@@ -798,7 +797,6 @@
                 }
 
                 var js = screen[1];
-
                 if ( _jsUrlScreens.hasOwnProperty(js) ) {
                     throw "[self.screens] js-URL repeated '" + js + "': " + this.id;
                 }

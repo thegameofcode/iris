@@ -17,8 +17,6 @@ iris.screen(
             window.throws(function () {
                 self.ui("home_screen", "test/bad_practices/my_ui.js");
             }, "Thrown an exception when the screen container is reused");
-
-            window.start();
             
         };
     }

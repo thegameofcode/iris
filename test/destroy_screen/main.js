@@ -10,9 +10,6 @@ iris.screen(
         
         self.awake = function () {
             window.console.log("Main Screen Awaked");
-            if (window.deferred && window.deferred.main) {
-                window.deferred.main.resolve();
-            }
         };
         
     }

@@ -33,20 +33,6 @@
         }
     }
     
-    
-    function createDeferred() {
-        window.deferred = {};
-        window.deferred.main = new $.Deferred();
-        window.deferred.home = new $.Deferred();
-        window.deferred.help = new $.Deferred();
-        window.deferred.home2 = new $.Deferred();
-        window.deferred.home3 = new $.Deferred();
-    }
-    
-    function destroyDeferred() {
-        window.deferred = {};
-    }
-    
     function gotoMain() {
         iris.welcome("test/destroy_screen/welcome.js");
         iris.navigate("#main");
@@ -57,11 +43,9 @@
     module( "Module Destroy Screen", {
         setup: function() {
             iris.notify("iris-reset");
-            createDeferred();
             gotoMain();
         },
         teardown: function () {
-            destroyDeferred();
             clearBody();
         }
     });
@@ -70,280 +54,244 @@
     
     asyncTest("Test Destroy #home after goto #home, then goto #help", function() {
         window.expect(3);
-        
-        window.deferred.main.done(
-            function() {
-                iris.navigate("#home"); // +1 Home Screen Created
-            }
-            );
-        
-        window.deferred.home.done(
-            function() {
-                iris.log("home DONE");
-                iris.navigate("#help"); // +1 Home Screen asleep
-            }
-            );
-            
-        window.deferred.help.done(
-            function() {
-            iris.log("help DONE");
-                setTimeout(function () {
-                    iris.destroyScreen("#home"); // +1 Home Screen Destroyed
-                    window.start();
-                }, 100);
-            }
-        );
-    }
-    );
+
+        iris.navigate("#home");
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            iris.navigate("#help");
+
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.off(iris.AFTER_NAVIGATION);
+
+                iris.destroyScreen("#home"); // +1 Home Screen Destroyed
+                start();
+
+            });
+
+        });
+
+    });
     
     asyncTest("Test Destroy #home after goto #help", function() {
       
-        window.expect(0);
+        window.expect(1);
         
-        window.deferred.main.done(
-            function() {
-                iris.navigate("#help");
-            }
-            );
+        iris.navigate("#help"); // +1 Home Screen Created
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            iris.destroyScreen("#home");
+            iris.navigate("#help"); // +1 Home Screen asleep
+
+            strictEqual(document.location.hash, "#help", "The hash is #help");
+            start();
+
+        });
         
-        
-        window.deferred.help.done(
-            function() {
-                setTimeout(function () {
-                    iris.destroyScreen("#home");
-                    window.start();
-                }, 10);
-            }
-            );
-        
-        
-    }
-    );
+    });
         
     asyncTest("Test Destroy #home after goto #home", function() {
-      
-        window.expect(2);
+
+        iris.navigate("#home"); // +1 Home Screen Created
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            raises(function() {
+                iris.destroyScreen("#home");
+            }, "It is impossible to destroy the current Screen");
+
+            start();
+
+        });
         
-        window.deferred.main.done(
-            function() {
-                iris.navigate("#home");
-            }
-            );
-        
-        
-        window.deferred.home.done(
-            function() {
-                setTimeout(function () {
-                    window.throws(function() {
-                        iris.destroyScreen("#home");
-                    },"It is impossible to destroy the current Screen");
-                    window.start();
-                }, 10);
-            }
-            );
-        
-        
-    }
-    );
+    });
         
 
-    asyncTest("Test Destroy #home after goto #home, then goto #home2, then goto #help", function() {
+    asyncTest("Test Destroy #home after goto #home, then goto #home/home2, then goto #help", function() {
         window.expect(4);
-        
-        window.deferred.main.done(
-            function() {
-                iris.navigate("#home"); // +1 Home Screen Created
-            }
-            );
-        
-        window.deferred.home.done(
-            function() {
-                iris.navigate("#home2"); // +1 Home Screen asleep
-            }
-            );
-        
-        
-        window.deferred.home2.done(
-            function() {
+
+        iris.navigate("#home"); // +1 Home Screen Created
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            iris.navigate("#home/home2"); // +1 Home Screen asleep
+
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.off(iris.AFTER_NAVIGATION);
+
                 iris.navigate("#help"); // +1 Home2 Screen asleep
-            }
-            );
-            
-        window.deferred.help.done(
-            function() {
-                setTimeout(function () {
-                    iris.destroyScreen("#home"); // +1 Home Screen Destroyed
-                    window.start();
-                }, 10);
-            }
-            );
-        
-        
-    }
-    );
-        
-    asyncTest("Test Destroy #home after goto #home, then goto #home2, then goto #home3, then goto #help", function() {
-        window.expect(5);
-        
-        window.deferred.main.done(
-            function() {
-                iris.navigate("#home"); // +1 Home Screen Created
-            }
-            );
-        
-        window.deferred.home.done(
-            function() {
-                iris.navigate("#home2"); // +1 Home Screen asleep
-            }
-            );
-        
-        
-        window.deferred.home2.done(
-            function() {
-                iris.navigate("#home3"); // +1 Home2 Screen asleep
-            }
-            );
-        
-        window.deferred.home3.done(
-            function() {
-                iris.navigate("#help"); // +1 Home3 Screen asleep
-            }
-            );
-        
-        
-        window.deferred.help.done(
-            function() {
-                setTimeout(function () {
-                    iris.destroyScreen("#home"); // +1 Home Screen Destroyed
-                    window.start();
-                }, 100);
-            }
-            );
-        
-        
-    }
-    );
-        
-    asyncTest("Test Destroy #home2 after goto #home, then goto #home2, then goto #home3, then goto #home", function() {
-        window.expect(5);
-        
-        window.deferred.main.done(
-            function() {
-                iris.navigate("#home"); // +1 Home Screen Created
-            }
-            );
-        
-        window.deferred.home.done(
-            function() {
-                iris.navigate("#home2"); // +1 Home Screen asleep
-            }
-            );
-        
-        
-        window.deferred.home2.done(
-            function() {
-                iris.navigate("#home3"); // +1 Home2 Screen asleep
-            }
-            );
-        
-        window.deferred.home3.done(
-            function() {
-                iris.navigate("#help"); // +1 Home3 Screen asleep
-            }
-            );
-        
-        
-        window.deferred.help.done(
-            function() {
-                setTimeout(function () {
-                    iris.destroyScreen("#home2"); // +1 Home2 Screen Destroyed
-                    window.start();
-                }, 10);
-            }
-            );
-        
-        
-    }
-    );
 
-    /*asyncTest("Test goto #home after destroy #home", function() {
+
+                iris.on(iris.AFTER_NAVIGATION, function () {
+                    iris.off(iris.AFTER_NAVIGATION);
+
+                    iris.destroyScreen("#home"); // +1 Home Screen Destroyed
+
+                    start();
+
+                });
+
+            });
+
+        });
+    });
+        
+    asyncTest("Test Destroy #home after goto #home, then goto #home/home2, then goto #home/home2/home3, then goto #help", function() {
+        window.expect(5);
+
+        iris.navigate("#home"); // +1 Home Screen Created
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            iris.navigate("#home/home2"); // +1 Home Screen asleep
+
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.off(iris.AFTER_NAVIGATION);
+
+                iris.navigate("#home/home2/home3"); // +1 Home2 Screen asleep
+
+
+                iris.on(iris.AFTER_NAVIGATION, function () {
+                    iris.off(iris.AFTER_NAVIGATION);
+
+                    iris.navigate("#help"); // +1 Home3 Screen asleep
+
+                    iris.on(iris.AFTER_NAVIGATION, function () {
+                        iris.off(iris.AFTER_NAVIGATION);
+
+                        iris.destroyScreen("#home"); // +1 Home Screen Destroyed
+
+                        start();
+                    });
+
+                });
+
+            });
+
+        });
+        
+    }
+    );
+        
+    asyncTest("Test Destroy #home/home2 after goto #home, then goto #home/home2, then goto #home/home2/home3, then goto #home", function() {
+        window.expect(5);
+
+        iris.navigate("#home"); // +1 Home Screen Created
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            iris.navigate("#home/home2"); // +1 Home Screen asleep
+
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.off(iris.AFTER_NAVIGATION);
+
+                iris.navigate("#home/home2/home3"); // +1 Home2 Screen asleep
+
+
+                iris.on(iris.AFTER_NAVIGATION, function () {
+                    iris.off(iris.AFTER_NAVIGATION);
+
+                    iris.navigate("#help"); // +1 Home3 Screen asleep
+
+                    iris.on(iris.AFTER_NAVIGATION, function () {
+                        iris.off(iris.AFTER_NAVIGATION);
+
+                        iris.destroyScreen("#home/home2"); // +1 Home2 Screen Destroyed
+
+                        start();
+                    });
+
+                });
+
+            });
+
+        });
+        
+        
+    });
+
+
+    asyncTest("Test goto #home after destroy #home", function() {
         window.expect(4);
-        
-        window.deferred.main.done(
-            function() {
-                iris.navigate("#home");
-            }
-            );
-        
-        window.deferred.home.done(
-            function() {
-                iris.navigate("#help");
-            }
-            );
-       
-        window.deferred.home2.done(
-            function() {
-                window.ok(window.location.hash === "#home2", "We are in #home2");
-            }
-            );
-       
-        
-        window.deferred.help.done(
-            function() {
-                    iris.destroyScreen("#home");
 
-                    try {
-                            iris.navigate("#home"); // real async call
-                        } catch (e) {
-                            start();
-                        }
+        iris.navigate("#home"); // +1 Home Screen Created
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            iris.navigate("#help"); // +1 Home Screen asleep
+
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.off(iris.AFTER_NAVIGATION);
+
+                iris.navigate("#home"); // +1 Current screen cannot be removed
+
+
+                iris.on(iris.AFTER_NAVIGATION, function () {
+                    iris.off(iris.AFTER_NAVIGATION);
+
+                    raises(function () {
+                        iris.destroyScreen("#home");
+                        
+                    },"Current screen cannot be removed");
+
+                    window.strictEqual(window.location.hash, "#home", "We are in #home");
+
+                    start();
+
                     
-            }
-            );
-    }
-    );*/
+                });
+
+            });
+
+        });
+    });
 
     
 
-    asyncTest("Test Destroy #home after goto #home, then goto #home2, then goto #home3", function() {
-        window.expect(4);
-        
-        window.deferred.main.done(
-            function() {
-                iris.navigate("#home"); // +1 Home Screen Created
-            }
-            );
-        
-        window.deferred.home.done(
-            function() {
-                iris.navigate("#home2"); // +1 Home Screen asleep
-            }
-            );
-        
-        
-        window.deferred.home2.done(
-            function() {
-                iris.navigate("#home3"); // +1 Home2 Screen asleep
-            }
-            );
-        
-        
-        
-        window.deferred.home3.done(
-            function() {
-                setTimeout(function () {
+    asyncTest("Test goto #home, then goto #home/home2, then goto #home/home2/home3 then destroy #home", function() {
+        window.expect(3);
 
-                    window.throws(function() {                        
+        iris.navigate("#home");
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            iris.navigate("#home/home2");
+
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.off(iris.AFTER_NAVIGATION);
+
+                iris.navigate("#home/home2/home3");
+
+                iris.on(iris.AFTER_NAVIGATION, function () {
+                    iris.off(iris.AFTER_NAVIGATION);
+
+                    raises(function () {
                         iris.destroyScreen("#home");
-                    },"It is impossible to destroy the parent screen"); // +1 It is impossible to destroy the parent screen
+                    },"Cannot delete the current screen or its parents");
 
-                    window.start();
+                    strictEqual(document.location.hash, "#home/home2/home3", "The hash is #home/home2/home3"); // +1
+                    start();
+                });
 
-                }, 10);
-            }
-            );
+            });
+
+        });
         
-    }
-    );
+    });
 
 }(jQuery));

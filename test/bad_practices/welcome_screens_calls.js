@@ -15,8 +15,6 @@ iris.screen(
                     ["#help", "test/bad_practices/help.js"]
                 ]);
             }, "Thrown an exception when multiple calls happen");
-
-            window.start();
         };
 
     }

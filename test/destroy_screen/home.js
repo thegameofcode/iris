@@ -7,7 +7,7 @@ iris.screen(
             self.tmpl("test/destroy_screen/home.html");
 
             self.screens("home2_container", [[
-                "#home2", "test/destroy_screen/home2.js"
+                "home2", "test/destroy_screen/home2.js"
             ]]);
 
             self.get("destroy_home").click(
@@ -27,9 +27,6 @@ iris.screen(
         
         self.awake = function () {
             window.console.log("Home Screen Awaked");
-            if (window.deferred && window.deferred.home !== undefined) {
-                window.deferred.home.resolve();
-            }
         };
         
         self.sleep = function () {

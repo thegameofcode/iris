@@ -8,9 +8,6 @@ iris.screen(
         
         self.awake = function () {
             window.console.log("Help2 Screen Awaked");
-            if (window.deferred && window.deferred.help) {
-                window.deferred.help.resolve();
-            }
         };
     }
     

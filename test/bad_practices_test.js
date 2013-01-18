@@ -39,41 +39,35 @@
         }
     });
     
-    asyncTest("Check if iris prevents multiple calls to the method iris.welcome()", function() {
+    test("Check if iris prevents multiple calls to the method iris.welcome()", function() {
         iris.welcome("test/bad_practices/welcome.js");
 
         expect(1);
         
-        window.throws(function () {
+        raises(function () {
             iris.welcome("test/bad_practices/welcome.js");
         }, "Thrown an exception when we recall to the iris.welcome() method");
 
-        start();
-
-        /*iris.notify("iris-reset");
-
-        try {
-            iris.welcome("test/bad_practices/welcome.js");
-            clearBody();
-            window.ok(true, "After init We can recall iris.welcome() method.");
-        } catch (err) {
-            window.ok(false, "After init We can recall iris.welcome() method."); 
-        }*/
-
     });
     
-    /*asyncTest("Bad p_screens format in iris.screens method", function() {
-        window.throws(function () {
+    test("Bad p_screens format in iris.screens method", function() {
+        window.raises(function () {
             iris.welcome("test/bad_practices/welcome2.js");
         }, "Thrown an exception when We use the old format");
+
+
         iris.notify("iris-reset");
-        window.throws(function () {
+        window.raises(function () {
             iris.welcome("test/bad_practices/welcome3.js");
         }, "Thrown an exception when We use array of Strings");
+
+
         iris.notify("iris-reset");
-        window.throws(function () {
+        window.raises(function () {
             iris.welcome("test/bad_practices/welcome4.js");
         }, "Thrown an exception when We use bad hash format");
+
+
         iris.notify("iris-reset");
         try {
             iris.welcome("test/bad_practices/welcome5.js");
@@ -81,41 +75,41 @@
         } catch (err) {
             window.ok(false, "Incorrect format."); 
         }
-    });*/
+    });
     
-    /*asyncTest("Check if iris prevents multiple calls to the self.screens() method", function() {
+    test("Check if iris prevents multiple calls to the self.screens() method", function() {
         
         iris.welcome("test/bad_practices/welcome_screens_calls.js");
 
     });
     
-    asyncTest("Check it is impossible to register twice the same Hash-URL", function() {
+    test("Check it is impossible to register twice the same Hash-URL", function() {
 
-        window.throws(function () {
+        raises(function () {
             iris.welcome("test/bad_practices/welcome_same_jsurl.js");
         }, "The screens has the same file js URL");
 
     });
 
-    asyncTest("Check if iris throws an exception when two Screens have the same #hash", function() {
+    test("Check if iris raises an exception when two Screens have the same #hash", function() {
         
-        window.throws(function () {
+        window.raises(function () {
             iris.welcome("test/bad_practices/welcome8.js");
         }, "Thrown an exception when two Screens have the same #hash");
 
     });
     
-    asyncTest("Check if iris prevents multiple calls to the self.tmpl() method", function() {
+    test("Check if iris prevents multiple calls to the self.tmpl() method", function() {
 
-        window.throws(function () {
+        window.raises(function () {
             iris.welcome("test/bad_practices/welcome11.js");
         }, "Thrown an exception when multiple calls happen");
 
     });
     
-    asyncTest("Check iris prevents reuse a screen container for a UI", function() {
+    test("Check iris prevents reuse a screen container for a UI", function() {
 
         iris.welcome("test/bad_practices/welcome_reuse_screen_container.js");
-    });*/
+    });
 
 }(jQuery));
