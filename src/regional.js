@@ -3,7 +3,7 @@
     var _locale, _regional;
     
     function _init() {
-        _locale = {};
+        _locale = undefined;
         _regional = {};
     }
 
