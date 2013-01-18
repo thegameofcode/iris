@@ -256,7 +256,7 @@
                         var script = document.createElement("script");
                         script.language = "javascript";
                         script.type = "text/javascript";
-                        script.text = p_data;
+                        script.text = p_data + '//@ sourceURL=/'+p_uiFile;
                         _head.appendChild(script);
                     }
 
