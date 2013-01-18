@@ -576,43 +576,40 @@
 
     Component.prototype.inflate = function(data) {
         if ( this.bind === undefined ) {
-            throw "[self.inflate] first set a html node with a data-bind attribute";
+            throw "[self.inflate] first set a html node with any data-bind attribute";
         } else {
-            var bindId, value, elements, nodeName, i, format, el;
 
-iris.log("----->", this.bind);
+            var bindId, value, elements, nodeName, i, format, el, formatParams, formatMatches;
+            var formatRegExp = /(date|currency)(?:\(([^\)]+)\))/;
 
             for ( bindId in this.bind ) {
                 value = iris.val(data, bindId);
+
                 if ( value !== undefined ) {
                     elements = this.bind[bindId];
-
-iris.log("id = " + bindId, elements);
+                    formatParams = undefined;
 
                     for ( i = 0; i < elements.length; i++ ) {
                         el = elements[i];
                         format = el.data("format");
 
-iris.log("     format="+format);
+                        if ( format && formatRegExp.test(format) ) {
+                          formatMatches = format.match(formatRegExp);
 
-                        //if ( format !== undefined ) {
+                          format = formatMatches[1];
+                          formatParams = formatMatches[2]; // TODO manage multiple parameter using: formatParams.splice(2);
+                        }
+
+                        if ( format ) {
                             switch ( format ) {
                                 case "date":
-                                    value = iris.date(value, format);
-
-iris.log("     date -> "+format);
-
+                                    value = iris.date(value, formatParams);
                                     break;
                                 case "currency":
-
-iris.log("     currency -> "+format + " , " + value);
-
-                                    value = iris.currency(value, format);
+                                    value = iris.currency(value);
                                     break;
                             }
-                        //}
-
-iris.log("         format["+format+"] el["+el+"] value["+value+"]");
+                        }
 
                         nodeName = el.prop("nodeName").toLowerCase();
                         if ( nodeName === "input" || nodeName === "textarea" ) {
@@ -625,10 +622,6 @@ iris.log("         format["+format+"] el["+el+"] value["+value+"]");
             } 
         }
     };
-
-    function _getFormattedVal(val, format) {
-        
-    }
 
     // Check if the template is set (https://github.com/intelygenz/iris/issues/19)
     Component.prototype._checkTmpl = function() {
