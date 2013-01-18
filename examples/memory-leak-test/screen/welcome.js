@@ -8,14 +8,18 @@ iris.screen(function(self) {
 		self.get("btn_create_uis").click(createUIs);
 		self.get("btn_destroy_all_uis").click(destroyAllUIs);
 
+/*
 		self.get("btn_create_screens").click(createScreens);
 		self.get("btn_destroy_all_screens").click(destroyAllScreens);
-		
+*/		
 		self.get("btn_run_ui_tests").click(runUITests);
 		uiResults = self.get("ui_results");
+
+		self.get("btn_reset_iris").on("click", onResetIris);
 		
 		inputMaxUIs = self.get("ui_max");
-		inputMaxScreens = self.get("screen_max");
+//		inputMaxScreens = self.get("screen_max");
+
 	}
 
 	
@@ -42,16 +46,25 @@ iris.screen(function(self) {
 	}
 	
 	function runUITests () {
+		uiResults.empty();
 		for ( var i=0; i<10; i++) {
 			createUIs();
 		}
 		destroyAllUIs();
+		onResetIris();
 	}
 	
+	function onResetIris () {
+		iris.notify("iris-reset");
+		uiResults.append("<li style='color:green;'>Iris reset</li>");
+	}
 	
+	/*
+		Since 0.5.0 version a screen js cannot be reused
+
 	function createScreens() {
 		var init = new Date().getTime();
-		console.log("Creating screens and navigating...");
+		iris.log("Creating screens and navigating...");
 		
 		screenCount = inputMaxScreens.val();
 		
@@ -65,11 +78,11 @@ iris.screen(function(self) {
 				self.AddScreen("screens", id, "screen/example_instance.js");
 				iris.navigate(id);
 				
-				iris.D("   Added screen=",id)
+				iris.log("   Added screen=",id)
 			}
 		},500);
 		
-		console.log("    Finished at " + (new Date().getTime() - init) + " ms");
+		iris.log("    Finished at " + (new Date().getTime() - init) + " ms");
 	}
 	
 	function destroyAllScreens() {
@@ -80,8 +93,8 @@ iris.screen(function(self) {
 			else {
 				var id = "#screen_" + screenCount;
 				iris.screen.Destroy(id);
-				iris.D("   Removed screen=",id)
+				iris.log("   Removed screen=",id)
 			}
 		},500);
-	}
+	}*/
 });
