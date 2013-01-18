@@ -5,12 +5,13 @@ iris.screen(
 			self.tmpl("screen/book_details.html");
 		}
 		
-		self.awake = function (p_params) {
+		self.awake = function (params) {
 
-			var data = { book : { title : p_params.title, author : p_params.author }};
+			var data = { book : { title : params.t, author : params.a, create: Number(params.d), price : Number(params.p) }};
+
 			self.inflate(data);
 
-			iris.log("AWAKE BOOK DETAILS", p_params);
+			iris.log("AWAKE BOOK DETAILS", params);
 		}
 		
 		self.sleep = function () {
