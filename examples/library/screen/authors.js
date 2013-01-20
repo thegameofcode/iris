@@ -37,4 +37,4 @@ iris.screen(
 		}
 		
 	}
-);
+,"screen/authors.js");

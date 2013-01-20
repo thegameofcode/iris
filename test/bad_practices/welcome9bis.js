@@ -11,5 +11,5 @@ iris.screen(
             ]]);
         };
 
-    }
-    );
+    },
+    "test/bad_practices/welcome9bis.js");

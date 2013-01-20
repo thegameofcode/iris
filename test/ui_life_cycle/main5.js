@@ -9,5 +9,5 @@ iris.screen(
         self.awake = function () {
             window.console.log("Main5 Screen Awaked");
         };
-    }
-    );
+    },
+    "test/ui_life_cycle/main5.js");

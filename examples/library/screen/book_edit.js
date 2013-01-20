@@ -25,4 +25,4 @@ iris.screen(
 			iris.log("SLEEP BOOK EDIT")
 		}
 	}
-);
+,"screen/book_edit.js");

@@ -6,13 +6,16 @@ iris.screen(
 
             self.tmpl("test/bad_practices/welcome.html");
 
-            self.screens("home_screen", [
-                ["#home", "test/bad_practices/home.js"],
-                ["#help", "test/bad_practices/home.js"]
-            ]);
+            window.raises(function () {
+                self.screens("home_screen", [
+                    ["#home", "test/bad_practices/home.js"],
+                    ["#help", "test/bad_practices/home.js"]
+                ]);
+            }, "The screens has the same file js URL");
+
 
             window.start();
         };
 
-    }
-    );
+    },
+    "test/bad_practices/welcome_same_jsurl.js");

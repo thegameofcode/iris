@@ -12,7 +12,7 @@ iris.screen(
             window.console.log("Main Screen Awaked");
         };
         
-    }
+    },
     
     
-    );
+    "test/destroy_screen/main.js");

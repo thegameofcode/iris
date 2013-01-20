@@ -9,7 +9,5 @@ iris.screen(
         self.awake = function () {
             window.console.log("Help2 Screen Awaked");
         };
-    }
-    
-    
-    );
+    },
+    "test/ui_life_cycle/help2.js");

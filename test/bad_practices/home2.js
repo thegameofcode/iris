@@ -12,5 +12,5 @@ iris.screen(
             window.start();
         };
 
-    }
-    );
+    },
+    "test/bad_practices/home2.js");

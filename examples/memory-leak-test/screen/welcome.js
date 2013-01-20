@@ -97,4 +97,4 @@ iris.screen(function(self) {
 			}
 		},500);
 	}*/
-});
+}, "screen/welcome.js");

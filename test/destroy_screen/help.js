@@ -16,7 +16,7 @@ iris.screen(
             window.console.log("Help Screen Awaked");
             
         };
-    }
+    },
     
     
-    );
+    "test/destroy_screen/help.js");

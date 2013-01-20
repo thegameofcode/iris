@@ -33,5 +33,5 @@ iris.ui(
             window.ok(true, "my_ui2 UI Destroyed");
         };
 
-    }
-    );
+    },
+    "test/ui_life_cycle/my_ui2.js");

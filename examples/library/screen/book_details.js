@@ -18,4 +18,4 @@ iris.screen(
 			iris.log("SLEEP BOOK DETAILS");
 		}
 	}
-);
+,"screen/book_details.js");

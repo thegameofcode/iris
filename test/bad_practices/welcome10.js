@@ -11,5 +11,5 @@ iris.screen(
             ]]);
         };
 
-    }
-    );
+    },
+    "test/bad_practices/welcome10.js");

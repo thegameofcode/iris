@@ -18,5 +18,5 @@ iris.screen(
                 );
         };
 
-    }
-    );
+    },
+    "test/destroy_screen/welcome.js");

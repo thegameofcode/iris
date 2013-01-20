@@ -37,4 +37,4 @@ iris.screen(function (self) {
 		window.strictEqual(self.uis.length, 0);
 	}
 
-});
+},"test/component/screen.js");

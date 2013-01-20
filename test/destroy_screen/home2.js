@@ -34,5 +34,5 @@ iris.screen(
             window.ok(true, "Home2 Screen Destroyed");
         };
 
-    }
-    );
+    },
+    "test/destroy_screen/home2.js");

@@ -25,4 +25,4 @@ iris.screen(
 			iris.log("SLEEP AUTHOR EDIT")
 		}
 	}
-);
+,"screen/author_edit.js");

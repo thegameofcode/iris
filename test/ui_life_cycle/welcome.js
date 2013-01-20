@@ -27,5 +27,5 @@ iris.screen(
             window.console.log("Welcome Screen Awaked");
         };
 
-    }
-    );
+    },
+    "test/ui_life_cycle/welcome.js");

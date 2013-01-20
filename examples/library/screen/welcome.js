@@ -14,4 +14,4 @@ iris.screen(function(self) {
 		}
 	}
 
-});
+},"screen/welcome.js");

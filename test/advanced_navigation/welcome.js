@@ -43,4 +43,4 @@ iris.screen(function (self) {
 		window.navigations.push(msg);
 	};
 
-});
+}, "test/advanced_navigation/welcome.js");

@@ -9,5 +9,5 @@ iris.screen(
             ]]);
         };
 
-    }
-    );
+    },
+    "test/ui_replacement/welcome.js");

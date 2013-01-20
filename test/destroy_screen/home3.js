@@ -28,5 +28,5 @@ iris.screen(
             window.ok(true, "Home3 Screen Destroyed");
         };
 
-    }
-    );
+    },
+    "test/destroy_screen/home3.js");

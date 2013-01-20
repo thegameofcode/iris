@@ -73,7 +73,7 @@
         iris.on(iris.AFTER_NAVIGATION, function () {
 
             if ( document.location.hash === navigationHash ) {
-                strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #screen1,[awake] #screen1,[create] #screen1/screen1_1,[awake] #screen1/screen1_1", "The navigation map is correct"); // +1
+                strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #screen1,[create] #screen1/screen1_1,[awake] #screen1,[awake] #screen1/screen1_1", "The navigation map is correct"); // +1
                 start();
             }
 
@@ -94,7 +94,7 @@
 
         iris.on(iris.AFTER_NAVIGATION, function () {
             if ( document.location.hash === navigationHash ) {
-                strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #screen1,[awake] #screen1,[create] #screen1/screen1_1,[awake] #screen1/screen1_1,[create] #screen1/screen1_1/screen1_1_1,[awake] #screen1/screen1_1/screen1_1_1", "The navigation map is correct"); // +1
+                strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #screen1,[create] #screen1/screen1_1,[create] #screen1/screen1_1/screen1_1_1,[awake] #screen1,[awake] #screen1/screen1_1,[awake] #screen1/screen1_1/screen1_1_1", "The navigation map is correct"); // +1
                 start();
             }
 
@@ -120,7 +120,7 @@
 
             } else if ( document.location.hash === "" ) {
                 // +1
-                strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #screen1,[awake] #screen1,[create] #screen1/screen1_1,[awake] #screen1/screen1_1,[create] #screen1/screen1_1/screen1_1_1,[awake] #screen1/screen1_1/screen1_1_1,[canSleep] #screen1/screen1_1/screen1_1_1,[canSleep] #screen1/screen1_1,[canSleep] #screen1,[sleep] #screen1/screen1_1/screen1_1_1,[sleep] #screen1/screen1_1,[sleep] #screen1", "The navigation map is correct");
+                strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #screen1,[create] #screen1/screen1_1,[create] #screen1/screen1_1/screen1_1_1,[awake] #screen1,[awake] #screen1/screen1_1,[awake] #screen1/screen1_1/screen1_1_1,[canSleep] #screen1/screen1_1/screen1_1_1,[canSleep] #screen1/screen1_1,[canSleep] #screen1,[sleep] #screen1/screen1_1/screen1_1_1,[sleep] #screen1/screen1_1,[sleep] #screen1", "The navigation map is correct");
                 start();
             }
 
@@ -145,7 +145,7 @@
 
                 iris.on(iris.AFTER_NAVIGATION, function () {
                     strictEqual(navigationHash, document.location.hash); // +1
-                    strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #screen1,[awake] #screen1,[create] #screen1/screen1_1,[awake] #screen1/screen1_1,[create] #screen1/screen1_1/screen1_1_1,[awake] #screen1/screen1_1/screen1_1_1,[canSleep] #screen1/screen1_1/screen1_1_1,[canSleep] #screen1/screen1_1", "The navigation map is correct");
+                    strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #screen1,[create] #screen1/screen1_1,[create] #screen1/screen1_1/screen1_1_1,[awake] #screen1,[awake] #screen1/screen1_1,[awake] #screen1/screen1_1/screen1_1_1,[canSleep] #screen1/screen1_1/screen1_1_1,[canSleep] #screen1/screen1_1", "The navigation map is correct");
                     start();
                 });
 
@@ -171,7 +171,7 @@
         iris.on(iris.AFTER_NAVIGATION, function () {
 
             // +1
-            strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #screen1,[awake] #screen1,[create] #screen1/screen1_1,[awake] #screen1/screen1_1,[create] #screen1/screen1_1/screen1_1_1,[awake] #screen1/screen1_1/screen1_1_1", "The navigation map is correct"); // +1
+            strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #screen1,[create] #screen1/screen1_1,[create] #screen1/screen1_1/screen1_1_1,[awake] #screen1,[awake] #screen1/screen1_1,[awake] #screen1/screen1_1/screen1_1_1", "The navigation map is correct"); // +1
 
             iris.off(iris.AFTER_NAVIGATION);
 
@@ -182,7 +182,7 @@
             iris.on(iris.AFTER_NAVIGATION, function () {
 
                 strictEqual(navigationHash, document.location.hash, "The final hash is right"); // +1
-                strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #screen1,[awake] #screen1,[create] #screen1/screen1_1,[awake] #screen1/screen1_1,[create] #screen1/screen1_1/screen1_1_1,[awake] #screen1/screen1_1/screen1_1_1,[canSleep] #screen1/screen1_1/screen1_1_1,[canSleep] #screen1/screen1_1,[canSleep] #screen1,[sleep] #screen1/screen1_1/screen1_1_1,[sleep] #screen1/screen1_1,[sleep] #screen1,[create] #screen2,[awake] #screen2", "The navigation map is correct"); // +1
+                strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #screen1,[create] #screen1/screen1_1,[create] #screen1/screen1_1/screen1_1_1,[awake] #screen1,[awake] #screen1/screen1_1,[awake] #screen1/screen1_1/screen1_1_1,[canSleep] #screen1/screen1_1/screen1_1_1,[canSleep] #screen1/screen1_1,[canSleep] #screen1,[sleep] #screen1/screen1_1/screen1_1_1,[sleep] #screen1/screen1_1,[sleep] #screen1,[create] #screen2,[awake] #screen2", "The navigation map is correct"); // +1
 
                 start();
             });
@@ -204,7 +204,7 @@
         iris.on(iris.AFTER_NAVIGATION, function () {
 
             // +1
-            strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #screen2,[awake] #screen2,[create] #screen2/screen2_1,[create-ui] screens_ createOtherUI=true,[create-ui] screens_ createOtherUI=false,[awake-ui] screens_ createOtherUI=false,[awake-ui] screens_ createOtherUI=true,[awake] #screen2/screen2_1", "The navigation map is correct");
+            strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #screen2,[create] #screen2/screen2_1,[create-ui] screens_ createOtherUI=true,[create-ui] screens_ createOtherUI=false,[awake-ui] screens_ createOtherUI=false,[awake-ui] screens_ createOtherUI=true,[awake] #screen2,[awake] #screen2/screen2_1", "The navigation map is correct");
 
             start();
 
@@ -216,12 +216,12 @@
             iris.on(iris.AFTER_NAVIGATION, function () {
 
                 // +1
-                strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #screen2,[awake] #screen2,[create] #screen2/screen2_1,[create-ui] screens_ createOtherUI=true,[create-ui] screens_ createOtherUI=false,[awake-ui] screens_ createOtherUI=false,[awake-ui] screens_ createOtherUI=true,[awake] #screen2/screen2_1,[canSleep] #screen2/screen2_1,[sleep-ui] screens_ createOtherUI=false,[sleep-ui] screens_ createOtherUI=true,[sleep] #screen2/screen2_1,[create] #screen2/screen2_2,[awake] #screen2/screen2_2", "Navigation map right");
+                strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #screen2,[create] #screen2/screen2_1,[create-ui] screens_ createOtherUI=true,[create-ui] screens_ createOtherUI=false,[awake-ui] screens_ createOtherUI=false,[awake-ui] screens_ createOtherUI=true,[awake] #screen2,[awake] #screen2/screen2_1,[canSleep] #screen2/screen2_1,[sleep-ui] screens_ createOtherUI=false,[sleep-ui] screens_ createOtherUI=true,[sleep] #screen2/screen2_1,[create] #screen2/screen2_2,[awake] #screen2/screen2_2", "Navigation map right");
 
                 iris.off(iris.AFTER_NAVIGATION);
 
                 iris.on(iris.AFTER_NAVIGATION, function () {
-                    strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #screen2,[awake] #screen2,[create] #screen2/screen2_1,[create-ui] screens_ createOtherUI=true,[create-ui] screens_ createOtherUI=false,[awake-ui] screens_ createOtherUI=false,[awake-ui] screens_ createOtherUI=true,[awake] #screen2/screen2_1,[canSleep] #screen2/screen2_1,[sleep-ui] screens_ createOtherUI=false,[sleep-ui] screens_ createOtherUI=true,[sleep] #screen2/screen2_1,[create] #screen2/screen2_2,[awake] #screen2/screen2_2,[canSleep] #screen2/screen2_2,[sleep] #screen2/screen2_2,[awake] #screen2/screen2_1,[awake-ui] screens_ createOtherUI=true,[awake-ui] screens_ createOtherUI=false", "Final Navigation map right");
+                    strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #screen2,[create] #screen2/screen2_1,[create-ui] screens_ createOtherUI=true,[create-ui] screens_ createOtherUI=false,[awake-ui] screens_ createOtherUI=false,[awake-ui] screens_ createOtherUI=true,[awake] #screen2,[awake] #screen2/screen2_1,[canSleep] #screen2/screen2_1,[sleep-ui] screens_ createOtherUI=false,[sleep-ui] screens_ createOtherUI=true,[sleep] #screen2/screen2_1,[create] #screen2/screen2_2,[awake] #screen2/screen2_2,[canSleep] #screen2/screen2_2,[sleep] #screen2/screen2_2,[awake] #screen2/screen2_1,[awake-ui] screens_ createOtherUI=true,[awake-ui] screens_ createOtherUI=false", "Final Navigation map right");
                     start();
                 });
 

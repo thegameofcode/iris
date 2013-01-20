@@ -34,7 +34,6 @@
     
     module( "UI replacement", {
         setup: function() {
-            window.location.hash = "";
             clearBody();
             iris.notify("iris-reset");
         },

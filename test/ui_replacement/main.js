@@ -46,7 +46,7 @@ iris.screen(
             window.console.log("Main Screen Awaked");
         };
         
-    }
+    },
     
     
-    );
+    "test/ui_replacement/main.js");

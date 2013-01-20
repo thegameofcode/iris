@@ -39,5 +39,5 @@ iris.screen(
             window.ok(true, "Home Screen Destroyed");
         };
 
-    }
-    );
+    },
+    "test/destroy_screen/home.js");

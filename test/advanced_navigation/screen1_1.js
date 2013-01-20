@@ -50,4 +50,4 @@ iris.screen(function (self) {
 		window.navigations.push(msg);
 	};
 
-});
+}, "test/advanced_navigation/screen1_1.js");
