@@ -7,4 +7,4 @@ iris.screen(function(self) {
 		self.ui("uis", "ui/nested.js");
 	}
 	
-});
+}, "screen/example_nested_uis.js");

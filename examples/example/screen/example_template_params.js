@@ -12,4 +12,4 @@ iris.screen(function(self) {
 		
 		self.tmpl("screen/example_template_params.html", params);
 	}
-});
+}, "screen/example_template_params.js");

@@ -24,4 +24,4 @@ iris.screen(function(self) {
 		self.destroyUI(uiList[idx]);
 		uiList.splice(idx, 1);
 	}
-});
+}, "screen/example_destroy.js");

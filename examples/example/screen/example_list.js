@@ -11,4 +11,4 @@ iris.screen(function(self) {
 			"count" : _Count++
 		});
 	}
-});
+}, "screen/example_list.js");

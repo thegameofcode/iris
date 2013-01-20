@@ -15,4 +15,4 @@ iris.screen(function(self) {
 	function _DestroyAllUIs() {
 		self.destroyUIs("uis");
 	}
-});
+}, "screen/example_destroy_all.js");

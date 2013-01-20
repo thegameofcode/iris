@@ -7,4 +7,4 @@ iris.screen(function(self) {
 	self.awake = function(params) {
 		self.get("screen_param").text(params["parameter"]);
 	}
-});
+}, "screen/example_screen_params_child.js");

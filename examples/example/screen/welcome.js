@@ -20,4 +20,4 @@ iris.screen(function(self) {
 			iris.navigate("#instance");
 		}
 	}
-});
+}, "screen/welcome.js");

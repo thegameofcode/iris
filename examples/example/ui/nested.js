@@ -13,4 +13,4 @@ iris.ui(function (self) {
 		self.ui("uis", "ui/nested.js");
 	}
 
-});
+},"ui/nested.js");

@@ -9,4 +9,4 @@ iris.screen(function(self) {
 		self.ui("container", "ui/example_basic.js");
 		self.get("btncreateUI").remove();
 	}
-});
+}, "screen/example_instance.js");

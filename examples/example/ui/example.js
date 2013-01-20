@@ -7,4 +7,4 @@ iris.ui(function (self) {
 
 	};
 
-});
+},"ui/example.js");

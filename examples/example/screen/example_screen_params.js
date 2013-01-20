@@ -25,4 +25,4 @@ iris.screen(function(self) {
 		
 		iris.navigate(uri);
 	}
-});
+}, "screen/example_screen_params.js");
