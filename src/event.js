@@ -17,13 +17,22 @@ window.iris = iris;
         iris.on("iris-reset", _init);
     }
 
-     iris.on = function (p_eventName, f_func) {
+    function _indexOf (item, array) {
+        for ( var i = 0; i < array.length; i++ ) {
+            if ( array[i] === item ) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    iris.on = function (p_eventName, f_func) {
         if ( !_events.hasOwnProperty(p_eventName) ) {
             _events[p_eventName] = [];
         }
 
         var callbacks = _events[p_eventName];
-        var index = $.inArray(f_func, callbacks);
+        var index = _indexOf(f_func, callbacks);
         if ( index === -1 ) {
             callbacks.push(f_func);
         }
@@ -33,7 +42,11 @@ window.iris = iris;
     iris.off = function (p_eventName, f_func){
         if ( _events.hasOwnProperty(p_eventName) ){
             if (f_func !== undefined) {
-                _events[p_eventName].splice($.inArray(f_func, _events[p_eventName]), 1);
+                var index = _indexOf(f_func, _events[p_eventName]);
+                if ( index !== -1 ) {
+                    _events[p_eventName].splice(index, 1);
+                }
+
             } else {
                 delete _events[p_eventName];
             }
@@ -54,12 +67,16 @@ window.iris = iris;
     };
 
     iris.destroyEvents = function (p_eventName, p_callbacks) {
-        var callbacks = _events[p_eventName];
-        if ( callbacks ) {
-            for ( var i=0; i < p_callbacks.length; i++ ) {
-                callbacks.splice($.inArray(p_callbacks[i], callbacks), 1);
+        // Create an array copy, to prevent concurrent modification of _events[p_eventName] array.
+        // This occur if an event that destroy uis is notified
+        var callbacks = _events[p_eventName].concat([]);
+        for ( var i=0; i < p_callbacks.length; i++ ) {
+            var index = _indexOf(p_callbacks[i], callbacks);
+            if ( index !== -1 ) {
+                callbacks.splice(index, 1);
             }
         }
+        _events[p_eventName] = callbacks;
     };
 
 
@@ -77,7 +94,8 @@ window.iris = iris;
         }
 
         var callbacks = this.events[p_eventName];
-        if ( $.inArray(f_func, callbacks) === -1 ) {
+        var index = _indexOf(f_func, callbacks);
+        if ( index === -1 ) {
             callbacks.push(f_func);
             iris.on(p_eventName, f_func);
         }
@@ -86,9 +104,8 @@ window.iris = iris;
 
     eventPrototype.off = function (p_eventName, f_func){
         var callbacks = this.events[p_eventName];
-
         if ( callbacks ) {
-            var index = $.inArray(f_func, callbacks);
+            var index = _indexOf(f_func, callbacks);
 
             if ( index !== -1 ) {
                 callbacks.splice(index, 1);

@@ -6,7 +6,7 @@ iris.screen(
             self.tmpl("test/bad_practices/welcome.html");
 
             self.screens("home_screen", [[
-                "#home", "test/bad_practices/home.js"
+                "home", "test/bad_practices/home.js"
             ]]);
             window.ok(true, "Correct Format");
             window.start();

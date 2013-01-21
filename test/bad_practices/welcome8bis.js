@@ -7,9 +7,9 @@ iris.screen(
             self.tmpl("test/bad_practices/welcome.html");
 
             self.screens("home_screen", [[
-                "#home", "test/bad_practices/home.js"
+                "home", "test/bad_practices/home.js"
             ],[
-                "#help", "test/bad_practices/home.js"
+                "help", "test/bad_practices/home.js"
             ]]);
         };
 

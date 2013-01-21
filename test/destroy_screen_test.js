@@ -35,7 +35,7 @@
     
     function gotoMain() {
         iris.welcome("test/destroy_screen/welcome.js");
-        iris.navigate("#main");
+        iris.navigate("#/main");
         
     }
     
@@ -55,18 +55,18 @@
     asyncTest("Test Destroy #home after goto #home, then goto #help", function() {
         window.expect(3);
 
-        iris.navigate("#home");
+        iris.navigate("#/home");
 
         iris.on(iris.AFTER_NAVIGATION, function () {
             iris.off(iris.AFTER_NAVIGATION);
 
-            iris.navigate("#help");
+            iris.navigate("#/help");
 
 
             iris.on(iris.AFTER_NAVIGATION, function () {
                 iris.off(iris.AFTER_NAVIGATION);
 
-                iris.destroyScreen("#home"); // +1 Home Screen Destroyed
+                iris.destroyScreen("#/home"); // +1 Home Screen Destroyed
                 start();
 
             });
@@ -79,15 +79,15 @@
       
         window.expect(1);
         
-        iris.navigate("#help"); // +1 Home Screen Created
+        iris.navigate("#/help"); // +1 Home Screen Created
 
         iris.on(iris.AFTER_NAVIGATION, function () {
             iris.off(iris.AFTER_NAVIGATION);
 
-            iris.destroyScreen("#home");
-            iris.navigate("#help"); // +1 Home Screen asleep
+            iris.destroyScreen("#/home");
+            iris.navigate("#/help"); // +1 Home Screen asleep
 
-            strictEqual(document.location.hash, "#help", "The hash is #help");
+            strictEqual(document.location.hash, "#/help", "The hash is #help");
             start();
 
         });
@@ -96,13 +96,13 @@
         
     asyncTest("Test Destroy #home after goto #home", function() {
 
-        iris.navigate("#home"); // +1 Home Screen Created
+        iris.navigate("#/home"); // +1 Home Screen Created
 
         iris.on(iris.AFTER_NAVIGATION, function () {
             iris.off(iris.AFTER_NAVIGATION);
 
             raises(function() {
-                iris.destroyScreen("#home");
+                iris.destroyScreen("#/home");
             }, "It is impossible to destroy the current Screen");
 
             start();
@@ -115,24 +115,24 @@
     asyncTest("Test Destroy #home after goto #home, then goto #home/home2, then goto #help", function() {
         window.expect(4);
 
-        iris.navigate("#home"); // +1 Home Screen Created
+        iris.navigate("#/home"); // +1 Home Screen Created
 
         iris.on(iris.AFTER_NAVIGATION, function () {
             iris.off(iris.AFTER_NAVIGATION);
 
-            iris.navigate("#home/home2"); // +1 Home Screen asleep
+            iris.navigate("#/home/home2"); // +1 Home Screen asleep
 
 
             iris.on(iris.AFTER_NAVIGATION, function () {
                 iris.off(iris.AFTER_NAVIGATION);
 
-                iris.navigate("#help"); // +1 Home2 Screen asleep
+                iris.navigate("#/help"); // +1 Home2 Screen asleep
 
 
                 iris.on(iris.AFTER_NAVIGATION, function () {
                     iris.off(iris.AFTER_NAVIGATION);
 
-                    iris.destroyScreen("#home"); // +1 Home Screen Destroyed
+                    iris.destroyScreen("#/home"); // +1 Home Screen Destroyed
 
                     start();
 
@@ -146,29 +146,29 @@
     asyncTest("Test Destroy #home after goto #home, then goto #home/home2, then goto #home/home2/home3, then goto #help", function() {
         window.expect(5);
 
-        iris.navigate("#home"); // +1 Home Screen Created
+        iris.navigate("#/home"); // +1 Home Screen Created
 
         iris.on(iris.AFTER_NAVIGATION, function () {
             iris.off(iris.AFTER_NAVIGATION);
 
-            iris.navigate("#home/home2"); // +1 Home Screen asleep
+            iris.navigate("#/home/home2"); // +1 Home Screen asleep
 
 
             iris.on(iris.AFTER_NAVIGATION, function () {
                 iris.off(iris.AFTER_NAVIGATION);
 
-                iris.navigate("#home/home2/home3"); // +1 Home2 Screen asleep
+                iris.navigate("#/home/home2/home3"); // +1 Home2 Screen asleep
 
 
                 iris.on(iris.AFTER_NAVIGATION, function () {
                     iris.off(iris.AFTER_NAVIGATION);
 
-                    iris.navigate("#help"); // +1 Home3 Screen asleep
+                    iris.navigate("#/help"); // +1 Home3 Screen asleep
 
                     iris.on(iris.AFTER_NAVIGATION, function () {
                         iris.off(iris.AFTER_NAVIGATION);
 
-                        iris.destroyScreen("#home"); // +1 Home Screen Destroyed
+                        iris.destroyScreen("#/home"); // +1 Home Screen Destroyed
 
                         start();
                     });
@@ -185,29 +185,29 @@
     asyncTest("Test Destroy #home/home2 after goto #home, then goto #home/home2, then goto #home/home2/home3, then goto #home", function() {
         window.expect(5);
 
-        iris.navigate("#home"); // +1 Home Screen Created
+        iris.navigate("#/home"); // +1 Home Screen Created
 
         iris.on(iris.AFTER_NAVIGATION, function () {
             iris.off(iris.AFTER_NAVIGATION);
 
-            iris.navigate("#home/home2"); // +1 Home Screen asleep
+            iris.navigate("#/home/home2"); // +1 Home Screen asleep
 
 
             iris.on(iris.AFTER_NAVIGATION, function () {
                 iris.off(iris.AFTER_NAVIGATION);
 
-                iris.navigate("#home/home2/home3"); // +1 Home2 Screen asleep
+                iris.navigate("#/home/home2/home3"); // +1 Home2 Screen asleep
 
 
                 iris.on(iris.AFTER_NAVIGATION, function () {
                     iris.off(iris.AFTER_NAVIGATION);
 
-                    iris.navigate("#help"); // +1 Home3 Screen asleep
+                    iris.navigate("#/help"); // +1 Home3 Screen asleep
 
                     iris.on(iris.AFTER_NAVIGATION, function () {
                         iris.off(iris.AFTER_NAVIGATION);
 
-                        iris.destroyScreen("#home/home2"); // +1 Home2 Screen Destroyed
+                        iris.destroyScreen("#/home/home2"); // +1 Home2 Screen Destroyed
 
                         start();
                     });
@@ -225,29 +225,29 @@
     asyncTest("Test goto #home after destroy #home", function() {
         window.expect(4);
 
-        iris.navigate("#home"); // +1 Home Screen Created
+        iris.navigate("#/home"); // +1 Home Screen Created
 
         iris.on(iris.AFTER_NAVIGATION, function () {
             iris.off(iris.AFTER_NAVIGATION);
 
-            iris.navigate("#help"); // +1 Home Screen asleep
+            iris.navigate("#/help"); // +1 Home Screen asleep
 
 
             iris.on(iris.AFTER_NAVIGATION, function () {
                 iris.off(iris.AFTER_NAVIGATION);
 
-                iris.navigate("#home"); // +1 Current screen cannot be removed
+                iris.navigate("#/home"); // +1 Current screen cannot be removed
 
 
                 iris.on(iris.AFTER_NAVIGATION, function () {
                     iris.off(iris.AFTER_NAVIGATION);
 
                     raises(function () {
-                        iris.destroyScreen("#home");
+                        iris.destroyScreen("#/home");
                         
                     },"Current screen cannot be removed");
 
-                    window.strictEqual(window.location.hash, "#home", "We are in #home");
+                    window.strictEqual(window.location.hash, "#/home", "We are in #home");
 
                     start();
 
@@ -264,27 +264,27 @@
     asyncTest("Test goto #home, then goto #home/home2, then goto #home/home2/home3 then destroy #home", function() {
         window.expect(3);
 
-        iris.navigate("#home");
+        iris.navigate("#/home");
 
         iris.on(iris.AFTER_NAVIGATION, function () {
             iris.off(iris.AFTER_NAVIGATION);
 
-            iris.navigate("#home/home2");
+            iris.navigate("#/home/home2");
 
 
             iris.on(iris.AFTER_NAVIGATION, function () {
                 iris.off(iris.AFTER_NAVIGATION);
 
-                iris.navigate("#home/home2/home3");
+                iris.navigate("#/home/home2/home3");
 
                 iris.on(iris.AFTER_NAVIGATION, function () {
                     iris.off(iris.AFTER_NAVIGATION);
 
                     raises(function () {
-                        iris.destroyScreen("#home");
+                        iris.destroyScreen("#/home");
                     },"Cannot delete the current screen or its parents");
 
-                    strictEqual(document.location.hash, "#home/home2/home3", "The hash is #home/home2/home3"); // +1
+                    strictEqual(document.location.hash, "#/home/home2/home3", "The hash is #home/home2/home3"); // +1
                     start();
                 });
 

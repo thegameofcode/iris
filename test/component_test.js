@@ -62,7 +62,7 @@
         expect(7);
     
         iris.welcome("test/component/welcome.js"); // + 4
-        iris.navigate("#screen"); // +3
+        iris.navigate("#/screen"); // +3
 
         iris.on(iris.AFTER_NAVIGATION, function () {
             window.start();
@@ -77,7 +77,7 @@
         iris.welcome("test/component/welcome.js"); // + 4
 
         // this will make a real async call
-        iris.navigate("#screen"); // +3
+        iris.navigate("#/screen"); // +3
 
         iris.on(iris.AFTER_NAVIGATION, function () {
             iris.notify("create_ui"); // + 4
@@ -91,7 +91,7 @@
         expect(14);
 
         iris.welcome("test/component/welcome.js"); // + 4
-        iris.navigate("#screen"); // +3
+        iris.navigate("#/screen"); // +3
 
         iris.on(iris.AFTER_NAVIGATION, function () {
             iris.notify("create_ui"); // + 4
@@ -107,7 +107,7 @@
         expect(17);
 
         iris.welcome("test/component/welcome.js"); // + 4
-        iris.navigate("#screen"); // +3
+        iris.navigate("#/screen"); // +3
 
         iris.on(iris.AFTER_NAVIGATION, function () {
             iris.notify("create_ui"); // + 4
@@ -123,7 +123,7 @@
         expect(12);
 
         iris.welcome("test/component/welcome.js"); // + 4
-        iris.navigate("#screen"); // +3
+        iris.navigate("#/screen"); // +3
 
         iris.on(iris.AFTER_NAVIGATION, function () {
             iris.notify("create_ui"); // + 4
@@ -138,7 +138,7 @@
         expect(8);
 
         iris.welcome("test/component/welcome.js"); // + 4
-        iris.navigate("#screen"); // +3
+        iris.navigate("#/screen"); // +3
 
         iris.on(iris.AFTER_NAVIGATION, function () {
 
@@ -152,7 +152,7 @@
         expect(8);
 
         iris.welcome("test/component/welcome.js"); // + 4
-        iris.navigate("#screen"); // +3
+        iris.navigate("#/screen"); // +3
 
         iris.on(iris.AFTER_NAVIGATION, function () {
             iris.notify("template_langs"); // +1
@@ -165,12 +165,12 @@
         expect(8);
 
         iris.welcome("test/component/welcome.js"); // + 4
-        iris.navigate("#screen"); // +3
+        iris.navigate("#/screen"); // +3
 
         iris.on(iris.AFTER_NAVIGATION, function () {
         
             window.throws(function() {
-                iris.destroyScreen("#screen");
+                iris.destroyScreen("#/screen");
             },"Fail. It is impossible remove the current screen.");
 
             start();

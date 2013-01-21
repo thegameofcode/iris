@@ -12,13 +12,13 @@ iris.screen(
 
             self.get("destroy_home").click(
                 function() {
-                    iris.destroyScreen("#home");
+                    iris.destroyScreen("#/home");
                 }
                 );
             
             self.get("goto_home2").click(
                 function() {
-                    iris.navigate("#home2");
+                    iris.navigate("#/home2");
                 }
                 );
 

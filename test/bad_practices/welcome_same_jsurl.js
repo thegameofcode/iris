@@ -8,8 +8,8 @@ iris.screen(
 
             window.raises(function () {
                 self.screens("home_screen", [
-                    ["#home", "test/bad_practices/home.js"],
-                    ["#help", "test/bad_practices/home.js"]
+                    ["home", "test/bad_practices/home.js"],
+                    ["help", "test/bad_practices/home.js"]
                 ]);
             }, "The screens has the same file js URL");
 

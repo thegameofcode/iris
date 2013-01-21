@@ -151,20 +151,19 @@
 
             //if(document.location.hash !== undefined && document.location.hash !== "#") {
             if(document.location.hash) {
-                _StartHashChange();
+                _startHashChange();
             }
 
-            $(window).on("hashchange", _StartHashChange);
+            $(window).on("hashchange", _startHashChange);
         }
 
     }
 
     function _goto(p_hashUri) {
-        document.location.hash = p_hashUri; // Trigger hashchange event, then execute _StartHashChange()
+        document.location.hash = p_hashUri; // Trigger hashchange event, then execute _startHashChange()
     }
 
-    function _StartHashChange() {
-
+    function _startHashChange() {
         
         // when a screen cannot sleep then window.history.back() & and finish navegation process
         if(_gotoCancelled) {
@@ -194,55 +193,57 @@
 
         
         var curr = hash.split("/"), i, screenPath;
+iris.log("hash change --->", _prevHash, " _ ", curr);
         _lastFullHash = hash;
 
 
-        var firstDiffNode = 0;
+        _firstDiffNode = 0;
         if ( _prevHash !== undefined ) {
 
             // get firstDiffNode
             for ( i = 0; i < curr.length; i++ ) {
                 if ( _prevHash[i] === undefined || _prevHash[i] !== curr[i] ) {
-                    firstDiffNode = i;
+                    _firstDiffNode = i;
                     break;
                 }
                 
             }
 
-            // check if can sleep
-            for ( i = _prevHash.length-1; i >= firstDiffNode; i-- ) {
+            // if previous hash is not # (the welcome screen)
+            if ( _prevHash.length > 1 ) {
 
-                screenPath = _getScreenPath(_prevHash, i);
-                if( _screen[screenPath].canSleep() === false ) {
-                    _gotoCancelled = true;
-                    document.location.href = _prevHashString;
-                    return false;
+                // check if can sleep
+                for ( i = _prevHash.length-1; i >= _firstDiffNode; i-- ) {
+
+                    screenPath = _getScreenPath(_prevHash, i);
+                    if( _screen[screenPath].canSleep() === false ) {
+                        _gotoCancelled = true;
+                        document.location.href = _prevHashString;
+                        return false;
+                    }
                 }
-            }
 
-            // hide previous screens
-            for ( i = _prevHash.length - 1; i >= firstDiffNode; i-- ) {
-                var screenToSleep = _screen[ _getScreenPath(_prevHash, i) ];
-                screenToSleep._sleep();
-                screenToSleep.hide();
+                // hide previous screens
+                for ( i = _prevHash.length - 1; i >= _firstDiffNode; i-- ) {
+                    var screenToSleep = _screen[ _getScreenPath(_prevHash, i) ];
+                    screenToSleep._sleep();
+                    screenToSleep.hide();
+                }
             }
         }
 
 
         // check if new screens are loaded
         _notLoadedScreens = [];
-        for ( i = firstDiffNode; i < curr.length; i++ ) {
+        for ( i = _firstDiffNode; i < curr.length; i++ ) {
 
             screenPath = _getScreenPath(curr, i);
-
             if(!_screen.hasOwnProperty(screenPath)) {
                 _notLoadedScreens.push(screenPath);
             }
-
         }
 
         // set navigation variables to the next hashchange event
-        _firstDiffNode = firstDiffNode;
         _prevHash = curr;
         _prevHashString = hash;
 
@@ -266,8 +267,12 @@
             var path = _notLoadedScreens.splice(0,1)[0];
             var fileJs = _screenJsUrl[path];
 
-            _lastScreenPathLoaded = path;
-            _loadJs([fileJs], _loadNewScreens);
+            if ( fileJs !== undefined ) {
+                _lastScreenPathLoaded = path;
+                _loadJs([fileJs], _loadNewScreens);
+            } else {
+                throw "The path[" + path + "] hasn't associated screen, use self.screens to register the screen first";
+            }
             
         } else {
             _lastScreenPathLoaded = undefined;
@@ -288,13 +293,11 @@
             if ( !_screenContainer.hasOwnProperty(screenPath) ) {
                 throw "'" + screenPath + "' must be registered using self.screens()";
             } else {
+                var screenInstance = _screen[screenPath];
                 var screenParams = _navGetParams(_prevHash[i]);
-                var currentScreen = _screen[screenPath];
 
-                if ( screenPath !== "#" ) {
-                    currentScreen._awake(screenParams);
-                    currentScreen.show();
-                }
+                screenInstance._awake(screenParams);
+                screenInstance.show();
             }
 
         }
@@ -465,8 +468,6 @@
     //
 
     function _registerScreen(f_screen, path) {
-        iris.log("_registerScreen", path);
-
         _includes[path] = f_screen;
         _srcToCheckDependencies += f_screen.toString();
     }
@@ -913,9 +914,10 @@
 
                 var screen = p_screens[i];
                 var hashUrl = screen[0];
-                if ( hashUrl.indexOf("#") !== 0 ) {
-                    hashUrl = ( this.id === "#") ? "#" +  hashUrl : this.id + "/" + hashUrl;
+                if ( hashUrl.indexOf("#") !== -1 ) {
+                    throw "[self.screens] incorrect screen path[" + hashUrl + "] cannot contain #";
                 }
+                hashUrl = this.id + "/" + hashUrl;
 
                 var js = screen[1];
                 if ( _jsUrlScreens.hasOwnProperty(js) ) {
