@@ -9,6 +9,11 @@ iris.locale(
             decimal: ".",
             thousand: ",",
             precision: 2
+        },
+        number : {
+            decimal: ".",
+            thousand: ",",
+            precision: 2
         }
     }
 );

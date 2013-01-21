@@ -86,27 +86,47 @@
         return $.ajax(p_settings);
     };
 
-    iris.currency = function (p_value) {
-        var settings = iris.regional("currency");
+    iris.currency = function (value, config) {
+        var settings = {
+            formatPos: "sn",
+            formatNeg: "(sn)",
+            symbol : "$"
+        };
+        $.extend(settings, config);
 
-        var val = Number(p_value);
+        var num = iris.number(value, settings);
+
+        return num.replace("s", settings.symbol);
+    };
+
+    iris.number = function (value, config) {
+        var settings = {
+            formatPos: "n",
+            formatNeg: "- n",
+            decimal: ".",
+            thousand: ",",
+            precision: 2
+        };
+        $.extend(settings, config);
+
+        var val = Number(value);
         var format = (val >= 0) ? settings.formatPos : settings.formatNeg;
 
-        var decimal = val % 1;
-        var num = String(Math.abs(val - decimal));
+        var dec = val % 1;
+        var num = String(Math.abs(val - dec));
 
         if ( settings.precision === 0 ) {
             num = parseInt(val.toFixed(), 10);
 
         } else {
-            decimal = String(Math.abs(decimal).toFixed(settings.precision));
-            decimal = decimal.substr(2);
+            dec = String(Math.abs(dec).toFixed(settings.precision));
+            dec = dec.substr(2);
 
             for(var i = 0; i < Math.floor((num.length - (1 + i)) / 3); i++) {
                 num = num.substring(0, num.length - (4 * i + 3)) + settings.thousand + num.substring(num.length - (4 * i + 3));
             }
 
-            num = num + settings.decimal + decimal;
+            num = num + settings.decimal + dec;
         }
 
         return format.replace("n", num);

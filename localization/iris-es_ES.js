@@ -5,7 +5,12 @@ iris.locale(
         dateFormat: "d/m/Y H:i:s",
         currency: {
             formatPos: "n",
-            formatNeg: "-n",
+            formatNeg: "- n",
+            decimal: ",",
+            thousand: ".",
+            precision: 2
+        },
+        number : {
             decimal: ",",
             thousand: ".",
             precision: 2

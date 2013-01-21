@@ -193,11 +193,9 @@
 
         
         var curr = hash.split("/"), i, screenPath;
-iris.log("hash change --->", _prevHash, " _ ", curr);
         _lastFullHash = hash;
-
-
         _firstDiffNode = 0;
+        
         if ( _prevHash !== undefined ) {
 
             // get firstDiffNode
