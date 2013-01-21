@@ -62,10 +62,15 @@
         expect(7);
     
         iris.welcome("test/component/welcome.js"); // + 4
-        iris.navigate("#/screen"); // +3
 
         iris.on(iris.AFTER_NAVIGATION, function () {
-            window.start();
+            iris.off(iris.AFTER_NAVIGATION);
+
+            iris.navigate("#/screen"); // +3
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                window.start();
+            });
         });
 
     });
@@ -76,12 +81,16 @@
 
         iris.welcome("test/component/welcome.js"); // + 4
 
-        // this will make a real async call
-        iris.navigate("#/screen"); // +3
-
         iris.on(iris.AFTER_NAVIGATION, function () {
-            iris.notify("create_ui"); // + 4
-            start();
+            iris.off(iris.AFTER_NAVIGATION);
+
+            // this will make a real async call
+            iris.navigate("#/screen"); // +3
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.notify("create_ui"); // + 4
+                start();
+            });
         });
     
     });
@@ -91,13 +100,17 @@
         expect(14);
 
         iris.welcome("test/component/welcome.js"); // + 4
-        iris.navigate("#/screen"); // +3
 
         iris.on(iris.AFTER_NAVIGATION, function () {
-            iris.notify("create_ui"); // + 4
+            iris.off(iris.AFTER_NAVIGATION);
+            iris.navigate("#/screen"); // +3
 
-            iris.notify("ui_settings"); // +3
-            start();
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.notify("create_ui"); // + 4
+
+                iris.notify("ui_settings"); // +3
+                start();
+            });
         });
 
     });
@@ -107,13 +120,18 @@
         expect(17);
 
         iris.welcome("test/component/welcome.js"); // + 4
-        iris.navigate("#/screen"); // +3
 
         iris.on(iris.AFTER_NAVIGATION, function () {
-            iris.notify("create_ui"); // + 4
+            iris.off(iris.AFTER_NAVIGATION);
 
-            iris.notify("nested_ui"); // 3 creation + 3 nested callback
-            start();
+            iris.navigate("#/screen"); // +3
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.notify("create_ui"); // + 4
+
+                iris.notify("nested_ui"); // 3 creation + 3 nested callback
+                start();
+            });
         });
     });
 
@@ -123,13 +141,18 @@
         expect(12);
 
         iris.welcome("test/component/welcome.js"); // + 4
-        iris.navigate("#/screen"); // +3
 
         iris.on(iris.AFTER_NAVIGATION, function () {
-            iris.notify("create_ui"); // + 4
+            iris.off(iris.AFTER_NAVIGATION);
 
-            iris.notify("destroy_ui"); // +1
-            start();
+            iris.navigate("#/screen"); // +3
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.notify("create_ui"); // + 4
+
+                iris.notify("destroy_ui"); // +1
+                start();
+            });
         });
     });
 
@@ -138,12 +161,17 @@
         expect(8);
 
         iris.welcome("test/component/welcome.js"); // + 4
-        iris.navigate("#/screen"); // +3
 
         iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
 
-            iris.notify("template_params"); // +1
-            start();
+            iris.navigate("#/screen"); // +3
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+
+                iris.notify("template_params"); // +1
+                start();
+            });
         });
     });
 
@@ -152,11 +180,16 @@
         expect(8);
 
         iris.welcome("test/component/welcome.js"); // + 4
-        iris.navigate("#/screen"); // +3
 
         iris.on(iris.AFTER_NAVIGATION, function () {
-            iris.notify("template_langs"); // +1
-            start();
+            iris.off(iris.AFTER_NAVIGATION);
+
+            iris.navigate("#/screen"); // +3
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.notify("template_langs"); // +1
+                start();
+            });
         });
     });
 
@@ -165,15 +198,20 @@
         expect(8);
 
         iris.welcome("test/component/welcome.js"); // + 4
-        iris.navigate("#/screen"); // +3
 
         iris.on(iris.AFTER_NAVIGATION, function () {
-        
-            window.throws(function() {
-                iris.destroyScreen("#/screen");
-            },"Fail. It is impossible remove the current screen.");
+            iris.off(iris.AFTER_NAVIGATION);
+            
+            iris.navigate("#/screen"); // +3
 
-            start();
+            iris.on(iris.AFTER_NAVIGATION, function () {
+            
+                window.throws(function() {
+                    iris.destroyScreen("#/screen");
+                },"Fail. It is impossible remove the current screen.");
+
+                start();
+            });
         });
     });
 

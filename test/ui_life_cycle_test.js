@@ -44,63 +44,98 @@
     
     asyncTest("Create my_ui directly in screen.create() method", function() {        
         window.expect(2);
-        iris.navigate("#/main");
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            iris.navigate("#/main");
+        });
         
     }
     );
         
     asyncTest("Create my_ui directly in screen.awake() method", function() {        
         window.expect(2);
-        iris.navigate("#/main2");
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            iris.navigate("#/main2");
+        });
     }
     );
         
     asyncTest("Create my_ui from button_click event", function() {        
         window.expect(2);
-        iris.navigate("#/main3");
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+            
+            iris.navigate("#/main3");
+        });
     }
     );
         
     asyncTest("Create my_ui with an inner UI", function() {        
         window.expect(8);
-        iris.navigate("#/main4");
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+            
+            iris.navigate("#/main4");
+        });
     }
     );
         
     asyncTest("Testing sleep UI event", function() {        
         window.expect(6);
-        iris.navigate("#/main5");
 
         iris.on(iris.AFTER_NAVIGATION, function () {
             iris.off(iris.AFTER_NAVIGATION);
-            iris.navigate("#/help");
+            
+            iris.navigate("#/main5");
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.off(iris.AFTER_NAVIGATION);
+                iris.navigate("#/help");
+            });
         });
     }
     );
         
     asyncTest("Testing destroy UI event", function() {        
         window.expect(8);
-        iris.navigate("#/main6");
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+            
+            iris.navigate("#/main6");
+        });
     }
     );
         
     asyncTest("Testing sleep and destroy events when destroyScreen() method is called", function() {        
         window.expect(8);
-        iris.navigate("#/main5");
 
         iris.on(iris.AFTER_NAVIGATION, function () {
             iris.off(iris.AFTER_NAVIGATION);
-
-            iris.navigate("#/help2");
+        
+            iris.navigate("#/main5");
 
             iris.on(iris.AFTER_NAVIGATION, function () {
                 iris.off(iris.AFTER_NAVIGATION);
 
-                iris.destroyScreen("#/main5");
-                start();
+                iris.navigate("#/help2");
+
+                iris.on(iris.AFTER_NAVIGATION, function () {
+                    iris.off(iris.AFTER_NAVIGATION);
+
+                    iris.destroyScreen("#/main5");
+                    start();
+
+                });
 
             });
-
         });
     });
     

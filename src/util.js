@@ -92,7 +92,7 @@
             formatNeg: "(sn)",
             symbol : "$"
         };
-        $.extend(settings, config);
+        $.extend(settings, iris.regional("currency"), config);
 
         var num = iris.number(value, settings);
 
