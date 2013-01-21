@@ -29,7 +29,7 @@
     function clearBody() {
         var irisGeneratedCode = $("#start_iris").nextAll();
         if (irisGeneratedCode !== undefined) {
-            irisGeneratedCode.remove();
+            //irisGeneratedCode.remove();
         }
     }
     
