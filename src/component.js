@@ -130,33 +130,15 @@
 
         _screenJsUrl["#"] = p_jsUrl;
         _screenContainer["#"] = $(document.body);
-        _loadJs([p_jsUrl], _welcomeOnLoad);
         
-    }
-
-    function _welcomeOnLoad () {
-
-
-        var screenObj = _instanceScreen("#");
-        screenObj.id = "#";
-
-        screenObj.create();
-        screenObj._awake();
-        screenObj.show();
-
-        // CHECK HASH SUPPORT
+        // check hashchange event support
         if(!("onhashchange" in window)) {
             throw "hashchange event unsupported";
         } else {
-
-            //if(document.location.hash !== undefined && document.location.hash !== "#") {
-            if(document.location.hash) {
-                _startHashChange();
-            }
-
+            // force to do an initial navigation
+            _startHashChange();
             $(window).on("hashchange", _startHashChange);
         }
-
     }
 
     function _goto(p_hashUri) {
@@ -173,7 +155,6 @@
         }
 
 
-        iris.notify(iris.BEFORE_NAVIGATION);
 
         // when document.location.href is [http://localhost:8080/#] then document.location.hash is [] (empty string)
         // to avoid the use of empty strings and prevent mistakes, we replace it by #. (# == welcome-screen)
@@ -187,17 +168,18 @@
             return false;
         }
 
+        iris.notify(iris.BEFORE_NAVIGATION);
+
         if(!_welcomeCreated) {
             throw "set the first screen using iris.welcome()";
         }
 
+
         
         var curr = hash.split("/"), i, screenPath;
-iris.log("hash change --->", _prevHash, " _ ", curr);
         _lastFullHash = hash;
-
-
-        _firstDiffNode = 0;
+        _firstDiffNode = -1;
+        
         if ( _prevHash !== undefined ) {
 
             // get firstDiffNode
@@ -209,8 +191,12 @@ iris.log("hash change --->", _prevHash, " _ ", curr);
                 
             }
 
+            if ( curr.length === 1 && _firstDiffNode === -1 ) {
+                _firstDiffNode = 1;
+            }
+
             // if previous hash is not # (the welcome screen)
-            if ( _prevHash.length > 1 ) {
+            if ( _firstDiffNode !== -1 ) {
 
                 // check if can sleep
                 for ( i = _prevHash.length-1; i >= _firstDiffNode; i-- ) {
@@ -230,16 +216,20 @@ iris.log("hash change --->", _prevHash, " _ ", curr);
                     screenToSleep.hide();
                 }
             }
+        } else {
+            _firstDiffNode = 0;
         }
-
 
         // check if new screens are loaded
         _notLoadedScreens = [];
-        for ( i = _firstDiffNode; i < curr.length; i++ ) {
+        if ( _firstDiffNode !== -1 ) {
+            for ( i = _firstDiffNode; i < curr.length; i++ ) {
 
-            screenPath = _getScreenPath(curr, i);
-            if(!_screen.hasOwnProperty(screenPath)) {
-                _notLoadedScreens.push(screenPath);
+                screenPath = _getScreenPath(curr, i);
+    //iris.log("check new screens screenPath["+screenPath+"] p["+_getScreenPath(curr, i)+"] curr["+curr+"] i["+i+"]")
+                if(!_screen.hasOwnProperty(screenPath)) {
+                    _notLoadedScreens.push(screenPath);
+                }
             }
         }
 
@@ -285,23 +275,25 @@ iris.log("hash change --->", _prevHash, " _ ", curr);
 
         var i, screenPath;
 
-        // show new screens
-        for ( i = _firstDiffNode; i < _prevHash.length; i++ ) {
+        if ( _firstDiffNode !== -1 ) {
+            // show new screens
+            for ( i = _firstDiffNode; i < _prevHash.length; i++ ) {
 
-            screenPath = _getScreenPath(_prevHash, i);
+                screenPath = _getScreenPath(_prevHash, i);
 
-            if ( !_screenContainer.hasOwnProperty(screenPath) ) {
-                throw "'" + screenPath + "' must be registered using self.screens()";
-            } else {
-                var screenInstance = _screen[screenPath];
-                var screenParams = _navGetParams(_prevHash[i]);
+                if ( !_screenContainer.hasOwnProperty(screenPath) ) {
+                    throw "'" + screenPath + "' must be registered using self.screens()";
+                } else {
+                    var screenInstance = _screen[screenPath];
+                    var screenParams = _navGetParams(_prevHash[i]);
 
-                screenInstance._awake(screenParams);
-                screenInstance.show();
+                    screenInstance._awake(screenParams);
+                    screenInstance.show();
+                }
+
             }
-
         }
-        
+
         iris.notify(iris.AFTER_NAVIGATION);
 
     }

@@ -40,8 +40,8 @@
             monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
             dateFormat: "m/d/Y h:i:s",
             currency: {
-                formatPos: "n",
-                formatNeg: "(n)",
+                formatPos: "sn",
+                formatNeg: "(sn)",
                 decimal: ".",
                 thousand: ",",
                 precision: 2
@@ -55,8 +55,8 @@
             monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
             dateFormat: "d/m/Y H:i:s",
             currency: {
-                formatPos: "n",
-                formatNeg: "-n",
+                formatPos: "n s",
+                formatNeg: "-n s",
                 decimal: ",",
                 thousand: ".",
                 precision: 2
@@ -89,7 +89,12 @@
   test("Currency format", function() {
     stop();
 
+    iris.locale("en_US");
     var amount = 1234.559;
+    var formatted = iris.currency(amount);
+    strictEqual(formatted, "$1,234.56", "Default currency format");
+    
+    /*var amount = 1234.559;
     iris.locale("es_ES");
     var formatted = iris.currency(amount);
     strictEqual(formatted, "1.234,56", "Currency Spanish Format");
@@ -97,7 +102,7 @@
 
     iris.locale("en_US");
     formatted = iris.currency(amount);
-    strictEqual(formatted, "1,234.56", "Currency USA Format");
+    strictEqual(formatted, "1,234.56", "Currency USA Format");*/
 
     start();
 
@@ -106,7 +111,15 @@
   test("Currency with custom format", function() {
     stop();
 
-    iris.locale(
+    var amount = 1234.559;
+    var formatted = iris.currency(amount, {
+      formatPos: "n s",
+      formatNeg: "- n s",
+      symbol : "€"
+    });
+    strictEqual(formatted, "1,234.56 €", "Custom currency format");
+
+    /*iris.locale(
       "custom-locale", {
         dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
         monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
@@ -122,12 +135,56 @@
 
     iris.locale("custom-locale");
 
-    var amount = 34.818;
     var formatted = iris.currency(amount);
-    strictEqual(formatted, "35", "Precision zero");
+    strictEqual(formatted, "35", "Precision zero");*/
 
     start();
 
+  });
+
+  test("Number format", function() {
+    stop();
+
+    var num = -3456123.89866;
+    var formatted = iris.number(num);
+    strictEqual(formatted, "- 3,456,123.90", "Custom number format");
+
+    start();
+  });
+
+  test("Number with custom format", function() {
+    stop();
+
+    var format = {
+      decimal: ",",
+      thousand: ".",
+      precision: 4
+    };
+
+    var num = -3456123.89866;
+    var formatted = iris.number(num, format);
+    strictEqual(formatted, "- 3.456.123,8987", "Custom number format");
+
+    start();
+  });
+
+  test("Number with regional format", function() {
+    stop();
+
+    iris.locale("custom",{
+      number:{
+        decimal: ",",
+        thousand: ".",
+        precision: 1
+      }
+    });
+    iris.locale("custom");
+
+    var num = -6123.89866;
+    var formatted = iris.number(num);
+    strictEqual(formatted, "- 6.123,9", "Custom number format");
+
+    start();
   });
 
   test("Get Object Value", function() {

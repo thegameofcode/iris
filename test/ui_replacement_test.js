@@ -44,7 +44,12 @@
     asyncTest("Test Create my_ui", function() {        
         window.expect(4);
         iris.welcome("test/ui_replacement/welcome.js");
-        iris.navigate("#/main");
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            iris.navigate("#/main");
+        });
     }
     );
     
