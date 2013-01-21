@@ -7,8 +7,8 @@ iris.screen(
             self.tmpl("test/bad_practices/welcome.html");
             
             self.screens("home_screen", [
-                ["#home", "test/bad_practices/home.js"],
-                ["#help", "test/bad_practices/help.js"]
+                ["home", "test/bad_practices/home.js"],
+                ["help", "test/bad_practices/help.js"]
             ]);
 
             // There is no problem the UI uses a diferent container

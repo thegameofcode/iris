@@ -8,8 +8,8 @@ iris.screen(
 
             window.raises(function () {
                 self.screens("home_screen", [
-                    ["#home", "test/bad_practices/home.js"],
-                    ["#home", "test/bad_practices/help.js"]
+                    ["home", "test/bad_practices/home.js"],
+                    ["home", "test/bad_practices/help.js"]
                 ]);
             }, "Thrown an exception when two Screens have the same #hash");
             window.start();

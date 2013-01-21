@@ -14,7 +14,7 @@ iris.screen(
                 );
             self.get("goto_home3").click(
                 function() {
-                    iris.navigate("#home3");
+                    iris.navigate("#/home3");
                 }
                 );
         };

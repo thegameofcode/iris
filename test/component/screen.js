@@ -11,7 +11,7 @@ iris.screen(function (self) {
 		self.on("destroy_ui", destroyUi);
 
 		// check screen properties
-		window.strictEqual(self.id, "#screen", "Compare screen properties: id");
+		window.strictEqual(self.id, "#/screen", "Compare screen properties: id");
 		window.strictEqual(self.fileJs, "test/component/screen.js", "Compare screen properties: fileJs");
 		window.strictEqual(self.uis.length, 0, "Compare screen properties: uis length");
 

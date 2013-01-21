@@ -6,7 +6,7 @@ iris.screen(
             self.tmpl("test/destroy_screen/help.html");
             self.get("destroy_home").click(
                 function() {
-                    iris.destroyScreen("#home");
+                    iris.destroyScreen("home");
                 }
             );
             
