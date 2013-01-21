@@ -1,10 +1,10 @@
-iris.UI(function (self) {
+iris.ui(function (self) {
 
-	self.Create = function() {
+	self.create = function() {
 		
-		self.TemplateMode(self.TEMPLATE_APPEND);
-		self.Template("example/ui/example.html");
+		self.tmplMode(self.APPEND);
+		self.tmpl("ui/example.html");
 
 	};
 
-});
+},"ui/example.js");

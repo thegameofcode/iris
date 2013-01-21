@@ -13,4 +13,4 @@ iris.screen(
 			iris.log("SLEEP AUTHOR DETAILS")
 		}
 	}
-);
+,"screen/author_details.js");

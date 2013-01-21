@@ -44,12 +44,9 @@ iris.screen(
         
         self.awake = function () {
             window.console.log("Main Screen Awaked");
-            if (iris.deferred_main !== undefined) {
-                iris.deferred_main.resolve();
-            }
         };
         
-    }
+    },
     
     
-    );
+    "test/ui_replacement/main.js");

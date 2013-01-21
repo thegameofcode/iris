@@ -10,5 +10,5 @@ iris.ui(
             window.console.log("my_ui UI Awakened");
             window.ok(true, "my_ui UI Awakened");
         };
-    }
-    );
+    },
+    "test/ui_life_cycle/my_ui.js");

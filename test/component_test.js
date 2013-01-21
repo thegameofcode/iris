@@ -178,9 +178,6 @@
     });
 
     asyncTest("Test Bindings", function() {
-
-        expect(7);
-
         iris.welcome("test/component/bindings.js");
     
     });

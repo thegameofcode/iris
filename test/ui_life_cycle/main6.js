@@ -12,5 +12,5 @@ iris.screen(
             self.destroyUI(myUI);
             window.start();
         };
-    }
-    );
+    },
+    "test/ui_life_cycle/main6.js");

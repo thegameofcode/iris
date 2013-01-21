@@ -23,15 +23,6 @@
   */
  
     iris.cache(false);
-    function createDeferred() {
-        window.deferred = {};
-        window.deferred.main = new $.Deferred();
-        window.deferred.help = new $.Deferred();
-    }
-    
-    function destroyDeferred() {
-        window.deferred = {};
-    }
     
     function clearBody() {
         var irisGeneratedCode = $("#start_iris").nextAll();
@@ -41,17 +32,13 @@
     }
     
     
-    
     module( "UI Life Cycle", {
         setup: function() {
-            window.location.hash = "";
-            clearBody();
-            createDeferred();
             iris.notify("iris-reset");
             iris.welcome("test/ui_life_cycle/welcome.js");
         },
         teardown: function () {
-            destroyDeferred();
+            clearBody();
         }
     });
     
@@ -83,11 +70,11 @@
     asyncTest("Testing sleep UI event", function() {        
         window.expect(6);
         iris.navigate("#main5");
-        window.deferred.main.done(
-            function() {
-                iris.navigate("#help");
-            }
-            );
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+            iris.navigate("#help");
+        });
     }
     );
         
@@ -100,22 +87,22 @@
     asyncTest("Testing sleep and destroy events when destroyScreen() method is called", function() {        
         window.expect(8);
         iris.navigate("#main5");
-        window.deferred.main.done(
-            function() {
-                iris.navigate("#help2");
-            }
-            );
-                
-        window.deferred.help.done(
-            function() {
-                setTimeout(function () {
-                    iris.destroyScreen("#main5");
-                    window.start();
-                }, 10);
-            }
-            );
-    }
-    );
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            iris.navigate("#help2");
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.off(iris.AFTER_NAVIGATION);
+
+                iris.destroyScreen("#main5");
+                start();
+
+            });
+
+        });
+    });
     
 
 }(jQuery));

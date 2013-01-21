@@ -1,27 +1,27 @@
-iris.Screen(function(self) {
-	var _UIs = []
-	,	_$InputIdx
+iris.screen(function(self) {
+	var uiList = []
+	,	inputIdx
 	;
 	
-	self.Create = function() {
-		self.Template("example/screen/example_destroy.html");
+	self.create = function() {
+		self.tmpl("screen/example_destroy.html");
 
-		self.$Get("btn_create").click(_Create);
-		self.$Get("btn_destroy").click(_DestroyUI);
+		self.get("btncreateUI").click(createUI);
+		self.get("btn_destroy").click(deleteUI);
 
-		_$InputIdx = self.$Get("idx");
+		inputIdx = self.get("idx");
 		
 	}
 
-	function _Create() {
-		_UIs.push(
-			self.InstanceUI("container", "example/ui/example.js")
+	function createUI() {
+		uiList.push(
+			self.ui("container", "ui/example.js")
 		);
 	}
 
-	function _DestroyUI() {
-		var idx = _$InputIdx.val();
-		self.DestroyUI(_UIs[idx]);
-		_UIs.splice(idx, 1);
+	function deleteUI() {
+		var idx = inputIdx.val();
+		self.destroyUI(uiList[idx]);
+		uiList.splice(idx, 1);
 	}
-});
+}, "screen/example_destroy.js");

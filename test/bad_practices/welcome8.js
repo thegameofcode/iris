@@ -6,11 +6,14 @@ iris.screen(
 
             self.tmpl("test/bad_practices/welcome.html");
 
-            self.screens("home_screen", [
-                ["#home", "test/bad_practices/home.js"],
-                ["#home", "test/bad_practices/help.js"]
-            ]);
+            window.raises(function () {
+                self.screens("home_screen", [
+                    ["#home", "test/bad_practices/home.js"],
+                    ["#home", "test/bad_practices/help.js"]
+                ]);
+            }, "Thrown an exception when two Screens have the same #hash");
+            window.start();
         };
 
-    }
-    );
+    },
+    "test/bad_practices/welcome8.js");

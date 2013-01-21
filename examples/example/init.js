@@ -1,34 +1,26 @@
-iris.config.Load({
-	 "environment-default" : "dev"
-	,"environments-nocache" : "dev"
-    ,"environment": {
-         "localhost" : "dev"
-    }
-    ,"log": {
-         "dev": "debug,warning,error"
-    }
-});
 
 $(document).ready(
-	function () {
-		iris.lang.LoadFrom("es-ES", "lang/es-es.js");
-		
-		
-//		iris.Regional("es-ES", {
-//			 dayNames : ["D","L","M","M","J","V","S"]
-//			,monthNames : ["E","F","M","A","M","J","J","A","S","O","N","D"]
-//			,dateFormat : "d/m/Y"
-//			,currency : {
-//				 formatPos : "n"
-//				,formatNeg : "-n"
-//				,decimal : ","
-//				,thousand : "."
-//				,precision : 2
-//			}
-//		});
-		
-//		iris.net.CacheVersion("v123");
-		
-		iris.screen.WelcomeScreen("example/screen/main.js");
-	}
+    function () {
+
+        iris.baseUri(iris.baseUri() + "examples/example/");
+        iris.translations("es-ES", "lang/es-es.js");
+        
+        
+        iris.locale(
+            "es-ES", {
+                dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+                monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+                dateFormat: "d/m/Y H:i:s",
+                currency: {
+                    formatPos: "n",
+                    formatNeg: "-n",
+                    decimal: ",",
+                    thousand: ".",
+                    precision: 2
+                }
+            }
+        );
+        
+        iris.welcome("screen/welcome.js");
+    }
 );

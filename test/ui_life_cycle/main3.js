@@ -18,5 +18,5 @@ iris.screen(
                     window.start();
                 }, 500);
         };
-    }
-    );
+    },
+    "test/ui_life_cycle/main3.js");

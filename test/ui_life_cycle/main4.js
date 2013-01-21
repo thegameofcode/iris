@@ -17,5 +17,5 @@ iris.screen(
                     self.get("create_my_ui").trigger("click");
                 }, 500);
         };
-    }
-    );
+    },
+    "test/ui_life_cycle/main4.js");

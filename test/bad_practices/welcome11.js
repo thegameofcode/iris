@@ -4,8 +4,13 @@ iris.screen(
         self.create = function () {
             window.console.log("Welcome Screen Created");
             self.tmpl("test/bad_practices/welcome.html");
-            self.tmpl("test/bad_practices/welcome.html");
+            
+            window.raises(function () {
+                self.tmpl("test/bad_practices/welcome.html");
+            }, "Thrown an exception when multiple calls happen");
+
+            window.start();
         };
 
-    }
-    );
+    },
+    "test/bad_practices/welcome11.js");

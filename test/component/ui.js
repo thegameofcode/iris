@@ -40,4 +40,4 @@ iris.ui(function (self) {
 		window.strictEqual(ui.setting("setting-param"), "nested_value", "UI Nested Settings: check default value");
 	};
 
-});
+},"test/component/ui.js");

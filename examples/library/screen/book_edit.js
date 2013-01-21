@@ -11,7 +11,7 @@ iris.screen(
 			_$Title = self.get("title")
 			_$Author = self.get("author")
 			
-			self.screens("details", [["#books/edit/details", "screen/book_details.js"]]);
+			self.screens("details", [["details", "screen/book_details.js"]]);
 		}
 		
 		self.awake = function (p_params) {
@@ -25,4 +25,4 @@ iris.screen(
 			iris.log("SLEEP BOOK EDIT")
 		}
 	}
-);
+,"screen/book_edit.js");

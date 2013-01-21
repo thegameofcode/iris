@@ -6,5 +6,5 @@ iris.screen(
             self.tmpl("test/bad_practices/help.html");
         };
 
-    }
-    );
+    },
+    "test/bad_practices/help.js");

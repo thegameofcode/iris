@@ -1,11 +1,11 @@
 <div>
 	<h2>Child Screen</h2>
 	
-	<p>2. This is the child screen what receives the parameter value from <code>self.Awake(p_params)</code> and print it:</p>
+	<p>2. This is the child screen what receives the parameter value from <code>self.awake(params)</code> and print it:</p>
 	
 	<pre>...
-self.Awake = function(p_params) {
-	self.$Get("screen_param").text(p_params["parameter"]);
+self.awake = function(params) {
+	self.get("screen_param").text(params["parameter"]);
 }
 ...</pre>
 

@@ -7,5 +7,5 @@ iris.screen(
             self.screens("home_screen", ["#home"]);
         };
 
-    }
-    );
+    },
+    "test/bad_practices/welcome3.js");

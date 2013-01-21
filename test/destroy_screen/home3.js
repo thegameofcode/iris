@@ -14,9 +14,6 @@ iris.screen(
         
         self.awake = function () {
             window.console.log("Home3 Screen Awaked");
-            if (window.deferred && window.deferred.home3) {
-                window.deferred.home3.resolve();
-            }
         };
         
         self.sleep = function () {
@@ -31,5 +28,5 @@ iris.screen(
             window.ok(true, "Home3 Screen Destroyed");
         };
 
-    }
-    );
+    },
+    "test/destroy_screen/home3.js");

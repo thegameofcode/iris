@@ -6,4 +6,4 @@ iris.screen(function (self) {
 
 	};
 
-});
+}, "test/advanced_navigation/screen1_2.js");

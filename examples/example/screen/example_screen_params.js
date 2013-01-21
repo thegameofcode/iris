@@ -1,28 +1,28 @@
-iris.Screen(function(self) {
+iris.screen(function(self) {
 
-	var _$CodeExample
-	,	_$ParamValue
+	var codeExample
+	,	paramValue
 	;
 	
-	self.Create = function() {
-		self.Template("example/screen/example_screen_params.html");
+	self.create = function() {
+		self.tmpl("screen/example_screen_params.html");
 		
-		_$ParamValue = self.$Get("input_param_value");
-		_$CodeExample = self.$Get("code_example");
+		paramValue = self.get("input_param_value");
+		codeExample = self.get("code_example");
 		
-		self.$Get("btn_send").click(_Send);
-		self.$Get("step1").hide();
+		self.get("btn_send").click(_Send);
+		self.get("step1").hide();
 		
-		self.AddScreen("screens", "#screen-parameters/child-screen", "example/screen/example_screen_params_child.js");
+		self.screens("screens", [["child-screen", "screen/example_screen_params_child.js"]]);
 	}
 	
 	function _Send () {
-		self.$Get("step1").show();
+		self.get("step1").show();
 		
-		var uri = "#screen-parameters/child-screen?parameter=" + encodeURIComponent(_$ParamValue.val());
+		var uri = "#screen-parameters/child-screen?parameter=" + encodeURIComponent(paramValue.val());
 		
-		_$CodeExample.text("iris.navigate('" + uri + "');");
+		codeExample.text("iris.navigate('" + uri + "');");
 		
 		iris.navigate(uri);
 	}
-});
+}, "screen/example_screen_params.js");

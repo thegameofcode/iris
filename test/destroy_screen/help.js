@@ -14,12 +14,9 @@ iris.screen(
         
         self.awake = function () {
             window.console.log("Help Screen Awaked");
-            if (window.deferred && window.deferred.help !== undefined) {
-                window.deferred.help.resolve();
-            }
             
         };
-    }
+    },
     
     
-    );
+    "test/destroy_screen/help.js");

@@ -32,19 +32,10 @@
     }
     
     
-    function createDeferred() {
-        iris.deferred = new $.Deferred();
-        
-    }
-    
-    
-    
     module( "UI replacement", {
         setup: function() {
-            window.location.hash = "";
             clearBody();
             iris.notify("iris-reset");
-        //createDeferred();
         },
         teardown: function () {
         }

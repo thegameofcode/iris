@@ -8,8 +8,11 @@
 
 	<input data-id="test_input_text" data-bind="person.name" type="text" />
 	<input data-id="test_input_hidden" data-bind="person.name" type="hidden" />
-	<span data-id="test_format_currency" data-bind="person.money" data-format="currency"></span>
 	
 	<textarea data-id="test_textarea" data-bind="person.name"></textarea>
+
+	<span data-id="test_format_currency" data-bind="person.money" data-format="currency"></span>
+	<span data-id="test_format_date" data-bind="person.lastLogin" data-format="date"></span>
+	<span data-id="test_format_date_params" data-bind="person.updated" data-format="date(y-m-d)"></span>
 
 </div>

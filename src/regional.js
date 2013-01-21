@@ -3,8 +3,10 @@
     var _locale, _regional;
     
     function _init() {
-        _locale = {};
+        _locale = undefined;
         _regional = {};
+
+        iris.on("iris-reset", _init);
     }
 
     iris.locale = function (p_locale, p_regional) {
@@ -27,7 +29,6 @@
     };
 
     iris.regional = function (p_label) {
-
         if(_regional.hasOwnProperty(_locale)) {
             if(typeof p_label === "undefined") {
                 return _regional[_locale];
@@ -42,7 +43,6 @@
     };
     
     _init();
-
-    iris.on("iris-reset", _init);
+    
 
 })();

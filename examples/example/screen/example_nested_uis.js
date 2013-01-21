@@ -1,10 +1,10 @@
-iris.Screen(function(self) {
+iris.screen(function(self) {
 
-	self.Create = function() {
+	self.create = function() {
 		
-		self.Template("example/screen/example_nested_uis.html");
+		self.tmpl("screen/example_nested_uis.html");
 		
-		self.InstanceUI("uis", "example/ui/nested.js");
+		self.ui("uis", "ui/nested.js");
 	}
 	
-});
+}, "screen/example_nested_uis.js");

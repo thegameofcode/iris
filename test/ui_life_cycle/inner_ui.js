@@ -22,5 +22,5 @@ iris.ui(
             window.console.log("inner_ui UI Destroyed");
             window.ok(true, "inner_ui UI Destroyed");
         };
-    }
-    );
+    },
+    "test/ui_life_cycle/inner_ui.js");

@@ -29,4 +29,4 @@ iris.screen(function (self) {
 		window.strictEqual(self.get("param").text(), PARAM_VAL);
 	}
 
-});
+},"test/component/welcome.js");
