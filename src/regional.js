@@ -35,7 +35,8 @@
             } else if(_regional[_locale].hasOwnProperty(p_label)) {
                 return _regional[_locale][p_label];
             } else {
-                throw "[regional] setting '" + p_label + "' not found for locale '" + _locale + "'";
+                return undefined;
+                //throw "[regional] setting '" + p_label + "' not found for locale '" + _locale + "'";
             }
         } else {
             throw "[regional] for locale '" + _locale + "' not found";

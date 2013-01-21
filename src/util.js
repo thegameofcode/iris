@@ -107,7 +107,7 @@
             thousand: ",",
             precision: 2
         };
-        $.extend(settings, config);
+        $.extend(settings, iris.regional("number"), config);
 
         var val = Number(value);
         var format = (val >= 0) ? settings.formatPos : settings.formatNeg;

@@ -40,8 +40,8 @@
             monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
             dateFormat: "m/d/Y h:i:s",
             currency: {
-                formatPos: "n",
-                formatNeg: "(n)",
+                formatPos: "sn",
+                formatNeg: "(sn)",
                 decimal: ".",
                 thousand: ",",
                 precision: 2
@@ -55,8 +55,8 @@
             monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
             dateFormat: "d/m/Y H:i:s",
             currency: {
-                formatPos: "n",
-                formatNeg: "-n",
+                formatPos: "n s",
+                formatNeg: "-n s",
                 decimal: ",",
                 thousand: ".",
                 precision: 2
@@ -89,6 +89,7 @@
   test("Currency format", function() {
     stop();
 
+    iris.locale("en_US");
     var amount = 1234.559;
     var formatted = iris.currency(amount);
     strictEqual(formatted, "$1,234.56", "Default currency format");
@@ -110,24 +111,12 @@
   test("Currency with custom format", function() {
     stop();
 
-    var amount = -1234.559;
-    var formatted = iris.currency(amount, {symbol:""}); // (1,234.56)
-    strictEqual(formatted, "(1,234.56)", "Custom currency format without symbol");
-
-    start();
-  });
-
-  test("Currency with custom format", function() {
-    stop();
-
-    var format = {
+    var amount = 1234.559;
+    var formatted = iris.currency(amount, {
       formatPos: "n s",
       formatNeg: "- n s",
       symbol : "€"
-    };
-
-    var amount = 1234.559;
-    var formatted = iris.currency(amount, format);
+    });
     strictEqual(formatted, "1,234.56 €", "Custom currency format");
 
     /*iris.locale(
@@ -184,8 +173,8 @@
 
     iris.locale("custom",{
       number:{
-        decimal: ".",
-        thousand: ",",
+        decimal: ",",
+        thousand: ".",
         precision: 1
       }
     });
