@@ -122,7 +122,7 @@ En esta sección se van a presentar los principales componentes de Iris y los m�
 
 ##<a name="components"></a>Componentes
 
-Iris permite estructurar la aplicación en componentes que interaccionan entre sí.
+Iris estructura la aplicación en componentes que interaccionan entre sí.
 
 Cada **componente** permite definir los elementos que conforman la interfaz de usuario. Un componente tiene dos elementos fundamentales: La vista o presentación y el comportamiento.
 
@@ -150,23 +150,25 @@ En un Screen podemos registrar otros Screens y visualizarlos al modificar el Has
 
 Un Screen puede contener otros componentes de tipo UI.
 
-En resumen: Los UIs deben pertenecer a otros UIs o a un Screen y no tienen Hash-URL. Los UIs sólo estarán visibles cuando se haya navegado al Screen al que pertenecen. Desde un Screen se puede navegar a otros Screens.
+En resumen: Los UIs deben pertenecer a otros UIs o a un Screen y no tienen Hash-URL. Los UIs sólo estarán visibles cuando se haya navegado al Screen al que pertenecen. Los *Screens* se registran en un Screen (padre) y se navega a ellos a través del Hash-URL asociado.
 
 ##<a name="life_cycle"></a>Ciclo de vida de un componente
 
 Iris establece cuatro transiciones en el ciclo de vida de un componente: *create*, *awake*, *sleep* y *destroy*. En el fichero Javascript asociado al componente, podemos definir métodos *callbacks* que serán llamados por Iris cuando el evento correspondiente se produzca.
 
-Cuando se cree un componente, Iris ejecutará el código asociado a su método **create**. Normalmente aquí cargaremos el código HTML asociado al componente y registraremos los Screens (si el componente es de tipo Screen). Este método sólo se llamará una vez en la vida de un componente. La creación de un Screen se realizará navegando al Hash-URL correspondiente o invocando,desde *Javascript*, el método *goto* de Iris. Si un Screen ya se hubiera creado, el método *goto* o escribir su Hash-URL en el navegador hará que Iris *navegue* hacia él provocando el evento *awake* (ver más adelante). La creación de un UI se realizará invocando el método *ui* del componente en el que lo queramos crear. A diferencia de lo que ocurre con los Screens, llamar al método *ui* siempre llamará al método "create" del componente ya que siempre se creará un nuevo UI.
+Cuando se cree un componente, Iris ejecutará el código asociado a su método **create**. Normalmente aquí cargaremos el código HTML asociado al componente y registraremos los Screens (si el componente es de tipo Screen). Este método sólo se llamará una vez en la vida de un componente. La creación de un Screen se realizará navegando al Hash-URL correspondiente o invocando, desde *Javascript*, el método *navigate* de Iris. Si un Screen ya se hubiera creado, el método *navigate* o escribir su Hash-URL en el navegador hará que Iris *navegue* hacia él provocando el evento *awake* (ver más adelante). La creación de un UI se realizará invocando el método *ui* del componente en el que lo queramos crear. A diferencia de lo que ocurre con los Screens, llamar al método *ui* **siempre** llamará al método "create" del componente ya que siempre se creará un nuevo UI.
 
 El evento complementario será **destroy**. Esté método, al igual que *create*, se ejecutará una única vez en la vida de un componente. La destrucción de un componente se efectuará llamando al método *destoryUI*, *destroyUIs* o *destroyScreen* dependiendo del componente de que se trate. En el caso de componentes de tipo UI, también se llamará cuando un UI sea sustituido por otro. La destrucción de un componente supondrá la destrucción de todos los componentes que contenga.
 
-<a name="awake"></a>El evento **awake** se producirá después del evento *create* y cada vez que cambie el Hash-URL asociado al Screen que se va a visualizar. El método *awake* se llamará también en los UIs que compongan el Screen. Aquí es donde habitualmente asociaremos eventos a nuestra aplicación, reproduciremos vídeo o audio, etc. En la llamada al método *awake* podemos pasar parámetros al componente para variar su comportamiento.
+<a name="awake"></a>El evento **awake** se producirá después del evento *create* y cada vez que cambie el Hash-URL asociado al Screen que se va a visualizar. El método *awake* se llamará también en los UIs que compongan el Screen. Aquí es donde habitualmente asociaremos eventos a nuestra aplicación, reproduciremos vídeo o audio, etc.
 
 Por último, el evento **sleep** es el complementario de *awake*, y se efectuará primero sobre los UIs contenidos en el Screen y luego en el propio Screen cada vez que se produzca un cambio en el Hash-URL que suponga su ocultamiento. No debemos olvidar desactivar los eventos o detener otras tareas, como la reproducción de componentes multimedia, que hayamos iniciado en el evento *awake*. Antes de que se llame al método *destroy* de un componente, se efectuará la llamada a *sleep*.
 
 Podemos ver esto gráficamente:
 
 ![Ciclo de vida](https://raw.github.com/surtich/iris/iris-grunt/docs/images/iris_life_cycle.png)
+
+Existe un método callback adicional llamado **canSleep**. Este método será invocado por Iris antes de llamar al método *Sleep*. Si el método *canSleep* devuelve *false*, Iris no navegará al Screen deseado e interrumpirá la navegación evitando que se llame al evento *sleep*. Este evento es útil si, por ejemplo, no hemos completado un formulario y queremos advertir al usuario que debe hacerlo antes de navegar a otro Screen.
 
 ##<a name="welcome"></a>Screen de bienvenida
 
@@ -371,7 +373,7 @@ En *welcome.html* sustituyamos el enlace por un botón:
 <div>
     <h1>Welcome Screen</h1>
     <p>This is the initial screen.</p>
-    <button data-id="goto_home">Click to go to Home Screen</button>
+    <button data-id="navigate_home">Click to go to Home Screen</button>
     <div data-id="screens">
         Here is where Iris will load the Home Screen
     </div>
@@ -388,12 +390,12 @@ self.create = function () {
         "#home": "home.js"
     }]);
     //The get method returns de JQuery element associated with the data-id parameter
-    self.get("goto_home").click( function() {
-        iris.goto("#home"); //It browses to the Hash-URL
+    self.get("navigate_home").click( function() {
+        iris.navigate("#home"); //It browses to the Hash-URL
     });
 };
 ```
-Observe como el método **goto** de Iris permite navegar al Hash-URL especificado y que, para capturar el evento *click* del botón, hemos utiliado el método **get** del componente de Iris que recibe el valor de su atributo *data-id*. Iris buscará un elemento en el DOM del componente con ese *data-id* y lo devolverá como un objeto de JQuery.
+Observe como el método **navigate** de Iris permite navegar al Hash-URL especificado y que, para capturar el evento *click* del botón, hemos utiliado el método **get** del componente de Iris que recibe el valor de su atributo *data-id*. Iris buscará un elemento en el DOM del componente con ese *data-id* y lo devolverá como un objeto de JQuery.
 
 Si al método *get* no se le pasara ningún argumento, Iris devolvería el objeto JQuery que corresponda con el elemento raíz del componente.
 
@@ -723,7 +725,7 @@ Para hacer esto simplemente incluiremos el siguiente código en el método *awak
 self.awake = function () {
     console.log("Welcome Screen Awakened");
     if ( !document.location.hash ) {                
-        iris.goto("#home"); //Default Screen
+        iris.navigate("#home"); //Default Screen
 
     }
 };
@@ -1018,7 +1020,7 @@ self.create = function () {
 
     self.get("create_home_screen").click(
         function() {   
-            iris.goto("#home");
+            iris.navigate("#home");
         }
     );
 
@@ -1414,7 +1416,7 @@ iris.screen(
 
 Observe que el parámetro se recibe como un atributo del objeto *params* que será pasado por Iris a la función definida en el método *awake*.
 
-También podemos pasar un parámetro en el método *goto* de Iris. Para probar esto hagamos los siguientes cambios:
+También podemos pasar un parámetro en el método *navigate* de Iris. Para probar esto hagamos los siguientes cambios:
 
 
 En *welcome.html* cambiamos el enlace por un botón:
@@ -1423,7 +1425,7 @@ En *welcome.html* cambiamos el enlace por un botón:
 <div>
     <h1>Welcome Screen</h1>
     <p>This is the initial screen.</p>
-    <button data-id="goto_home">Goto Home</button>
+    <button data-id="navigate_home">Goto Home</button>
     </br>
     <a href="#help">Click to gets some help</a>
     </br> 
@@ -1446,9 +1448,9 @@ iris.screen(
             },{
                 "#help": "help.js"
             }]);
-            self.get("goto_home").click(
+            self.get("navigate_home").click(
                 function() {
-                    iris.goto("#home?year=" + (new Date().getFullYear())); //Send the current year instead a fixed value
+                    iris.navigate("#home?year=" + (new Date().getFullYear())); //Send the current year instead a fixed value
                 }
             );
         };
@@ -2347,7 +2349,7 @@ iris.welcome("welcome.js");
 
 Observe que se le ha pasado un parámetro adicional al método *iris.screen*. Este parámetro tiene que coincidir exactamente con el parámetro que se pasa al método *iris.welcome*. Si se pasa este parámetro adicional, cuando se vaya a crear el Screen, Iris buscará si ya hay cargado en memoria un método que corresponda a este *Screen* en lugar de cargarlo desde el servidor. Y, por lo tanto, se utilizará el fichero *minificado* si se dispone de él.
 
-La misma técnica se utilizará cuando se cree un *Screen* al navegar a él por primera vez o cuando se llame al método *goto* para crear un *Screen*. De la misma forma, en los UIs deberemos definir el *UI* con el parámetro adicional que permite a Iris localizarlo. Por ejemplo, si el *UI* *my_ui* está en el directorio raíz:
+La misma técnica se utilizará cuando se cree un *Screen* al navegar a él por primera vez o cuando se llame al método *navigate* para crear un *Screen*. De la misma forma, en los UIs deberemos definir el *UI* con el parámetro adicional que permite a Iris localizarlo. Por ejemplo, si el *UI* *my_ui* está en el directorio raíz:
 
 ```js
 //In my_ui.js
@@ -3639,7 +3641,7 @@ Nota: Al igual que las anteriores, se trata de un simple ejemplo demostrativo de
             }
             );
         
-        iris.goto("#products?idCategory=2");
+        iris.navigate("#products?idCategory=2");
                 
         window.setTimeout(function() {
             $("input[type='checkbox']", "[data-id='list_products']").trigger('click');
@@ -3661,11 +3663,11 @@ Nota: Al igual que las anteriores, se trata de un simple ejemplo demostrativo de
             }
             );
         
-        iris.goto("#products?idCategory=2");
+        iris.navigate("#products?idCategory=2");
                 
         window.setTimeout(function() {
             $("input[type='checkbox']", "[data-id='list_products']").trigger('click');
-            iris.goto("#shopping");
+            iris.navigate("#shopping");
             
             window.setTimeout(function () {
                 $("button[data-id='buy']").first().trigger("click");
@@ -3680,7 +3682,7 @@ Nota: Al igual que las anteriores, se trata de un simple ejemplo demostrativo de
 }(jQuery));
 ```
 
-Observe que después de llamar al método *goto* de *Iris*, hemos tenido que provocar una espera con la función *setTimeout* de *Javascript* ya que la vista se tiene que refrescar antes de que podamos simular eventos en ella.
+Observe que después de llamar al método *navigate* de *Iris*, hemos tenido que provocar una espera con la función *setTimeout* de *Javascript* ya que la vista se tiene que refrescar antes de que podamos simular eventos en ella.
 
 ##<a name="step_by_step_grunt"></a>Automatizando procesos con *Grunt*
 
@@ -4028,7 +4030,7 @@ iris.cache(false);
             }
             );
         
-        iris.goto("#categories");
+        iris.navigate("#categories");
                 
         window.setTimeout(function() {
             $("input[type='checkbox']", "#collapse_category_2").trigger('click');
@@ -4050,11 +4052,11 @@ iris.cache(false);
             }
             );
         
-        iris.goto("#categories");
+        iris.navigate("#categories");
                 
         window.setTimeout(function() {
             $("input[type='checkbox']", "#collapse_category_2").trigger('click');
-            iris.goto("#shopping");
+            iris.navigate("#shopping");
             
             window.setTimeout(function () {
                 $("button[data-id='buy']").first().trigger("click");
