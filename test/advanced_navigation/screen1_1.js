@@ -25,6 +25,13 @@ iris.screen(function (self) {
 		if ( params.hasOwnProperty("canSleep") ) {
 			self.setting("canSleep", false);
 		}
+
+		if ( params !== undefined && params.hasOwnProperty("param") && params.hasOwnProperty("param2") ) {
+			msg = "[params] " + self.id + " param[" + params.param + "] param2[" + params.param2 + "]";
+			window.ok(true, msg);
+			iris.log(msg);
+			window.navigations.push(msg);
+		}
 	};
 
 	self.sleep = function () {

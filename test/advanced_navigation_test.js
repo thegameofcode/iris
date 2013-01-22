@@ -264,7 +264,73 @@
                 
             });
         });
+    });
 
+    asyncTest("Create welcome screen and navigate to it passing parameters", function() {
+
+        expect(5);
+
+        iris.welcome("test/advanced_navigation/welcome.js"); // +1 create, +1 awake
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            iris.navigate("#?param=value&param2=value2"); // +1 awake, +1 params
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.off(iris.AFTER_NAVIGATION);
+
+                strictEqual(window.navigations.join(","), "[create] #,[awake] #,[awake] #,[params] # param[value] param2[value2]", "The navigation map is correct"); // +1
+                start();
+            });
+        });
+
+    });
+
+    asyncTest("Navigate to a screen at level 1 with params", function() {
+
+        expect(6);
+
+        iris.welcome("test/advanced_navigation/welcome.js"); // +1 create, +1 awake
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            // this will make an async call
+            iris.navigate("#/screen1?param=value&param2=value2"); // +1 create, +1 awake, +1 param
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.off(iris.AFTER_NAVIGATION);
+                
+                strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #/screen1,[awake] #/screen1,[params] #/screen1 param[value] param2[value2]", "The navigation map is correct"); // +1
+
+                start();
+            });
+        });
+    
+    });
+
+    asyncTest("Navigate to a screen at level 2, all screens receives parameters", function() {
+
+        expect(11);
+
+        iris.welcome("test/advanced_navigation/welcome.js"); // +1 create, +1 awake
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            // this will make an async call
+            iris.navigate("#?param=valueWelcome&param2=valueWelcome-2/screen1?param=valueS1&param2=valueS1-2/screen1_1?param=valueS1_1&param2=valueS1_1-2"); // +2 create, +3 awake, +3 param
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.off(iris.AFTER_NAVIGATION);
+                
+                strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #/screen1,[create] #/screen1/screen1_1,[awake] #,[params] # param[valueWelcome] param2[valueWelcome-2],[awake] #/screen1,[params] #/screen1 param[valueS1] param2[valueS1-2],[awake] #/screen1/screen1_1,[params] #/screen1/screen1_1 param[valueS1_1] param2[valueS1_1-2]", "The navigation map is correct"); // +1
+
+                start();
+            });
+        });
+    
     });
 
 }(jQuery));
