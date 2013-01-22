@@ -53,8 +53,9 @@
 
         iris.welcome("test/component/welcome.js");
 
-        window.start();
-
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            window.start();
+        });
     });
 
     asyncTest("Navigate To Screen", function() {
