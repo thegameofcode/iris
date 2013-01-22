@@ -26,8 +26,10 @@
   * <a href="#params">Enviando parámetros a un Screen</a><br>
   * <a href="#ui_params">Paso de parámetros en UIs</a><br>
   * <a href="#canSleep">Evento *canSleep*</a><br>
-  * <a href="#settings">Paso de parámetros utilizando el método *settings*</a><br>
-  * <a href="#tmpl_settings">Paso de parámetros con el método *tmpl*</a><br>
+  * <a href="#data-settings">Paso de parámetros utilizando el atributo *data*</a><br>
+  * <a href="#settings_priority">Prioridad en el paso de parámtetros</a><br>
+  * <a href="#tmpl_settings">Paso de parámetros a la vista con el método *tmpl*</a><br>
+  * <a href="#data-bind">Paso de parámetros a la vista con el atributo *data-bind*</a><br>
   * <a href="#events">Trabajando con eventos</a><br>
   * <a href="#locals">Utilizando locales y regionales</a><br>
   * <a href="#ajax">Llamadas Ajax y servicios REST</a><br>
@@ -256,6 +258,9 @@ Observe que el método *create* ejecuta una llamada al método **tmpl** que perm
 
 Observe, además, que el método *create* recibe la función antes mencionada y, como segundo parámetro, la *URL* del fichero *Javascript* asociado. Es muy importante que la *URL* del método *iris.welcome* coincida exactamente con la que aquí pongamos.
 
+
+> El método *self.tmpl()* debe ser llamado una única vez y **OBLIGATORIAMENTE* en el método *self.create()* antes de utilizar ningún otro método del componente (*self.get(), self.destroyUI(), etc*);
+
 > Los ficheros HTML asociados a componentes de Iris deben tener un único nodo raíz (típicamente un DIV). Si hubiera comentarios en HTML deben estar dentro de este nodo.
 
 Por ejemplo:
@@ -349,7 +354,7 @@ Observe como el método **screens** permite definir los Hash-URL de los objetos 
 
 > En un Screen puede llamar al método *screens* una única vez.
 
-En nuestro ejemplo, para *navegar* el Screen debemos pulsar sobre el enlace que hemos añadido en *welcome.html* y que contine el Hash-URL del Screen al que queremos ir.
+En nuestro ejemplo, para *navegar* al Screen debemos pulsar sobre el enlace que hemos añadido en *welcome.html* y que contine el Hash-URL del Screen al que queremos ir.
 
 Cuando pulsemos sobre el enlace, Iris buscará un elemento del DOM cuyo atributo *data-id* corresponda con el contenedor pasado al método *screens* y ejecutará el fichero de *javascript* asociado al Hash-URL, concretamente llamará al método *create*, con lo cual, el contenido HTML del Screen se añadirá al contenedor.
 
@@ -808,7 +813,7 @@ Tampoco tiene nada especial el fichero *my_ui.html*:
 </div>
 ```
 
-Ahora vamos a ver las modificaciones que haremos en el Screen Home.
+Ahora vamos a ver las modificaciones en el Screen Home.
 
 El fichero *home.html* tendrá un botón que nos permita cargar el UI y un contenedor que nos permita visualizarlo.
 
@@ -838,7 +843,7 @@ self.create = function () {
 
 Los UIs son componentes no *navegables* y, por lo tanto, su activación tiene que hacerse desde Javascript de forma análoga a como se puede hacer también con los Screens. La principal diferencia con ellos es que no se registran y se cargan simplemente llamando al método *ui* del componente (en este caso del Screen Home).
 
-Este método puede recibir cuatro parámetros: el *data-id* del contenedor donde se va a cargar; el fichero Javascript asociado al UI y opcionalmente un objeto de Javascript que se pasará al UI como se explica más adelante; y por último, también de forma opcional, el *template mode* (ver explicación posterior).
+Este método puede recibir cuatro parámetros: el *data-id* del contenedor donde se va a cargar; el fichero Javascript asociado al UI; opcionalmente un objeto de Javascript que se pasará al UI como se explica más adelante; y por último, también de forma opcional, el *template mode* (ver explicación posterior).
 
 Es interesante estudiar el DOM que genera Iris tras pulsar el botón y cargar el UI:
 
@@ -1109,7 +1114,7 @@ self.create = function () {
 };
 ```
 
-Si hacemos lo anterior para destruir el Screen Home, se generará un DOM idéntico al anterior ya que el UI se destruirá junto con el Screen. La secuencia de eventos será la siguiente:
+Si hacemos lo anterior al destruir el Screen Home, se generará un DOM idéntico al anterior ya que el UI se destruirá junto con el Screen. La secuencia de eventos será la siguiente:
 
 <pre>
 Welcome Screen Created
@@ -1217,6 +1222,8 @@ Si navegamos a *#help*, podremos destruir el Screen Home. Como decíamos antes, 
 
 ##<a name="UIs_drestroy"></a>Destruyendo UIs
 
+Recuerde que un UI se destruye cuando se destruye su componente padre. Además:
+
 Para destruir UIs, Iris dispone de dos métodos: *destroyUI* y *destroyUIs*. Esto métodos son locales al componente que los vaya a destruir a diferencia de *destroyScreen* que es global.
 
 Para probar *destroyUI* tendremos el siguiente código:
@@ -1276,7 +1283,7 @@ self.create = function () {
 };
 ```
 
-En el DOM generado ha eliminado todo el contenido del UI. Tampoco aparece ninguna referencia a su contenedor (*data-id='container'*) porque estamos en modo *REPLACE*.
+En el DOM generado se ha eliminado todo el contenido del UI. Tampoco aparece ninguna referencia a su contenedor (*data-id='container'*) porque estamos en modo *REPLACE*.
 
 ```html
 <html>
@@ -1372,7 +1379,7 @@ my_ui UI Destroyed
 
 ##<a name="canSleep"></a>Evento *canSleep*
 
-Antes de llamar al evento *sleep* de un compoenente, Iris comprueba si existe un método con el nombre *canSleep*. Si ese método devuelve *false*, Iris cancelará la propagación de eventos e imperirá cambiar el hash-URL.
+Antes de llamar al evento *sleep* de un compoenente, Iris comprueba si existe un método con el nombre *canSleep*. Si este método devuelve *false*, Iris cancelará la propagación de eventos e imperirá cambiar el hash-URL.
 
 Esto puede ser útil si por ejemplo, el usuario tiene que completar un formulario antes de navegar a otro Screen.
 
@@ -1513,9 +1520,9 @@ Observe como se pasa el parámetro al Screen Home en el archivo *welcome.html*:
 <div>
     <h1>Welcome Screen</h1>
     <p>This is the initial screen.</p>
-    <a href="#home?year=2013">Click to go to Home Screen</a>
+    <a href="#/home?year=2013">Click to go to Home Screen</a>
     </br>
-    <a href="#help">Click to gets some help</a>
+    <a href="#/help">Click to gets some help</a>
     </br> 
     <div data-id="screens">
         Here is where Iris will load all the Screens
@@ -1532,13 +1539,14 @@ iris.screen(
         self.create = function () {
             console.log("Welcome Screen Created");
             self.tmpl("welcome.html"); 
-            self.screens("screens", [{
-                "#home": "home.js"
-            },{
-                "#help": "help.js"
-            }]);
+            self.screens("screens", [
+                ["home", "home.js"]
+                ,
+                ["help", "help.js"]
+            ]);
         };
-    }
+    },
+    "welcome.js"
 );
 ```
 
@@ -1559,6 +1567,7 @@ Y en *home.js*:
 ```js
 //In home.js
 
+//In home.js
 iris.screen(
     function (self) {
         self.create = function () {   
@@ -1566,9 +1575,10 @@ iris.screen(
             self.tmpl("home.html");
         };
   
-        self.awake = function (params) {  
-            console.log("Home Screen Awakened");   
-            self.get("year_parameter").text("The value of the year parameter is: " + params.year);
+        self.awake = function () {  
+            console.log("Home Screen Awakened");
+            var year = self.setting("year");
+            self.get("year_parameter").text("The value of the year parameter is: " + year);
         };
 		
         self.sleep = function () {
@@ -1578,14 +1588,26 @@ iris.screen(
         self.destroy = function () {
             console.log("Home Screen Destroyed");
         };
-    }
+    },
+    "home.js"
 );
 ```
 
-Observe que el parámetro se recibe como un atributo del objeto *params* que será pasado por Iris a la función definida en el método *awake*.
+Observe que el parámetro lo podemos recuperar utilizando el método *setting*. Este método recibe el nombre del parámtero si lo queremos leer y, opcionalmente, el valor del parámetro si lo queremos sobreescribir o crear.
+
+```js
+//Read the parameter value
+var param_value = self.setting("param_name");
+```
+
+```js
+//Write the parameter value
+self.setting("param_name" ,"param_value");
+```
+
+El valor de *param_value* puede ser cualquier tipo válido en *Javascript*, incluso un objeto o una función.
 
 También podemos pasar un parámetro en el método *navigate* de Iris. Para probar esto hagamos los siguientes cambios:
-
 
 En *welcome.html* cambiamos el enlace por un botón:
 
@@ -1595,7 +1617,7 @@ En *welcome.html* cambiamos el enlace por un botón:
     <p>This is the initial screen.</p>
     <button data-id="navigate_home">Goto Home</button>
     </br>
-    <a href="#help">Click to gets some help</a>
+    <a href="#/help">Click to gets some help</a>
     </br> 
     <div data-id="screens">
         Here is where Iris will load all the Screens
@@ -1606,23 +1628,26 @@ En *welcome.html* cambiamos el enlace por un botón:
 En *welcome.js* enviamos el parámetro:
 
 ```js
+//In welcome.js
 iris.screen(
     function (self) {
         self.create = function () {
             console.log("Welcome Screen Created");
             self.tmpl("welcome.html"); 
-            self.screens("screens", [{
-                "#home": "home.js"
-            },{
-                "#help": "help.js"
-            }]);
+            self.screens("screens", [
+                ["home", "home.js"]
+                ,
+                ["help", "help.js"]
+            ]);
             self.get("navigate_home").click(
                 function() {
-                    iris.navigate("#home?year=" + (new Date().getFullYear())); //Send the current year instead a fixed value
+                    iris.navigate("#/home?year=" + (new Date().getFullYear())); //Send the current year instead a fixed value
                 }
             );
         };
-    }
+        
+    },
+    "welcome.js"
 );
 ```
 
@@ -1660,7 +1685,8 @@ iris.screen(
                 }
             );
         };
-    }
+    },
+    "welcome.js"
 );
 ```
 
@@ -1668,7 +1694,6 @@ En *my_ui.js*:
 
 ```js
 //In my_ui.js
-
 iris.ui(
     function (self) {
         self.create = function () {   
@@ -1676,11 +1701,12 @@ iris.ui(
             self.tmpl("my_ui.html");
         };
   
-        self.awake = function (params) {  
+        self.awake = function () {  
             console.log("my_ui UI Awakened");
-            self.get("ui_number").text("This is the " + params.ui_number + " muyUI UI.");
+            self.get("ui_number").text("This is the " + self.setting("ui_number") + " muyUI UI.");
         };
-    }
+    },
+    "my_ui.js"
 );
 ```
 
@@ -1696,10 +1722,7 @@ En *my_ui.html*:
 
 Observe como el UI recibe un parámetro que indica el número de UI de que se trata.
 
-
-##<a name="settings"></a>Paso de parámetros utilizando el método *settings*
-
-Los componentes, UIs y Screens, disponen de un método alternativo al anteriormente explicado para pasar parámetros. Consiste en utilizar los métodos *settings* o *setting*.
+Los componentes, UIs y Screens, disponen de un método alternativo al anteriormente explicado para pasar parámetros. Consiste en utilizar el método *settings*.
 
 El método *settings* permite almacenar cualquier objeto de Javascript en el componente. La sintaxis de este método es:
 
@@ -1707,19 +1730,29 @@ El método *settings* permite almacenar cualquier objeto de Javascript en el com
 self.settings({...}); //any kind of Javascript object
 ```
 
-El método *setting* permite almacenar o recuperar una variable (atributo).
-
-Para almacenar un atributo:
+El ejemplo anterior, utilizando este método se habría hecho de esta manera:
 
 ```js
-self.setting(variable_name, {...});
+self.settings({
+    "year": 2013
+}); //any kind of Javascript object
 ```
 
-Para recuperar un atributo:
+Tango con el método *setting* como con *settings* se pueden pasar parámetros con varios niveles. Por ejemplo:
 
 ```js
-self.setting(variable_name);
+self.settings({ person: { name:"test name"}, money: -67890.678, region: { country: "country test" }});
 ```
+
+Para recuperar el nombre:
+
+```js
+var name = self.setting("person.name");
+```
+
+##<a name="data-settings"></a>Paso de parámetros utilizando el atributo *data*
+
+Podemos pasar parámetros desde la vista al controlador utilizando el atributo *data-*.
 
 Lo que hicimos en el ejemplo anterior, lo podemos hacer ahora de la siguiente manera:
 
@@ -1729,10 +1762,13 @@ En *welcome.html*:
 <div>
     <h1>Welcome Screen</h1>
     <p>This is the initial screen.</p>
-    <button data-id="create_my_ui">Click create a my_ui UI</button>
+    <button data-id="navigate_home">Goto Home</button>
+    </br>
+    <a href="#/help">Click to gets some help</a>
     </br> 
-    <button data-id="destroy_my_ui">Click to destroy all my_ui UIs</button>
-    <div data-id="ui_container"></div>
+    <div data-id="screens">
+        Here is where Iris will load all the Screens
+    </div> 	
 </div>
 ```
 
@@ -1741,67 +1777,84 @@ En *welcome.js*:
 ```js
 //In welcome.js
 iris.screen(
-
     function (self) {
-  
-        var my_ui_number = 0;
-
         self.create = function () {
             console.log("Welcome Screen Created");
             self.tmpl("welcome.html"); 
- 
-            self.get("create_my_ui").click(
+            self.screens("screens", [
+                ["home", "home.js"]
+                ,
+                ["help", "help.js"]
+            ]);
+            self.get("navigate_home").click(
                 function() {
-                    my_ui_number++;
-                    self.ui("ui_container", "my_ui.js", {
-                        "number": my_ui_number
-                    });
-                }
-            );
-
-            self.get("destroy_my_ui").click(
-                function() {   
-                    self.destroyUIs("ui_container");
+                    iris.navigate("#/home");
                 }
             );
         };
-
-    }
-
+        
+    },
+    "welcome.js"
 );
 ```
 
-En *my_ui.html*:
+En *home.html*:
 
 ```html
 <div>
-    <h1>my_ui UI</h1>
-    <p>This is the <span data-id="my_ui_number"></span> my_ui template.</p>
+    <h1>Home Screen</h1>
+    <p>This is the home screen.</p>
+    <div data-id="year_parameter" data-year="2013"></div>
 </div>
 ```
-En *my_ui.js*:
+
+Observe que el parámetro se pasa con el atributo *data-year*.
+
+En *home.js*:
 
 ```js
-//In my_ui.js
-
-iris.ui(
+//In home.js
+iris.screen(
     function (self) {
-        self.create = function () {
-            console.log("my_ui UI Created");
-            self.tmplMode(self.APPEND);
-            self.tmpl("my_ui.html");
+        self.create = function () {   
+            console.log("Home Screen Created");
+            self.tmpl("home.html");
         };
-        self.awake = function () {   
-            console.log("my_ui UI Awakened");
-            self.get("my_ui_number").html(self.setting("number"));
+  
+        self.awake = function () {  
+            console.log("Home Screen Awakened");
+            var year = self.setting("year");
+            self.get("year_parameter").text("The value of the year parameter is: " + year);
         };
-    }
+		
+        self.sleep = function () {
+            console.log("Home Screen Asleep");
+        };
+  
+        self.destroy = function () {
+            console.log("Home Screen Destroyed");
+        };
+    },
+    "home.js"
 );
 ```
 
-Observe como utilizamos el método *self.setting* para recuperar el valor de la variable.
+##<a name="settings_priority"></a>Prioridad en el paso de parámtetros
 
-##<a name="tmpl_settings"></a>Paso de parámetros con el método *tmpl*
+Los componentes pueden recibir parámetros de varias formas. Concretamente los *uis* pueden recibir parámetros:
+
+1. Con los métodos *setting* y *settings*.
+2. Desde la vista con el atributo *data-*.
+
+Adicionalmente, los *screens* pueden recibir parámetros:
+
+3. En el *Query String*.
+
+> Si un parámetro se pasa con el mismo nombre de varias formas, será sobreescrito con la prioridad que se ha indicado antes. Es decir, que el método más prioritario será *setting* ó *settings* prevaleciendo el valor que se haya asignado con este método.
+
+> Si se llama varias veces a *setting* o a *settings* con el mismo nombre de parámetro, prevalecerá el útlimo valor asignado.
+
+##<a name="tmpl_settings"></a>Paso de parámetros a la vista con el método *tmpl*
 
 Podemos pasar parámetros a la vista a través del método *tmpl*. Para hacerlo, debemos añadir un segundo parámetro a este método. Este parámetro será un objeto con los nombres de variables que queramos pasar y sus valores.
 
@@ -1827,6 +1880,36 @@ Por ejemplo, en *welcome.html*:
     <h1>Welcome Screen</h1>
     <p>The name is ##name##</p>
 </div>
+```
+
+> Los parámetros que se pasan a la vista con el método *tmpl* son **CONSTANTES**. Es decir, que aunque cambie su valor, no serán actualizados en la vista cuando se llame al evento *awake*. La única forma correcta de actualizar los valores recuperardos en la vista mediante *##*, es destriur y volver a crear la vista.
+
+##<a name="data-bind"></a>Paso de parámetros a la vista con el atributo *data-bind*
+
+```html
+<div>
+    <h1>Welcome Screen</h1>
+    <p>This is the initial screen.</p>
+    Name: <span data-bind="person.name"></span>
+</div>
+```
+
+```js
+//In welcome.js
+iris.screen(
+    function (self) {
+        self.create = function () {
+            console.log("Welcome Screen Created");
+            self.tmpl("welcome.html"); 
+        };
+        self.awake = function () {
+            console.log("Welcome Screen Created");
+            var data = { person: { name:"John" }};
+            self.inflate(data);
+        };
+    },
+    "welcome.js"
+);
 ```
 
 ##<a name="events"></a>Trabajando con eventos
