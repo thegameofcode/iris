@@ -1500,7 +1500,7 @@ iris.screen(
 );
 ```
 
-Observe que el método *canSleep* devuelve *false*. Esto impedirá ir a *#help* cuando pulsemos el enlace.
+Observe que el método *canSleep* devuelve *false* estó impedirá ir a *#help* cuando pulsemos el enlace.
 
 ##<a name="params"></a>Enviando parámetros a un Screen
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
