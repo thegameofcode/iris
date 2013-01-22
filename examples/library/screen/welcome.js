@@ -10,7 +10,7 @@ iris.screen(function(self) {
 		]);
 
 		if ( !document.location.hash ) {
-		    iris.navigate("#books");
+		    iris.navigate("#/books");
 		}
 	}
 

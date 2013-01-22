@@ -333,4 +333,97 @@
     
     });
 
+    asyncTest("Navigate to a screen at level 2 and navigate to its parent at level 1", function() {
+
+        expect(9);
+
+        iris.welcome("test/advanced_navigation/welcome.js"); // +1 create, +1 awake
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            iris.navigate("#/screen1/screen1_1"); // +2 create, +2 awake
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.off(iris.AFTER_NAVIGATION);
+
+                iris.navigate("#/screen1"); // +1 cansleep, +1 sleep
+
+                iris.on(iris.AFTER_NAVIGATION, function () {
+                    iris.off(iris.AFTER_NAVIGATION);
+
+                    strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #/screen1,[create] #/screen1/screen1_1,[awake] #/screen1,[awake] #/screen1/screen1_1,[canSleep] #/screen1/screen1_1,[sleep] #/screen1/screen1_1", "The navigation map is correct"); // +1
+                    start();
+                });
+            });
+        });
+    });
+
+    asyncTest("Navigate to a screen at level 2 and navigate to its parent at level 1 and finally return to the screen at level 2", function() {
+
+        expect(10);
+
+        iris.welcome("test/advanced_navigation/welcome.js"); // +1 create, +1 awake
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            iris.navigate("#/screen1/screen1_1"); // +2 create, +2 awake
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.off(iris.AFTER_NAVIGATION);
+
+                iris.navigate("#/screen1"); // +1 cansleep, +1 sleep
+
+                iris.on(iris.AFTER_NAVIGATION, function () {
+                    iris.off(iris.AFTER_NAVIGATION);
+
+                    iris.navigate("#/screen1/screen1_1"); // +1 awake
+
+                    iris.on(iris.AFTER_NAVIGATION, function () {
+                        iris.off(iris.AFTER_NAVIGATION);
+
+                        strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #/screen1,[create] #/screen1/screen1_1,[awake] #/screen1,[awake] #/screen1/screen1_1,[canSleep] #/screen1/screen1_1,[sleep] #/screen1/screen1_1,[awake] #/screen1/screen1_1", "The navigation map is correct"); // +1
+                        start();
+
+                    });
+                });
+            });
+        });
+    });
+
+    asyncTest("Navigate to a screen at level 3, then navigate to welcome screen and finally destroy the screen at level 1", function() {
+
+        expect(18);
+
+        iris.welcome("test/advanced_navigation/welcome.js"); // +1 create, +1 awake
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            var navigationHash = "#/screen1/screen1_1/screen1_1_1";
+
+            // this will make an async call
+            iris.navigate(navigationHash); // +3 create, +3 awake
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.off(iris.AFTER_NAVIGATION);
+
+                // async
+                navigationHash = "#";
+                iris.navigate(navigationHash); // +3 cansleep, +3 sleep
+
+                iris.on(iris.AFTER_NAVIGATION, function () {
+
+                    iris.destroyScreen("#/screen1"); // +3 destroy
+                    strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #/screen1,[create] #/screen1/screen1_1,[create] #/screen1/screen1_1/screen1_1_1,[awake] #/screen1,[awake] #/screen1/screen1_1,[awake] #/screen1/screen1_1/screen1_1_1,[canSleep] #/screen1/screen1_1/screen1_1_1,[canSleep] #/screen1/screen1_1,[canSleep] #/screen1,[sleep] #/screen1/screen1_1/screen1_1_1,[sleep] #/screen1/screen1_1,[sleep] #/screen1,[destroy] #/screen1/screen1_1/screen1_1_1,[destroy] #/screen1/screen1_1,[destroy] #/screen1", "The navigation map is correct"); // +1
+
+                    start();
+                });
+
+            });
+        });
+    });
+
+
 }(jQuery));

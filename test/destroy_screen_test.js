@@ -139,7 +139,7 @@
         
 
     asyncTest("Test Destroy #home after goto #home, then goto #home/home2, then goto #help", function() {
-        window.expect(4);
+        window.expect(5);
 
         iris.on(iris.AFTER_NAVIGATION, function () {
             iris.off(iris.AFTER_NAVIGATION);
@@ -165,7 +165,7 @@
                         iris.on(iris.AFTER_NAVIGATION, function () {
                             iris.off(iris.AFTER_NAVIGATION);
 
-                            iris.destroyScreen("#/home"); // +1 Home Screen Destroyed
+                            iris.destroyScreen("#/home"); // +1 Home Screen Destroyed, +1 destroy child screen
 
                             start();
 
@@ -178,7 +178,7 @@
     });
         
     asyncTest("Test Destroy #home after goto #home, then goto #home/home2, then goto #home/home2/home3, then goto #help", function() {
-        window.expect(5);
+        window.expect(7);
 
         iris.on(iris.AFTER_NAVIGATION, function () {
             iris.off(iris.AFTER_NAVIGATION);
@@ -209,7 +209,7 @@
                             iris.on(iris.AFTER_NAVIGATION, function () {
                                 iris.off(iris.AFTER_NAVIGATION);
 
-                                iris.destroyScreen("#/home"); // +1 Home Screen Destroyed
+                                iris.destroyScreen("#/home"); // +1 Home Screen Destroyed, +2 destroy screen childs
 
                                 start();
                             });
@@ -226,7 +226,7 @@
     );
         
     asyncTest("Test Destroy #home/home2 after goto #home, then goto #home/home2, then goto #home/home2/home3, then goto #home", function() {
-        window.expect(5);
+        window.expect(6);
 
         iris.on(iris.AFTER_NAVIGATION, function () {
             iris.off(iris.AFTER_NAVIGATION);
@@ -257,7 +257,7 @@
                             iris.on(iris.AFTER_NAVIGATION, function () {
                                 iris.off(iris.AFTER_NAVIGATION);
 
-                                iris.destroyScreen("#/home/home2"); // +1 Home2 Screen Destroyed
+                                iris.destroyScreen("#/home/home2"); // +1 Home2 Screen Destroyed, +1 screen child
 
                                 start();
                             });
