@@ -9,8 +9,8 @@ iris.screen(
 			
 			self.screens("screens", [["edit", "screen/book_edit.js"]]);
 
-			if ( document.location.hash == "#books" ) {
-				iris.navigate("#books/edit");
+			if ( document.location.hash == "#/books" ) {
+				iris.navigate("#/books/edit");
 			}
 		}
 		
@@ -23,7 +23,7 @@ iris.screen(
 		}
 		
 		function gotoSleep () {
-			iris.navigate("#books/edit?t=Title&a=Author")
+			iris.navigate("#/books/edit?t=Title&a=Author")
 		}
 		
 	}

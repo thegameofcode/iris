@@ -146,15 +146,6 @@
     }
 
     function _startHashChange() {
-        
-        // when a screen cannot sleep then window.history.back() & and finish navegation process
-        if(_gotoCancelled) {
-            _gotoCancelled = false;
-            iris.notify(iris.AFTER_NAVIGATION);
-            return false;
-        }
-
-
 
         // when document.location.href is [http://localhost:8080/#] then document.location.hash is [] (empty string)
         // to avoid the use of empty strings and prevent mistakes, we replace it by #. (# == welcome-screen)
@@ -167,71 +158,91 @@
         if ( _lastFullHash === hash ) {
             return false;
         }
-
-        iris.notify(iris.BEFORE_NAVIGATION);
+        
+        // when a screen cannot sleep then window.history.back() & and finish navegation process
+        if(_gotoCancelled) {
+            _gotoCancelled = false;
+            iris.notify(iris.AFTER_NAVIGATION);
+            _lastFullHash = _prevHashString;
+            return false;
+        }
 
         if(!_welcomeCreated) {
             throw "set the first screen using iris.welcome()";
         }
 
 
+        iris.notify(iris.BEFORE_NAVIGATION);
+        _lastFullHash = hash;
+
         
         var curr = hash.split("/"), i, screenPath;
-        _lastFullHash = hash;
-        _firstDiffNode = -1;
+        var firstDiffNode = -1;
         if ( _prevHash !== undefined ) {
 
-            // get firstDiffNode
+            // get firstDiffNode attending to current hash
             for ( i = 0; i < curr.length; i++ ) {
                 if ( _prevHash[i] === undefined || _prevHash[i] !== curr[i] ) {
-                    _firstDiffNode = i;
+                    firstDiffNode = i;
                     break;
                 }
                 
             }
 
-            // if goto welcome screen [curr.length === 1] and there are not differents [_firstDiffNode === -1],
+            // This case:
+            // prev = #/s1/s2
+            // curr = #/s1
+            // we need sleep s2, therefor firstNodeToSleep = curr.length
+            var firstNodeToSleep = firstDiffNode;
+            if ( (firstNodeToSleep === -1) && (curr.length < _prevHash.length) ) {
+                firstNodeToSleep = curr.length;
+
+            // if welcome screen has been changed firstDiffNode == 0, and there are not previous screens to sleep, _prevHash.length == 1
+            // ignore cansleep and sleep of welcome screen, firstNodeToSleep = -1
+            } else if ( firstDiffNode === 0 && _prevHash.length === 1 ) {
+                firstNodeToSleep = -1;
+            }
+
+            // if goto welcome screen [curr.length === 1] and there are not differents [firstDiffNode === -1],
             // then sleep the previous screens except welcome screen
-            if ( curr.length === 1 && _firstDiffNode === -1 ) {
-                _firstDiffNode = 1;
+            if ( curr.length === 1 && firstDiffNode === -1 ) {
+                firstDiffNode = 1;
             }
 
 
-            if ( _firstDiffNode !== -1 ) {
 
-                // if welcome screen has been changed _firstDiffNode == 0, and there are not previous screens to sleep, _prevHash.length == 1
-                // ignore cansleep and sleep of welcome screen
-                if ( !(_firstDiffNode === 0 && _prevHash.length === 1) ) {
 
-                    // check if can sleep
-                    for ( i = _prevHash.length-1; i >= _firstDiffNode; i-- ) {
+            if ( firstNodeToSleep !== -1 ) {
 
-                        screenPath = _getScreenPath(_prevHash, i);
-                        if( _screen[screenPath].canSleep() === false ) {
-                            _gotoCancelled = true;
-                            document.location.href = _prevHashString;
-                            return false;
-                        }
-                    }
+                // check if can sleep
+                for ( i = _prevHash.length-1; i >= firstNodeToSleep; i-- ) {
 
-                    // hide previous screens
-                    for ( i = _prevHash.length - 1; i >= _firstDiffNode; i-- ) {
-                        var screenToSleep = _screen[ _getScreenPath(_prevHash, i) ];
-                        screenToSleep._sleep();
-                        screenToSleep.hide();
+                    screenPath = _getScreenPath(_prevHash, i);
+                    if( _screen[screenPath].canSleep() === false ) {
+                        _gotoCancelled = true;
+                        document.location.href = _prevHashString;
+                        return false;
                     }
                 }
+
+                // hide previous screens
+                for ( i = _prevHash.length - 1; i >= firstNodeToSleep; i-- ) {
+                    var screenToSleep = _screen[ _getScreenPath(_prevHash, i) ];
+                    screenToSleep._sleep();
+                    screenToSleep.hide();
+                }
+
 
             }
 
         } else {
-            _firstDiffNode = 0;
+            firstDiffNode = 0;
         }
 
         // check if new screens are loaded
         _notLoadedScreens = [];
-        if ( _firstDiffNode !== -1 ) {
-            for ( i = _firstDiffNode; i < curr.length; i++ ) {
+        if ( firstDiffNode !== -1 ) {
+            for ( i = firstDiffNode; i < curr.length; i++ ) {
 
                 screenPath = _getScreenPath(curr, i);
                 if(!_screen.hasOwnProperty(screenPath)) {
@@ -243,6 +254,7 @@
         // set navigation variables to the next hashchange event
         _prevHash = curr;
         _prevHashString = hash;
+        _firstDiffNode = firstDiffNode;
 
         if ( _notLoadedScreens.length > 0 ) {
             _loadNewScreens();
@@ -260,7 +272,6 @@
         }
 
         if ( _notLoadedScreens.length > 0 ) {
-
             var path = _notLoadedScreens.splice(0,1)[0];
             var fileJs = _screenJsUrl[path];
 
@@ -279,7 +290,6 @@
     }
 
     function _FinishHashChange () {
-
         var i, screenPath;
         if ( _firstDiffNode !== -1 ) {
             // show new screens
@@ -300,7 +310,6 @@
         }
 
         iris.notify(iris.AFTER_NAVIGATION);
-
     }
 
     function _removeURLParams(p_url) {
@@ -489,19 +498,37 @@
         return screenObj;
     }
 
-    function _destroyScreen(p_screenPath) {
+    function _destroyScreenByPath(p_screenPath) {
         
         if(_screen.hasOwnProperty(p_screenPath)) {
-
-            var screenToDestroy = _screen[p_screenPath];
 
             if ( p_screenPath === "#" ) {
                 throw "Welcome screen cannot be deleted";
             }
 
-            if ( (p_screenPath.indexOf(document.location.hash) === 0) || (document.location.hash.indexOf(p_screenPath) === 0) ) {
+
+            var hash = document.location.hash;
+
+            // if url=http://example.com/#, the document.location.hash="" empty string
+            // check if current screen is welcome screen (hash !== "")
+            // check if the current hash belongs to the path to delete
+            if ( (hash !== "") && (p_screenPath.indexOf(hash) === 0 || hash.indexOf(p_screenPath) === 0) ) {
                 throw "Cannot delete the current screen or its parents";
             }
+
+            _destroyScreen(p_screenPath);
+            
+        } else {
+            iris.log("Error removing the screen \"" + p_screenPath + "\", path not found.");
+        }
+    }
+
+    function _destroyScreen (path) {
+
+        var screen = _screen[path];
+
+        // the screen can be register using self.screens() but no instanciated using navigation
+        if ( screen !== undefined ) {
 
             // destroy child screens
             if ( screen.screenChilds !== undefined ) {
@@ -509,17 +536,15 @@
                     _destroyScreen(screen.screenChilds[i]);
                 }
             }
-            
-            screenToDestroy._destroy();
-            screenToDestroy.get().remove();
-            delete _jsUrlScreens[_screenJsUrl[p_screenPath]];
-            delete _screen[p_screenPath];
-            delete _screenJsUrl[p_screenPath];
-            delete _screenContainer[p_screenPath];
-            
-        } else {
-            iris.log("Error removing the screen \"" + p_screenPath + "\", path not found.");
+
+            screen._destroy();
+            screen.get().remove();
+            delete _jsUrlScreens[_screenJsUrl[path]];
+            delete _screen[path];
+            delete _screenJsUrl[path];
+            delete _screenContainer[path];
         }
+
     }
 
     function _tmplParse(p_html, p_data, p_htmlUrl) {
@@ -938,7 +963,7 @@
     
     iris.include = _include;
     iris.screen = _registerScreen;
-    iris.destroyScreen = _destroyScreen;
+    iris.destroyScreen = _destroyScreenByPath;
     iris.welcome = _welcome;
     iris.navigate = _goto;
     iris.ui = _registerUI;

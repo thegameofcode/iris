@@ -33,7 +33,7 @@ iris.screen(
 		}
 		
 		function gotoSleep () {
-			iris.navigate("#authors/edit?t=Title&a=Author")
+			iris.navigate("#/authors/edit?t=Title&a=Author")
 		}
 		
 	}
