@@ -25,7 +25,7 @@
   * <a href="#UIs_drestroy">Destruyendo UIs</a><br>
   * <a href="#params">Enviando parámetros a un Screen</a><br>
   * <a href="#ui_params">Paso de parámetros en UIs</a><br>
-  * <a href="#canSleep">Evento *canSeelp*</a><br>
+  * <a href="#canSleep">Evento *canSleep*</a><br>
   * <a href="#settings">Paso de parámetros utilizando el método *settings*</a><br>
   * <a href="#tmpl_settings">Paso de parámetros con el método *tmpl*</a><br>
   * <a href="#events">Trabajando con eventos</a><br>
@@ -1370,7 +1370,7 @@ my_ui UI Asleep
 my_ui UI Destroyed
 </pre>
 
-##<a name="canSleep"></a>Evento *canSeelp*
+##<a name="canSleep"></a>Evento *canSleep*
 
 Antes de llamar al evento *sleep* de un compoenente, Iris comprueba si existe un método con el nombre *canSleep*. Si ese método devuelve *false*, Iris cancelará la propagación de eventos e imperirá cambiar el hash-URL.
 
