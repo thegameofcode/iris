@@ -179,7 +179,6 @@
         var curr = hash.split("/"), i, screenPath;
         _lastFullHash = hash;
         _firstDiffNode = -1;
-        
         if ( _prevHash !== undefined ) {
 
             // get firstDiffNode
@@ -191,31 +190,40 @@
                 
             }
 
+            // if goto welcome screen [curr.length === 1] and there are not differents [_firstDiffNode === -1],
+            // then sleep the previous screens except welcome screen
             if ( curr.length === 1 && _firstDiffNode === -1 ) {
                 _firstDiffNode = 1;
             }
 
-            // if previous hash is not # (the welcome screen)
+
             if ( _firstDiffNode !== -1 ) {
 
-                // check if can sleep
-                for ( i = _prevHash.length-1; i >= _firstDiffNode; i-- ) {
+                // if welcome screen has been changed _firstDiffNode == 0, and there are not previous screens to sleep, _prevHash.length == 1
+                // ignore cansleep and sleep of welcome screen
+                if ( !(_firstDiffNode === 0 && _prevHash.length === 1) ) {
 
-                    screenPath = _getScreenPath(_prevHash, i);
-                    if( _screen[screenPath].canSleep() === false ) {
-                        _gotoCancelled = true;
-                        document.location.href = _prevHashString;
-                        return false;
+                    // check if can sleep
+                    for ( i = _prevHash.length-1; i >= _firstDiffNode; i-- ) {
+
+                        screenPath = _getScreenPath(_prevHash, i);
+                        if( _screen[screenPath].canSleep() === false ) {
+                            _gotoCancelled = true;
+                            document.location.href = _prevHashString;
+                            return false;
+                        }
+                    }
+
+                    // hide previous screens
+                    for ( i = _prevHash.length - 1; i >= _firstDiffNode; i-- ) {
+                        var screenToSleep = _screen[ _getScreenPath(_prevHash, i) ];
+                        screenToSleep._sleep();
+                        screenToSleep.hide();
                     }
                 }
 
-                // hide previous screens
-                for ( i = _prevHash.length - 1; i >= _firstDiffNode; i-- ) {
-                    var screenToSleep = _screen[ _getScreenPath(_prevHash, i) ];
-                    screenToSleep._sleep();
-                    screenToSleep.hide();
-                }
             }
+
         } else {
             _firstDiffNode = 0;
         }
@@ -226,7 +234,6 @@
             for ( i = _firstDiffNode; i < curr.length; i++ ) {
 
                 screenPath = _getScreenPath(curr, i);
-    //iris.log("check new screens screenPath["+screenPath+"] p["+_getScreenPath(curr, i)+"] curr["+curr+"] i["+i+"]")
                 if(!_screen.hasOwnProperty(screenPath)) {
                     _notLoadedScreens.push(screenPath);
                 }
@@ -274,7 +281,6 @@
     function _FinishHashChange () {
 
         var i, screenPath;
-
         if ( _firstDiffNode !== -1 ) {
             // show new screens
             for ( i = _firstDiffNode; i < _prevHash.length; i++ ) {
@@ -286,7 +292,6 @@
                 } else {
                     var screenInstance = _screen[screenPath];
                     var screenParams = _navGetParams(_prevHash[i]);
-
                     screenInstance._awake(screenParams);
                     screenInstance.show();
                 }
