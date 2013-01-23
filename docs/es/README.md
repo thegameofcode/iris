@@ -31,6 +31,7 @@
   * <a href="#tmpl_settings">Paso de parámetros a la vista con el método *tmpl*</a><br>
   * <a href="#data-bind">Paso de parámetros a la vista con el atributo *data-bind*</a><br>
   * <a href="#events">Trabajando con eventos</a><br>
+  * <a href="#events_globals">Eventos globales</a><br>
   * <a href="#locals">Utilizando locales y regionales</a><br>
   * <a href="#ajax">Llamadas Ajax y servicios REST</a><br>
   * <a href="#production">Paso a producción</a><br>
@@ -131,7 +132,7 @@ Cada **componente** permite definir los elementos que conforman la interfaz de u
 
 La **vista** consiste en un fragmento de código en HTML, típicamente un *DIV*, almacenado en un fichero, normalmente con extensión *.html*.
 
-El **comportamiento** es un fragmento de código en Javascript almacenado en un fichero, típicamente con extensión *.js*. Cuando un componente se activa (<a href="#awake">ver más adelante</a>), puede recibir parámetros que permiten modificar su comportamiento.
+El **comportamiento** es un fragmento de código en Javascript almacenado en un fichero, típicamente con extensión *.js*. Mediante ste fichero controlamos e interaccionamos con la vista. Cuando un componente se activa (<a href="#awake">ver más adelante</a>), puede recibir parámetros que permiten modificar su comportamiento.
 
 ![Definición de comportamiento](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/component_equation.png)
 
@@ -178,7 +179,7 @@ Los Screens tienen método callback adicional llamado **canSleep**. Este método
 Toda aplicación Iris debe definir un componente inicial que se cargará al principio y antes de efectuar cualquier operación con Iris. Este componente será un <a href="#screen">Screen</a> especial ya que tiene algunas diferencias con lo explicado anteriormente:
 * El Screen de bienvenida tiene el símbolo *#* como Hash-URL asociado y se carga con el método **welcome** de Iris.
 * En una aplicación Iris, normalmente, no habrá necesidad de refrescar o de modificar la *URL* sobre la que se carga el Screen de bienvenida.
-* Por lo tanto, tampoco será necesario llamar al método *destroy* de este Screen. Es decir, que el ciclo de vida de este Screen se simplifica ya que únicamente se hará una primera llamada al método *create* y una segunda al método *awake*. No habrá, por lo tanto, llamadas a *sleep* o a *destroy*. Puede haber, sin embargo, varias llamadas a *Awake* cuando se pasan parámetros como se explica más adelante.
+* Por lo tanto, tampoco será necesario llamar al método *destroy* de este Screen. Es decir, que el ciclo de vida de este Screen se simplifica ya que únicamente se hará una primera llamada al método *create* y nunca se llamará al método *destroy*. Puede haber, sin embargo, varias llamadas a *awake* o a *sleep* cuando se pasan parámetros como se explica más adelante.
 * Lo habitual es que el cometido del Screen de bienvenida sea registrar otros Screens y *llamar* al Hash-URL del Screen inicial de nuestra aplicación.
 * Todos los demás Screens son hijos de este Screen y, por lo tanto, su Hash.URL tendrá la forma "#/...".
 
@@ -254,7 +255,7 @@ Cuando se ejecute el método *iris.welcome*, Iris creará un objeto de tipo Scre
 
 Observe que el método *create* ejecuta una llamada al método **tmpl** que permite cargar en el DOM el contenido del archivo *welcome.html* pasado como parámetro.
 
-Observe, además, que el método *create* recibe la función antes mencionada y, como segundo parámetro, la *URL* del fichero *Javascript* asociado. Es muy importante que la *URL* del método *iris.welcome* coincida exactamente con la que aquí pongamos.
+Observe, además, que el método *iris.screen* recibe la función antes mencionada y, como segundo parámetro, la *URL* del fichero *Javascript* asociado. Es muy importante que la *URL* del método *iris.welcome* coincida exactamente con la que aquí pongamos.
 
 
 > El método *self.tmpl()* debe ser llamado una única vez y **OBLIGATORIAMENTE* en el método *self.create()* antes de utilizar ningún otro método del componente (*self.get(), self.destroyUI(), etc*);
@@ -350,9 +351,9 @@ Y dejamos el fichero asociado *welcome.html* de la siguiente manera:
 
 Observe como el método **screens** permite definir los Hash-URL de los objetos de tipo Screen. Este método recibe dos parámetros: El primer parámetro define el elemento de HTML dentro del cual será cargado el Screen cuando su Hash-URL sea invocado; el segundo parámetro es un *array de arrays*. Los arrays internos permiten registrar cada Screen poniendo como primer valor el *Hash* sin el símbolo *#* y como segundo el fichero de comportamiento asociado.
 
-> En el registro, el hash-URL se pone de forma **relativa** y sin el símbolo *#*.
+> En el registro de Screens, el hash-URL se pone de forma **relativa** y sin el símbolo *#*.
 
-Por ejemplo, en nuestro caso registramos el Screen *Home* que pertecene al  Screen *Welcome*, con el hash-URL *home*.
+Por ejemplo, en nuestro caso registramos el Screen *Home* que pertecene al Screen *Welcome*, con el hash-URL *home*.
 
 > Un Screen puede llamar al método *screens* una única vez.
 
@@ -362,7 +363,7 @@ En nuestro ejemplo, para *navegar* al Screen debemos pulsar sobre el enlace que 
 
 > El Screen *Welcome* siempre tiene el símbolo *#* como hash-URL asociado.
 
-Como el Screen *Home* pertenece al Screen *Welcome*, su ruta de acceso será: */#/home*
+Como el Screen *Home* pertenece al Screen *Welcome*, su ruta de acceso será: */#/home*. Recuerde que el símolo *#* identifica al Screen Welcome.
 
 Cuando pulsemos sobre el enlace, Iris buscará un elemento del DOM cuyo atributo *data-id* corresponda con el contenedor pasado al método *screens* y ejecutará el fichero de *javascript* asociado al Hash-URL; concretamente, llamará al método *create*, con lo cual, el contenido HTML del Screen se añadirá al contenedor.
 
@@ -778,7 +779,7 @@ self.awake = function () {
 
 ##<a name="uis"></a>Visualizando UIs
 
-En este apartado vamos a aprender a trabajar con UIs. Los UIs son componentes reutiizables para definir la interfaz de usuario. Un UI pertenece a un Screen o a otro UI.
+En este apartado vamos a aprender a trabajar con UIs. Los UIs son componentes reutilizables para definir la interfaz de usuario. Un UI pertenece a un Screen o a otro UI.
 
 Los UIs tienen muchas analogías con los Screens por lo que si no lo ha hecho todavía, revise la sección anterior.
 
@@ -810,7 +811,7 @@ iris.ui(
     "my_ui.js"
 );
 ```
-La única diferencia que encontramos aquí con respecto a lo explicado en los Screens es que el método se llama **ui** en vez de *screen*.
+La única diferencia que encontramos aquí con respecto a lo explicado en los Screens es que el método se llama **iris.ui** en vez de *iris.screen*.
 
 Tampoco tiene nada especial el fichero *my_ui.html*:
 
@@ -984,7 +985,7 @@ Aquí hay poco que comentar. Tan sólo que los UIs, al igual que los Screens, ti
 
 ##<a name="some_UIs"></a>Añadiendo varios UIs a un mismo contenedor
 
-Anteriormente hemos visto que cuando añadimos un UI, su contenedor es reemplazado por la vista del UI. Este comportamiento se puede modificar.
+Anteriormente hemos visto que cuando añadimos un UI, su contenedor es reemplazado por la vista del UI. Este comportamiento se puede cambiar.
 
 Para mostrar como hacer esto, modifiquemos el método *create* del UI *my_ui*:
 
@@ -1210,6 +1211,7 @@ iris.screen(
         };   
         self.awake = function () {   
             console.log("Home Screen Awakened");
+            iris.navigate("#/home/inner_home");
         };
 
         self.sleep = function () {
@@ -1223,16 +1225,15 @@ iris.screen(
     "home.js"
 );
 ```
-Observe que estando en el hash-URL *#inner_home*, si pulsamos el botón de destruir el Screen Home, Iris da un error indicando que no podemos destruir el padre del Screen actual.
+Observe que estando en el hash-URL *#/home/inner_home*, si pulsamos el botón de destruir el Screen Home, Iris da un error indicando que no podemos destruir el padre del Screen actual.
 
 Si navegamos a *#help*, podremos destruir el Screen Home. Como decíamos antes, la destrucción del Screen Home no eliminará su registro, sin embargo sí se eliminará el registro del Screen Inner_home.
-
 
 ##<a name="UIs_destroy"></a>Destruyendo UIs
 
 Recuerde que un UI se destruye cuando se destruye su componente padre. Además:
 
-Para destruir UIs, Iris dispone de dos métodos: *destroyUI* y *destroyUIs*. Esto métodos son locales al componente que los vaya a destruir a diferencia de *destroyScreen* que es global.
+Para destruir UIs, Iris dispone de dos métodos: *self.destroyUI* y *self.destroyUIs*. Esto métodos son locales al componente que los vaya a destruir a diferencia de *iris.destroyScreen* que es global.
 
 Para probar *destroyUI* tendremos el siguiente código:
 
@@ -1291,7 +1292,7 @@ self.create = function () {
 };
 ```
 
-En el DOM generado se ha eliminado todo el contenido del UI. Tampoco aparece ninguna referencia a su contenedor (*data-id='container'*) porque estamos en modo *REPLACE*.
+En el DOM generado, se ha eliminado todo el contenido del UI. Tampoco aparece ninguna referencia a su contenedor (*data-id='container'*) porque estamos en modo *REPLACE*.
 
 ```html
 <html>
@@ -1308,7 +1309,7 @@ En el DOM generado se ha eliminado todo el contenido del UI. Tampoco aparece nin
 </html>
 ```
 
-Si descomentamos la línea que asigna el *tmplMode* a *APPEND* en el fichero *my_ui.js*, y pulsamos varias veces sobre botón que crea el UI seguida de una pulsación sobre el que lo destruye, sólo se eliminará el último UI creado ya que la referencia la habremos ido reemplazando a medida que creamos nuevos UIs.
+Si descomentamos la línea que asigna *APPEND* al *tmplMode* en el fichero *my_ui.js*, y pulsamos varias veces sobre botón que crea el UI seguida de una pulsación sobre el que lo destruye, sólo se eliminará el último UI creado ya que la referencia la habremos ido reemplazando a medida que creamos nuevos UIs.
 
 Podríamos eliminar todos los UIs si los hubiéramos ido almacenando en un *array*. Aunque también lo podemos hacer si utilizamos el método *destroyUIs* como se explica en el siguiente ejemplo:
 
@@ -1389,7 +1390,7 @@ my_ui UI Destroyed
 
 Antes de llamar al evento *sleep* de un screen, Iris comprueba si existe un método con el nombre *canSleep*. Si este método devuelve *false*, Iris cancelará la propagación de eventos e imperirá cambiar el hash-URL.
 
-Esto puede ser útil si por ejemplo, el usuario tiene que completar un formulario antes de navegar a otro Screen.
+Esto puede ser útil si, por ejemplo, el usuario tiene que completar un formulario antes de navegar a otro Screen.
 
 Veamos un ejemplo:
 
@@ -1515,12 +1516,16 @@ iris.screen(
 );
 ```
 
-Observe que el método *canSleep* devuelve *false*. Esto impedirá ir a *#help* cuando pulsemos el enlace.
+Observe que el método *canSleep* devuelve *false*. Esto impedirá ir a *#help* cuando pulsemos sobre el enlace.
 
 ##<a name="querystring_params"></a>Enviando parámetros a un Screen
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-En las siguientes secciones vamos a ver diversas formas de pasar parámetros entre componentes. Una forma de pasar un parámetro a un Screen es en el *[Query String](http://en.wikipedia.org/wiki/Query_string)* de la URL.
+En esta y en las siguientes secciones vamos a ver diversas formas de pasar parámetros entre componentes. 
+
+Comencemos por el paso de parámetros a Screens:
+
+Una forma de pasar un parámetro a un Screen es en el *[Query String](http://en.wikipedia.org/wiki/Query_string)* de la URL.
 
 Observe como se pasa el parámetro al Screen Home en el archivo *welcome.html*:
 
@@ -1644,7 +1649,7 @@ iris.screen(
 );
 ```
 
-Se pueden pasar parámetros simultáneamente varios Screens (padres e hijos). En el siguiente ejemplo pasamos un parámetro al Screen Welcome y otro al Screen Home.
+Se pueden pasar parámetros simultáneamente a varios Screens (padres e hijos). En el siguiente ejemplo pasamos un parámetro al Screen Welcome y otro al Screen Home.
 
 El Screen Home queda inalterado:
 
@@ -1764,7 +1769,7 @@ Este es un caso particular del ciclo de vida de los *screens*:
 
 Los componentes de Iris (UIs y Screens) pueden recibir parámetros utilizando los métodos *self.setting* o *self.settings*. 
 
-El método *setting* recibe el nombre del parámtero si lo queremos leer y, opcionalmente, el valor del parámetro si lo queremos sobreescribir o crear.
+El método *setting* recibe el nombre del parámetro si lo queremos leer y, opcionalmente, el valor del parámetro si lo queremos sobreescribir o crear.
 
 ```js
 //Read the parameter value
@@ -2028,13 +2033,13 @@ Observe que el parámetro *year* se pasa en el método *self.ui* del Screen y se
 
 ##<a name="settings_prioroty"></a>Prioridad en el paso de parámetros
 
-Los componentes pueden recibir parámetros de varias formas. Concretamente, los *uis* pueden recibir parámetros:
+Los componentes pueden recibir parámetros de varias formas. Concretamente, los *UIs* pueden recibir parámetros:
 
 1. Con los métodos *self.etting* y *self.settings*.
 2. En el método *self.ui* del componente padre.
 3. Desde la vista con el atributo *data-* en el contenedor del padre del UI.
 
-Todos estas alternativas comparten el mismo objeto *settings* de *javascript* con lo que si utilizamos en mismo nombre de parámetro de varias formas diferentes, el valor del parámetro resultará sobreescrito.
+Todos estas alternativas comparten el mismo objeto *settings* de *javascript* con lo que si pasamos un mismo nombre de parámetro de varias formas diferentes, el valor del parámetro resultará sobreescrito.
 
 El orden de prioridad es el que se ha reflejado en la lista anterior, aunque el valor final resultante dependerá de en qué momento del ciclo de vida fijemos el parámetro.
 
@@ -2074,8 +2079,8 @@ iris.ui(
     function (self) {
         self.create = function () {
             console.log("my_ui UI Created");
-            self.setting("year", 2015);
             self.tmpl("my_ui.html");
+            self.setting("year", 2015);
         };
         self.awake = function () {   
             console.log("my_ui UI Awakened");
@@ -2111,7 +2116,7 @@ Si hacemos varias llamadas a *self.setting* o a *self.settings* el valor del par
 
 > Si un parámetro se pasa con el mismo nombre de varias formas, será sobreescrito con la prioridad que se ha indicado antes. Es decir, que el método más prioritario será *setting* ó *settings* prevaleciendo el valor que se haya asignado con este método.
 
-> Si se llama varias veces a *setting* o a *settings* con el mismo nombre de parámetro, prevalecerá el útlimo valor asignado.
+> Si se llama varias veces a *setting* o a *settings* con el mismo nombre de parámetro, prevalecerá el último valor asignado.
 
 ##<a name="tmpl_settings"></a>Paso de parámetros a la vista con el método *tmpl*
 
@@ -2141,11 +2146,11 @@ Por ejemplo, en *welcome.html*:
 </div>
 ```
 
-> Los parámetros que se pasan a la vista con el método *tmpl* son **CONSTANTES**. Es decir, que aunque cambie su valor, no serán actualizados en la vista cuando se llame al evento *awake*. La única forma correcta de actualizar los valores recuperardos en la vista mediante *##..##*, es destriur y volver a crear la vista.
+> Los parámetros que se pasan a la vista con el método *tmpl* son **CONSTANTES**. Es decir, que aunque cambie su valor, no serán actualizados en la vista cuando se llame al evento *awake*. La única forma correcta de actualizar los valores recuperados en la vista mediante *##..##*, es destriur y volver a crear la vista.
 
 ##<a name="data-bind"></a>Paso de parámetros a la vista con el atributo *data-bind*
 
-Iris dispone de una forma alternativa de pasar parámetros a la vista utlizando el atributo *data-bind*. La diferencia con el anterior es que Iris actualzará el valor de los parámetros pasados mediante *data-bind* cuando se invoque el método *self.inflate* en el componente.
+Iris dispone de una forma alternativa de pasar parámetros a la vista utlizando el atributo *data-bind*. La diferencia con el anterior es que Iris actualzará el valor de los parámetros pasados mediante *data-bind* cuando se invoque el método *self.inflate* en el controlador del componente.
 
 Veamos un en ejemplo.
 
@@ -2255,8 +2260,8 @@ iris.screen(
             my_ui_number = 0;
             self.get("my_ui_number").html(my_ui_number);
         }
-    }
-
+    },
+    "welcome.js"
 );
 ```
 
@@ -2273,7 +2278,6 @@ En *my_ui.js*:
 
 ```js
 //In my_ui.js
-
 iris.ui(
     function (self) {
         self.create = function () {
@@ -2282,11 +2286,12 @@ iris.ui(
             self.tmpl("my_ui.html");   
             iris.notify("MY_UI_CREATED_event"); //This notifies subscribers that the "MY_UI_CREATED_event" event has occurred 
         };
-    }
+    },
+    "my_ui.js"
 );
 ```
 
-Observe como para suscribirse a un evento, en el método *iris.on*, pasamos una cadena de texto (que representa al evento) y una función que será llamada cuando el evento se produzca. Para notificar que un evento se ha producido, se debe llamar al método *iris.notify*.
+Observe como para suscribirse a un evento, en el método *iris.on*, pasamos una cadena de texto (que representa al evento) y una función que será llamada cuando el evento se produzca. Para notificar que un evento se ha producido, se debe llamar al método *iris.notify* pasándole la cadena de texto asociada al evento.
 
 Es importante eliminar la suscripción a un evento cuanto esta ya no sea necesaria. Para hacer esto se utiliza el método *iris.off* con la misma sintaxis que *iris.on*. Por ejemplo:
 
@@ -2363,16 +2368,16 @@ iris.screen(
             self.get("my_ui_number").html(my_ui_number);
         }
   
-    }
-
+    },
+    "welcome.js"
 );
+
 ```
 
 Y en *my_ui.js*:
 
 ```js
 //In my_ui.js
-
 iris.ui(
     function (self) {
         self.create = function () {
@@ -2381,7 +2386,8 @@ iris.ui(
             self.tmpl("my_ui.html");   
             iris.notify(EVENT.MY_UI_CREATED, EVENT.MY_UI_CREATED);
         };
-    }
+    },
+    "my_ui.js"
 );
 ```
 
@@ -2390,6 +2396,17 @@ Podemos utilizar el método *iris.destroyEvents* como alternativa al método *ir
 ```js
 iris.destroyEvents(EVENT.MY_UIS_DESTROYED, [fn_my_ui_event]);
 ```
+##<a name="events_globals"></a>Eventos globales
+
+Iris define los siguiente eventos globales:
+
+iris.BEFORE_NAVIGATION = "iris_before_navigation";
+iris.AFTER_NAVIGATION = "iris_after_navigation";
+iris.SERVICE_ERROR = "iris_service_error";
+
+Las funciones que se suscriban a los dos primeros serán notificadas antes y después de que se produzca un cambio en el hash-URL respectivamente.
+
+El tercero notificará cuando se produzca un error al hacer la llamada a un servicio. Las funciones que se suscriban recibirán información del error a través de tres parámetros (request, status, error) devueltos por la llamada *jquery.ajax*.
 
 ##<a name="locals"></a>Utilizando locales y regionales
 
@@ -2451,7 +2468,7 @@ Para ver como hacer esto, puede consultar la sección *<a href="#paso-a-paso">Co
 
 Para traducir un vocablo, tenemos dos opciones:
 
-1 Hacer la traducción en un fichero de Javascript, por ejemplo:
+1 Especificar el vocablo en el método *iris.translate*, por ejemplo:
 
 ```js
 iris.translate("GREETINGS.MORNING");
@@ -2473,6 +2490,8 @@ iris.translate("GREETINGS.MORNING", "es_ES");
 ```
 
 Observe que el vocablo hay que rodearlo con un doble símbolo *@*.
+
+> Las traducciones hechas com *@@..@@* son constantes. Es decir que aunque varíe la definición o el idioma de la aplicación, Iris no modificará la traducción.
 
 Veamos un ejemplo completo:
 
@@ -2517,10 +2536,11 @@ iris.screen(
             self.tmpl("welcome.html");   
             self.get("greeting").html(iris.translate("GREETINGS.MORNING"));
         };  
-    }
+    },
+    "welcome.js"
 );
 ```
-Iris tiene capacidad de aplicar formatos de fechas, números y monedas adaptándolos a la variación **regional** que se haya seleccionado. Esto se puede hacer desde el código Javascript de un componente o bien desde el código HTML de un componente. En este último caso, los datos a formatear se pasarán en el método *tmpl*.
+Iris puede aplicar formatos a fechas, números y monedas adaptándolos a la variación **regional** que se haya seleccionado. Esto se puede hacer desde el código Javascript o bien desde el código HTML de un componente. En este último caso, los datos a formatear se pasarán en el método *tmpl*.
 
 Veamos un ejemplo de cada uno de ellos.
 
@@ -2589,7 +2609,8 @@ iris.screen(
             self.get("regionals_from_js").html(s);
         };
 
-    }
+    },
+    "welcome.js"
 );
 ```
 
@@ -2702,7 +2723,8 @@ iris.screen(
    
         };
 
-    }
+    },
+    "welcome.js"
 );
 ```
 
@@ -2740,7 +2762,7 @@ Para invocar esta función, ejecutaremos:
 
 ```js
 var settings = {...};
-iris.ajax(settings);
+var promise = iris.ajax(settings);
 ```
 
 Iris dispone del método *service* que facilita el acceso a servicios *REST*.
