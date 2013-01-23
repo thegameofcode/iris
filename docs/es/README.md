@@ -2404,9 +2404,9 @@ iris.BEFORE_NAVIGATION = "iris_before_navigation";
 iris.AFTER_NAVIGATION = "iris_after_navigation";
 iris.SERVICE_ERROR = "iris_service_error";
 
-Las funciones que se suscriban a los dos primeros serán notificadas antes y después de que se produzca un cambio en el hash-URL respectivamente.
+Las funciones que se suscriban a los dos primeros serán notificadas antes y después de que se produzca un cambio en el hash-URL, respectivamente.
 
-El tercero notificará cuando se produzca un error al hacer la llamada a un servicio. Las funciones que se suscriban recibirán información del error a través de tres parámetros (request, status, error) devueltos por la llamada *jquery.ajax*.
+El tercero notificará cuando se produzca un error al hacer la llamada a un servicio (ver más adelante). Las funciones que se suscriban a este evento, recibirán información del error a través de tres parámetros (request, status, error) devueltos por la llamada *jquery.ajax*.
 
 ##<a name="locals"></a>Utilizando locales y regionales
 
@@ -2619,6 +2619,8 @@ La función *iris.regional* permite conocer el valor regional que está utilizan
 ```js
 iris.regional("dayNames");
 ```
+
+Las funciones *iris.date*, *iris.currency* e *iris.number* admiten opcionalmente como segundo parámetro un objeto de *Javascript* que será utilizado al aplicar el formato. Si este parámetro no se pasara, se utilizará el formato definido en *iris.locale*.
 
 Para el formateado desde HTML utilizaremos los siguientes ficheros:
 
