@@ -2400,9 +2400,11 @@ iris.destroyEvents(EVENT.MY_UIS_DESTROYED, [fn_my_ui_event]);
 
 Iris define los siguiente eventos globales:
 
+```js
 iris.BEFORE_NAVIGATION = "iris_before_navigation";
 iris.AFTER_NAVIGATION = "iris_after_navigation";
 iris.SERVICE_ERROR = "iris_service_error";
+```
 
 Las funciones que se suscriban a los dos primeros serán notificadas antes y después de que se produzca un cambio en el hash-URL, respectivamente.
 
@@ -2795,26 +2797,6 @@ En *welcome.html*:
 En *welcome.js*:
 
 ```js
-//In welcome.js
-var testService = iris.service(function(self){
-    self.load = function (id, success, error) {
-        self.get("./" + id, success, error);
-    };
-
-    self.create = function (params, success, error) {
-        self.post("echo/create", params, success, error);
-    };
-
-    self.update = function (id, params, success, error) {
-        self.put("echo/put/" + id, params, success, error);
-    };
-
-    self.remove = function (id, success, error) {
-        self.del("echo/delete/" + id, success, error);
-    };
-
-});
-   
 iris.screen(
     function (self) {
         self.create = function () {
@@ -2822,7 +2804,7 @@ iris.screen(
    
             self.tmpl("welcome.html");
    
-            testService.load("test.json", function (json) {
+            iris.service("service.js").load("test.json", function (json) {
                 self.get("json_container").html(json.title);
             }, function (p_request, p_textStatus, p_errorThrown) {
                 console.log("Error callback unexpected: " + p_errorThrown);
@@ -2830,11 +2812,41 @@ iris.screen(
    
         };
 
-    }
+    },
+    "welcome.js"
 );
 ```
 
-Observe que hemos llamado al método *iris.service* y asignado su retorno a una variable. El método *iris.service* recibe como parámetro una función que será llamada por Iris pasándole como parámetro un objeto de tipo *Service* creado por Iris. Este objeto dispone de los métodos *get*, *del*, *push* y *post* para acceder a servicios REST y pueden recibir una función de éxito o de error para procesar la respuesta obtenida.
+En *service.js*:
+
+```js
+iris.service(function(self){
+
+    //self.settings({path : "http://localhost:8080/"});
+
+    self.load = function (id, success, error) {
+      self.get("./" + id, success, error);
+    };
+
+    self.create = function (params, success, error) {
+      self.post("echo/create", params, success, error);
+    };
+
+    self.update = function (id, params, success, error) {
+      self.put("echo/put/" + id, params, success, error);
+    };
+
+    self.remove = function (id, success, error) {
+      self.del("echo/delete/" + id, success, error);
+    };
+
+}, "service.js");
+
+```
+
+Observe que hemos creado un fichero *service.js* donde se llama al método *iris.service*. Este método crea un objeto de tipo *Service* que se retorna en la función pasada como argumento y que dispobe de distintos métodos (*get*, *pos*, *put* y *del*) para acceder a servicios REST y pueden recibir una función de éxito o de error en la que se procesará la respuesta obtenida.
+
+Desde el Screen *Welcome*, hemos llamado al mismo método anterior, *iris.service*, pero en este caso pasándole un *string* que se corresponde con la ruta de acceso al fichero y que nos permite invocar los métodos definidos en él. En nuestro ejemplo hemos llamado al método *load* pasándole la ruta de acceso al fichero *JSON* que queremos recuperar.
 
 Iris facilita el trabajo con errores genéricos de tal forma que podemos tratar todos los errores de un determinado tipo sin tener que especificar la misma función en cada llamada a un servicio. Iris notificará cualquier error en un servicio a la función que se haya registrado en el evento iris.SERVICE_ERROR.
 
@@ -2880,10 +2892,10 @@ iris.log(arg1, arg2, arg3, arg4); //This shows in the browser console that is pa
 
 ```js
 iris.enableLog(server1, server2,...) //If no arguments are passed, returns the logging policy.
-//Or the servers that you want to use the Iris logging system.
+//Or Ypu can pass the servers that you want to use the Iris logging system.
 ```
 
-Iris ayuda a la **minificación** de la aplicación. Para reducir el número de ficheros que hay que descargar desde el servidor en una aplicación Iris, podemos *minificar* todos los ficheros *.js* en uno único con la herramienta que queramos (por ejemplo [Grunt](https://github.com/gruntjs/grunt)). Para evitar que Iris tenga que descargarse el fichero del componente y utilice el del archivo *minificado*, debemos indicar la ruta de acceso al fichero en el método que crea el componente.
+Iris ayuda a la **minificación** de la aplicación. Para reducir el número de ficheros que hay que descargar desde el servidor en una aplicación Iris, podemos *minificar* todos los ficheros *.js* en uno único con la herramienta que queramos (por ejemplo [Grunt](https://github.com/gruntjs/grunt)). Para evitar que Iris tenga que descargarse el fichero del componente y utilice el del archivo *minificado*, tenemos que indicar la ruta de acceso al fichero en el método que crea el componente.
 
 Por ejemplo, si el fichero *welcome.js* está en el fichero raíz de la aplicación, el parámetro se añadiría de la siguiente forma:
 
@@ -2901,9 +2913,9 @@ Y la llamada que crea el Screen *welcome* sería:
 iris.welcome("welcome.js");
 ```
 
-Observe que se le ha pasado un parámetro adicional al método *iris.screen*. Este parámetro tiene que coincidir exactamente con el parámetro que se pasa al método *iris.welcome*. Si se pasa este parámetro adicional, cuando se vaya a crear el Screen, Iris buscará si ya hay cargado en memoria un método que corresponda a este *Screen* en lugar de cargarlo desde el servidor. Y, por lo tanto, se utilizará el fichero *minificado* si se dispone de él.
+Observe que el método *iris.screen* recibe dos parámetros, la función del ciclo de vida y una cadena de texto que indica dónde se encuentra el fichero. Este parámetro tiene que coincidir exactamente con el parámetro que se pasa al método *iris.welcome*. Cuando se vaya a crear el Screen, Iris buscará si ya hay cargado en memoria un fichero que corresponda a este *Screen* en lugar de cargarlo desde el servidor. Y, por lo tanto, se utilizará el fichero *minificado* si se dispone de él.
 
-La misma técnica se utilizará cuando se cree un *Screen* al navegar a él por primera vez o cuando se llame al método *navigate* para crear un *Screen*. De la misma forma, en los UIs deberemos definir el *UI* con el parámetro adicional que permite a Iris localizarlo. Por ejemplo, si el *UI* *my_ui* está en el directorio raíz:
+La misma técnica se utilizará cuando se cree un *Screen* al navegar a él por primera vez o cuando se llame al método *navigate* para crear un *Screen*. Igualmente, en los UIs deberemos definir el *UI* con el parámetro adicional que permite a Iris localizarlo. Por ejemplo, si el *UI* *my_ui* está en el directorio raíz:
 
 ```js
 //In my_ui.js
@@ -2917,7 +2929,7 @@ iris.ui(
 
 Para probar su correcto funcionamiento y detectar errores, se han realizado pruebas de unidad de todos los métodos de Iris. Las pruebas de unidad se han realizado con la librería [QUnit](http://qunitjs.com/).
 
-Las pruebas de unidad son una fuente adicional para conocer el funcionamiento de Iris. Puede consultar las pruebas realizadas en el directorio [test](https://github.com/iris-js/iris/tree/iris-grunt/test).
+Las pruebas de unidad son una fuente adicional para conocer el funcionamiento de Iris. Puede consultar las pruebas realizadas en el directorio [test](https://github.com/iris-js/iris/tree/iris-grunt/test).<!-- TODO cambiar enlace -->
 
 #<a name="step_by_step"></a>Construyendo paso a paso una aplicación desde cero
 
