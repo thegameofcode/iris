@@ -17,8 +17,12 @@
     _srcToCheckDependencies,
     _dependency,
     _firstDiffNode,
-    _notLoadedScreens,
-    _lastScreenPathLoaded
+    _notCreatedScreenHashses,
+    _lastScreenPathLoaded,
+    _navigating,
+    _newHashToNavigate,
+    _firstNodeToSleep,
+    _lastLoadedHash
     ;
 
     function _init() {
@@ -50,72 +54,22 @@
         _srcToCheckDependencies = "";
         _dependency={};
 
-        // Array with hash paths of new screens
-        _notLoadedScreens = undefined;
-
         // Last hash-path loaded
-        _lastScreenPathLoaded = undefined;
+        _lastScreenPathLoaded = "";
 
         // Indicate the first screen that is different of the previos hash-url
-        _firstDiffNode = undefined;
+        _firstDiffNode = 0;
+        _firstNodeToSleep = -1;
+
+        // Indicate if the navigation has been finished or not yet
+        _navigating = false;
+        _lastLoadedHash = "";
+
+        // Set the new hash to navigate if a _navigating == true
+        _newHashToNavigate = "";
 
         iris.on("iris-reset", _init);
     }
-
-
-    function _loadJs (paths, callback) {
-        iris.log("[load-js]", paths);
-
-        for (var i = 0; i < paths.length; i++) {
-            var script= document.createElement('script');
-            script.type= 'text/javascript';
-            script.src= iris.baseUri() + paths[i];
-            script.onload = _loadJsOnLoad;
-            _head.appendChild(script);
-                
-            _dependencyCount++;
-        }
-
-        if ( callback !== undefined ) {
-            _loadJsCallback = callback;
-        }
-    }
-
-    function _loadJsOnLoad () {
-
-        if ( --_dependencyCount === 0 ) {
-
-            // remove comments blocks
-            _srcToCheckDependencies = _srcToCheckDependencies.replace(/(\/\*[\w\'\s\r\n\*]*\*\/)|(\/\/[\w\s\']*)|(<![\-\-\s\w\>\/]*\>)/g, "");
-
-            var regex = /self\.ui\s*\(\s*[^,]+\s*,\s*"([^\.]+\.js)"/g; // to extract ui dependencies
-            var dependencies = [];
-
-            var matches = regex.exec(_srcToCheckDependencies);
-            while (matches) {
-
-                if ( !_dependency.hasOwnProperty(matches[1]) ) {
-                    iris.log("[load-js] new dependency found: " + matches[1]);
-
-                    dependencies.push(matches[1]);
-                    _dependency[ matches[1] ] = true;
-                }
-                matches = regex.exec(_srcToCheckDependencies);
-            }
-
-            _srcToCheckDependencies = "";
-
-            if ( dependencies.length > 0 ) {
-                _loadJs(dependencies);
-                
-            } else if ( (dependencies.length === 0) && (_loadJsCallback !== undefined) ) {
-                _loadJsCallback();
-            }
-            
-        }
-
-    }
-    
 
     function _welcome(p_jsUrl) {
         
@@ -141,12 +95,45 @@
         }
     }
 
+    //
+    // Scripts load
+    //
+    function _loadJs (paths, callback) {
+        iris.log("[load-js]", paths);
+
+        _loadJsCallback = callback;
+
+        for (var i = 0; i < paths.length; i++) {
+            var script= document.createElement('script');
+            script.type= 'text/javascript';
+            script.src= iris.baseUri() + paths[i];
+            script.onload = _loadJsOnLoad;
+            _head.appendChild(script);
+                
+            _dependencyCount++;
+        }
+    }
+
+    function _loadJsOnLoad () {
+        if ( --_dependencyCount === 0 ) {
+            _loadJsCallback();
+        }
+    }
+
+    //
+    // Navigation
+    //
     function _goto(p_hashUri) {
         document.location.hash = p_hashUri; // Trigger hashchange event, then execute _startHashChange()
     }
 
-    function _startHashChange() {
+    function _startHashChange(e) {
 
+        // Check if welcome screen has been created
+        if(!_welcomeCreated) {
+            throw "set the first screen using iris.welcome()";
+        }
+        
         // when document.location.href is [http://localhost:8080/#] then document.location.hash is [] (empty string)
         // to avoid the use of empty strings and prevent mistakes, we replace it by #. (# == welcome-screen)
         var hash = document.location.hash;
@@ -154,12 +141,13 @@
             hash = "#";
         }
 
+        // Prevent multiple calls with the same hash
         // http://stackoverflow.com/questions/4106702/change-hash-without-triggering-a-hashchange-event#fggij
         if ( _lastFullHash === hash ) {
             return false;
         }
-        
-        // when a screen cannot sleep then window.history.back() & and finish navegation process
+
+        // when a screen cannot sleep, finish navegation process
         if(_gotoCancelled) {
             _gotoCancelled = false;
             iris.notify(iris.AFTER_NAVIGATION);
@@ -167,17 +155,23 @@
             return false;
         }
 
-        if(!_welcomeCreated) {
-            throw "set the first screen using iris.welcome()";
+        // If the navigation has not been finished, do nothing and save the new hash that will be used by _loadNewScreens
+        if ( _navigating ) {
+            e.preventDefault();
+            _newHashToNavigate = hash;
+            _prevHash = _lastLoadedHash;
+            return false;
         }
 
-
-        iris.notify(iris.BEFORE_NAVIGATION);
+        iris.log("Starting a new navigation["+hash+"]");
+        _navigating = true;
         _lastFullHash = hash;
+        iris.notify(iris.BEFORE_NAVIGATION);
 
         
-        var curr = hash.split("/"), i, screenPath;
-        var firstDiffNode = -1;
+        var i, screenPath, firstDiffNode = -1, curr = hash.split("/");
+
+        // Call to canSleeps and sleeps of previous screens
         if ( _prevHash !== undefined ) {
 
             // get firstDiffNode attending to current hash
@@ -186,21 +180,19 @@
                     firstDiffNode = i;
                     break;
                 }
-                
             }
+            
+            _firstNodeToSleep = firstDiffNode;
 
-            // This case:
-            // prev = #/s1/s2
-            // curr = #/s1
-            // we need sleep s2, therefor firstNodeToSleep = curr.length
-            var firstNodeToSleep = firstDiffNode;
-            if ( (firstNodeToSleep === -1) && (curr.length < _prevHash.length) ) {
-                firstNodeToSleep = curr.length;
+            // For cases like this: prev = #/s1/s2, curr = #/s1
+            // we need sleep s2, therefor _firstNodeToSleep = curr.length
+            if ( (_firstNodeToSleep === -1) && (curr.length < _prevHash.length) ) {
+                _firstNodeToSleep = curr.length;
 
             // if welcome screen has been changed firstDiffNode == 0, and there are not previous screens to sleep, _prevHash.length == 1
-            // ignore cansleep and sleep of welcome screen, firstNodeToSleep = -1
+            // ignore cansleep and sleep of welcome screen, _firstNodeToSleep = -1
             } else if ( firstDiffNode === 0 && _prevHash.length === 1 ) {
-                firstNodeToSleep = -1;
+                _firstNodeToSleep = -1;
             }
 
             // if goto welcome screen [curr.length === 1] and there are not differents [firstDiffNode === -1],
@@ -209,44 +201,32 @@
                 firstDiffNode = 1;
             }
 
-
-
-
-            if ( firstNodeToSleep !== -1 ) {
+            if ( _firstNodeToSleep !== -1 ) {
 
                 // check if can sleep
-                for ( i = _prevHash.length-1; i >= firstNodeToSleep; i-- ) {
-
-                    screenPath = _getScreenPath(_prevHash, i);
+                for ( i = _lastLoadedHash.length-1; i >= _firstNodeToSleep; i-- ) {
+                    screenPath = _getScreenPath(_lastLoadedHash, i);
                     if( _screen[screenPath].canSleep() === false ) {
                         _gotoCancelled = true;
                         document.location.href = _prevHashString;
                         return false;
                     }
                 }
-
-                // hide previous screens
-                for ( i = _prevHash.length - 1; i >= firstNodeToSleep; i-- ) {
-                    var screenToSleep = _screen[ _getScreenPath(_prevHash, i) ];
-                    screenToSleep._sleep();
-                    screenToSleep.hide();
-                }
-
-
             }
 
         } else {
+            // No previous screens loaded
             firstDiffNode = 0;
         }
 
-        // check if new screens are loaded
-        _notLoadedScreens = [];
+        // get not created screens
+        _notCreatedScreenHashses = [];
         if ( firstDiffNode !== -1 ) {
             for ( i = firstDiffNode; i < curr.length; i++ ) {
 
                 screenPath = _getScreenPath(curr, i);
                 if(!_screen.hasOwnProperty(screenPath)) {
-                    _notLoadedScreens.push(screenPath);
+                    _notCreatedScreenHashses.push(screenPath);
                 }
             }
         }
@@ -256,41 +236,116 @@
         _prevHashString = hash;
         _firstDiffNode = firstDiffNode;
 
-        if ( _notLoadedScreens.length > 0 ) {
+        if ( _notCreatedScreenHashses.length > 0 ) {
             _loadNewScreens();
         }
         else {
-            _FinishHashChange();
+            _finishHashChange();
         }
     }
 
     function _loadNewScreens () {
 
-        if (_lastScreenPathLoaded) {
+        iris.log("Loading new screens...");
+
+        if (_lastScreenPathLoaded !== "" ) {
+            iris.log("A previous screen was loaded [" + _lastScreenPathLoaded + "], creating...");
+
             var screenObj = _instanceScreen(_lastScreenPathLoaded);
             screenObj.create();
+            _lastScreenPathLoaded = "";
         }
 
-        if ( _notLoadedScreens.length > 0 ) {
-            var path = _notLoadedScreens.splice(0,1)[0];
+        if ( _checkNewNavigation() ) {
+            return false;
+        }
+
+        if ( _notCreatedScreenHashses.length > 0 ) {
+            var path = _notCreatedScreenHashses.splice(0,1)[0];
             var fileJs = _screenJsUrl[path];
 
             if ( fileJs !== undefined ) {
                 _lastScreenPathLoaded = path;
-                _loadJs([fileJs], _loadNewScreens);
+                _loadJs([fileJs], _loadNewDependencies);
             } else {
                 throw "The path[" + path + "] hasn't associated screen, use self.screens to register the screen first";
             }
             
         } else {
-            _lastScreenPathLoaded = undefined;
-            _FinishHashChange();
+            _finishHashChange();
         }
 
     }
 
-    function _FinishHashChange () {
+    function _loadNewDependencies () {
+        iris.log("Finding new dependencies...");
+
+        // remove comments blocks
+        _srcToCheckDependencies = _srcToCheckDependencies.replace(/\/\/.*/g, "").replace(/\/\*[\s\S]*\*\//g, "");
+
+        // to extract ui dependencies
+        var dependencies = [];
+        _getDependecies(dependencies, /self\.ui\s*\(\s*[^,]+\s*,\s*["']([^"']+)["']/g);
+
+        // to extract service dependencies
+        _getDependecies(dependencies, /iris\.service\s*\(\s*["']([^"']+)["']/g);
+
+        if ( dependencies.length > 0 ) {
+            _loadJs(dependencies, _loadNewDependencies);
+        } else {
+            iris.log("No dependencies found.");
+            _loadNewScreens();
+        }
+    }
+
+    function _getDependecies (dependencies, regex) {
+        var matches = regex.exec(_srcToCheckDependencies);
+        while (matches) {
+
+            if ( !_includes.hasOwnProperty(matches[1]) ) {
+                iris.log("New dependency found: " + matches[1]);
+
+                dependencies.push(matches[1]);
+
+                _includes[matches[1]] = true;
+            }
+            matches = regex.exec(_srcToCheckDependencies);
+        }
+    }
+
+    function _checkNewNavigation () {
+        if ( _newHashToNavigate !== "" ) {
+            iris.log("Stop current navigation, new navigation ["+ _newHashToNavigate +"]");
+            document.location.hash = _newHashToNavigate;
+
+            _navigating = false;
+            _newHashToNavigate = "";
+
+            _startHashChange();
+
+            return true;
+        }
+        return false;
+    }
+
+    function _finishHashChange () {
+
+        if ( _checkNewNavigation() ) {
+            return false;
+        }
+
         var i, screenPath;
+
+        if ( _firstNodeToSleep !== -1 ) {
+
+            // hide previous screens
+            for ( i = _lastLoadedHash.length - 1; i >= _firstNodeToSleep; i-- ) {
+                var screenToSleep = _screen[ _getScreenPath(_lastLoadedHash, i) ];
+                screenToSleep._sleep();
+                screenToSleep.hide();
+            }
+        }
+        
         if ( _firstDiffNode !== -1 ) {
             // show new screens
             for ( i = _firstDiffNode; i < _prevHash.length; i++ ) {
@@ -309,6 +364,9 @@
             }
         }
 
+        iris.log("Navigation finished");
+        _navigating = false;
+        _lastLoadedHash = _prevHash;
         iris.notify(iris.AFTER_NAVIGATION);
     }
 
@@ -950,7 +1008,7 @@
                     throw "[self.screens] hash-URL repeated  '" + hashUrl + "' in " + this.fileJs;
                 }
 
-                iris.log("register screen ", js, hashUrl);
+                iris.log("Register screen hash[" + hashUrl + "] js[" + js + "]");
 
                 _screenJsUrl[hashUrl] = js;
                 _screenContainer[hashUrl] = $cont;
