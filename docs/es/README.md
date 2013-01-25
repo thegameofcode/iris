@@ -4412,108 +4412,68 @@ En *welcome.js* debemos eliminar el registro de "#/products"; para ello modifica
 
 ```js
 function _createScreens() {
-    self.screens("screens", [{
-        "#home": "/shopping/screen/home.js"
-    }, {
-        "#categories": "/shopping/screen/products/categories.js"
-    },{
-        "#shopping": "/shopping/screen/list/shopping.js"
-    }]);
+    self.screens("screens", [
+        ["home", "/shopping/screen/home.js"],
+        ["categories", "/shopping/screen/products/categories.js"],
+        ["shopping", "/shopping/screen/list/shopping.js"]
+        ]);
 }
 ```
 
-En el fichero eliminado, *products.js*,  detectábamos cuando se pulsaba sobre un producto para añadirlo o eliminarlo a/de la *lista de la compra*. Esto lo podemos realizar en *product_list_item.js* sin apenas modificar el código original:
+En *products.js* cargábamos los productos en el UI *product_list_item*. Esta tarea se la vamos a asignar a *category_list_item.js* que quedará de la siguiente forma:
 
 ```js
-//In product_list_item.js
-iris.ui(function(self) {	
-    self.create = function() {  
-        self.tmplMode(self.APPEND);
-        var product = self.setting("product");                
-        self.tmpl("/shopping/ui/products/product_list_item.html", product);
-        self.get("product").change(function (event) {
-            if (this.checked) {
-                iris.notify(model.event.PRODUCTS.ADD, {
-                    idProduct:product.idProduct, 
-                    nameProduct:product.nameProduct
-                });
-            } else {
-                iris.notify(model.event.PRODUCTS.REMOVE, product.idProduct);
-            }
-        });
-    };
-}, "/shopping/ui/products/product_list_item.js");
-```
-
-Otra cosa que hacíamos en *products.js* era cargar los productos en el UI *product_list_item*. Esta tarea se la vamos a asignar a *category_list_item.js* que quedará de la siguiente forma:
-
-```js
-//In category_list_item.js
-iris.ui(function(self) {	
-    self.create = function() {
-        
-        function _inflate(products) {
-            $.each(products,
-                function(index, product) {
+iris.ui(function(self) {
+    function _inflate(category, products) {
+        $.each(products,
+            function(index, product) {
+                if (category.idCategory === product.category) {
                     self.ui("list_products", "/shopping/ui/products/product_list_item.js", {
                         "product": product
                     });
                 }
-                );
-        }
-        
-        var category = self.setting("category");
+            }
+            );
+    }
+    
+    self.create = function() {
         self.tmplMode(self.APPEND);
+        var category = self.setting("category");
         self.tmpl("/shopping/ui/products/category_list_item.html", category);
-        
-        model.service.app.getProducts(category.idCategory, _inflate);
-        
+        _inflate(category, self.setting("products"));
     };	
     
 }, "/shopping/ui/products/category_list_item.js");
 ```
-Observe que se llama al método *model.service.app.getProducts* directamente sin esperar a que se pulse sobre la categoría. Si hubiera muchos productos, esto sería inadecuado. Se ha hecho así para simplificar la lógica de la aplicación. Una solución mejor sería cargar los productos de una categoría cuando se pulse sobre ella y almacenarlos en memoria para que, si se vuelve a pulsar, no haya que cargarlos de nuevo.
 
-Finalmente modificamos *categories.js* para que marque los productos que están en la lista de la compra. Este trabajo antes se hacía en *products.js*.
+Observe que se reciben todos los productos pero sólo se añaden a la vista los que correspondan a la caterogía en la que estamos.
+
+Modificamos *categories.js* para que cargue las categorías y los productos.
 
 ```js
-//In categories.js
 iris.screen(
     function (self) {
         
-        function _inflate(categories) {
+        function _inflate(categories, products) {
             $.each(categories,
                 function(index, category) {						
                     self.ui("list_categories", "/shopping/ui/products/category_list_item.js", {
-                        "category": category
+                        "category": category,
+                        "products": products
                     });
                 }
                 );
         }
         
-        function _check() {
-            $("[data-product]").prop('checked', false);
-            var products = model.shoppingList.getShoppingProducts();
-            if (products.length > 0) {                
-                $.each(products,
-                    function(index, product) {
-                        var checkbox = $("[data-product="+ product.idProduct + "]");
-                        if (checkbox.size() > 0) {
-                            checkbox.prop('checked', true);
-                        }
-                    }
-                    );
-            }
-        }
-        
         self.create = function () {
             self.tmpl("/shopping/screen/products/categories.html");
-            model.service.app.getCategories(_inflate);
+            model.service.app.getCategories(function(categories){
+                model.service.app.getAllProducts(function(products){
+                    _inflate(categories, products); 
+                });
+            });
         };
         
-        self.awake = function () {
-            _check();
-        };
         
     }, "/shopping/screen/products/categories.js");
 ```
@@ -4525,7 +4485,6 @@ En *categories.html*:
 ```html
 <div class="accordion" id="accordion_categories" data-id="list_categories">
 </div>
-
 ```
 
 En *category_list_item.html*:
@@ -4541,22 +4500,37 @@ En *category_list_item.html*:
         <div data-id="list_products" class="accordion-inner"></div>
     </div>
 </div>
+
 ```
 
-Y en *product_list_item.html*:
-
-```html
-<label class="checkbox">
-    <input data-id="product" type="checkbox" data-product="##idProduct##">##nameProduct##
-</label> 
-```
-
-Por último, debemos hacer una pequeña modificación en el fichero de pruebas unitarias *view_test.js*:
+Por último, hemos realizado algunas pruebas de pruebas unitarias para la vista en *view_test.js*:
 
 ```js
+/*global QUnit:false, module:false, test:false, asyncTest:false, expect:false*/
+/*global start:false, stop:false ok:false, equal:false, notEqual:false, deepEqual:false*/
+/*global notDeepEqual:false, strictEqual:false, notStrictEqual:false, raises:false*/
 (function($) {
 
-iris.cache(false);
+    /*
+    ======== A Handy Little QUnit Reference ========
+    http://docs.jquery.com/QUnit
+
+    Test methods:
+      expect(numAssertions)
+      stop(increment)
+      start(decrement)
+    Test assertions:
+      ok(value, [message])
+      equal(actual, expected, [message])
+      notEqual(actual, expected, [message])
+      deepEqual(actual, expected, [message])
+      notDeepEqual(actual, expected, [message])
+      strictEqual(actual, expected, [message])
+      notStrictEqual(actual, expected, [message])
+      raises(block, [expected], [message])
+  */
+ 
+    iris.cache(false);
     iris.enableLog("localhost");
 
     function clearBody() {
@@ -4569,69 +4543,74 @@ iris.cache(false);
     
     module( "View Test", {
         setup: function() {            
-            iris.init();
-            iris.baseUri("../www");
+            iris.notify("iris-reset");
+            iris.baseUri("..");
+            iris.include("/js/shopping_list.js");
             model.init();
             iris.welcome("/shopping/screen/welcome.js");
         },
         teardown: function () {
             model.destroy();
-            window.location.hash ="";
+            //window.location.hash ="";
             clearBody();
         }
     });
     
+    
     asyncTest("Test add products to the Shopping List", function() {
-        var products = [];
         window.expect(1);
-        
-        model.service.app.getProducts(2,
-            function(data) {
-                products = data;
-            }
-            );
-        
-        iris.navigate("#categories");
-                
-        window.setTimeout(function() {
-            $("input[type='checkbox']", "#collapse_category_2").trigger('click');
-            window.ok(model.shoppingList.getShoppingProducts().length === products.length, "All products in idCaterory=2 are selected");
-            window.start();
-        }, 500);
-    }
-    );
-        
-        
-        
-    asyncTest("Test check product", function() {
-        var products = [];
-        window.expect(1);
-        
-        model.service.app.getProducts(2,
-            function(data) {
-                products = data;
-            }
-            );
-        
-        iris.navigate("#categories");
-                
-        window.setTimeout(function() {
-            $("input[type='checkbox']", "#collapse_category_2").trigger('click');
-            iris.navigate("#shopping");
+        iris.on(iris.AFTER_NAVIGATION ,function() {
+            iris.off(iris.AFTER_NAVIGATION);
+            model.service.app.getCategories(function(categories){
+                model.service.app.getAllProducts(function(products){
+                    iris.navigate("#/categories");
+                    iris.on(iris.AFTER_NAVIGATION ,function() {
+                        setTimeout(function() {
+                            $("input[type='checkbox']", "[id^='collapse_category']").trigger('click');
+                            window.ok(model.shoppingList.getShoppingProducts().length === products.length, "All products are selected");
+                            window.start();
+                        },1000);
+                    });
+                });
+            });
             
-            window.setTimeout(function () {
-                $("button[data-id='buy']").first().trigger("click");
-                model.ShoppingList.prototype.removePurchased();
-                window.ok(model.shoppingList.getShoppingProducts().length === products.length - 1, "Removed 1 purchased product");
-                window.start();
-            }, 500);
-        }, 500);
+        });
+    });
+        
+    asyncTest("Test remove purchased products", function() {
+        var products = [];
+        window.expect(1);
+        iris.on(iris.AFTER_NAVIGATION ,function() {
+            iris.off(iris.AFTER_NAVIGATION);
+            model.service.app.getCategories(function(categories){
+                model.categories = categories;
+                model.service.app.getAllProducts(function(products){
+                    model.products = products;
+                    iris.navigate("#/categories");
+                    iris.on(iris.AFTER_NAVIGATION ,function() {
+                        iris.off(iris.AFTER_NAVIGATION);
+                        setTimeout(function() {
+                            $("input[type='checkbox']", "[id^='collapse_category']").trigger('click');
+                            iris.navigate("#/shopping");
+                            iris.on(iris.AFTER_NAVIGATION ,function() {
+                                $("button[data-id='buy']").first().trigger("click");
+                                $("button[data-id='btn_remove_checked']").trigger("click");
+                                //model.ShoppingList.prototype.removePurchased();
+                                window.ok(model.shoppingList.getShoppingProducts().length === products.length - 1, "Removed 1 purchased product");
+                                window.start();
+                            });
+                        },1000);
+                    });
+                });
+            });
+            
+        });
     }
     );
         
 }(jQuery));
 ```
 
-La modificación consiste en reemplazar la llamada a *#products* por *#categories* y en cambiar la forma de seleccionar los *checkbox*.
+Observe que se ha utilizado el evento *iris.AFTER_NAVIGATION* para saber cuando Iris ha terminado de realizar la navegación y el método *window.setTimeout* para dar tiempo a que se llame a los servicios.
 
 Puede descargar la aplicación modificada en el siguiente [enlace](https://github.com/surtich/iris/blob/iris-grunt/docs/iris-shopping2.tar.gz?raw=true).
