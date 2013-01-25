@@ -4400,21 +4400,15 @@ En esta sección vamos a discutir que cambios son necesarios en la aplicación p
 
 ![categories2](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/categories2.png)
 
-El problema que se nos plantea es que, en la aplicación actual, los productos se cargan a través del Screen *#products* y, sin embargo, cada categoría se carga en el UI *category_list_item* desde la que se navega al Screen *#products* pasándole el *idCategory* correspondiente. Iris no permite registrar un Screen dentro de un UI por lo que no podremos cargar el Screen *#products* en el UI *category_list_item*.
+El problema que se nos plantea es que, en la aplicación actual, los productos se cargan a través del Screen *#/products* y, sin embargo, cada categoría se carga en el UI *category_list_item* desde la que se navega al Screen *#/products* pasándole el *idCategory* correspondiente. Iris no permite registrar un Screen dentro de un UI por lo que no podremos cargar el Screen *#/products* en el UI *category_list_item*.
 
-Vamos a discutir tres soluciones aunque sólo la última será correcta:
-
-1 Para evitar el problema podríamos tratar de transformar el UI *category_list_item* en un Screen y así registrar el Screen *#products* en este Screen. Claramente esta no es una buena idea ya que entonces no bastaría con un único Screen *#category_list_item* sino que necesitaríamos un Screen diferente para cada categoría y tendríamos que tener un fichero *html* y otro *js* por cada categoría lo que supondría una redundancia inaceptable. Pero es que además, como sólo se puede ver un Screen a la vez, sólo se podrá visualizar una única categoría con lo que ni siquiera llegaríamos a conseguir nuestro propósito.
-
-2 Otra solución consistiría en que el Screen *#categories*, que actualmente carga las categorías mediante el UI *category_list_item*, registre el Screen *#products* en un contenedor propio (actualmente este Screen lo registra *#welcome*). De esta forma, cuando naveguemos a *#products*, no se ocultarán las categorías que se han cargado mediante el Screen *#categories*.  Efectivamente esto funcionará como se ha descrito ya que Iris mantiene visible la rama de la jerarquía de los hash-URLs por la que se está navegando. El inconveniente será que necesitamos que los productos se muestren **debajo** de la categoría que se ha seleccionado y que, como el contenedor donde carguemos "#products" debe ser único, no podremos conseguir esto de forma sencilla. Además será imposible ver a la vez los productos de dos o más categorías.
-
-3 La solución correcta y más sencilla consistirá en eliminar el Screen *#products* y cargar en el UI *category_list_item*, los UIs *product_list_item* que, a su vez, cargan los productos de cada categoría. De esta forma, almacenamos en un UI, un conjunto de UIs y evitamos la limitación que se nos planteaba de que un UI registre un Screen. Lógicamente, el trabajo que se hacía en el Screen *#products* habrá que hacerlo en otro sitio; en nuestro caso lo repartiremos entre el Screen *#categories* y los UIs *category_list_item* y *product_list_item*.
+Una posible solución consistirá en eliminar el Screen *#/products* y cargar en el UI *category_list_item*, los UIs *product_list_item* que, a su vez, cargan los productos de cada categoría. Lógicamente, el trabajo que se hacía en el Screen *#/products* habrá que hacerlo en otro sitio; en nuestro caso lo repartiremos entre el Screen *#/categories* y los UIs *category_list_item* y *product_list_item*.
 
 Vamos a ver los cambios necesarios para implementar la solución propuesta.
 
 En primer lugar, debemos borrar los ficheros *products.js* y *products.html* del directorio *screen/products*.
 
-En *welcome.js* debemos eliminar el registro de "#products"; para ello modificamos la función *_createScreens()*:
+En *welcome.js* debemos eliminar el registro de "#/products"; para ello modificamos la función *_createScreens()*:
 
 ```js
 function _createScreens() {
