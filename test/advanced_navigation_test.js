@@ -280,9 +280,6 @@
                     // async
                     iris.navigate(navigationHash); // +1 sleep, +3 awakes
 
-                    start();
-
-
                 });
                 
             });
