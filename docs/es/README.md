@@ -8,42 +8,45 @@
  * <a href="#life_cycle">Ciclo de vida de un componente</a></br>
  * <a href="#welcome">Screen de bienvenida</a><br>
 * <a href="#starting">Empezando con Iris</a></br>
-  * <a href="#installing">Instalando Iris</a><br>
-  * <a href="#calling_welcome">Llamando al Screen de bienvenida</a><br>
-  * <a href="#register">Registrando y mostrando un Screen</a><br>
-  * <a href="#showing_screen_js">Mostrando un Screen desde Javascript</a><br>
-  * <a href="#showing_some_screens">Mostrando varios screens</a><br>
-  * <a href="#showing_some_inner_screens">Screens que registran otros screens</a><br>
-  * <a href="#screens_bad_practices">Malas prácticas en el registro de Screens</a><br>
-  * <a href="#default_screen">Creando un Screen por defecto</a><br>
-  * <a href="#uis">Visualizando UIs</a><br>
-  * <a href="#inner_UIs">UIs contenidos en otros UIs</a><br>
-  * <a href="#some_UIs">Añadiendo varios UIs a un mismo contenedor</a><br>
-  * <a href="#UIs_bad_practices">Malas prácticas con UIs</a><br>
-  * <a href="#Screens_drestroy">Destruyendo Screens</a><br>
-  * <a href="#destroy_screens_bad_practices">Malas prácticas destruyendo Screens</a><br>
-  * <a href="#UIs_drestroy">Destruyendo UIs</a><br>
-  * <a href="#params">Enviando parámetros a un Screen</a><br>
-  * <a href="#ui_params">Paso de parámetros en UIs</a><br>
-  * <a href="#settings">Paso de parámetros utilizando el método *settings*</a><br>
-  * <a href="#tmpl_settings">Paso de parámetros con el método *tmpl*</a><br>
-  * <a href="#events">Trabajando con eventos</a><br>
-  * <a href="#locals">Utilizando locales y regionales</a><br>
-  * <a href="#ajax">Llamadas Ajax y servicios REST</a><br>
-  * <a href="#production">Paso a producción</a><br>
-  * <a href="#unit_test">Pruebas de unidad en Iris</a><br>
+ * <a href="#installing">Instalando Iris</a><br>
+ * <a href="#calling_welcome">Llamando al Screen de bienvenida</a><br>
+ * <a href="#register">Registrando y mostrando un Screen</a><br>
+ * <a href="#showing_screen_js">Mostrando un Screen desde Javascript</a><br>
+ * <a href="#showing_some_screens">Mostrando varios screens</a><br>
+ * <a href="#showing_some_inner_screens">Screens que registran otros screens</a><br>
+ * <a href="#screens_bad_practices">Malas prácticas en el registro de Screens</a><br>
+ * <a href="#default_screen">Creando un Screen por defecto</a><br>
+ * <a href="#uis">Visualizando UIs</a><br>
+ * <a href="#inner_UIs">UIs contenidos en otros UIs</a><br>
+ * <a href="#some_UIs">Añadiendo varios UIs a un mismo contenedor</a><br>
+ * <a href="#UIs_bad_practices">Malas prácticas con UIs</a><br>
+ * <a href="#Screens_destroy">Destruyendo Screens</a><br>
+ * <a href="#destroy_screens_bad_practices">Malas prácticas destruyendo Screens</a><br>
+ * <a href="#UIs_destroy">Destruyendo UIs</a><br>
+ * <a href="#canSleep">Evento *canSleep*</a><br>
+ * <a href="#querystring_params">Enviando parámetros a un Screen</a><br>
+ * <a href="#settings">Paso de parámetros con el método *setting*</a><br>
+ * <a href="#data-settings">Paso de parámetros utilizando atributos *data-*</a><br>
+ * <a href="#settings_ui">Paso de parámetros con el método *self.ui*</a><br>
+ * <a href="#tmpl_settings">Paso de parámetros a la vista con el método *tmpl*</a><br>
+ * <a href="#data-bind">Paso de parámetros a la vista con el atributo *data-bind*</a><br>
+ * <a href="#events">Trabajando con eventos</a><br>
+ * <a href="#events_globals">Eventos globales</a><br>
+ * <a href="#locals">Utilizando locales y regionales</a><br>
+ * <a href="#ajax">Llamadas Ajax y servicios REST</a><br>
+ * <a href="#production">Paso a producción</a><br>
+ * <a href="#unit_test">Pruebas de unidad en Iris</a><br>
 * <a href="#step_by_step">Construyendo paso a paso una aplicación desde cero</a><br>
-  * <a href="#directories">Estructura de directorios</a><br>
-  * <a href="#step_by_step_welcome">*Screen* Welcome</a><br>
-  * <a href="#step_by_step_home">*Screen* Home</a><br>
-  * <a href="#step_by_step_model">ShoppingList Model</a><br>
-  * <a href="#step_by_step_caterogies">*Screen* Categories</a><br>
-  * <a href="#step_by_step_products">*Screen* Products</a><br>
-  * <a href="#step_by_step_shopping">*Screen* Shopping</a><br>
-  * <a href="#step_by_step_qunit">Pruebas unitarias con *QUnit*</a><br>
-  * <a href="#step_by_step_grunt">Automatizando procesos con *Grunt*</a><br>
-  * <a href="#step_by_step_change">Modificando la aplicación</a><br>
-  
+ * <a href="#directories">Estructura de directorios</a><br>
+ * <a href="#step_by_step_welcome">*Screen* Welcome</a><br>
+ * <a href="#step_by_step_home">*Screen* Home</a><br>
+ * <a href="#step_by_step_model">ShoppingList Model</a><br>
+ * <a href="#step_by_step_caterogies">*Screen* Categories</a><br>
+ * <a href="#step_by_step_products">*Screen* Products</a><br>
+ * <a href="#step_by_step_shopping">*Screen* Shopping</a><br>
+ * <a href="#step_by_step_qunit">Pruebas unitarias con *QUnit*</a><br>
+ * <a href="#step_by_step_grunt">Automatizando procesos con *Grunt*</a><br>
+ * <a href="#step_by_step_exercise">Ejercicio: Modificando la aplicación</a><br>
 
 #<a name="what_is_it"></a>¿Qué es Iris?
 
@@ -122,13 +125,13 @@ En esta sección se van a presentar los principales componentes de Iris y los m�
 
 ##<a name="components"></a>Componentes
 
-Iris permite estructurar la aplicación en componentes que interaccionan entre sí.
+Iris estructura la aplicación en componentes que interaccionan entre sí.
 
 Cada **componente** permite definir los elementos que conforman la interfaz de usuario. Un componente tiene dos elementos fundamentales: La vista o presentación y el comportamiento.
 
 La **vista** consiste en un fragmento de código en HTML, típicamente un *DIV*, almacenado en un fichero, normalmente con extensión *.html*.
 
-El **comportamiento** es un fragmento de código en Javascript almacenado en un fichero, típicamente con extensión *.js*. Cuando un componente se activa (<a href="#awake">ver más adelante</a>), puede recibir parámetros que permiten modificar su comportamiento.
+El **comportamiento** es un fragmento de código en Javascript almacenado en un fichero, típicamente con extensión *.js*. Mediante ste fichero controlamos e interaccionamos con la vista. Cuando un componente se activa (<a href="#awake">ver más adelante</a>), puede recibir parámetros que permiten modificar su comportamiento.
 
 ![Definición de comportamiento](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/component_equation.png)
 
@@ -150,17 +153,17 @@ En un Screen podemos registrar otros Screens y visualizarlos al modificar el Has
 
 Un Screen puede contener otros componentes de tipo UI.
 
-En resumen: Los UIs deben pertenecer a otros UIs o a un Screen y no tienen Hash-URL. Los UIs sólo estarán visibles cuando se haya navegado al Screen al que pertenecen. Desde un Screen se puede navegar a otros Screens.
+En resumen: Los UIs deben pertenecer a otros UIs o a un Screen y no tienen Hash-URL. Los UIs sólo estarán visibles cuando se haya navegado al Screen al que pertenecen. Los *Screens* se registran en un Screen (padre) y se navega a ellos a través del Hash-URL asociado.
 
 ##<a name="life_cycle"></a>Ciclo de vida de un componente
 
 Iris establece cuatro transiciones en el ciclo de vida de un componente: *create*, *awake*, *sleep* y *destroy*. En el fichero Javascript asociado al componente, podemos definir métodos *callbacks* que serán llamados por Iris cuando el evento correspondiente se produzca.
 
-Cuando se cree un componente, Iris ejecutará el código asociado a su método **create**. Normalmente aquí cargaremos el código HTML asociado al componente y registraremos los Screens (si el componente es de tipo Screen). Este método sólo se llamará una vez en la vida de un componente. La creación de un Screen se realizará navegando al Hash-URL correspondiente o invocando,desde *Javascript*, el método *goto* de Iris. Si un Screen ya se hubiera creado, el método *goto* o escribir su Hash-URL en el navegador hará que Iris *navegue* hacia él provocando el evento *awake* (ver más adelante). La creación de un UI se realizará invocando el método *ui* del componente en el que lo queramos crear. A diferencia de lo que ocurre con los Screens, llamar al método *ui* siempre llamará al método "create" del componente ya que siempre se creará un nuevo UI.
+Cuando se cree un componente, Iris ejecutará el código asociado a su método **create**. Normalmente aquí cargaremos el código HTML asociado al componente y registraremos los Screens (si el componente es de tipo Screen). Este método sólo se llamará una vez en la vida de un componente. La creación de un Screen se realizará navegando al Hash-URL correspondiente o invocando, desde *Javascript*, el método *navigate* de Iris. Si un Screen ya se hubiera creado, el método *navigate* o escribir su Hash-URL en el navegador hará que Iris *navegue* hacia él provocando el evento *awake* (ver más adelante). La creación de un UI se realizará invocando el método *ui* del componente en el que lo queramos crear. A diferencia de lo que ocurre con los Screens, llamar al método *ui* **siempre** llamará al método "create" del componente ya que siempre se creará un nuevo UI.
 
 El evento complementario será **destroy**. Esté método, al igual que *create*, se ejecutará una única vez en la vida de un componente. La destrucción de un componente se efectuará llamando al método *destoryUI*, *destroyUIs* o *destroyScreen* dependiendo del componente de que se trate. En el caso de componentes de tipo UI, también se llamará cuando un UI sea sustituido por otro. La destrucción de un componente supondrá la destrucción de todos los componentes que contenga.
 
-<a name="awake"></a>El evento **awake** se producirá después del evento *create* y cada vez que cambie el Hash-URL asociado al Screen que se va a visualizar. El método *awake* se llamará también en los UIs que compongan el Screen. Aquí es donde habitualmente asociaremos eventos a nuestra aplicación, reproduciremos vídeo o audio, etc. En la llamada al método *awake* podemos pasar parámetros al componente para variar su comportamiento.
+<a name="awake"></a>El evento **awake** se producirá después del evento *create* y cada vez que cambie el Hash-URL asociado al Screen que se va a visualizar. El método *awake* se llamará también en los UIs que compongan el Screen. Aquí es donde habitualmente asociaremos eventos a nuestra aplicación, reproduciremos vídeo o audio, etc.
 
 Por último, el evento **sleep** es el complementario de *awake*, y se efectuará primero sobre los UIs contenidos en el Screen y luego en el propio Screen cada vez que se produzca un cambio en el Hash-URL que suponga su ocultamiento. No debemos olvidar desactivar los eventos o detener otras tareas, como la reproducción de componentes multimedia, que hayamos iniciado en el evento *awake*. Antes de que se llame al método *destroy* de un componente, se efectuará la llamada a *sleep*.
 
@@ -168,14 +171,16 @@ Podemos ver esto gráficamente:
 
 ![Ciclo de vida](https://raw.github.com/surtich/iris/iris-grunt/docs/images/iris_life_cycle.png)
 
+Los Screens tienen método callback adicional llamado **canSleep**. Este método será invocado por Iris antes de llamar al método *Sleep*. Si el método *canSleep* devuelve *false*, Iris no navegará al Screen deseado e interrumpirá la navegación evitando que se llame al evento *sleep*. Este evento es útil si, por ejemplo, no hemos completado un formulario y queremos advertir al usuario que debe hacerlo antes de navegar a otro Screen.
+
 ##<a name="welcome"></a>Screen de bienvenida
 
 Toda aplicación Iris debe definir un componente inicial que se cargará al principio y antes de efectuar cualquier operación con Iris. Este componente será un <a href="#screen">Screen</a> especial ya que tiene algunas diferencias con lo explicado anteriormente:
-* El Screen de bienvenida no tiene Hash-URL asociado y se carga con el método **welcome** de Iris.
-* A diferencia de lo que ocurre con otros Screens, el componente no puede recibir parámetros en su activación.
+* El Screen de bienvenida tiene el símbolo *#* como Hash-URL asociado y se carga con el método **welcome** de Iris.
 * En una aplicación Iris, normalmente, no habrá necesidad de refrescar o de modificar la *URL* sobre la que se carga el Screen de bienvenida.
-* Por lo tanto, tampoco será necesario llamar al método *destroy* de este Screen. Es decir, que el ciclo de vida de este Screen se simplifica ya que únicamente se hará una primera llamada al método *create* y una segunda al método *awake*.
+* Por lo tanto, tampoco será necesario llamar al método *destroy* de este Screen. Es decir, que el ciclo de vida de este Screen se simplifica ya que únicamente se hará una primera llamada al método *create* y nunca se llamará al método *destroy*. Puede haber, sin embargo, varias llamadas a *awake* o a *sleep* cuando se pasan parámetros como se explica más adelante.
 * Lo habitual es que el cometido del Screen de bienvenida sea registrar otros Screens y *llamar* al Hash-URL del Screen inicial de nuestra aplicación.
+* Todos los demás Screens son hijos de este Screen y, por lo tanto, su Hash.URL tendrá la forma "#/...".
 
 #<a name="starting"></a>Empezando con Iris
 
@@ -191,7 +196,7 @@ El primer paso será decidir si queremos trabajar con la versión de [desarrollo
 ```html
 <!-- In index.html -->
 <script src="jquery-min.js"></script> <!--Iris just depends on JQuery-->
-<script src="iris-0.5.0-SNAPSHOT.js"></script> <!-- TODO Change URL -->
+<script src="iris.js"></script> <!-- TODO Change URL -->
 ```
 
 ##<a name="calling_welcome"></a>Llamando al Screen de bienvenida
@@ -201,7 +206,7 @@ Desde Javascript, llamamos al método **welcome** de Iris para cargar el fichero
 //In any Javascrit file or in a "<script>" section of an HTML file ... 
 $(document).ready(
     function () {
-         iris.baseUri("./"); //It sets de base directory of the application
+         iris.baseUri("./"); //Optional: It sets de base directory of the application
          iris.welcome("welcome.js"); //It loads the behavior file of the welcome Screen
     }
 );
@@ -225,16 +230,16 @@ iris.screen(
         };
 		
         self.sleep = function () {
-            console.log("Welcome Screen Sleeping"); //Never called
+            console.log("Welcome Screen Asleep"); //Never called
         };
   
         self.destroy = function () {
             console.log("Welcome Screen Destroyed");//Never called
         };
   
-    }
- 
-);
+    },
+    "welcome.js"  
+ );
 ```
 
 Y el del archivo *welcome.html*:
@@ -247,9 +252,25 @@ Y el del archivo *welcome.html*:
 
 Cuando se ejecute el método *iris.welcome*, Iris creará un objeto de tipo Screen. Este objeto será pasado a la función que recibe el método *iris.screen* definido en el fichero *welcome.js* y se ejecutarán los métodos del ciclo de vida que se hayan definido en esta función. Concretamente, en nuestro ejemplo, se ejecutarán sucesivamente los métodos *create* y *awake*.
 
-Observe que el método *create* ejecuta una llamada al método **tmpl** que permite cargar en el DOM el contenido del archivo *welcome.html* pasado como parámetro. 
+Observe que el método *create* ejecuta una llamada al método **tmpl** que permite cargar en el DOM el contenido del archivo *welcome.html* pasado como parámetro.
 
-> Los ficheros HTML asociados a componentes de Iris deben tener un único nodo raíz (típicamente un DIV).
+Observe, además, que el método *iris.screen* recibe la función antes mencionada y, como segundo parámetro, la *URL* del fichero *Javascript* asociado. Es muy importante que la *URL* del método *iris.welcome* coincida exactamente con la que aquí pongamos.
+
+
+> El método *self.tmpl()* debe ser llamado una única vez y **OBLIGATORIAMENTE* en el método *self.create()* antes de utilizar ningún otro método del componente (*self.get(), self.destroyUI(), etc*);
+
+> Los ficheros HTML asociados a componentes de Iris deben tener un único nodo raíz (típicamente un DIV). Si hubiera comentarios en HTML deben estar dentro de este nodo.
+
+Por ejemplo:
+
+```html
+<!-- Invalid coment with Iris -->
+<div>
+	<!-- Valid coment with Iris -->
+</div>
+```
+
+Nota: Para que Iris funciona correctamente, debe situar los archivos anteriores en un servidor Web (Apache, Node.js, GAE, etc).
 
 Tras ejecutarse los métodos *create* y *awake* se generará y visualizará el DOM siguiente:
 
@@ -257,7 +278,7 @@ Tras ejecutarse los métodos *create* y *awake* se generará y visualizará el D
 <html>
  <head>...</head>
  <body>
-  <div>
+  <div style="">
    <h1>Welcome Screen</h1>
    <p>This is the initial screen.</p>
   </div>
@@ -267,11 +288,12 @@ Tras ejecutarse los métodos *create* y *awake* se generará y visualizará el D
 
 ##<a name="register"></a>Registrando y mostrando un Screen
 
+En esta sección vamos a registrar un *Screen* y luego navegar a él.
+
 Primero creamos el *Screen Home* con una estructura muy parecida a la anterior.
 
 ```js
 //In home.js
-
 iris.screen(
     function (self) {
         self.create = function () {   
@@ -283,13 +305,14 @@ iris.screen(
         };
 		
         self.sleep = function () {
-            console.log("Home Screen Sleeping");
+            console.log("Home Screen Asleep");
         };
   
         self.destroy = function () {
             console.log("Home Screen Destroyed");
         };
-    }
+    },
+    "home.js"
 );
 ```
 
@@ -307,51 +330,62 @@ Modificamos el método *create* del Screen Welcome:
 self.create = function () {
     console.log("Welcome Screen Created");
     self.tmpl("welcome.html");
-    self.screens("screens", [{
-                "#home": "home.js"
-    }]);
-    //This registers the #home hash and associates it with the Screen home.
-    //The Screen will be added into the HTML element with attribute "data-id = 'screens'"
-}
+    self.screens("screens", [
+        ["home", "home.js"]
+ ]);
 ```
+
 Y dejamos el fichero asociado *welcome.html* de la siguiente manera:
 
 ```html
 <div>
     <h1>Welcome Screen</h1>
     <p>This is the initial screen.</p>
-    <a href="#home">Click to go to Home Screen</a>
+    <a href="#/home">Click to go to Home Screen</a>
     <div data-id="screens">
         Here is where Iris will load the Home Screen
     </div>
 </div>
 ```
-Observe como el método **screens** permite definir los Hash-URL de los objetos de tipo Screen. Este método recibe dos parámetros: El primer parámetro define el elemento de HTML dentro del cual será cargado el Screen cuando su Hash-URL sea invocado; el segundo parámetro es un *array de objetos* donde cada objeto tiene el formato: "#hash":"fichero.js". Es decir, que cada objeto tiene un atributo que se corresponde con al *#hash* del *Screen* y el valor de este atributo será el fichero de comportamiento asociado. El método *screens* únicamente registra esta información pero no produce ningún evento del ciclo de vida del Screen.
 
-> En un Screen puede llamar al método *screens* una única vez.
+> El resgistro de *screens* no produce ningún evento del ciclo de vida. Los eventos se producen cuando se navega al Screen.
 
-En nuestro ejemplo, para *navegar* el Screen debemos pulsar sobre el enlace que hemos añadido en *welcome.html* y que contine el Hash-URL del Screen al que queremos ir.
+Observe como el método **screens** permite definir los Hash-URL de los objetos de tipo Screen. Este método recibe dos parámetros: El primer parámetro define el elemento de HTML dentro del cual será cargado el Screen cuando su Hash-URL sea invocado; el segundo parámetro es un *array de arrays*. Los arrays internos permiten registrar cada Screen poniendo como primer valor el *Hash* sin el símbolo *#* y como segundo el fichero de comportamiento asociado.
 
-Cuando pulsemos sobre el enlace, Iris buscará un elemento del DOM cuyo atributo *data-id* corresponda con el contenedor pasado al método *screens* y ejecutará el fichero de *javascript* asociado al Hash-URL, concretamente llamará al método *create*, con lo cual, el contenido HTML del Screen se añadirá al contenedor.
+> En el registro de Screens, el hash-URL se pone de forma **relativa** y sin el símbolo *#*.
+
+Por ejemplo, en nuestro caso registramos el Screen *Home* que pertecene al Screen *Welcome*, con el hash-URL *home*.
+
+> Un Screen puede llamar al método *screens* una única vez.
+
+En nuestro ejemplo, para *navegar* al Screen debemos pulsar sobre el enlace que hemos añadido en *welcome.html* y que contine el Hash-URL del Screen al que queremos ir.
+
+> Para navegar a un Screen ponemos la ruta **absoluta** de acceso al Screen.
+
+> El Screen *Welcome* siempre tiene el símbolo *#* como hash-URL asociado.
+
+Como el Screen *Home* pertenece al Screen *Welcome*, su ruta de acceso será: */#/home*. Recuerde que el símolo *#* identifica al Screen Welcome.
+
+Cuando pulsemos sobre el enlace, Iris buscará un elemento del DOM cuyo atributo *data-id* corresponda con el contenedor pasado al método *screens* y ejecutará el fichero de *javascript* asociado al Hash-URL; concretamente, llamará al método *create*, con lo cual, el contenido HTML del Screen se añadirá al contenedor.
 
 Tras llamar al método *create*, Iris llamará al método *awake* del Screen.
 
-Tras pulsar el enlace, el DOM de la página generada por Iris será el siguiente:
+Al pulsar sobre el enlace, el DOM de la página generada por Iris será el siguiente:
 
 ```html
 <html>
  <head>..</head>
  <body>
-  <div>
+  <div style="">
    <h1>Welcome Screen</h1>
    <p>This is the initial screen.</p>
-   <a href="#home">Click to go to Home Screen</a>
+   <a href="#/home">Click to go to Home Screen</a>
    <div data-id="screens">
     Here is where Iris will load the Home Screen
-    <div style="display: block;">
-     <h1>Home Screen</h1>
-     <p>This is the home screen.</p>
-    </div>
+   <div style="">
+    <h1>Home Screen</h1>
+    <p>This is the home screen.</p>
+   </div>
    </div>
   </div>
  </body>
@@ -371,7 +405,7 @@ En *welcome.html* sustituyamos el enlace por un botón:
 <div>
     <h1>Welcome Screen</h1>
     <p>This is the initial screen.</p>
-    <button data-id="goto_home">Click to go to Home Screen</button>
+    <button data-id="navigate_home">Click to go to Home Screen</button>
     <div data-id="screens">
         Here is where Iris will load the Home Screen
     </div>
@@ -384,18 +418,18 @@ Y en el fichero *welcome.js*:
 self.create = function () {
     console.log("Welcome Screen Created");
     self.tmpl("welcome.html");
-    self.screens("screens", [{
-        "#home": "home.js"
-    }]);
+    self.screens("screens", [
+        ["home", "home.js"]
+    ]);
     //The get method returns de JQuery element associated with the data-id parameter
-    self.get("goto_home").click( function() {
-        iris.goto("#home"); //It browses to the Hash-URL
+    self.get("navigate_home").click( function() {
+        iris.navigate("#/home"); //It browses to the Hash-URL
     });
 };
 ```
-Observe como el método **goto** de Iris permite navegar al Hash-URL especificado y que, para capturar el evento *click* del botón, hemos utiliado el método **get** del componente de Iris que recibe el valor de su atributo *data-id*. Iris buscará un elemento en el DOM del componente con ese *data-id* y lo devolverá como un objeto de JQuery.
+Observe como el método **navigate** de Iris permite navegar al Hash-URL especificado y que, para capturar el evento *click* del botón, hemos utiliado el método **get** del componente de Iris que recibe el valor de su atributo *data-id*. Iris buscará un elemento en el DOM del componente con ese *data-id* y lo devolverá como un objeto de JQuery.
 
-Si al método *get* no se le pasara ningún argumento, Iris devolvería el objeto JQuery que corresponda con el elemento raíz del componente.
+Si al método *get* no se le pasara ningún argumento, Iris devolverá el objeto JQuery que corresponda con el elemento raíz del componente.
 
 ##<a name="showing_some_screens"></a>Mostrando varios screens
 
@@ -407,7 +441,6 @@ Los ficheros asociados serán los habituales:
 
 ```js
 //In help.js
-
 iris.screen(
     function (self) {
         self.create = function () {   
@@ -419,13 +452,14 @@ iris.screen(
         };
 		
         self.sleep = function () {
-            console.log("Help Screen Sleeping");
+            console.log("Help Screen Asleep");
         };
   
         self.destroy = function () {
             console.log("Help Screen Destroyed");
         };
-    }
+    },
+    "help.js"
 );
 ```
 
@@ -443,11 +477,10 @@ El método *create* de *welcome.js* quedará así:
 self.create = function () {
     console.log("Welcome Screen Created");
     self.tmpl("welcome.html");
-    self.screens("screens", [{
-        "#home": "home.js"
-    },{
-        "#help": "help.js"
-    }]);
+    self.screens("screens", [
+        ["home", "home.js"],
+        ["help", "help.js"]
+    ]);
 };
 ```
 
@@ -457,9 +490,9 @@ Y el fichero *welcome.html*:
 <div>
     <h1>Welcome Screen</h1>
     <p>This is the initial screen.</p>
-    <a href="#home">Click to go to Home Screen</a>
+    <a href="#/home">Click to go to Home Screen</a>
     </br>
-    <a href="#help">Click to gets some help</a>
+    <a href="#/help">Click to gets some help</a>
     <div data-id="screens">
         Here is where Iris will load all the Screens
     </div>
@@ -472,7 +505,7 @@ Si pulsamos primero sobre el enlace a *#home* y después sobre *#help*, el DOM g
 <html>
  <head>..</head>
  <body>
-  <div>
+  <div style="">
    <h1>Welcome Screen</h1>
    <p>This is the initial screen.</p>
    <a href="#home">Click to go to Home Screen</a>
@@ -484,7 +517,7 @@ Si pulsamos primero sobre el enlace a *#home* y después sobre *#help*, el DOM g
      <h1>Home Screen</h1>
      <p>This is the home screen.</p>
     </div>
-    <div style="display: block;">
+    <div style="">
      <h1>Help Screen</h1>
      <p>This is the help screen.</p>
     </div>
@@ -494,7 +527,7 @@ Si pulsamos primero sobre el enlace a *#home* y después sobre *#help*, el DOM g
 </html>
 ```
 
-Podemos comprobar, consistentemente con lo explicado anteriormente, que el código HTML de los Screens Home y Help ha sido añadido al contenedor pero sólo estará visible el correspondiente al último enlace pulsado, Help en este caso.
+Podemos comprobar, consistentemente con lo explicado anteriormente, que el código HTML de los Screens *Home* y *Help* ha sido añadido al contenedor pero sólo estará visible el correspondiente al último enlace pulsado, *Help* en este caso.
 
 La secuencia de eventos producida será:
 
@@ -504,14 +537,14 @@ Welcome Screen Awakened
 Home Screen Created
 Home Screen Awakened
 Help Screen Created
-Home Screen Sleeping
+Home Screen Asleep
 Help Screen Awakened 
 </pre>
 
-Si volvemos a pulsa sobre el enlace a *#home*, se producirán los eventos adicionales:
+Si volvemos a pulsar sobre el enlace a *#home*, se producirán los eventos adicionales:
 
 <pre>
-Help Screen Sleeping
+Help Screen Asleep
 Home Screen Awakened 
 </pre>
 
@@ -536,13 +569,14 @@ iris.screen(
         };
 		
         self.sleep = function () {
-            console.log("Inner_home Screen Sleeping");
+            console.log("Inner_home Screen Asleep");
         };
   
         self.destroy = function () {
             console.log("Inner_home Screen Destroyed");
         };
-    }
+    },
+    "inner_home.js"
 );
 ```
 
@@ -566,23 +600,24 @@ iris.screen(
         self.create = function () {   
             console.log("Home Screen Created");
             self.tmpl("home.html");
-            self.screens("inner_home_container", [{
-                "#inner_home": "inner_home.js"
-            }]);
+            self.screens("inner_home_container", [
+                ["inner_home", "inner_home.js"]
+            ]);
         };
         self.awake = function () {   
             console.log("Home Screen Awakened");
         };
 
         self.sleep = function () {
-            console.log("Home Screen Sleeping");
+            console.log("Home Screen Asleep");
         };
 
         self.destroy = function () {
             console.log("Home Screen Destroyed");
         };
-    }
-    );
+    },
+    "home.js"
+);
 ```
 
 En *home.html*:
@@ -591,7 +626,7 @@ En *home.html*:
 <div>
     <h1>Home Screen</h1>
     <p>This is the home screen.</p>
-    <a href="#inner_home">Click to go to Inner Home Screen</a>
+    <a href="#/home/inner_home">Click to go to Inner Home Screen</a>
     <div data-id="inner_home_container"></div>
 </div>
 ```
@@ -601,26 +636,33 @@ El fichero *welcome.js* queda inalterado:
 ```js
 //In welcome.js
 iris.screen(
-
+	
     function (self) {
-
+ 
         self.create = function () {
             console.log("Welcome Screen Created");
             self.tmpl("welcome.html");
-            self.screens("screens", [{
-                "#home": "home.js"
-            },{
-                "#help": "help.js"
-            }]);
-        }
+            self.screens("screens", [
+                ["home", "home.js"],
+                ["help", "help.js"]
+            ]);
+        };
 
         self.awake = function () {
             console.log("Welcome Screen Awakened");
         };
-
-    }
-
-    );
+		
+        self.sleep = function () {
+            console.log("Welcome Screen Asleep"); //Never called
+        };
+  
+        self.destroy = function () {
+            console.log("Welcome Screen Destroyed");//Never called
+        };
+  
+    },
+    "welcome.js"
+);
 ```
 
 Tampoco es necesario modificar *welcome.html*:
@@ -649,7 +691,14 @@ Inner_home Screen Created
 Inner_home Screen Awakened 
 </pre>
 
-TODO: Hay problemas en el ciclo de vida. Cuando se arreglen se completará esta sección
+Si ahora vamos a "#help", se generarán los eventos adicionales:
+
+<pre>
+Inner_home Screen Asleep
+Home Screen Asleep
+Help Screen Created
+Help Screen Awakened 
+</pre>
 
 ##<a name="screens_bad_practices"></a>Malas prácticas en el registro de Screens
 
@@ -663,8 +712,8 @@ En *welcome.js* tendremos:
 self.create = function () {
     console.log("Welcome Screen Created");
     self.tmpl("welcome.html");
-    self.screens("home_screen", [{"#home": "home.js"}]);
-    self.screens("help_screen", [{"#help": "help.js"}]);
+    self.screens("home_screen", [["home", "home.js"]]);
+    self.screens("help_screen", [["help", "help.js"]]);
 };
 ```
 
@@ -692,11 +741,11 @@ Y en *welcome.html*:
 Otra cosa que debemos evitar es hacer cosas como la siguiente:
 
 ```js
-self.screens("screens", [{
-        "#home": "home.js"
-    },{
-        "#home": "help.js"
-}]);
+self.screens("screens", [
+    ["home", "home.js"]
+    ,
+    ["home", "help.js"]
+]);
 ```
 
 > El hash-URL asociado a un Screen debe ser único en toda la aplicación.
@@ -704,11 +753,11 @@ self.screens("screens", [{
 Por último, tampoco es posible hacer lo siguiente:
 
 ```js
-self.screens("screens", [{
-        "#home": "home.js"
-    },{
-        "#help": "home.js"
-}]);
+self.screens("screens", [
+    ["home", "home.js"]
+    ,
+    ["help", "home.js"]
+]);
 ```
 
 > No podemos asociar el mismo Screen a varios Hash-URLs.
@@ -723,7 +772,7 @@ Para hacer esto simplemente incluiremos el siguiente código en el método *awak
 self.awake = function () {
     console.log("Welcome Screen Awakened");
     if ( !document.location.hash ) {                
-        iris.goto("#home"); //Default Screen
+        iris.navigate("#/home"); //Default Screen
 
     }
 };
@@ -731,7 +780,7 @@ self.awake = function () {
 
 ##<a name="uis"></a>Visualizando UIs
 
-En este apartado vamos a aprender a trabajar con UIs. Los UIs son componentes reutiizables para definir la interfaz de usuario. Un UI pertenece a un Screen o a otro UI.
+En este apartado vamos a aprender a trabajar con UIs. Los UIs son componentes reutilizables para definir la interfaz de usuario. Un UI pertenece a un Screen o a otro UI.
 
 Los UIs tienen muchas analogías con los Screens por lo que si no lo ha hecho todavía, revise la sección anterior.
 
@@ -743,7 +792,6 @@ En my_ui.js:
 
 ```js
 //In my_ui.js
-
 iris.ui(
     function (self) {
         self.create = function () {
@@ -752,18 +800,19 @@ iris.ui(
         };
         self.awake = function () {   
             console.log("my_ui UI Awakened");
-        }
+        };
         self.sleep = function () {
-            console.log("my_ui UI Sleeping");
+            console.log("my_ui UI Asleep");
         };
   
         self.destroy = function () {
             console.log("my_ui UI Destroyed");
         };
-    }
+    },
+    "my_ui.js"
 );
 ```
-La única diferencia que encontramos aquí con respecto a lo explicado en los Screens es que el método se llama **ui** en vez de *screen*.
+La única diferencia que encontramos aquí con respecto a lo explicado en los Screens es que el método se llama **iris.ui** en vez de *iris.screen*.
 
 Tampoco tiene nada especial el fichero *my_ui.html*:
 
@@ -774,7 +823,7 @@ Tampoco tiene nada especial el fichero *my_ui.html*:
 </div>
 ```
 
-Ahora vamos a ver las modificaciones que haremos en el Screen Home.
+Ahora vamos a ver las modificaciones en el Screen Home.
 
 El fichero *home.html* tendrá un botón que nos permita cargar el UI y un contenedor que nos permita visualizarlo.
 
@@ -785,7 +834,6 @@ El fichero *home.html* tendrá un botón que nos permita cargar el UI y un conte
     <button data-id="my_ui_loader">Load my_ui</button>
     <div data-id='ui_container'/>
 </div>
-
 ```
 
 En el método *create* del fichero *home.js* tendremos lo siguiente:
@@ -805,7 +853,7 @@ self.create = function () {
 
 Los UIs son componentes no *navegables* y, por lo tanto, su activación tiene que hacerse desde Javascript de forma análoga a como se puede hacer también con los Screens. La principal diferencia con ellos es que no se registran y se cargan simplemente llamando al método *ui* del componente (en este caso del Screen Home).
 
-Este método puede recibir cuatro parámetros: el *data-id* del contenedor donde se va a cargar; el fichero Javascript asociado al UI y opcionalmente un objeto de Javascript que se pasará al UI como se explica más adelante; y por último, también de forma opcional, el *template mode* (ver explicación posterior).
+Este método puede recibir cuatro parámetros: el *data-id* del contenedor donde se va a cargar; el fichero Javascript asociado al UI; opcionalmente un objeto de Javascript que se pasará al UI como se explica más adelante; y por último, también de forma opcional, el *template mode* (ver explicación posterior).
 
 Es interesante estudiar el DOM que genera Iris tras pulsar el botón y cargar el UI:
 
@@ -821,7 +869,7 @@ Es interesante estudiar el DOM que genera Iris tras pulsar el botón y cargar el
    <a href="#help">Click to gets some help</a>
    <div data-id="screens">
     Here is where Iris will load all the Screens
-    <div style="display: block;">
+    <div style="">
      <h1>Home Screen</h1>
      <p>This is the home screen.</p>
      <button data-id="my_ui_loader">Load my_ui</button>
@@ -840,10 +888,9 @@ Observe que el contenedor con *data-id='ui_container'* ha sido reemplazado por e
 
 Aunque se puede modificar, como explicaremos posteriormente, este es el comportamiento por defecto de los UIs:
 
-> De forma predeterminada, cuando se carga un **UI**, su vista reemplaza al contenedor. Por el contrario, cuando se carga un **Screen**, su vista se añade al contenedor.
+> De forma predeterminada, cuando se carga un **UI**, se reemplaza el contenedor por la vista del UI. Por el contrario, cuando se carga un **Screen**, su vista se añade al contenedor.
 
 Comprender esto es esencial ya que si, por ejemplo, volviéramos a pulsar el botón, se trataría de cargar el UI *my_ui* sin éxito debido a que el contenedor que le estamos pasando en el método *ui* ya no está presente en el DOM. Iris mostrará un mensaje en la consola de error advirtiendo de esta circunstancia.
-
 
 También es interesante analizar la secuencia de eventos que se produce:
 
@@ -859,9 +906,9 @@ my_ui UI Awakened
 Hasta aquí nada especial; pero si luego pulsamos sobre el enlace a *#help*:
 
 <pre>
+my_ui UI Asleep
+Home Screen Asleep
 Help Screen Created
-my_ui UI Sleeping
-Home Screen Sleeping
 Help Screen Awakened 
 </pre>
 
@@ -870,7 +917,7 @@ Obsérvese que se llama al evento *sleep* tanto del UI *my_ui* como del Screen *
 Si ahora volvemos a pulsar sobre *#home*:
 
 <pre>
-Help Screen Sleeping
+Help Screen Asleep
 Home Screen Awakened
 my_ui UI Awakened 
 </pre>
@@ -885,7 +932,6 @@ En *inner_ui.js*:
 
 ```js
 //In inner_ui.js
-
 iris.ui(
     function (self) {
         self.create = function () {
@@ -896,13 +942,14 @@ iris.ui(
             console.log("inner_ui UI Awakened");
         };
         self.sleep = function () {
-            console.log("inner_ui UI Sleeping");
+            console.log("inner_ui UI Asleep");
         };
   
         self.destroy = function () {
             console.log("inner_ui UI Destroyed");
         };
-    }
+    },
+    "inner_ui.js"
 );
 ```
 
@@ -935,11 +982,11 @@ Y el fichero en el fichero *my_ui.html*:
 </div>
 ```
 
-Aquí hay poco que comentar. Tan sólo que los UIs, al igual que los Screens, tienen un método *ui* que permite cargar otros UIs. Obsérvese también que la carga del UI interno se ha realizado directamente sin utilizar un botón como hicimos en el ejemplo anterior.
+Aquí hay poco que comentar. Tan sólo que los UIs, al igual que los Screens, tienen un método *ui* que permite cargar otros UIs. Obsérvese también que la carga del UI interno se ha realizado directamente, sin utilizar un botón como hicimos en el ejemplo anterior.
 
 ##<a name="some_UIs"></a>Añadiendo varios UIs a un mismo contenedor
 
-Anteriormente hemos visto que cuando añadimos un UI, su contenedor es reemplazado por la vista del UI. Este comportamiento se puede modificar.
+Anteriormente hemos visto que cuando añadimos un UI, su contenedor es reemplazado por la vista del UI. Este comportamiento se puede cambiar.
 
 Para mostrar como hacer esto, modifiquemos el método *create* del UI *my_ui*:
 
@@ -966,14 +1013,14 @@ Se puede especificar el valor de *tmplMode* en el método *ui* pasándolo como c
 Por ejemplo, el siguiente código producirá un error:
 
 ```js
+//In welcome.js
 self.create = function () {
     console.log("Welcome Screen Created");
     self.tmpl("welcome.html");
-    self.screens("screens", [{
-        "#home": "home.js"
-    },{
-        "#help": "help.js"
-    }]);
+    self.screens("screens", [
+        ["home", "home.js"],
+        ["help", "help.js"]
+    ]);
     self.ui("screens", "my_ui.js");
 };
 ```
@@ -984,7 +1031,7 @@ Normalmente cada tipo de UI tendrá su propio contenedor.
 
 > Debemos evitar utilizar el atributo *id* de las etiquetas de *HTML* y en su lugar utilizar *data-id*, debido a que, al ser los UIs componentes reutilizables, normalmente habrá varios de ellos en la misma página y el atributo *id* en *HTML* debe ser único.
 
-##<a name="Screens_drestroy"></a>Destruyendo Screens
+##<a name="Screens_destroy"></a>Destruyendo Screens
 
 Iris dispone del método *destroyScreen* para destruir componentes de tipo Screen.
 
@@ -1000,8 +1047,8 @@ En *welcome.html*:
     </br> 
     <button data-id="destroy_home_screen">Click to destroy Home Screen</button>
     </br>
-    <a href="#help">Gets some help</a>
-    <div data-id="container"></div>
+    <a href="#/help">Gets some help</a>
+    <div data-id="screens"></div>
 </div>
 ```
 Y en el método *create* *welcome.js*:
@@ -1010,21 +1057,20 @@ Y en el método *create* *welcome.js*:
 self.create = function () {
     console.log("Welcome Screen Created");
     self.tmpl("welcome.html"); 
-    self.screens("container", [{
-        "#home": "home.js"
-    },{
-        "#help": "help.js"
-    }]);
+    self.screens("screens", [
+        ["home", "home.js"],
+        ["help", "help.js"]
+    ]);
 
     self.get("create_home_screen").click(
         function() {   
-            iris.goto("#home");
+            iris.navigate("#/home");
         }
     );
 
     self.get("destroy_home_screen").click(
         function() {   
-            iris.destroyScreen("#home");
+            iris.destroyScreen("#/home");
         }
     );
 };
@@ -1045,7 +1091,7 @@ Observe que tenemos dos botones, uno para ir al Screen Home y otro para destruir
    <br>
    <a href="#help">Gets some help</a>
    <div data-id="container"></div>
-    <div style="display: block;">
+    <div style="">
      <h1>Help Screen</h1>
      <p>This is the help screen.</p>
     </div>
@@ -1078,7 +1124,7 @@ self.create = function () {
 };
 ```
 
-Si hacemos lo anterior para destruir el Screen Home, se generará un DOM idéntico al anterior ya que el UI se destruirá junto con el Screen. La secuencia de eventos será la siguiente:
+Si hacemos lo anterior al destruir el Screen Home, se generará un DOM idéntico al anterior ya que el UI se destruirá junto con el Screen. La secuencia de eventos será la siguiente:
 
 <pre>
 Welcome Screen Created
@@ -1088,8 +1134,8 @@ my_ui UI Created
 my_ui UI Awakened
 Home Screen Awakened
 Help Screen Created
-my_ui UI Sleeping
-Home Screen Sleeping
+my_ui UI Asleep
+Home Screen Asleep
 Help Screen Awakened
 my_ui UI Destroyed
 Home Screen Destroyed
@@ -1099,7 +1145,7 @@ Home Screen Destroyed
 
 > No se puede destruir el Screen actual. Es decir, no se puede destruir el Screen asociado al hash-URL que esté mostrando el navegador.
 
-Si, por ejemplo, estamos en el hash-URL #home, no podemos destruir el Screen Home. Puede probarlo tratando de destruir el Screen Home sin cambiar a *#help*.
+Si, por ejemplo, estamos en el hash-URL #home, no podemos destruir el Screen Home. Puede probarlo con el ejemplo anterior, trate de destruir el Screen Home sin cambiar a *#help*.
 
 > Tampoco se puede destruir un Screen si el hash-URL actual pertenece a la jerarquía del Screen que se quiere destruir.
 
@@ -1109,7 +1155,6 @@ En *inner_home.js*:
 
 ```js
 //In inner_home.js
-
 iris.screen(
     function (self) {
         self.create = function () {   
@@ -1121,13 +1166,14 @@ iris.screen(
         };
 		
         self.sleep = function () {
-            console.log("Inner_home Screen Sleeping");
+            console.log("Inner_home Screen Asleep");
         };
   
         self.destroy = function () {
             console.log("Inner_home Screen Destroyed");
         };
-    }
+    },
+    "inner_home.js"
 );
 ```
 
@@ -1135,8 +1181,8 @@ En *inner_home.html*:
 
 ```html
 <div>
-    <h1>Inner_home Screen</h1>
-    <p>This is the Inner_home screen.</p>
+    <h1>Inner Home Screen</h1>
+    <p>This is the Inner Home screen.</p>
 </div>
 ```
 
@@ -1146,7 +1192,7 @@ En *home.html*:
 <div>
     <h1>Home Screen</h1>
     <p>This is the home screen.</p>
-    <div data-id='inner_home_container'/>
+    <div data-id='container'/>
 </div>
 ```
 
@@ -1154,36 +1200,41 @@ Y en *home.js*:
 
 ```js
 //In home.js
-
 iris.screen(
     function (self) {
-        self.screens("container", [{
-            "#inner_home": "inner_home.js"
-        }]);
+        //In home.js
+        self.create = function () {   
+            console.log("Home Screen Created");
+            self.tmpl("home.html");
+            self.screens("container", [
+                ["inner_home", "inner_home.js"]
+            ]);
+        };   
         self.awake = function () {   
             console.log("Home Screen Awakened");
+            iris.navigate("#/home/inner_home");
         };
-		
+
         self.sleep = function () {
-            console.log("Home Screen Sleeping");
+            console.log("Home Screen Asleep");
         };
-  
+
         self.destroy = function () {
             console.log("Home Screen Destroyed");
         };
-    }
+    },
+    "home.js"
 );
 ```
-Observe que estando en el hash-URL *#inner_home*, si pulsamos el botón de destruir el Screen Home, Iris da un error indicando que no podemos destruir el padre del Screen actual.
+Observe que estando en el hash-URL *#/home/inner_home*, si pulsamos el botón de destruir el Screen Home, Iris da un error indicando que no podemos destruir el padre del Screen actual.
 
-Si navegamos a *#help*, podremos destruir el Screen Home. Como decíamos antes, la destrucción del Screen Home no eliminará su registro, sin embargo sí se eliminará el registro del Screen Inner_home. Para volver a navegar a #inner_home debemos navegar previamente #home; se volverá a llamar al método *create* del Screen Home que volverá a registrar el Screen Inner_Home permitiéndonos navegar a él.
+Si navegamos a *#help*, podremos destruir el Screen Home. Como decíamos antes, la destrucción del Screen Home no eliminará su registro, sin embargo sí se eliminará el registro del Screen Inner_home.
 
-> Si destruimos un Screen, se eliminará el registro de los #hash-URL que hayan sido creados por él. 
+##<a name="UIs_destroy"></a>Destruyendo UIs
 
+Recuerde que un UI se destruye cuando se destruye su componente padre. Además:
 
-##<a name="UIs_drestroy"></a>Destruyendo UIs
-
-Para destruir UIs, Iris dispone de dos métodos: *destroyUI* y *destroyUIs*. Esto métodos son locales al componente que los vaya a destruir a diferencia de *destroyScreen* que es global.
+Para destruir UIs, Iris dispone de dos métodos: *self.destroyUI* y *self.destroyUIs*. Esto métodos son locales al componente que los vaya a destruir a diferencia de *iris.destroyScreen* que es global.
 
 Para probar *destroyUI* tendremos el siguiente código:
 
@@ -1195,7 +1246,7 @@ En *welcome.html*:
     <p>This is the initial screen.</p>
     <button data-id="create_my_ui">Click create a my_ui UI</button>
     </br> 
-    <button data-id="destroy_my_ui">Click to destroy all my_ui UIs</button>
+    <button data-id="destroy_my_ui">Click to destroy my_ui</button>
     <div data-id="container"></div>
 </div>
 ```
@@ -1228,6 +1279,10 @@ self.create = function () {
 
 Observe que eliminamos el UI con el método *destroyUI* a través de la referencia que nos devuelve la llamada al método *ui*.
 
+> El método *self.ui* devuelve una referencia al UI creado.
+
+> El método *self.uis()* devuelve la colección de UIs que tiene el componente.
+
 En *my_ui.js*:
 
 ```js
@@ -1238,13 +1293,13 @@ self.create = function () {
 };
 ```
 
-En el DOM generado ha eliminado todo el contenido del UI. Tampoco aparece ninguna referencia a su contenedor (*data-id='container'*) porque estamos en modo *REPLACE*.
+En el DOM generado, se ha eliminado todo el contenido del UI. Tampoco aparece ninguna referencia a su contenedor (*data-id='container'*) porque estamos en modo *REPLACE*.
 
 ```html
 <html>
  <head>...</head>
  <body>
-  <div>
+  <div style="">
    <h1>Welcome Screen</h1>
    <p>This is the initial screen.</p>
    <button data-id="create_my_ui">Click create a my_ui UI</button>
@@ -1255,7 +1310,7 @@ En el DOM generado ha eliminado todo el contenido del UI. Tampoco aparece ningun
 </html>
 ```
 
-Si descomentamos la línea que asigna el *tmplMode* a *APPEND* en el fichero *my_ui.js*, y pulsamos varias veces sobre botón que crea el UI seguida de una pulsación sobre el que lo destruye, sólo se eliminará el último UI creado ya que la referencia la habremos ido reemplazando a medida que creamos nuevos UIs.
+Si descomentamos la línea que asigna *APPEND* al *tmplMode* en el fichero *my_ui.js*, y pulsamos varias veces sobre botón que crea el UI seguida de una pulsación sobre el que lo destruye, sólo se eliminará el último UI creado ya que la referencia la habremos ido reemplazando a medida que creamos nuevos UIs.
 
 Podríamos eliminar todos los UIs si los hubiéramos ido almacenando en un *array*. Aunque también lo podemos hacer si utilizamos el método *destroyUIs* como se explica en el siguiente ejemplo:
 
@@ -1299,7 +1354,7 @@ Tras pulsar tres veces sobre el botón que crea el UI y una vez sobre el que lo 
 <html>
  <head>...</head>
  <body>
-  <div>
+  <div style="">
    <h1>Welcome Screen</h1>
    <p>This is the initial screen.</p>
    <button data-id="create_my_ui">Click create a my_ui UI</button>
@@ -1324,18 +1379,154 @@ my_ui UI Created
 my_ui UI Awakened
 my_ui UI Created
 my_ui UI Awakened
-my_ui UI Sleeping
+my_ui UI Asleep
 my_ui UI Destroyed
-my_ui UI Sleeping
+my_ui UI Asleep
 my_ui UI Destroyed
-my_ui UI Sleeping
+my_ui UI Asleep
 my_ui UI Destroyed
 </pre>
 
-##<a name="params"></a>Enviando parámetros a un Screen
+##<a name="canSleep"></a>Evento *canSleep*
+
+Antes de llamar al evento *sleep* de un screen, Iris comprueba si existe un método con el nombre *canSleep*. Si este método devuelve *false*, Iris cancelará la propagación de eventos e imperirá cambiar el hash-URL.
+
+Esto puede ser útil si, por ejemplo, el usuario tiene que completar un formulario antes de navegar a otro Screen.
+
+Veamos un ejemplo:
+
+En *welcome.html*:
+
+```html
+<div>
+    <h1>Welcome Screen</h1>
+    <p>This is the initial screen.</p>
+    </br>
+        <a href="#/home">Goto Home</a>
+    </br>
+    <a href="#/help">Gets some help</a>
+    <div data-id="screens"></div>
+
+</div>
+```
+
+En *welcome.js*:
+
+```js
+//In welcome.js
+iris.screen(
+	
+    function (self) {
+ 
+        self.create = function () {
+            console.log("Welcome Screen Created");
+            self.tmpl("welcome.html"); 
+            self.screens("screens", [
+                ["home", "home.js"],
+                ["help", "help.js"]
+            ]);
+        };
+        self.awake = function () {
+            console.log("Welcome Screen Awakened");
+            iris.navigate("#/home");
+        };
+		
+        self.sleep = function () {
+            console.log("Welcome Screen Asleep"); //Never called
+        };
+  
+        self.destroy = function () {
+            console.log("Welcome Screen Destroyed");//Never called
+        };
+  
+    },
+    "welcome.js"
+);
+```
+
+En *help.html*:
+
+```html
+<div>
+    <h1>Help Screen</h1>
+    <p>This is the help screen.</p>
+</div>
+```
+
+```js
+//In help.js
+iris.screen(
+    function (self) {
+        self.create = function () {   
+            self.tmpl("help.html");
+            console.log("Help Screen Created");
+        };
+        self.awake = function () {   
+            console.log("Help Screen Awakened");
+        };
+		
+        self.sleep = function () {
+            console.log("Help Screen Asleep");
+        };
+  
+        self.destroy = function () {
+            console.log("Help Screen Destroyed");
+        };
+    },
+    "help.js"
+);
+```
+
+En *home.html*:
+
+```html
+<div>
+    <h1>Home Screen</h1>
+    <p>This is the home screen.</p>
+</div>
+```
+
+Y en *home.js*:
+
+```js
+//In home.js
+iris.screen(
+    function (self) {
+        self.create = function () {   
+            console.log("Home Screen Created");
+            self.tmpl("home.html");
+        };   
+        self.awake = function () {   
+            console.log("Home Screen Awakened");
+        };
+        
+        self.canSleep = function () {
+            console.log("Can Home Sceen sleep?");
+            return false;
+        };
+
+        self.sleep = function () {
+            console.log("Home Screen Asleep");
+        };
+
+        self.destroy = function () {
+            console.log("Home Screen Destroyed");
+        };
+    },
+    "home.js"
+);
+```
+
+Observe que el método *canSleep* devuelve *false*. Esto impedirá ir a *#help* cuando pulsemos sobre el enlace.
+
+##<a name="querystring_params"></a>Enviando parámetros a un Screen
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-En esta sección vamos a ver varias formas de que un Screen reciba un parámetro. Los parámetros se pasan a los Screen en el *[Query String](http://en.wikipedia.org/wiki/Query_string)* de la URL.
+En esta y en las siguientes secciones vamos a ver diversas formas de pasar parámetros entre componentes. 
+
+Comencemos por el paso de parámetros a Screens:
+
+Una forma de pasar un parámetro a un Screen es en el *[Query String](http://en.wikipedia.org/wiki/Query_string)* de la URL.
 
 Observe como se pasa el parámetro al Screen Home en el archivo *welcome.html*:
 
@@ -1343,9 +1534,9 @@ Observe como se pasa el parámetro al Screen Home en el archivo *welcome.html*:
 <div>
     <h1>Welcome Screen</h1>
     <p>This is the initial screen.</p>
-    <a href="#home?year=2013">Click to go to Home Screen</a>
+    <a href="#/home?year=2013">Click to go to Home Screen</a>
     </br>
-    <a href="#help">Click to gets some help</a>
+    <a href="#/help">Click to gets some help</a>
     </br> 
     <div data-id="screens">
         Here is where Iris will load all the Screens
@@ -1362,13 +1553,14 @@ iris.screen(
         self.create = function () {
             console.log("Welcome Screen Created");
             self.tmpl("welcome.html"); 
-            self.screens("screens", [{
-                "#home": "home.js"
-            },{
-                "#help": "help.js"
-            }]);
+            self.screens("screens", [
+                ["home", "home.js"]
+                ,
+                ["help", "help.js"]
+            ]);
         };
-    }
+    },
+    "welcome.js"
 );
 ```
 
@@ -1388,7 +1580,6 @@ Y en *home.js*:
 
 ```js
 //In home.js
-
 iris.screen(
     function (self) {
         self.create = function () {   
@@ -1397,25 +1588,25 @@ iris.screen(
         };
   
         self.awake = function (params) {  
-            console.log("Home Screen Awakened");   
+            console.log("Home Screen Awakened");
             self.get("year_parameter").text("The value of the year parameter is: " + params.year);
         };
 		
         self.sleep = function () {
-            console.log("Home Screen Sleeping");
+            console.log("Home Screen Asleep");
         };
   
         self.destroy = function () {
             console.log("Home Screen Destroyed");
         };
-    }
+    },
+    "home.js"
 );
 ```
 
-Observe que el parámetro se recibe como un atributo del objeto *params* que será pasado por Iris a la función definida en el método *awake*.
+Observe que el parámetro lo podemos recuperar con el objeto *params* que recibimos en el método *awake*.
 
-También podemos pasar un parámetro en el método *goto* de Iris. Para probar esto hagamos los siguientes cambios:
-
+También podemos pasar un parámetro en el método *navigate* de Iris. Para probar esto hagamos los siguientes cambios:
 
 En *welcome.html* cambiamos el enlace por un botón:
 
@@ -1423,9 +1614,9 @@ En *welcome.html* cambiamos el enlace por un botón:
 <div>
     <h1>Welcome Screen</h1>
     <p>This is the initial screen.</p>
-    <button data-id="goto_home">Goto Home</button>
+    <button data-id="navigate_home">Goto Home</button>
     </br>
-    <a href="#help">Click to gets some help</a>
+    <a href="#/help">Click to gets some help</a>
     </br> 
     <div data-id="screens">
         Here is where Iris will load all the Screens
@@ -1436,29 +1627,164 @@ En *welcome.html* cambiamos el enlace por un botón:
 En *welcome.js* enviamos el parámetro:
 
 ```js
+//In welcome.js
 iris.screen(
     function (self) {
         self.create = function () {
             console.log("Welcome Screen Created");
             self.tmpl("welcome.html"); 
-            self.screens("screens", [{
-                "#home": "home.js"
-            },{
-                "#help": "help.js"
-            }]);
-            self.get("goto_home").click(
+            self.screens("screens", [
+                ["home", "home.js"]
+                ,
+                ["help", "help.js"]
+            ]);
+            self.get("navigate_home").click(
                 function() {
-                    iris.goto("#home?year=" + (new Date().getFullYear())); //Send the current year instead a fixed value
+                    iris.navigate("#/home?year=" + (new Date().getFullYear())); //Send the current year instead a fixed value
                 }
             );
         };
-    }
+        
+    },
+    "welcome.js"
 );
 ```
 
-##<a name="ui_params"></a>Paso de parámetros en UIs
+Se pueden pasar parámetros simultáneamente a varios Screens (padres e hijos). En el siguiente ejemplo pasamos un parámetro al Screen Welcome y otro al Screen Home.
 
-Los UIs pueden recibir parámetros de forma análoga a como se hizo en el ejercicio anterior. Veámoslo con el siguiente ejemplo:
+El Screen Home queda inalterado:
+
+En *home.js*:
+
+```js
+//In home.js
+iris.screen(
+    function (self) {
+        self.create = function () {   
+            console.log("Home Screen Created");
+            self.tmpl("home.html");
+        };
+  
+        self.awake = function (params) {  
+            console.log("Home Screen Awakened");
+            self.get("year_parameter").text("The value of the year parameter is: " + params.year);
+        };
+		
+        self.sleep = function () {
+            console.log("Home Screen Asleep");
+        };
+  
+        self.destroy = function () {
+            console.log("Home Screen Destroyed");
+        };
+    },
+    "home.js"
+);
+```
+
+En *home.html*:
+
+```html
+<div>
+    <h1>Home Screen</h1>
+    <p>This is the home screen.</p>
+    <div data-id="year_parameter"></div>
+</div>
+```
+
+En *welcome.js*:
+
+```js
+iris.screen(
+    function (self) {
+        self.create = function () {
+            console.log("Welcome Screen Created");
+            self.tmpl("welcome.html"); 
+            self.screens("screens", [
+                ["home", "home.js"]
+            ]);
+            self.awake= function (params) {
+                console.log("Welcome Screen Awaked");
+                if (params.year) {
+                    self.get("year_parameter").text("The value of the year parameter is: " + params.year);
+                } else {
+                    self.get("year_parameter").text("No year");
+                }
+            };
+        };
+    },
+    "welcome.js"
+);
+```
+
+Y en *welcome.html*:
+
+```html
+<div>
+    <h1>Welcome Screen</h1>
+    <p>This is the initial screen.</p>
+    <a href="#?year=2013/home?year=2013">Click to go to Home Screen (year = 2013)</a>
+    </br>
+    <a href="#?year=2014/home?year=2014">Click to go to Home Screen (year = 2014)</a>
+    </br> 
+    <div data-id="year_parameter"></div>
+    </br>
+    <div data-id="screens">
+        Here is where Iris will load all the Screens
+    </div> 	
+</div>
+```
+
+Observe que el parámetro *year* se pasa tanto al Screen Welcome como al Screen Home.
+
+> Para pasar un parámetro a un Screen hay que ponerlo después del signo *?* que, a su vez, irá destrás de su hash-URL y antes que sus hijos.
+
+> Si se quiere pasar un mismo parámetro a varios Screens hay que repetirlo en cada uno de ellos.
+
+> Si se quieren pasar varios parámetros a un mismo Screen, se separarán con el símbolo *&*.
+
+Es importante comprender lo que sucede con los eventos. Al cargar la página con el ejemplo anterior:
+
+<pre>
+Welcome Screen Created
+Welcome Screen Awaked 
+</pre>
+
+Hasta aquí nada de particular. Pero si pulsamos sobre el primer enlace:
+
+<pre>
+Home Screen Created
+Welcome Screen Awaked
+Home Screen Awakened 
+</pre>
+
+Observe que se volverá a llamar al evento *awake* de welcome sin pasar por su evento *sleep*.
+
+Este es un caso particular del ciclo de vida de los *screens*:
+
+> Cuando se modifiquen los parámetros con los que se ha llamado a un Screen, se volverá a llamar a su evento *awake*.
+
+
+
+##<a name="settings"></a>Paso de parámetros con el método *setting*
+
+Los componentes de Iris (UIs y Screens) pueden recibir parámetros utilizando los métodos *self.setting* o *self.settings*. 
+
+El método *setting* recibe el nombre del parámetro si lo queremos leer y, opcionalmente, el valor del parámetro si lo queremos sobreescribir o crear.
+
+```js
+//Read the parameter value
+var param_value = self.setting("param_name");
+```
+
+```js
+//Write the parameter value
+self.setting("param_name" ,"param_value");
+```
+
+El valor de *param_value* puede ser cualquier tipo válido en *Javascript*, incluso un objeto o una función.
+
+Veámoslo con el siguiente ejemplo:
 
 En *welcome.html*:
 
@@ -1490,7 +1816,8 @@ iris.screen(
                 }
             );
         };
-    }
+    },
+    "welcome.js"
 );
 ```
 
@@ -1498,7 +1825,6 @@ En *my_ui.js*:
 
 ```js
 //In my_ui.js
-
 iris.ui(
     function (self) {
         self.create = function () {   
@@ -1506,11 +1832,12 @@ iris.ui(
             self.tmpl("my_ui.html");
         };
   
-        self.awake = function (params) {  
+        self.awake = function () {  
             console.log("my_ui UI Awakened");
-            self.get("ui_number").text("This is the " + params.ui_number + " muyUI UI.");
+            self.get("ui_number").text("This is the " + self.setting("ui_number") + " muyUI UI.");
         };
-    }
+    },
+    "my_ui.js"
 );
 ```
 
@@ -1526,10 +1853,7 @@ En *my_ui.html*:
 
 Observe como el UI recibe un parámetro que indica el número de UI de que se trata.
 
-
-##<a name="settings"></a>Paso de parámetros utilizando el método *settings*
-
-Los componentes, UIs y Screens, disponen de un método alternativo al anteriormente explicado para pasar parámetros. Consiste en utilizar los métodos *settings* o *setting*.
+Los componentes, UIs y Screens, disponen de un método alternativo al anteriormente explicado para pasar parámetros. Consiste en utilizar el método *settings*.
 
 El método *settings* permite almacenar cualquier objeto de Javascript en el componente. La sintaxis de este método es:
 
@@ -1537,21 +1861,29 @@ El método *settings* permite almacenar cualquier objeto de Javascript en el com
 self.settings({...}); //any kind of Javascript object
 ```
 
-El método *setting* permite almacenar o recuperar una variable (atributo).
-
-Para almacenar un atributo:
+El ejemplo anterior, utilizando este método se habría hecho de esta manera:
 
 ```js
-self.setting(variable_name, {...});
+self.settings({
+    "year": 2013
+}); //any kind of Javascript object
 ```
 
-Para recuperar un atributo:
+Tanto con el método *setting* como con *settings* se pueden pasar parámetros con varios niveles. Por ejemplo:
 
 ```js
-self.setting(variable_name);
+self.settings({ person: { name:"test name"}, money: -67890.678, region: { country: "country test" }});
 ```
 
-Lo que hicimos en el ejemplo anterior, lo podemos hacer ahora de la siguiente manera:
+Para recuperar el nombre:
+
+```js
+var name = self.setting("person.name");
+```
+
+##<a name="data-settings"></a>Paso de parámetros utilizando atributos *data-*
+
+Podemos pasar parámetros desde el contenedor de un UI utilizando el atributo *data-*.
 
 En *welcome.html*:
 
@@ -1559,45 +1891,30 @@ En *welcome.html*:
 <div>
     <h1>Welcome Screen</h1>
     <p>This is the initial screen.</p>
-    <button data-id="create_my_ui">Click create a my_ui UI</button>
-    </br> 
-    <button data-id="destroy_my_ui">Click to destroy all my_ui UIs</button>
-    <div data-id="ui_container"></div>
+    <button data-id="my_ui_loader">Load my_ui</button>
+    <div data-id="ui_container" data-year="2013"/>
 </div>
 ```
+
+Observe que el parámetro se pasa con el atributo *data-year* en el contenedor del UI *my_ui*.
 
 En *welcome.js*:
 
 ```js
 //In welcome.js
 iris.screen(
-
     function (self) {
-  
-        var my_ui_number = 0;
-
-        self.create = function () {
+        self.create = function () {   
             console.log("Welcome Screen Created");
-            self.tmpl("welcome.html"); 
- 
-            self.get("create_my_ui").click(
+            self.tmpl("welcome.html");
+            self.get("my_ui_loader").click(
                 function() {
-                    my_ui_number++;
-                    self.ui("ui_container", "my_ui.js", {
-                        "number": my_ui_number
-                    });
+                    self.ui( "ui_container", "my_ui.js");
                 }
-            );
-
-            self.get("destroy_my_ui").click(
-                function() {   
-                    self.destroyUIs("ui_container");
-                }
-            );
+            );   
         };
-
-    }
-
+    },
+    "welcome.js"
 );
 ```
 
@@ -1606,32 +1923,203 @@ En *my_ui.html*:
 ```html
 <div>
     <h1>my_ui UI</h1>
-    <p>This is the <span data-id="my_ui_number"></span> my_ui template.</p>
+    <p>This is the my_ui template.</p>
+    <div data-id="year_parameter"></div>
 </div>
 ```
+
+
+
 En *my_ui.js*:
 
 ```js
 //In my_ui.js
-
 iris.ui(
     function (self) {
         self.create = function () {
             console.log("my_ui UI Created");
-            self.tmplMode(self.APPEND);
             self.tmpl("my_ui.html");
         };
         self.awake = function () {   
             console.log("my_ui UI Awakened");
-            self.get("my_ui_number").html(self.setting("number"));
+            self.get("year_parameter").text("The value of the year parameter is: " + self.setting("year"));
         };
-    }
+        self.sleep = function () {
+            console.log("my_ui UI Asleep");
+        };
+  
+        self.destroy = function () {
+            console.log("my_ui UI Destroyed");
+        };
+    },
+    "my_ui.js"
 );
 ```
 
-Observe como utilizamos el método *self.setting* para recuperar el valor de la variable.
+##<a name="settings_ui"></a>Paso de parámetros con el método *self.ui*
 
-##<a name="tmpl_settings"></a>Paso de parámetros con el método *tmpl*
+El método *self.ui* también permite pasar parámetros a un *UI*.
+
+Veamos un ejemplo:
+
+En *welcome.html*:
+
+```html
+<div>
+    <h1>Welcome Screen</h1>
+    <p>This is the initial screen.</p>
+    <button data-id="my_ui_loader">Load my_ui</button>
+    <div data-id='ui_container'/>
+</div>
+```
+
+En *welcome.js*:
+
+```js
+//In welcome.js
+iris.screen(
+    function (self) {
+        //In home.js
+        self.create = function () {   
+            console.log("Welcome Screen Created");
+            self.tmpl("welcome.html");
+            self.get("my_ui_loader").click(
+                function() {
+                    self.ui( "ui_container", "my_ui.js", {year: 2013} );
+                }
+            );   
+        };
+    },
+    "welcome.js"
+);
+```
+
+En *my_ui.html*:
+
+```html
+<div>
+    <h1>my_ui UI</h1>
+    <p>This is the my_ui template.</p>
+    <div data-id="year_parameter"></div>
+</div>
+```
+
+Y en *my_ui.js*:
+
+```js
+//In my_ui.js
+iris.ui(
+    function (self) {
+        self.create = function () {
+            console.log("my_ui UI Created");
+            self.tmpl("my_ui.html");
+        };
+        self.awake = function () {   
+            console.log("my_ui UI Awakened");
+            self.get("year_parameter").text("The value of the year parameter is: " + self.setting("year"));
+        };
+        self.sleep = function () {
+            console.log("my_ui UI Asleep");
+        };
+  
+        self.destroy = function () {
+            console.log("my_ui UI Destroyed");
+        };
+    },
+    "my_ui.js"
+);
+```
+
+Observe que el parámetro *year* se pasa en el método *self.ui* del Screen y se recoge en el método *self.setting* del UI.
+
+##<a name="settings_prioroty"></a>Prioridad en el paso de parámetros
+
+Los componentes pueden recibir parámetros de varias formas. Concretamente, los *UIs* pueden recibir parámetros:
+
+1. Con los métodos *self.etting* y *self.settings*.
+2. En el método *self.ui* del componente padre.
+3. Desde la vista con el atributo *data-* en el contenedor del padre del UI.
+
+Todos estas alternativas comparten el mismo objeto *settings* de *javascript* con lo que si pasamos un mismo nombre de parámetro de varias formas diferentes, el valor del parámetro resultará sobreescrito.
+
+El orden de prioridad es el que se ha reflejado en la lista anterior, aunque el valor final resultante dependerá de en qué momento del ciclo de vida fijemos el parámetro.
+
+Por ejemplo:
+
+En *welcome.js*, pasamos el parámetro en el método *self.ui* que se invoca en el evento *self.create*:
+
+```js
+//In welcome.js
+iris.screen(
+    function (self) {
+        self.create = function () {   
+            console.log("Welcome Screen Created");
+            self.tmpl("welcome.html");
+            self.ui( "ui_container", "my_ui.js", {year: 2014});
+        };
+    },
+    "welcome.js"
+);
+```
+
+En *welcome.html*, pasamos el mismo parámetro en el contenedor del padre:
+
+```html
+<div>
+    <h1>Welcome Screen</h1>
+    <p>This is the initial screen.</p>
+    <div data-id="ui_container" data-year="2013"/>
+</div>
+```
+
+En *my_ui.js*, pasamos el parámetro en el método *self.setting* del componente que se llama en el evento *self.create*:
+
+```js
+//In my_ui.js
+iris.ui(
+    function (self) {
+        self.create = function () {
+            console.log("my_ui UI Created");
+            self.tmpl("my_ui.html");
+            self.setting("year", 2015);
+        };
+        self.awake = function () {   
+            console.log("my_ui UI Awakened");
+            self.get("year_parameter").text("The value of the year parameter is: " + self.setting("year"));
+        };
+        self.sleep = function () {
+            console.log("my_ui UI Asleep");
+        };
+  
+        self.destroy = function () {
+            console.log("my_ui UI Destroyed");
+        };
+    },
+    "my_ui.js"
+);
+```
+
+En *my_ui.html*, visualizamos el parámetro:
+
+```html
+<div>
+    <h1>my_ui UI</h1>
+    <p>This is the my_ui template.</p>
+    <div data-id="year_parameter"></div>
+</div>
+```
+
+El valor que se visualizará será *2015* que será el que hemos pasado en el método *self.setting*. La razón de esto es que el contenedor del UI pasa el valor *2013*, pero el método *self.ui* sobreescribe este valor a *2014*. Cuando el método *self.tmpl* del UI *my_ui* retorna, se modifica el valor del parámetro con *self.setting* que es lo que se visualiza.
+
+Si comentamos la línea que asigna el valor con *self.settings*, el valor mostrado será *2014*, que corresponde con el pasado con *Self.ui*.
+
+Si hacemos varias llamadas a *self.setting* o a *self.settings* el valor del parámetro será el que hayamos asignado en la última llamada.
+
+> Si un parámetro se pasa con el mismo nombre de varias formas, será sobreescrito con la prioridad que se ha indicado antes. Es decir, que el método más prioritario será *setting* ó *settings* prevaleciendo el valor que se haya asignado con este método.
+
+> Si se llama varias veces a *setting* o a *settings* con el mismo nombre de parámetro, prevalecerá el último valor asignado.
+
+##<a name="tmpl_settings"></a>Paso de parámetros a la vista con el método *tmpl*
 
 Podemos pasar parámetros a la vista a través del método *tmpl*. Para hacerlo, debemos añadir un segundo parámetro a este método. Este parámetro será un objeto con los nombres de variables que queramos pasar y sus valores.
 
@@ -1658,6 +2146,56 @@ Por ejemplo, en *welcome.html*:
     <p>The name is ##name##</p>
 </div>
 ```
+
+> Los parámetros que se pasan a la vista con el método *tmpl* son **CONSTANTES**. Es decir, que aunque cambie su valor, no serán actualizados en la vista cuando se llame al evento *awake*. La única forma correcta de actualizar los valores recuperados en la vista mediante *##..##*, es destriur y volver a crear la vista.
+
+##<a name="data-bind"></a>Paso de parámetros a la vista con el atributo *data-bind*
+
+Iris dispone de una forma alternativa de pasar parámetros a la vista utlizando el atributo *data-bind*. La diferencia con el anterior es que Iris actualzará el valor de los parámetros pasados mediante *data-bind* cuando se invoque el método *self.inflate* en el controlador del componente.
+
+Veamos un en ejemplo.
+
+En *welcome.html*:
+
+```html
+<div>
+    <h1>Welcome Screen</h1>
+    <p>This is the initial screen.</p>
+    <button data-id="update_date">Update date</button>
+    <br>
+    The date is: <span data-bind="date">Not set yet</span>
+</div>
+```
+
+En *welcome.js*
+
+```js
+//In welcome.js
+iris.screen(
+    function (self) {
+        self.create = function () {   
+            console.log("Welcome Screen Created");
+            self.tmpl("welcome.html");
+            self.get("update_date").click(
+                function() {
+                    self.inflate({date: new Date()});
+                }
+            );   
+        };
+    },
+    "welcome.js"
+);
+```
+
+Observe que el contenido del elemento del *DOM* que tenga un atributo *data-bind*, cuyo valor coincida con algún atributo del objeto pasado al método *self.inlfate*, será reemplazado. Si el valor de *data-bind* no coincide con ningún atributo, el componente del DOM conservará su valor.
+
+> El paso de parámetros con *data-bind* permite actualziar los valores en la vista, por el contrario el paso con ##...## mantendrá el valor del parámetro en todo el ciclo de vida del componente.
+
+> La utilización de ##...## permite hacer cosas que no se pueden hacer con *data-bind*.
+
+Por ejemplo:
+
+<img src="##logo##.png/>
 
 ##<a name="events"></a>Trabajando con eventos
 
@@ -1723,8 +2261,8 @@ iris.screen(
             my_ui_number = 0;
             self.get("my_ui_number").html(my_ui_number);
         }
-    }
-
+    },
+    "welcome.js"
 );
 ```
 
@@ -1741,7 +2279,6 @@ En *my_ui.js*:
 
 ```js
 //In my_ui.js
-
 iris.ui(
     function (self) {
         self.create = function () {
@@ -1750,11 +2287,12 @@ iris.ui(
             self.tmpl("my_ui.html");   
             iris.notify("MY_UI_CREATED_event"); //This notifies subscribers that the "MY_UI_CREATED_event" event has occurred 
         };
-    }
+    },
+    "my_ui.js"
 );
 ```
 
-Observe como para suscribirse a un evento, en el método *iris.on*, pasamos una cadena de texto (que representa al evento) y una función que será llamada cuando el evento se produzca. Para notificar que un evento se ha producido, se debe llamar al método *iris.notify*.
+Observe como para suscribirse a un evento, en el método *iris.on*, pasamos una cadena de texto (que representa al evento) y una función que será llamada cuando el evento se produzca. Para notificar que un evento se ha producido, se debe llamar al método *iris.notify* pasándole la cadena de texto asociada al evento.
 
 Es importante eliminar la suscripción a un evento cuanto esta ya no sea necesaria. Para hacer esto se utiliza el método *iris.off* con la misma sintaxis que *iris.on*. Por ejemplo:
 
@@ -1831,16 +2369,16 @@ iris.screen(
             self.get("my_ui_number").html(my_ui_number);
         }
   
-    }
-
+    },
+    "welcome.js"
 );
+
 ```
 
 Y en *my_ui.js*:
 
 ```js
 //In my_ui.js
-
 iris.ui(
     function (self) {
         self.create = function () {
@@ -1849,7 +2387,8 @@ iris.ui(
             self.tmpl("my_ui.html");   
             iris.notify(EVENT.MY_UI_CREATED, EVENT.MY_UI_CREATED);
         };
-    }
+    },
+    "my_ui.js"
 );
 ```
 
@@ -1858,6 +2397,19 @@ Podemos utilizar el método *iris.destroyEvents* como alternativa al método *ir
 ```js
 iris.destroyEvents(EVENT.MY_UIS_DESTROYED, [fn_my_ui_event]);
 ```
+##<a name="events_globals"></a>Eventos globales
+
+Iris define los siguiente eventos globales:
+
+```js
+iris.BEFORE_NAVIGATION = "iris_before_navigation";
+iris.AFTER_NAVIGATION = "iris_after_navigation";
+iris.SERVICE_ERROR = "iris_service_error";
+```
+
+Las funciones que se suscriban a los dos primeros serán notificadas antes y después de que se produzca un cambio en el hash-URL, respectivamente.
+
+El tercero notificará cuando se produzca un error al hacer la llamada a un servicio (ver más adelante). Las funciones que se suscriban a este evento, recibirán información del error a través de tres parámetros (request, status, error) devueltos por la llamada *jquery.ajax*.
 
 ##<a name="locals"></a>Utilizando locales y regionales
 
@@ -1919,7 +2471,7 @@ Para ver como hacer esto, puede consultar la sección *<a href="#paso-a-paso">Co
 
 Para traducir un vocablo, tenemos dos opciones:
 
-1 Hacer la traducción en un fichero de Javascript, por ejemplo:
+1 Especificar el vocablo en el método *iris.translate*, por ejemplo:
 
 ```js
 iris.translate("GREETINGS.MORNING");
@@ -1941,6 +2493,8 @@ iris.translate("GREETINGS.MORNING", "es_ES");
 ```
 
 Observe que el vocablo hay que rodearlo con un doble símbolo *@*.
+
+> Las traducciones hechas com *@@..@@* son constantes. Es decir que aunque varíe la definición o el idioma de la aplicación, Iris no modificará la traducción.
 
 Veamos un ejemplo completo:
 
@@ -1985,10 +2539,11 @@ iris.screen(
             self.tmpl("welcome.html");   
             self.get("greeting").html(iris.translate("GREETINGS.MORNING"));
         };  
-    }
+    },
+    "welcome.js"
 );
 ```
-Iris tiene capacidad de aplicar formatos de fechas, números y monedas adaptándolos a la variación **regional** que se haya seleccionado. Esto se puede hacer desde el código Javascript de un componente o bien desde el código HTML de un componente. En este último caso, los datos a formatear se pasarán en el método *tmpl*.
+Iris puede aplicar formatos a fechas, números y monedas adaptándolos a la variación **regional** que se haya seleccionado. Esto se puede hacer desde el código Javascript o bien desde el código HTML de un componente. En este último caso, los datos a formatear se pasarán en el método *tmpl*.
 
 Veamos un ejemplo de cada uno de ellos.
 
@@ -2057,7 +2612,8 @@ iris.screen(
             self.get("regionals_from_js").html(s);
         };
 
-    }
+    },
+    "welcome.js"
 );
 ```
 
@@ -2066,6 +2622,8 @@ La función *iris.regional* permite conocer el valor regional que está utilizan
 ```js
 iris.regional("dayNames");
 ```
+
+Las funciones *iris.date*, *iris.currency* e *iris.number* admiten opcionalmente como segundo parámetro un objeto de *Javascript* que será utilizado al aplicar el formato. Si este parámetro no se pasara, se utilizará el formato definido en *iris.locale*.
 
 Para el formateado desde HTML utilizaremos los siguientes ficheros:
 
@@ -2170,7 +2728,8 @@ iris.screen(
    
         };
 
-    }
+    },
+    "welcome.js"
 );
 ```
 
@@ -2208,7 +2767,7 @@ Para invocar esta función, ejecutaremos:
 
 ```js
 var settings = {...};
-iris.ajax(settings);
+var promise = iris.ajax(settings);
 ```
 
 Iris dispone del método *service* que facilita el acceso a servicios *REST*.
@@ -2239,26 +2798,6 @@ En *welcome.html*:
 En *welcome.js*:
 
 ```js
-//In welcome.js
-var testService = iris.service(function(self){
-    self.load = function (id, success, error) {
-        self.get("./" + id, success, error);
-    };
-
-    self.create = function (params, success, error) {
-        self.post("echo/create", params, success, error);
-    };
-
-    self.update = function (id, params, success, error) {
-        self.put("echo/put/" + id, params, success, error);
-    };
-
-    self.remove = function (id, success, error) {
-        self.del("echo/delete/" + id, success, error);
-    };
-
-});
-   
 iris.screen(
     function (self) {
         self.create = function () {
@@ -2266,7 +2805,7 @@ iris.screen(
    
             self.tmpl("welcome.html");
    
-            testService.load("test.json", function (json) {
+            iris.service("service.js").load("test.json", function (json) {
                 self.get("json_container").html(json.title);
             }, function (p_request, p_textStatus, p_errorThrown) {
                 console.log("Error callback unexpected: " + p_errorThrown);
@@ -2274,11 +2813,41 @@ iris.screen(
    
         };
 
-    }
+    },
+    "welcome.js"
 );
 ```
 
-Observe que hemos llamado al método *iris.service* y asignado su retorno a una variable. El método *iris.service* recibe como parámetro una función que será llamada por Iris pasándole como parámetro un objeto de tipo *Service* creado por Iris. Este objeto dispone de los métodos *get*, *del*, *push* y *post* para acceder a servicios REST y pueden recibir una función de éxito o de error para procesar la respuesta obtenida.
+En *service.js*:
+
+```js
+iris.service(function(self){
+
+    //self.settings({path : "http://localhost:8080/"});
+
+    self.load = function (id, success, error) {
+      self.get("./" + id, success, error);
+    };
+
+    self.create = function (params, success, error) {
+      self.post("echo/create", params, success, error);
+    };
+
+    self.update = function (id, params, success, error) {
+      self.put("echo/put/" + id, params, success, error);
+    };
+
+    self.remove = function (id, success, error) {
+      self.del("echo/delete/" + id, success, error);
+    };
+
+}, "service.js");
+
+```
+
+Observe que hemos creado un fichero *service.js* donde se llama al método *iris.service*. Este método crea un objeto de tipo *Service* que se retorna en la función pasada como argumento y que dispobe de distintos métodos (*get*, *pos*, *put* y *del*) para acceder a servicios REST y pueden recibir una función de éxito o de error en la que se procesará la respuesta obtenida.
+
+Desde el Screen *Welcome*, hemos llamado al mismo método anterior, *iris.service*, pero en este caso pasándole un *string* que se corresponde con la ruta de acceso al fichero y que nos permite invocar los métodos definidos en él. En nuestro ejemplo hemos llamado al método *load* pasándole la ruta de acceso al fichero *JSON* que queremos recuperar.
 
 Iris facilita el trabajo con errores genéricos de tal forma que podemos tratar todos los errores de un determinado tipo sin tener que especificar la misma función en cada llamada a un servicio. Iris notificará cualquier error en un servicio a la función que se haya registrado en el evento iris.SERVICE_ERROR.
 
@@ -2324,10 +2893,10 @@ iris.log(arg1, arg2, arg3, arg4); //This shows in the browser console that is pa
 
 ```js
 iris.enableLog(server1, server2,...) //If no arguments are passed, returns the logging policy.
-//Or the servers that you want to use the Iris logging system.
+//Or Ypu can pass the servers that you want to use the Iris logging system.
 ```
 
-Iris ayuda a la **minificación** de la aplicación. Para reducir el número de ficheros que hay que descargar desde el servidor en una aplicación Iris, podemos *minificar* todos los ficheros *.js* en uno único con la herramienta que queramos (por ejemplo [Grunt](https://github.com/gruntjs/grunt)). Para evitar que Iris tenga que descargarse el fichero del componente y utilice el del archivo *minificado*, debemos indicar la ruta de acceso al fichero en el método que crea el componente.
+Iris ayuda a la **minificación** de la aplicación. Para reducir el número de ficheros que hay que descargar desde el servidor en una aplicación Iris, podemos *minificar* todos los ficheros *.js* en uno único con la herramienta que queramos (por ejemplo [Grunt](https://github.com/gruntjs/grunt)). Para evitar que Iris tenga que descargarse el fichero del componente y utilice el del archivo *minificado*, tenemos que indicar la ruta de acceso al fichero en el método que crea el componente.
 
 Por ejemplo, si el fichero *welcome.js* está en el fichero raíz de la aplicación, el parámetro se añadiría de la siguiente forma:
 
@@ -2345,9 +2914,9 @@ Y la llamada que crea el Screen *welcome* sería:
 iris.welcome("welcome.js");
 ```
 
-Observe que se le ha pasado un parámetro adicional al método *iris.screen*. Este parámetro tiene que coincidir exactamente con el parámetro que se pasa al método *iris.welcome*. Si se pasa este parámetro adicional, cuando se vaya a crear el Screen, Iris buscará si ya hay cargado en memoria un método que corresponda a este *Screen* en lugar de cargarlo desde el servidor. Y, por lo tanto, se utilizará el fichero *minificado* si se dispone de él.
+Observe que el método *iris.screen* recibe dos parámetros, la función del ciclo de vida y una cadena de texto que indica dónde se encuentra el fichero. Este parámetro tiene que coincidir exactamente con el parámetro que se pasa al método *iris.welcome*. Cuando se vaya a crear el Screen, Iris buscará si ya hay cargado en memoria un fichero que corresponda a este *Screen* en lugar de cargarlo desde el servidor. Y, por lo tanto, se utilizará el fichero *minificado* si se dispone de él.
 
-La misma técnica se utilizará cuando se cree un *Screen* al navegar a él por primera vez o cuando se llame al método *goto* para crear un *Screen*. De la misma forma, en los UIs deberemos definir el *UI* con el parámetro adicional que permite a Iris localizarlo. Por ejemplo, si el *UI* *my_ui* está en el directorio raíz:
+La misma técnica se utilizará cuando se cree un *Screen* al navegar a él por primera vez o cuando se llame al método *navigate* para crear un *Screen*. Igualmente, en los UIs deberemos definir el *UI* con el parámetro adicional que permite a Iris localizarlo. Por ejemplo, si el *UI* *my_ui* está en el directorio raíz:
 
 ```js
 //In my_ui.js
@@ -2361,15 +2930,17 @@ iris.ui(
 
 Para probar su correcto funcionamiento y detectar errores, se han realizado pruebas de unidad de todos los métodos de Iris. Las pruebas de unidad se han realizado con la librería [QUnit](http://qunitjs.com/).
 
-Las pruebas de unidad son una fuente adicional para conocer el funcionamiento de Iris. Puede consultar las pruebas realizadas en el directorio [test](https://github.com/iris-js/iris/tree/iris-grunt/test).
+Las pruebas de unidad son una fuente adicional para conocer el funcionamiento de Iris. Puede consultar las pruebas realizadas en el directorio [test](https://github.com/iris-js/iris/tree/iris-grunt/test).<!-- TODO cambiar enlace -->
 
 #<a name="step_by_step"></a>Construyendo paso a paso una aplicación desde cero
 
 En esta sección vamos utilizar Iris para construir una sencilla aplicación que nos permita comprender como integrar todo lo visto anteriormente.
 
-Puede descargar la aplicación en el siguiente [enlace](https://github.com/surtich/iris/blob/iris-grunt/docs/iris-shopping.tar.gz?raw=true).
+Puede descargar la aplicación en el siguiente [enlace](https://github.com/surtich/iris/blob/iris-grunt/docs/iris-shopping.tar.gz?raw=true). <!-- TODO actualizar enlace -->Para probar la aplicación debe descomprimirla y desplegarla en un servidor Web (Apache, Node.js, etc). Si tiene instalado *Grunt* puede, simplemente, situarse en el directorio raíz de la aplicación y ejecutar el comando *grunt*.
 
-La aplicación va a permitir realizar la lista de la compra de una serie de productos agrupados en categorías. En las siguientes imágenes presentamos las principales pantallas de la aplicación.
+Puede probar el funcionamiento de la aplicación en el siguiente [enlace](http://shopping-list-example.appspot.com/)
+
+La aplicación va a permitir realizar la lista de la compra de una serie de productos agrupados en categorías. En las siguientes imágenes presentamos las principales pantallas de la aplicación:
 
 <a name="home_img"></a>*#home:*
 ![home](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/shopping_list/home.png)
@@ -2399,7 +2970,7 @@ Más detalladamente, el contenido del directorio *shopping* será el siguiente:
 
 ![shopping_directories](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/shopping_list/shopping_directories.png)
 
-Observe que, para hacer más sencillo el ejemplo, se ha creado un directorio *json* que permite cargar los productos y las categorías desde el servidor Web sin depender de ninguna tecnología de servidor. En una aplicación real, normalmente los productos estarían almacenados en una base de datos.
+Observe que, para hacer más sencillo el ejemplo y no depender de ninguna tecnología de servidor concreto, se ha creado un directorio *json* que permite cargar los productos y las categorías desde el servidor Web sin depender de ninguna tecnología de servidor. En una aplicación real, normalmente los productos estarían almacenados en una base de datos.
 
 ##<a name="step_by_step_welcome"></a>*Screen* Welcome
 
@@ -2415,16 +2986,19 @@ En *index.html*:
     <head>
         <title>iris shopping</title>
 
+        <link type="text/css" rel="stylesheet" href="./css/jquery-ui-1.9.2.custom.css">
         <link type="text/css" rel="stylesheet" href="./css/bootstrap.css">
         <link type="text/css" rel="stylesheet" href="./css/jquery.dataTables.css">
         <link type="text/css" rel="stylesheet" href="./css/shopping.css">
 
         <script type='text/javascript' src='./js/jquery-1.8.3.js'></script>
-        <script type='text/javascript' src='./js/iris-0.5.0-SNAPSHOT.js'></script>
+        <script type='text/javascript' src='./js/jquery-ui-1.9.2.custom.js'></script>
         <script type='text/javascript' src='./js/bootstrap.js'></script>
-        <script type='text/javascript' src='./js/jquery.dataTables.js'></script>      
+        <script type='text/javascript' src='./js/jquery.dataTables.js'></script>
         
-        <script type='text/javascript' src='./js/shopping_list.js'></script>
+        <script type='text/javascript' src='./js/iris.js'></script>
+        
+        <!-- <script type='text/javascript' src='./js/shopping_list.js'></script> -->
         
         <script type='text/javascript' src='./js/init.js'></script>
 
@@ -2476,20 +3050,58 @@ $(document).ready(
                 }
             }
         });
+        
+        iris.locale(
+            "en_US", {
+                dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+                dateFormat: "m/d/Y h:i:s",
+                currency: {
+                    formatPos: "n",
+                    formatNeg: "(n)",
+                    decimal: ".",
+                    thousand: ",",
+                    precision: 2
+                }
+            }
+            );
+
+        iris.locale(
+            "es_ES", {
+                dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+                monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+                dateFormat: "d/m/Y H:i:s",
+                currency: {
+                    formatPos: "n",
+                    formatNeg: "-n",
+                    decimal: ",",
+                    thousand: ".",
+                    precision: 2
+                }
+            }
+            );
 
         _setLang();
         
+        iris.on(iris.SERVICE_ERROR, function(p_request, p_textStatus, p_errorThrown) {
+            if (p_request.request.status === 401) {
+                window.location.href = "/login?next=/#admin";
+            }
+        });
         
         iris.baseUri(".");
         iris.enableLog("localhost");
+        iris.include("/js/shopping_list.js");
+        model.init();
         iris.welcome("/shopping/screen/welcome.js");
-                                
     }
-);
+    );
 ```
-Observe que lo primero que hacemos en este *script* es cargar algunas de las traducciones que vamos a necesitar. Hemos decidido que cada fichero de Javascript cargue las traducciones que vaya a utilizar. En el caso de *init.js* vamos a cargar las traducciones comunes en toda la aplicación. Una alternativa perfectamente aceptable sería tener un único punto donde definiríamos todas las traducciones de la aplicación. Otra posible solución sería almacenar las traducciones en una base de datos y recuperarlas mediante un objeto *JSON*.
+Observe que lo primero que hacemos en este *script* es cargar algunas de las traducciones que vamos a necesitar. Hemos decidido que cada fichero de *Javascript* cargue las traducciones que vaya a utilizar. En el caso de *init.js* vamos a cargar las traducciones comunes en toda la aplicación. Una alternativa perfectamente aceptable sería tener un único punto donde definiríamos todas las traducciones de la aplicación. Otra posible solución sería almacenar las traducciones en una base de datos y recuperarlas mediante un objeto *JSON*.
 
 Después llamamos a la función *_setLang* que nos permite definir el idioma de la aplicación. El idioma se seleccionará a partir del parámetro *lang* que se haya pasado en el *Query String* de la *URL*. Si no se ha pasado este parámetro se seleccionará el idioma por defecto.
+
+A continuación incluímos el fichero *shopping_list.js* que va a ser nuestro modelo de objetos en el cliente.
 
 Por último cargamos el *Screen* Welcome.
 
@@ -2498,73 +3110,70 @@ En *welcome.js*:
 ```js
 iris.screen(
     function (self) {	
-        self.create = function () {
+        function _ajaxPrepare() {
+            $.ajaxPrefilter(function( options, originalOptions, jqXHR ) {            
+                //self.get("screens").hide();
+                self.get("loading").show();                
+                jqXHR.always(function() {
+                    self.get("loading").hide();
+                //self.get("screens").show();
+                });            
+            });                
+        }
             
-            function _ajaxPrepare() {
-                $.ajaxPrefilter(function( options, originalOptions, jqXHR ) {            
-                    self.get("screens").hide();
-                    self.get("loading").show();                
-                    jqXHR.always(function() {
-                        self.get("loading").hide();
-                        self.get("screens").show();
-                    });            
-                });                
-            }
-            
-            function _createScreens() {
-                self.screens("screens", [{
-                    "#home": "/shopping/screen/home.js"
-                }, {
-                    "#categories": "/shopping/screen/products/categories.js"
-                }, {
-                    "#products": "/shopping/screen/products/products.js"
-                },{
-                    "#shopping": "/shopping/screen/list/shopping.js"
-                }]);
-            }
+        function _createScreens() {
+            self.screens("screens", [
+                ["home", "/shopping/screen/home.js"],
+                ["categories", "/shopping/screen/products/categories.js"],
+                ["products", "/shopping/screen/products/products.js"],
+                ["shopping", "/shopping/screen/list/shopping.js"]
+                ]);
+        }
         
-            function _changeLang(link) {
-                var regExp = /[?&]lang=[a-z][a-z][\-_][A-Z][A-Z]/;
-                var lang = window.location.href.match(regExp);
-                var url = window.location.href;
-                if ( lang === null) {
-                    lang = "lang=" + link.data("lang");
-                    if (window.location.href.match(/[?]/)) {
-                        lang = "&" + lang;                            
-                    } else {
-                        lang = "?" + lang;
-                    }
-                    url += lang;
+        function _changeLang(link) {
+            var regExp = /[?&]lang=[a-z][a-z][\-_][A-Z][A-Z]/;
+            var lang = window.location.href.match(regExp);
+            var url = window.location.href;
+            var hash = window.location.hash;
+            if ( lang === null) {
+                lang = "lang=" + link.data("lang");
+                if (window.location.href.match(/[?]/)) {
+                    lang = "&" + lang;                            
                 } else {
-                    var first = lang[0].substr(0,6);
-                    url = window.location.href.replace(regExp, first + link.data("lang"));                       
+                    lang = "?" + lang;
                 }
-                    
-                window.location.href = url;
-                window.location.reload(true);
+                url = url.substr(0, url.indexOf(hash));
+                url += lang;
+                url += hash;
+            } else {
+                var first = lang[0].substr(0,6);
+                url = window.location.href.replace(regExp, first + link.data("lang"));                       
             }
+            window.location.href = url;
+        }
             
             
-            iris.translations("es_ES", {    
-                LOADING: "Cargando...",
-                MENU: {
-                    WELCOME: "Ejemplo de lista de la compra",
-                    HOME: "Incio",
-                    PRODUCTS: "Productos",
-                    SHOPPING_LIST:"Lista de la compra"
-                }
-            });
+        iris.translations("es_ES", {    
+            LOADING: "Cargando...",
+            MENU: {
+                WELCOME: "Ejemplo de lista de la compra",
+                HOME: "Incio",
+                PRODUCTS: "Productos",
+                SHOPPING_LIST: "Lista de la compra"
+            }
+        });
             
-            iris.translations("en_US", {
-                LOADING: "Loading...",
-                MENU: {
-                    WELCOME: "Shopping List Example",
-                    HOME: "Home",
-                    PRODUCTS: "Products",
-                    SHOPPING_LIST: "Shopping List"
-                }
-            });
-            
+        iris.translations("en_US", {
+            LOADING: "Loading...",
+            MENU: {
+                WELCOME: "Shopping List Example",
+                HOME: "Home",
+                PRODUCTS: "Products",
+                SHOPPING_LIST: "Shopping List"
+            }
+        });
+        
+        self.create = function () {
             
             self.tmpl("/shopping/screen/welcome.html");
             
@@ -2581,7 +3190,7 @@ iris.screen(
             
             
             if ( !document.location.hash ) {                
-                iris.navigate("#home"); //Default page
+                iris.navigate("#/home"); //Default page
             }
         };
     } , "/shopping/screen/welcome.js");
@@ -2590,7 +3199,7 @@ Lo más relevante de este fichero es:
 * La función *_ajaxPrepare* permite poner un texto *cargando...* cada vez que se efectúa una llamada *AJAX*.
 * La función *_createScreens* registra los *screens* de la aplicación.
 * La función *_changeLang* recarga la aplicación añadiendo el código del idioma que se haya seleccionado como un parámetro del *Query String*.
-* Se selecciona el *Hash-URL* *#home* como página por defecto de la aplicación.
+* Se selecciona el *Hash-URL* *#/home* como página por defecto de la aplicación.
 
 Finalmente, el fichero *welcome.html* contendrá:
 
@@ -2604,18 +3213,18 @@ Finalmente, el fichero *welcome.html* contendrá:
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </a>
-                <a class="brand" href="#home">@@MENU.WELCOME@@</a>
+                <a class="brand" href="#/home">@@MENU.WELCOME@@</a>
                 <div class="nav-collapse collapse">
                     <ul class="nav">
-                        <li><a href="#home">@@MENU.HOME@@</a></li>
-                        <li><a href="#categories">@@MENU.PRODUCTS@@</a></li>
-                        <li><a href="#shopping">@@MENU.SHOPPING_LIST@@</a></li>                        
+                        <li><a href="#/home">@@MENU.HOME@@</a></li>
+                        <li><a href="#/categories">@@MENU.PRODUCTS@@</a></li>
+                        <li><a href="#/shopping">@@MENU.SHOPPING_LIST@@</a></li>
                     </ul>
                     <ul class="nav pull-right">
                         <li><a href="#" data-lang="es_ES"><i class="icon-spain-flag"></i></a></li>
                         <li><a href="#" data-lang="en_US"><i class="icon-united-kingdom-flag"></i></a></li>
                     </ul>
-                </div>
+                </div><!--/.nav-collapse -->
             </div>
         </div>
     </div>
@@ -2637,25 +3246,26 @@ En *home.js*:
 
 ```js
 iris.screen(
-    function (self) {	
-        self.create = function () {
-           
-            iris.translations("es_ES", {                
-                HOME: {
-                    TITLE: "Ejemplo de lista de la compra",
-                    DESC: "Este es un ejemplo de uso de"
-                }
-            });
+    function (self) {
+        
+        iris.translations("es_ES", {                
+            HOME: {
+                TITLE: "Ejemplo de lista de la compra",
+                DESC: "Este es un ejemplo de uso de"
+            }
+        });
             
-            iris.translations("en_US", {                
-                HOME: {
-                    TITLE: "Shopping List Iris Example",
-                    DESC: "This a simple example of using"
-                }
-            });
+        iris.translations("en_US", {                
+            HOME: {
+                TITLE: "Shopping List Iris Example",
+                DESC: "This a simple example of using"
+            }
+        });
             
+        self.create = function () {    
             self.tmpl("/shopping/screen/home.html");
         };
+        
     }, "/shopping/screen/home.js");
 ```
 
@@ -2663,9 +3273,9 @@ En *home.html*:
 
 ```html
 <div>
-	<h1>@@HOME.TITLE@@</h1>
-        
-	<p>@@HOME.DESC@@ <a href="https://github.com/iris-js">iris.</a></p>
+    <h1>@@HOME.TITLE@@</h1>
+
+    <p>@@HOME.DESC@@ <a href="https://github.com/iris-js">iris.</a></p>
 </div>
 ```
 
@@ -2681,8 +3291,9 @@ var model = {};
     model.event = {
         
         PRODUCTS: {
-            ADD: "shopping:products:add",
-            REMOVE: "shopping:products:remove"
+            ADD:- "shopping:products:add",
+            REMOVE: "shopping:products:remove",
+            REMOVED: "shopping:products:removed"
         },
         
         SHOPPING: {
@@ -2693,12 +3304,14 @@ var model = {};
             CHECK_ALL: "shopping:products:check_all",
             UNCHECK_ALL: "shopping:products:uncheck_all",
             INVERT_CHECK: "shopping:products:invert_check",
-            REMOVE_CHECKED: "shopping:products:remove_purchased"
+            REMOVE_CHECKED: "shopping:products:remove_checked"
         }
     };
-
+    
+    
     function _init () {
         model.shoppingList = new model.ShoppingList();
+        
         iris.on(model.event.PRODUCTS.REMOVE, model.shoppingList.removeShoppingProduct);
         iris.on(model.event.PRODUCTS.ADD, model.shoppingList.addShoppingProduct);
         iris.on(model.event.SHOPPING.CHANGE_STATE, model.shoppingList.changeStateShoppingProduct);        
@@ -2707,7 +3320,6 @@ var model = {};
         iris.on(model.event.SHOPPING.UNCHECK_ALL, model.shoppingList.uncheckAll);        
         iris.on(model.event.SHOPPING.INVERT_CHECK, model.shoppingList.invertCheck);  //Cuando un evento no existe no de ningún aviso, Me he vuelto loco porque no sabía que pasaba
         iris.on(model.event.SHOPPING.REMOVE_CHECKED, model.shoppingList.removePurchased);
-        
     }
     
     function _destroy () {
@@ -2718,7 +3330,7 @@ var model = {};
         iris.off(model.event.SHOPPING.CHECK_ALL, model.shoppingList.checkAll);
         iris.off(model.event.SHOPPING.UNCHECK_ALL, model.shoppingList.uncheckAll);        
         iris.off(model.event.SHOPPING.INVERT_CHECK, model.shoppingList.invertCheck);  //Cuando un evento no existe no de ningún aviso, Me he vuelto loco porque no sabía que pasaba
-        iris.off(model.event.SHOPPING.REMOVE_CHECKED, model.shoppingList.removePurchased);
+        iris.off(model.event.SHOPPING.REMOVE_CHECKED, model.shoppingList.removePurchased);        
         model.shoppingList = null;
     }
     
@@ -2801,7 +3413,12 @@ var model = {};
         
         function _addShoppingProduct (product) {
             if (_getShoppingProduct(product.idProduct) === null) {
-                var shoppingProduct = new model.ShoppingProduct(product.idProduct, product.nameProduct, false);
+                if (product.order) {
+                    if (product.order > _order) {
+                        _order = product.order;
+                    }
+                }
+                var shoppingProduct = new model.ShoppingProduct(product);
                 shoppingProduct.order = _order;                
                 _order++;
                 _shoppingProducts.push(shoppingProduct);
@@ -2812,16 +3429,16 @@ var model = {};
         }
         
         
-        function _removeShoppingProduct (idProduct) {            
+        function _removeShoppingProduct (idProduct) {
             var i = _getShoppingProductIndex(idProduct);
             if (i >= 0) {
                 _shoppingProducts.splice(i, 1);
             }
         }
         
-        function _removeAll () {                        
-            _shoppingProducts = [];
+        function _removeAll () {
             _order = 1;
+            _shoppingProducts = [];
         }
         
         
@@ -2852,7 +3469,7 @@ var model = {};
             var i = 0;
             while (i < _shoppingProducts.length) {
                 var product = _shoppingProducts[i];                
-                if (product.hasOwnProperty("purchased") && product.purchased === true) {                   
+                if (product.hasOwnProperty("purchased") && product.purchased === true) {
                     _shoppingProducts.splice(i, 1);
                 } else {
                     i++;
@@ -2874,7 +3491,16 @@ var model = {};
             return found;
         }
         
-        
+        function _countProducts(purchased) {
+            var number = 0;
+            for (var i = 0; i < _shoppingProducts.length; i++) {
+                if (_shoppingProducts[i].purchased === purchased) {
+                    number++;
+                }
+            }
+            return number;
+        }
+             
         model.ShoppingList.prototype.getShoppingProducts = _getShoppingProducts;
         model.ShoppingList.prototype.getSortedShoppingProducts = _getSortedShoppingProducts;
         model.ShoppingList.prototype.getShoppingProduct = _getShoppingProduct;
@@ -2900,33 +3526,29 @@ var model = {};
         model.ShoppingList.prototype.hasNoPurchasedProducts = function() {            
             return _hasProducts(false);
         };
+        
+        model.ShoppingList.prototype.countPurchased = function() {            
+            return _countProducts(true);
+        };
+        
     };
     
     
     
-    model.ShoppingProduct = function (idProduct, nameProduct, purchased) {
+    model.ShoppingProduct = function (product) {
+    
         this.order = -1;
-        this.idProduct = idProduct;
-        this.nameProduct = nameProduct;
+        this.idProduct = product.idProduct;
+        this.nameProduct = product.nameProduct;
+        this.purchased = product.purchased === true;
         
-        this.changeState = function (purchased) {
-            if (purchased === true) {
-                this.purchased = true;
-            } else {
-                this.purchased = false;
-            }
+        this.changeState = function(purchased) {
+            this.purchased = purchased === true;
         };
-        
-        this.changeState(purchased);
         
     };
     
-    model.service = iris.service(function(self){
-        self.load = function (path, success, error) {
-            self.get(iris.baseUri() + path, success, error);
-        };
-    });
-    
+    model.service = iris.service("/shopping/service.js");
     
     model.service.app = (function() {
         return {
@@ -2934,12 +3556,14 @@ var model = {};
                 model.service.load("/json/categories.json", success, error);
             },
             getProducts: function(idCategory, success, error) {
-                model.service.load("/json/category_" + idCategory + ".json", success, error);
+                model.service.load("/json/products_" + idCategory + ".json", success, error);
+            }            ,
+            getAllProducts: function(success, error) {
+                model.service.load("/json/products.json", success, error);
             }
         };
+        
     })();
-    
-    model.init();
     
 })(jQuery);
 ```
@@ -2950,6 +3574,16 @@ Sin entrar en detalle vamos a comentar lo más importante de este fichero:
 * La comunicación con los componentes de *Iris* se realiza a través de *eventos Iris* para lo que se han definido una serie de constantes.
 * Se ha definido un método *model.service* para acceder a los servicios *REST* que ofrece Iris.
 * Se ha definido un objeto *model.service.app* que permite recuperar la información de productos y categorías del servidor.
+
+En el fichero *service.js*, prepararomas las funciones que nos permiten acceder a servicios REST.
+
+```js
+iris.service(function(self){
+    self.load = function (path, success, error) {
+        self.get(iris.baseUri() + path, success, error);
+    };
+}, "/shopping/service.js");
+```
 
 
 ##<a name="step_by_step_caterogies"></a>*Screen* Categories
@@ -2976,7 +3610,7 @@ iris.screen(
             self.tmpl("/shopping/screen/products/categories.html");
             model.service.app.getCategories(_inflate);
         };
-
+        
         
     }, "/shopping/screen/products/categories.js");
 ```
@@ -2985,13 +3619,13 @@ Y en *categories.html*:
 
 ```html
 <div class="container">  
-	<div class="row">  
-		<div class="span12">  
-			<ul data-id="list_categories" class="nav nav-tabs nav-stacked">  				
-										
-			</ul>  
-		</div>  
-	</div>  
+    <div class="row">  
+        <div class="span12">  
+            <ul data-id="list_categories" class="nav nav-tabs nav-stacked">  				
+
+            </ul>  
+        </div>  
+    </div>  
 </div>  
 ```
 
@@ -3003,11 +3637,13 @@ En *category_list_item.js*:
 
 ```js
 iris.ui(function(self) {	
+    
     self.create = function() {
-        var category = self.setting("category");
         self.tmplMode(self.APPEND);
+        var category = self.setting("category");
         self.tmpl("/shopping/ui/products/category_list_item.html", category);
     };	
+    
 }, "/shopping/ui/products/category_list_item.js");
 ```
 
@@ -3015,7 +3651,7 @@ En *category_list_item.html*:
 
 ```html
 <li>
-    <a href="#products?idCategory=##idCategory##">##nameCategory##</a>
+    <a href="#/products?idCategory=##idCategory##">##nameCategory##</a>
 </li>
 ```
 
@@ -3034,7 +3670,7 @@ Observe lo siguiente:
 * El método *tmplMode* tiene el valor *APPEND* para que las categorías se añadan y no se reemplacen.
 * La categoría pasada como parámetro desde el *Screen* *Categories* se recupera y se pasa a la vista en el método *tmpl*.
 * En la vista podemos utilizar las propiedades del objeto *Category* recuperado.
-* Los *UIs* creados contienen un enlace que permite navegar al *Screen* con *Hash-URL* *#products*.
+* Los *UIs* creados contienen un enlace que permite navegar al *Screen* con *Hash-URL* *#/products*.
 * Este *Screen* recibe el parámetro *idCategory* para conocer de qué categoría queremos recuperar los productos.
 
 ##<a name="step_by_step_products"></a>*Screen* Products
@@ -3048,71 +3684,46 @@ En *products.js*:
 ```js
 iris.screen(
     function (self) {
-        var _msg = null;
+        
+        iris.translations("es_ES", {                
+            PRODUCTS: {
+                MISSING_CATEGORY: "Falta el parámetro <i>idCategoria</i>.",
+                CHOOSE_PRODUCTS: "Elige los productos que te interesen"
+            }
+        });
+            
+        iris.translations("en_US", {                
+            PRODUCTS: {
+                MISSING_CATEGORY: "Missing <i>idCategory</i> parameter.",
+                CHOOSE_PRODUCTS: "Choose some products"
+            }
+        });
+        
+        function _inflate(products) {
+            
+            self.get("msg").html(iris.translate("PRODUCTS.CHOOSE_PRODUCTS") + ":"); 
+            $.each(products,
+                function(index, product) {
+                    self.ui("list_products", "/shopping/ui/products/product_list_item.js", {
+                        "product": product
+                    });
+                }
+                );					
+        }
+        
         
         self.create = function () { 
-            
-            iris.translations("es_ES", {                
-                PRODUCTS: {
-                    MISSING_CATEGORY: "Falta el parámetro <i>idCategoria</i>.",
-                    CHOOSE_PRODUCTS: "Elige los productos que te interesen"
-                }
-            });
-            
-            iris.translations("en_US", {                
-                PRODUCTS: {
-                    MISSING_CATEGORY: "Missing <i>idCategory</i> parameter.",
-                    CHOOSE_PRODUCTS: "Choose some products"
-                }
-            });
-            
             self.tmpl("/shopping/screen/products/products.html");
-            _msg = self.get("msg");
-            
-            $("[data-id='list_products']").on("change", "input[type='checkbox']", function (event) {
-                var idProduct = $(this).data("product");                
-                var nameProduct = $(this).parent().text();
-                if (this.checked) {
-                    //model.shoppingList.addShoppingProduct(idProduct, nameProduct);
-                    iris.notify(model.event.PRODUCTS.ADD, {
-                        idProduct:idProduct, 
-                        nameProduct:nameProduct
-                    });
-                } else {
-                    //model.shoppingList.removeShoppingProduct(idProduct);
-                    iris.notify(model.event.PRODUCTS.REMOVE, idProduct);
-                }
-            });
-            
         };
        
         self.awake = function (params) {
-            
-            function _inflate(products) {
-                _msg.html(iris.translate("PRODUCTS.CHOOSE_PRODUCTS") + ":"); 
-                $.each(products,
-                    function(index, product) {
-                        if (model.shoppingList.getShoppingProduct(product.idProduct) !== null) {
-                            product.checked = "checked";
-                        } else {
-                            product.checked = "";
-                        }
-                        self.ui("list_products", "/shopping/ui/products/product_list_item.js", {
-                            "product": product
-                        });
-                    }
-                    );					
-            }
-            
-            
-            if (params.hasOwnProperty("idCategory")) {
-                self.destroyUIs("list_products");
-                model.service.app.getProducts(params.idCategory, _inflate,
-                    function (p_request, p_textStatus, p_errorThrown) {
-                        _msg.html(iris.translate("ERROR") + ": <i>" + p_textStatus + "</i>");
-                    }
-                    );
-            }
+            self.destroyUIs("list_products");
+            model.service.app.getProducts(params.idCategory, _inflate,
+                function (request, textStatus, error) {
+                    self.get("msg").html(iris.translate("ERROR") + ": <i>" + error + "</i>");
+                }
+                );
+
         };
     }, "/shopping/screen/products/products.js");
 ```
@@ -3140,8 +3751,6 @@ Los más interesante de estos ficheros lo resumimos en los siguientes puntos:
 * El motivo por el que hacemos esto es que necesitamos reutilizar el contenedor *list_products* cuando cambiamos la categoría seleccionada.
 * El método *awake* debe, por lo tanto, destruir los productos que haya en el contenedor antes de cargar los de la categoría seleccionada.
 * La carga de los productos se hace, de forma similar a como lo hicimos con las categorías, en el *UI* *product_list_item*.
-* Hemos utilizado el método *on* de JQuery para que cuando se pulse sobre algún producto, se añada o se elimine el producto de la lista de la compra. Este método de *JQuery* tiene la ventaja de que el evento se va a asociar incluso a aquellos elementos que todavía no existan en la interfaz de usuario.
-* Cuando se pulse sobre algún producto, el método anterior, notificará al modelo de la aplicación lo que ha ocurrido utilizando el modelo de eventos de *Iris*.
 
 
 El *UI* *product_list_item* tendrá los siguientes ficheros:
@@ -3150,10 +3759,27 @@ En *product_list_item.js*:
 
 ```js
 iris.ui(function(self) {	
+    var product;
     self.create = function() {  
         self.tmplMode(self.APPEND);
-        var product = self.setting("product");                
+        product = self.setting("product");
         self.tmpl("/shopping/ui/products/product_list_item.html", product);
+        self.get("product").change(function (event) {
+            if (this.checked) {
+                iris.notify(model.event.PRODUCTS.ADD, product);
+            } else {
+                iris.notify(model.event.PRODUCTS.REMOVE, product.idProduct);
+            }
+        });
+    };
+    
+    self.awake = function() {
+        var p = model.shoppingList.getShoppingProduct(product.idProduct);
+        if (p) {
+            self.get("product").prop('checked', true);
+        } else {
+            self.get("product").prop('checked', false);
+        }
     };
 }, "/shopping/ui/products/product_list_item.js");
 ```
@@ -3162,8 +3788,8 @@ Y en *product_list_item.html*:
 
 ```html
 <label class="checkbox">
-    <input type="checkbox" data-product="##idProduct##" ##checked##>##nameProduct##
-</label>
+    <input data-id="product" type="checkbox" data-product="##idProduct##">##nameProduct##
+</label> 
 ```
 
 El fichero de productos para una categoría cualquiera, por ejemplo *category_2.json*, tendrá la siguiente estructura:
@@ -3182,7 +3808,12 @@ El fichero de productos para una categoría cualquiera, por ejemplo *category_2.
 ]
 ```
 
-La explicación de estos ficheros es similar a la que realizamos para el *UI* *category_list_item*.
+La explicación de estos ficheros es similar a la que realizamos para el *UI* *category_list_item*, pero además:
+
+* Hemos utilizado el método *change* de JQuery para que cuando se pulse sobre algún producto, se añada o se elimine el producto de la lista de la compra.
+* Cuando se pulse sobre algún producto, el método anterior, notificará al modelo de la aplicación lo que ha ocurrido utilizando el modelo de eventos de *Iris*.
+* Observe que en el método *awake* comprobamos si el producto sigue estando o no en la lista de la comprar para marcar o desmarcar su *check*. Esto es necesario ya que desde el Screen *Shopping*, también podemos eliminar productos de la lista y así se mantiene la información sincronizada.
+
 
 ##<a name="step_by_step_shopping"></a>*Screen* Shopping
 
@@ -3195,41 +3826,41 @@ En *shopping.js*:
 ```js
 iris.screen(
     function (self) {
-        
-        self.create = function () {
-            iris.translations("es_ES", {                
-                SHOPPING_LIST: {
-                    EMPTY: "La cesta está vacía.",
-                    REFRESH: "Actualizar",
-                    REMOVE_ALL: "Borrar todos",
-                    CHECK_ALL: "Marcar todos",
-                    UNCHECK_ALL: "Desmarcar todos",
-                    INVERT_ALL: "Invertir",
-                    REMOVE_PURCHASED: "Borrar marcados",
-                    ORDER: "Orden",
-                    PRODUCT: "Producto",
-                    ACTION: "Acción",
-                    BUY: "Cambiar estado",
-                    REMOVE: "Borrar"
-                }
-            });
+        iris.translations("es_ES", {                
+            SHOPPING_LIST: {
+                EMPTY: "La cesta está vacía.",
+                REFRESH: "Actualizar",
+                REMOVE_ALL: "Borrar todos",
+                CHECK_ALL: "Marcar todos",
+                UNCHECK_ALL: "Desmarcar todos",
+                INVERT_ALL: "Invertir",
+                REMOVE_PURCHASED: "Borrar marcados",
+                ORDER: "Orden",
+                PRODUCT: "Producto",
+                ACTION: "Acción",
+                BUY: "Cambiar estado",
+                REMOVE: "Borrar"
+            }
+        });
             
-            iris.translations("en_US", {                
-                SHOPPING_LIST: {
-                    EMPTY: "The Shopping list is empty.",
-                    REFRESH: "Refresh",
-                    REMOVE_ALL: "Remove All",
-                    CHECK_ALL: "Check All",
-                    UNCHECK_ALL: "Uncheck All",
-                    INVERT_ALL: "Invert checks",
-                    REMOVE_PURCHASED: "Remove purchased",
-                    ORDER: "Order",
-                    PRODUCT: "Product",
-                    ACTION: "Action",
-                    BUY: "Change state",
-                    REMOVE: "Remove"
-                }
-            });
+        iris.translations("en_US", {                
+            SHOPPING_LIST: {
+                EMPTY: "The Shopping list is empty.",
+                REFRESH: "Refresh",
+                REMOVE_ALL: "Remove All",
+                CHECK_ALL: "Check All",
+                UNCHECK_ALL: "Uncheck All",
+                INVERT_ALL: "Invert checks",
+                REMOVE_PURCHASED: "Remove purchased",
+                ORDER: "Order",
+                PRODUCT: "Product",
+                ACTION: "Action",
+                BUY: "Change state",
+                REMOVE: "Remove"
+            }
+        });
+            
+        self.create = function () {
             
             self.tmpl("/shopping/screen/list/shopping.html");            
             _asignEvents();
@@ -3294,34 +3925,20 @@ iris.screen(
                 $.each(products,
                     function(index, product) {
                         var ui = self.ui("shoppingList_products", "/shopping/ui/list/product_shopping_list_item.js", {
-                            "product": product
-                        });
-                        
-                        ui.get("remove").on("click",
-                            function () {
-                                var idProduct = ui.setting("product").idProduct;
+                            "product": product,
+                            "removeProduct": function() {
+                                var idProduct = product.idProduct;
                                 var table = self.get("shopping_table");
                                 var row = $(this).closest("tr").get(0);
                                 table.fnDeleteRow(table.fnGetPosition(row));
                                 self.destroyUI(ui);
                                 iris.notify(model.event.PRODUCTS.REMOVE, idProduct);
+                            },
+                            "buyProduct": function() {
+                                var idProduct = product.idProduct;
+                                iris.notify(model.event.SHOPPING.CHANGE_STATE, idProduct);
                             }
-                            );
-                                
-                        ui.get("buy").on("click",
-                            function () {
-                                var idProduct = ui.setting("product").idProduct;
-                                ui.get("order").toggleClass("purchased");
-                                ui.get("nameProduct").toggleClass("purchased");
-                                ui.get("icon-shopping-cart").toggleClass("icon-shopping-cart icon-shopping-cart-remove");
-                                iris.notify(model.event.SHOPPING.CHANGE_STATE, idProduct);                            
-                            }
-                            );
-                        if (product.purchased === true) {
-                            ui.get("order").addClass("purchased");
-                            ui.get("nameProduct").addClass("purchased");
-                            ui.get("icon-shopping-cart").removeClass("icon-shopping-cart").addClass("icon-shopping-cart-remove");
-                        }
+                        });
                     }
                     );
             }
@@ -3379,9 +3996,9 @@ iris.screen(
         }
         
         function _changeStateButtons() {            
-            self.get("btn_check_all").toggleClass("disabled", !model.shoppingList.hasNoPurchasedProducts());
-            self.get("btn_uncheck_all").toggleClass("disabled", !model.shoppingList.hasPurchasedProducts());
-            self.get("btn_remove_checked").toggleClass("disabled", !model.shoppingList.hasPurchasedProducts());            
+            self.get("btn_check_all").toggleClass("disabled", !model.shoppingList.hasNoPurchasedProducts()).prop("disabled", !model.shoppingList.hasNoPurchasedProducts());
+            self.get("btn_uncheck_all").toggleClass("disabled", !model.shoppingList.hasPurchasedProducts()).prop("disabled", !model.shoppingList.hasPurchasedProducts());
+            self.get("btn_remove_checked").toggleClass("disabled", !model.shoppingList.hasPurchasedProducts()).prop("disabled", !model.shoppingList.hasPurchasedProducts());
         }
     
         self.destroy = function () {
@@ -3390,6 +4007,7 @@ iris.screen(
         };
         
     },"/shopping/screen/list/shopping.js");
+    
 ```
 
 Y en *shopping.html*:
@@ -3427,7 +4045,8 @@ Y en *shopping.html*:
 Estos son los puntos más relevantes de estos ficheros:
 
 * La función *_asignEvents* asigna la pulsación de los botones del *screen* a eventos de Iris para actuar sobre el modelo. También registra eventos de Iris lanzados desde el modelo.
-* La función *_loadShoppingProducts* carga en el *tbody* de la tabla *shopping_table* los productos de la lista de la compra. Los productos que no se hayan comprado todavía aparecen primero ordenados por su *idProduct*. Con cada producto se pueden realizar dos acciones: comprar y borrar de la lista. Esta función gestiona la pulsación sobre los botones que efectúan estas acciones. Por último, se asignan los estilos adecuados cuando un producto ha sido comprado.
+* La función *_loadShoppingProducts* carga en el *tbody* de la tabla *shopping_table* los productos de la lista de la compra a través del UI *product_shopping_list_item*. Los productos que no se hayan comprado todavía aparecen primero ordenados por su *idProduct*. Con cada producto se pueden realizar dos acciones: comprar y borrar de la lista. Al cada UI de tipo *product_shopping_list_item* se le pása como parámetro sendas funciones que permiten realizar estas acciones.
+* El paso de funciones como parámetros entre componentes o la notificación de eventos, permite reducir el acoplamiento de componentes al mínimo.
 * La función *_destroyShoppingTable* elimina la tabla de la lista de la compra.
 * La función *_createShoppingTable* determina las columnas que se van a mostrar en la tabla de la lista de la compra, el sistema de *paginación* y las columnas por las que se puede realizar ordenación.
 * La función *_changeVisibilityShoppingTable* oculta la tabla de la lista de la compra cuando no hay ningún producto.
@@ -3443,7 +4062,26 @@ iris.ui(function(self) {
         self.tmplMode(self.APPEND);
         var product = self.setting("product");                
         self.tmpl("/shopping/ui/list/product_shopping_list_item.html", product);
-    };	
+        if (product.purchased === true) {
+            self.get("order").addClass("purchased");
+            self.get("nameProduct").addClass("purchased");
+            self.get("icon-shopping-cart").removeClass("icon-shopping-cart").addClass("icon-shopping-cart-remove");
+        }
+        self.get("remove").on("click", self.setting("removeProduct"));
+        self.get("buy").on("click",
+            function () {
+                (self.setting("buyProduct"))();
+                self.get("order").toggleClass("purchased");
+                self.get("nameProduct").toggleClass("purchased");
+                self.get("icon-shopping-cart").toggleClass("icon-shopping-cart icon-shopping-cart-remove");
+            }
+            );
+    };
+    
+    self.destroy = function () {
+        self.get("remove").off("click");
+        self.get("buy").off("click");
+    };
 }, "/shopping/ui/list/product_shopping_list_item.js");
 ```
 
@@ -3464,13 +4102,18 @@ Y en *product_shopping_list_item.html*:
 </tr>
 ```
 
+Lo más relevante de estos ficheros es:
+
+* Se asignan estilos en función de si el producto está o no comprado.
+* Se capturan los eventos de pulsación sobre los botones para cambiar sus estilos y llamar a las funciones que ha recibido el UI en el método *self.setting*.
+
 ##<a name="step_by_step_qunit"></a>Pruebas unitarias con *QUnit*
 
 *[QUnit](http://qunitjs.com/)* es una librería para realizar [pruebas unitarias](http://es.wikipedia.org/wiki/Prueba_unitaria) que pertenece al proyecto [JQuery](http://jquery.com/).
 
 Con *QUnit* podemos realizar tanto pruebas síncronas como asíncronas así como probar eventos de la interfaz de usuario.
 
-*QUnit* permite agrupar las pruebas en módulos. En nuestro ejemplo vamos a crear dos módulos, uno para probar el modelo y otro para probar la interfaz de usuario.
+*QUnit* permite agrupar las pruebas en módulos. En nuestro ejemplo vamos a crear un único módulo para probar el modelo, en el ejercicio posterior se incorporará un segundo módulo para probar la interfaz de usuario.
 
 Las pruebas de unidad deben ser atómicas, es decir, que una prueba no debe depender de los resultados o de las acciones realizadas en otra prueba de unidad. Para facilitar esto, *QUnit* tiene la posibilidad de asociar a cada módulo las funciones *setup* y *teardown* y en ellas definir lo que queremos que se haga antes y después de cada test, respectivamente.
 
@@ -3479,10 +4122,10 @@ El módulo para probar el modelo lo almacenamos en el fichero *model_test.js*:
 Nota: No se ha realizado una prueba exhaustiva sino que se trata de un simple ejemplo para comprender el funcionamiento de *QUnit*.
 
 ```js
-(function($) {
-
+ 
     iris.cache(false);
     iris.enableLog("localhost");
+
 
     function clearBody() {
         var irisGeneratedCode = $("#start_iris").nextAll();
@@ -3494,8 +4137,10 @@ Nota: No se ha realizado una prueba exhaustiva sino que se trata de un simple ej
     
     module( "Model Test", {
         setup: function() {
+            iris.notify("iris-reset");
+            iris.baseUri("..");
+            iris.include("/js/shopping_list.js");
             model.init();
-            iris.baseUri("../www");
         },
         teardown: function () {
             model.destroy();
@@ -3569,8 +4214,6 @@ Nota: No se ha realizado una prueba exhaustiva sino que se trata de un simple ej
     }
     );
         
-    
-
     asyncTest("Test getCategories() Method", function() {
         window.expect(1);
         model.service.app.getCategories(
@@ -3584,103 +4227,30 @@ Nota: No se ha realizado una prueba exhaustiva sino que se trata de un simple ej
         
     asyncTest("Test getProducts() Method", function() {
         window.expect(1);
-        model.service.app.getProducts(1,
+        model.service.app.getAllProducts(
             function(products) {
-                window.ok(products.length === 5, "Products retrieved");
+                window.ok(products.length === 28, "Products retrieved");
                 window.start();
             }
-            );
+            ),function(request, status, error) {
+                    console.log(error);
+            };
     }
     );
 
     
 }(jQuery));
 ```
-Observe que para realizar un test síncrono hay que llamar a la función *test* de *QUnit* y, de forma similar, a la función *asyncTest* cuando el test sea asíncrono. Los dos últimos casos de prueba del ejemplo deben ser asíncronos ya que estamos recuperando datos de una *URL*. Los test asíncronos no comienzan a ejecutarse hasta que no se llame a la función *start*. La función *expect* indica el número de test que se deben pasan exitosamente para que *QUnit* considere el caso de prueba como positivo.
+Observe que para realizar un test síncrono hay que llamar a la función *test* de *QUnit* y, de forma similar, a la función *asyncTest* cuando el test sea asíncrono. Los dos últimos casos de prueba del ejemplo deben ser asíncronos ya que estamos recuperando datos de una *URL*. Los test asíncronos no comienzan a ejecutarse hasta que no se llame a la función *start*. La función *expect* indica el número de test que se deben pasar exitosamente para que *QUnit* considere el caso de prueba como positivo.
 
-Las pruebas sobre la interfaz de usuario las incluimos en el fichero *view_test.js*.
-Nota: Al igual que las anteriores, se trata de un simple ejemplo demostrativo del funcionamiento de *QUnit*.
+Observe que en el método *setup* hemos incluído una llamada a:
 
 ```js
-(function($) {
- 
-    iris.cache(false);
-    iris.enableLog("localhost");
-
-    function clearBody() {
-        var irisGeneratedCode = $("#start_iris").nextAll();
-        if (irisGeneratedCode !== undefined) {
-            irisGeneratedCode.remove();
-        }
-    }
-    
-    
-    module( "View Test", {
-        setup: function() {            
-            iris.init();
-            iris.baseUri("../www");
-            model.init();
-            iris.welcome("/shopping/screen/welcome.js");
-        },
-        teardown: function () {
-            model.destroy();
-            window.location.hash ="";
-        //clearBody();
-        }
-    });
-    
-    asyncTest("Test add products to the Shopping List", function() {
-        var products = [];
-        window.expect(1);
-        
-        model.service.app.getProducts(2,
-            function(data) {
-                products = data;
-            }
-            );
-        
-        iris.goto("#products?idCategory=2");
-                
-        window.setTimeout(function() {
-            $("input[type='checkbox']", "[data-id='list_products']").trigger('click');
-            window.ok(model.shoppingList.getShoppingProducts().length === products.length, "All products in idCaterory=2 are selected");
-            window.start();
-        }, 500);
-    }
-    );
-        
-        
-        
-    asyncTest("Test check product", function() {
-        var products = [];
-        window.expect(1);
-        
-        model.service.app.getProducts(2,
-            function(data) {
-                products = data;
-            }
-            );
-        
-        iris.goto("#products?idCategory=2");
-                
-        window.setTimeout(function() {
-            $("input[type='checkbox']", "[data-id='list_products']").trigger('click');
-            iris.goto("#shopping");
-            
-            window.setTimeout(function () {
-                $("button[data-id='buy']").first().trigger("click");
-                model.ShoppingList.prototype.removePurchased();
-                window.ok(model.shoppingList.getShoppingProducts().length === products.length - 1, "Removed 1 purchased product");
-                window.start();
-            }, 500);
-        }, 500);
-    }
-    );
-        
-}(jQuery));
+iris.notify("iris-reset");
 ```
 
-Observe que después de llamar al método *goto* de *Iris*, hemos tenido que provocar una espera con la función *setTimeout* de *Javascript* ya que la vista se tiene que refrescar antes de que podamos simular eventos en ella.
+Esta llamada permite que Iris reinicie su estado y su uso está indicando únicamente cuando se realizan test.
+
 
 ##<a name="step_by_step_grunt"></a>Automatizando procesos con *Grunt*
 
@@ -3691,7 +4261,6 @@ Para utilizar *Grunt* previamente hay que instalar [Node.js](http://nodejs.org/)
 ```
 npm install -g grunt
 ```
-
 
 Los ficheros de configuración de *Grunt* de la aplicación son:
 
@@ -3757,10 +4326,10 @@ module.exports = function(grunt) {
             }
         },
         qunit: {
-            files: ['test/**/*.html']
+            files: ['www/test/**/*.html']
         },
         lint: {
-            files: ['grunt.js', ' www/js/iris-0.5.0-SNAPSHOT.js', 'www/js/init.js', 'www/js/shopping_list.js', 'www/shopping/**/*.js', 'test/**/*.js']
+            files: ['grunt.js', ' www/js/iris.js', 'www/js/init.js', 'www/js/shopping_list.js', 'www/shopping/**/*.js', 'www/test/modet_test.js']
         },
         watch: {
             files: '<config:lint.files>',
@@ -3789,7 +4358,7 @@ module.exports = function(grunt) {
         },
         uglify: {},
         server: {
-            port:8081,
+            port:8080,
             base: "./"
         }
     });
@@ -3825,132 +4394,86 @@ Por último, para realizar las pruebas desde el terminal y no tener que abrir el
 grunt test
 ```
 
-##<a name="step_by_step_change"></a>Modificando la aplicación
+##<a name="step_by_step_exercise"></a>Ejercicio: Modificando la aplicación
 
 En esta sección vamos a discutir que cambios son necesarios en la aplicación para que los productos se seleccionen en la misma pantalla en la que se cargan las categorías tal y como se muestra en la siguiente imagen:
 
 ![categories2](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/categories2.png)
 
-El problema que se nos plantea es que, en la aplicación actual, los productos se cargan a través del Screen *#products* y, sin embargo, cada categoría se carga en el UI *category_list_item* desde la que se navega al Screen *#products* pasándole el *idCategory* correspondiente. Iris no permite registrar un Screen dentro de un UI por lo que no podremos cargar el Screen *#products* en el UI *category_list_item*.
+El problema que se nos plantea es que, en la aplicación actual, los productos se cargan a través del Screen *#/products* y, sin embargo, cada categoría se carga en el UI *category_list_item* desde la que se navega al Screen *#/products* pasándole el *idCategory* correspondiente. Iris no permite registrar un Screen dentro de un UI por lo que no podremos cargar el Screen *#/products* en el UI *category_list_item*.
 
-Vamos a discutir tres soluciones aunque sólo la última será correcta:
-
-1 Para evitar el problema podríamos tratar de transformar el UI *category_list_item* en un Screen y así registrar el Screen *#products* en este Screen. Claramente esta no es una buena idea ya que entonces no bastaría con un único Screen *#category_list_item* sino que necesitaríamos un Screen diferente para cada categoría y tendríamos que tener un fichero *html* y otro *js* por cada categoría lo que supondría una redundancia inaceptable. Pero es que además, como sólo se puede ver un Screen a la vez, sólo se podrá visualizar una única categoría con lo que ni siquiera llegaríamos a conseguir nuestro propósito.
-
-2 Otra solución consistiría en que el Screen *#categories*, que actualmente carga las categorías mediante el UI *category_list_item*, registre el Screen *#products* en un contenedor propio (actualmente este Screen lo registra *#welcome*). De esta forma, cuando naveguemos a *#products*, no se ocultarán las categorías que se han cargado mediante el Screen *#categories*.  Efectivamente esto funcionará como se ha descrito ya que Iris mantiene visible la rama de la jerarquía de los hash-URLs por la que se está navegando. El inconveniente será que necesitamos que los productos se muestren **debajo** de la categoría que se ha seleccionado y que, como el contenedor donde carguemos "#products" debe ser único, no podremos conseguir esto de forma sencilla. Además será imposible ver a la vez los productos de dos o más categorías.
-
-3 La solución correcta y más sencilla consistirá en eliminar el Screen *#products* y cargar en el UI *category_list_item*, los UIs *product_list_item* que, a su vez, cargan los productos de cada categoría. De esta forma, almacenamos en un UI, un conjunto de UIs y evitamos la limitación que se nos planteaba de que un UI registre un Screen. Lógicamente, el trabajo que se hacía en el Screen *#products* habrá que hacerlo en otro sitio; en nuestro caso lo repartiremos entre el Screen *#categories* y los UIs *category_list_item* y *product_list_item*.
+Una posible solución consistirá en eliminar el Screen *#/products* y cargar en el UI *category_list_item*, los UIs *product_list_item* que, a su vez, cargan los productos de cada categoría. Lógicamente, el trabajo que se hacía en el Screen *#/products* habrá que hacerlo en otro sitio; en nuestro caso lo repartiremos entre el Screen *#/categories* y los UIs *category_list_item* y *product_list_item*.
 
 Vamos a ver los cambios necesarios para implementar la solución propuesta.
 
 En primer lugar, debemos borrar los ficheros *products.js* y *products.html* del directorio *screen/products*.
 
-En *welcome.js* debemos eliminar el registro de "#products"; para ello modificamos la función *_createScreens()*:
+En *welcome.js* debemos eliminar el registro de "#/products"; para ello modificamos la función *_createScreens()*:
 
 ```js
 function _createScreens() {
-    self.screens("screens", [{
-        "#home": "/shopping/screen/home.js"
-    }, {
-        "#categories": "/shopping/screen/products/categories.js"
-    },{
-        "#shopping": "/shopping/screen/list/shopping.js"
-    }]);
+    self.screens("screens", [
+        ["home", "/shopping/screen/home.js"],
+        ["categories", "/shopping/screen/products/categories.js"],
+        ["shopping", "/shopping/screen/list/shopping.js"]
+        ]);
 }
 ```
 
-En el fichero eliminado, *products.js*,  detectábamos cuando se pulsaba sobre un producto para añadirlo o eliminarlo a/de la *lista de la compra*. Esto lo podemos realizar en *product_list_item.js* sin apenas modificar el código original:
+En *products.js* cargábamos los productos en el UI *product_list_item*. Esta tarea se la vamos a asignar a *category_list_item.js* que quedará de la siguiente forma:
 
 ```js
-//In product_list_item.js
-iris.ui(function(self) {	
-    self.create = function() {  
-        self.tmplMode(self.APPEND);
-        var product = self.setting("product");                
-        self.tmpl("/shopping/ui/products/product_list_item.html", product);
-        self.get("product").change(function (event) {
-            if (this.checked) {
-                iris.notify(model.event.PRODUCTS.ADD, {
-                    idProduct:product.idProduct, 
-                    nameProduct:product.nameProduct
-                });
-            } else {
-                iris.notify(model.event.PRODUCTS.REMOVE, product.idProduct);
-            }
-        });
-    };
-}, "/shopping/ui/products/product_list_item.js");
-```
-
-Otra cosa que hacíamos en *products.js* era cargar los productos en el UI *product_list_item*. Esta tarea se la vamos a asignar a *category_list_item.js* que quedará de la siguiente forma:
-
-```js
-//In category_list_item.js
-iris.ui(function(self) {	
-    self.create = function() {
-        
-        function _inflate(products) {
-            $.each(products,
-                function(index, product) {
+iris.ui(function(self) {
+    function _inflate(category, products) {
+        $.each(products,
+            function(index, product) {
+                if (category.idCategory === product.category) {
                     self.ui("list_products", "/shopping/ui/products/product_list_item.js", {
                         "product": product
                     });
                 }
-                );
-        }
-        
-        var category = self.setting("category");
+            }
+            );
+    }
+    
+    self.create = function() {
         self.tmplMode(self.APPEND);
+        var category = self.setting("category");
         self.tmpl("/shopping/ui/products/category_list_item.html", category);
-        
-        model.service.app.getProducts(category.idCategory, _inflate);
-        
+        _inflate(category, self.setting("products"));
     };	
     
 }, "/shopping/ui/products/category_list_item.js");
 ```
-Observe que se llama al método *model.service.app.getProducts* directamente sin esperar a que se pulse sobre la categoría. Si hubiera muchos productos, esto sería inadecuado. Se ha hecho así para simplificar la lógica de la aplicación. Una solución mejor sería cargar los productos de una categoría cuando se pulse sobre ella y almacenarlos en memoria para que, si se vuelve a pulsar, no haya que cargarlos de nuevo.
 
-Finalmente modificamos *categories.js* para que marque los productos que están en la lista de la compra. Este trabajo antes se hacía en *products.js*.
+Observe que se reciben todos los productos pero sólo se añaden a la vista los que correspondan a la caterogía en la que estamos.
+
+Modificamos *categories.js* para que cargue las categorías y los productos.
 
 ```js
-//In categories.js
 iris.screen(
     function (self) {
         
-        function _inflate(categories) {
+        function _inflate(categories, products) {
             $.each(categories,
                 function(index, category) {						
                     self.ui("list_categories", "/shopping/ui/products/category_list_item.js", {
-                        "category": category
+                        "category": category,
+                        "products": products
                     });
                 }
                 );
         }
         
-        function _check() {
-            $("[data-product]").prop('checked', false);
-            var products = model.shoppingList.getShoppingProducts();
-            if (products.length > 0) {                
-                $.each(products,
-                    function(index, product) {
-                        var checkbox = $("[data-product="+ product.idProduct + "]");
-                        if (checkbox.size() > 0) {
-                            checkbox.prop('checked', true);
-                        }
-                    }
-                    );
-            }
-        }
-        
         self.create = function () {
             self.tmpl("/shopping/screen/products/categories.html");
-            model.service.app.getCategories(_inflate);
+            model.service.app.getCategories(function(categories){
+                model.service.app.getAllProducts(function(products){
+                    _inflate(categories, products); 
+                });
+            });
         };
         
-        self.awake = function () {
-            _check();
-        };
         
     }, "/shopping/screen/products/categories.js");
 ```
@@ -3962,7 +4485,6 @@ En *categories.html*:
 ```html
 <div class="accordion" id="accordion_categories" data-id="list_categories">
 </div>
-
 ```
 
 En *category_list_item.html*:
@@ -3978,22 +4500,37 @@ En *category_list_item.html*:
         <div data-id="list_products" class="accordion-inner"></div>
     </div>
 </div>
+
 ```
 
-Y en *product_list_item.html*:
-
-```html
-<label class="checkbox">
-    <input data-id="product" type="checkbox" data-product="##idProduct##">##nameProduct##
-</label> 
-```
-
-Por último, debemos hacer una pequeña modificación en el fichero de pruebas unitarias *view_test.js*:
+Por último, hemos realizado algunas pruebas de pruebas unitarias para la vista en *view_test.js*:
 
 ```js
+/*global QUnit:false, module:false, test:false, asyncTest:false, expect:false*/
+/*global start:false, stop:false ok:false, equal:false, notEqual:false, deepEqual:false*/
+/*global notDeepEqual:false, strictEqual:false, notStrictEqual:false, raises:false*/
 (function($) {
 
-iris.cache(false);
+    /*
+    ======== A Handy Little QUnit Reference ========
+    http://docs.jquery.com/QUnit
+
+    Test methods:
+      expect(numAssertions)
+      stop(increment)
+      start(decrement)
+    Test assertions:
+      ok(value, [message])
+      equal(actual, expected, [message])
+      notEqual(actual, expected, [message])
+      deepEqual(actual, expected, [message])
+      notDeepEqual(actual, expected, [message])
+      strictEqual(actual, expected, [message])
+      notStrictEqual(actual, expected, [message])
+      raises(block, [expected], [message])
+  */
+ 
+    iris.cache(false);
     iris.enableLog("localhost");
 
     function clearBody() {
@@ -4006,69 +4543,74 @@ iris.cache(false);
     
     module( "View Test", {
         setup: function() {            
-            iris.init();
-            iris.baseUri("../www");
+            iris.notify("iris-reset");
+            iris.baseUri("..");
+            iris.include("/js/shopping_list.js");
             model.init();
             iris.welcome("/shopping/screen/welcome.js");
         },
         teardown: function () {
             model.destroy();
-            window.location.hash ="";
+            //window.location.hash ="";
             clearBody();
         }
     });
     
+    
     asyncTest("Test add products to the Shopping List", function() {
-        var products = [];
         window.expect(1);
-        
-        model.service.app.getProducts(2,
-            function(data) {
-                products = data;
-            }
-            );
-        
-        iris.goto("#categories");
-                
-        window.setTimeout(function() {
-            $("input[type='checkbox']", "#collapse_category_2").trigger('click');
-            window.ok(model.shoppingList.getShoppingProducts().length === products.length, "All products in idCaterory=2 are selected");
-            window.start();
-        }, 500);
-    }
-    );
-        
-        
-        
-    asyncTest("Test check product", function() {
-        var products = [];
-        window.expect(1);
-        
-        model.service.app.getProducts(2,
-            function(data) {
-                products = data;
-            }
-            );
-        
-        iris.goto("#categories");
-                
-        window.setTimeout(function() {
-            $("input[type='checkbox']", "#collapse_category_2").trigger('click');
-            iris.goto("#shopping");
+        iris.on(iris.AFTER_NAVIGATION ,function() {
+            iris.off(iris.AFTER_NAVIGATION);
+            model.service.app.getCategories(function(categories){
+                model.service.app.getAllProducts(function(products){
+                    iris.navigate("#/categories");
+                    iris.on(iris.AFTER_NAVIGATION ,function() {
+                        setTimeout(function() {
+                            $("input[type='checkbox']", "[id^='collapse_category']").trigger('click');
+                            window.ok(model.shoppingList.getShoppingProducts().length === products.length, "All products are selected");
+                            window.start();
+                        },1000);
+                    });
+                });
+            });
             
-            window.setTimeout(function () {
-                $("button[data-id='buy']").first().trigger("click");
-                model.ShoppingList.prototype.removePurchased();
-                window.ok(model.shoppingList.getShoppingProducts().length === products.length - 1, "Removed 1 purchased product");
-                window.start();
-            }, 500);
-        }, 500);
+        });
+    });
+        
+    asyncTest("Test remove purchased products", function() {
+        var products = [];
+        window.expect(1);
+        iris.on(iris.AFTER_NAVIGATION ,function() {
+            iris.off(iris.AFTER_NAVIGATION);
+            model.service.app.getCategories(function(categories){
+                model.categories = categories;
+                model.service.app.getAllProducts(function(products){
+                    model.products = products;
+                    iris.navigate("#/categories");
+                    iris.on(iris.AFTER_NAVIGATION ,function() {
+                        iris.off(iris.AFTER_NAVIGATION);
+                        setTimeout(function() {
+                            $("input[type='checkbox']", "[id^='collapse_category']").trigger('click');
+                            iris.navigate("#/shopping");
+                            iris.on(iris.AFTER_NAVIGATION ,function() {
+                                $("button[data-id='buy']").first().trigger("click");
+                                $("button[data-id='btn_remove_checked']").trigger("click");
+                                //model.ShoppingList.prototype.removePurchased();
+                                window.ok(model.shoppingList.getShoppingProducts().length === products.length - 1, "Removed 1 purchased product");
+                                window.start();
+                            });
+                        },1000);
+                    });
+                });
+            });
+            
+        });
     }
     );
         
 }(jQuery));
 ```
 
-La modificación consiste en reemplazar la llamada a *#products* por *#categories* y en cambiar la forma de seleccionar los *checkbox*.
+Observe que se ha utilizado el evento *iris.AFTER_NAVIGATION* para saber cuando Iris ha terminado de realizar la navegación y el método *window.setTimeout* para dar tiempo a que se llame a los servicios.
 
 Puede descargar la aplicación modificada en el siguiente [enlace](https://github.com/surtich/iris/blob/iris-grunt/docs/iris-shopping2.tar.gz?raw=true).

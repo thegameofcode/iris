@@ -27,14 +27,14 @@
         iris.on("iris-reset", _init);
     }
 
-    function urlContains () {
-        for(var host in arguments) {
-            if ( document.location.href.indexOf(host) > -1 ) {
+    function urlContains (args) {
+        for(var i = 0 ; i< args.length; i++) {
+            if ( document.location.href.indexOf(args[i]) > -1 ) {
                 return true;
             }
         }
         return false;
-    }
+}
 
     //
     // Public

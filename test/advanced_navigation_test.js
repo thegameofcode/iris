@@ -234,7 +234,7 @@
                 // +1
                 strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #/screen2,[create] #/screen2/screen2_1,[create-ui] screens_ createOtherUI=true,[create-ui] screens_ createOtherUI=false,[awake-ui] screens_ createOtherUI=false,[awake-ui] screens_ createOtherUI=true,[awake] #/screen2,[awake] #/screen2/screen2_1", "The navigation map is correct");
 
-                start();
+                //start();
 
                 iris.off(iris.AFTER_NAVIGATION);
 
