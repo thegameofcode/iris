@@ -14,7 +14,7 @@
     _head = document.getElementsByTagName('head')[0],
     _loadJsCallback,
     _dependencyCount,
-    _srcToCheckDependencies,
+    _lastLoadedDependencies,
     _dependency,
     _firstDiffNode,
     _notCreatedScreenHashses,
@@ -51,7 +51,7 @@
 
         // dependencies
         _dependencyCount = 0;
-        _srcToCheckDependencies = "";
+        _lastLoadedDependencies = [];
         _dependency={};
 
         // Last hash-path loaded
@@ -267,6 +267,7 @@
             if ( fileJs !== undefined ) {
                 _lastScreenPathLoaded = path;
                 _loadJs([fileJs], _loadNewDependencies);
+                _lastLoadedDependencies = [fileJs];
             } else {
                 throw "The path[" + path + "] hasn't associated screen, use self.screens to register the screen first";
             }
@@ -280,26 +281,35 @@
     function _loadNewDependencies () {
         iris.log("Finding new dependencies...");
 
-        // remove comments blocks
-        _srcToCheckDependencies = _srcToCheckDependencies.replace(/\/\/.*/g, "").replace(/\/\*[\s\S]*\*\//g, "");
-
         // to extract ui dependencies
         var dependencies = [];
-        _getDependecies(dependencies, /self\.ui\s*\(\s*[^,]+\s*,\s*["']([^"']+)["']/g);
+        var i, newSrc;
+        for ( i = 0; i < _lastLoadedDependencies.length; i++ ) {
 
-        // to extract service dependencies
-        _getDependecies(dependencies, /iris\.service\s*\(\s*["']([^"']+)["']/g);
+            newSrc = _includes[ _lastLoadedDependencies[i] ].toString();
+
+            // remove comments blocks
+            newSrc = newSrc.replace(/\/\/.*/g, "").replace(/\/\*[\s\S]*\*\//g, "");
+
+            _getDependecies(newSrc, dependencies, /self\.ui\s*\(\s*[^,]+\s*,\s*["']([^"']+)["']/g);
+
+            // to extract service dependencies
+            _getDependecies(newSrc, dependencies, /iris\.service\s*\(\s*["']([^"']+)["']/g);
+        }
+
 
         if ( dependencies.length > 0 ) {
+            _lastLoadedDependencies = dependencies;
             _loadJs(dependencies, _loadNewDependencies);
         } else {
             iris.log("No dependencies found.");
             _loadNewScreens();
         }
+
     }
 
-    function _getDependecies (dependencies, regex) {
-        var matches = regex.exec(_srcToCheckDependencies);
+    function _getDependecies (newSrc, dependencies, regex) {
+        var matches = regex.exec(newSrc);
         while (matches) {
 
             if ( !_includes.hasOwnProperty(matches[1]) ) {
@@ -309,7 +319,7 @@
 
                 _includes[matches[1]] = true;
             }
-            matches = regex.exec(_srcToCheckDependencies);
+            matches = regex.exec(newSrc);
         }
     }
 
@@ -478,7 +488,6 @@
 
     function _registerUI(f_ui, path) {
         _includes[path] = f_ui;
-        _srcToCheckDependencies += f_ui.toString();
     }
 
     function _instanceUI(p_$container, p_uiId, p_jsUrl, p_uiSettings, p_templateMode) {
@@ -533,7 +542,6 @@
 
     function _registerScreen(f_screen, path) {
         _includes[path] = f_screen;
-        _srcToCheckDependencies += f_screen.toString();
     }
 
     function _instanceScreen (p_screenPath) {
