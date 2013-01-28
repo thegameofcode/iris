@@ -3,7 +3,7 @@ iris.screen(
         self.create = function () {
             window.console.log("Main3 Screen Created");
             self.tmpl("test/ui_life_cycle/main.html");
-            self.get("create_my_ui").bind("click",
+            self.get("create_my_ui").on("click",
                 function () {
                     self.ui("ui_container", "test/ui_life_cycle/my_ui.js");
                 }

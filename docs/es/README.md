@@ -29,7 +29,7 @@
  * <a href="#data-settings">Paso de parámetros utilizando atributos *data-*</a><br>
  * <a href="#settings_ui">Paso de parámetros con el método *self.ui*</a><br>
  * <a href="#tmpl_settings">Paso de parámetros a la vista con el método *tmpl*</a><br>
- * <a href="#data-bind">Paso de parámetros a la vista con el atributo *data-bind*</a><br>
+ * <a href="#data-model">Paso de parámetros a la vista con el atributo *data-model*</a><br>
  * <a href="#events">Trabajando con eventos</a><br>
  * <a href="#events_globals">Eventos globales</a><br>
  * <a href="#locals">Utilizando locales y regionales</a><br>
@@ -2149,9 +2149,9 @@ Por ejemplo, en *welcome.html*:
 
 > Los parámetros que se pasan a la vista con el método *tmpl* son **CONSTANTES**. Es decir, que aunque cambie su valor, no serán actualizados en la vista cuando se llame al evento *awake*. La única forma correcta de actualizar los valores recuperados en la vista mediante *##..##*, es destriur y volver a crear la vista.
 
-##<a name="data-bind"></a>Paso de parámetros a la vista con el atributo *data-bind*
+##<a name="data-model"></a>Paso de parámetros a la vista con el atributo *data-model*
 
-Iris dispone de una forma alternativa de pasar parámetros a la vista utlizando el atributo *data-bind*. La diferencia con el anterior es que Iris actualzará el valor de los parámetros pasados mediante *data-bind* cuando se invoque el método *self.inflate* en el controlador del componente.
+Iris dispone de una forma alternativa de pasar parámetros a la vista utlizando el atributo *data-model*. La diferencia con el anterior es que Iris actualzará el valor de los parámetros pasados mediante *data-model* cuando se invoque el método *self.inflate* en el controlador del componente.
 
 Veamos un en ejemplo.
 
@@ -2163,7 +2163,7 @@ En *welcome.html*:
     <p>This is the initial screen.</p>
     <button data-id="update_date">Update date</button>
     <br>
-    The date is: <span data-bind="date">Not set yet</span>
+    The date is: <span data-model="date">Not set yet</span>
 </div>
 ```
 
@@ -2187,11 +2187,11 @@ iris.screen(
 );
 ```
 
-Observe que el contenido del elemento del *DOM* que tenga un atributo *data-bind*, cuyo valor coincida con algún atributo del objeto pasado al método *self.inlfate*, será reemplazado. Si el valor de *data-bind* no coincide con ningún atributo, el componente del DOM conservará su valor.
+Observe que el contenido del elemento del *DOM* que tenga un atributo *data-model*, cuyo valor coincida con algún atributo del objeto pasado al método *self.inlfate*, será reemplazado. Si el valor de *data-model* no coincide con ningún atributo, el componente del DOM conservará su valor.
 
-> El paso de parámetros con *data-bind* permite actualziar los valores en la vista, por el contrario el paso con ##...## mantendrá el valor del parámetro en todo el ciclo de vida del componente.
+> El paso de parámetros con *data-model* permite actualziar los valores en la vista, por el contrario el paso con ##...## mantendrá el valor del parámetro en todo el ciclo de vida del componente.
 
-> La utilización de ##...## permite hacer cosas que no se pueden hacer con *data-bind*.
+> La utilización de ##...## permite hacer cosas que no se pueden hacer con *data-model*.
 
 Por ejemplo:
 

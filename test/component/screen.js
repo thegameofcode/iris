@@ -36,7 +36,7 @@ iris.screen(function (self) {
 	}
 
 	function destroyUiReplace () {
-		self.ui("container", "test/component/ui_replace.js");
+		var ui = self.ui("container", "test/component/ui_replace.js");
 
 		window.raises(function () {
 			self.destroyUIs("container");

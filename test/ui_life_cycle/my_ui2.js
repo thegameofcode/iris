@@ -5,7 +5,7 @@ iris.ui(
             self.tmpl("test/ui_life_cycle/my_ui2.html");
             window.ok(true, "my_ui2 UI Created");
             self.ui("inner_ui_container", "test/ui_life_cycle/inner_ui.js");
-            self.get("create_inner_ui").bind("click",
+            self.get("create_inner_ui").on("click",
                 function () {
                     self.ui("inner_ui_container", "test/ui_life_cycle/inner_ui.js");
                 }

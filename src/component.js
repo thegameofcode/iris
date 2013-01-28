@@ -762,34 +762,34 @@
                 throw "Unknown template mode '" + p_mode + "'";
         }
 
-        // create bind-components map
-        this.bind = {};
-        var bindings = this.bind;
-        $("[data-bind]", tmpl).each(function(){
+        // create model-components map
+        this.model = {};
+        var models = this.model;
+        $("[data-model]", tmpl).each(function(){
             var el = $(this);
-            var bindId = el.data("bind");
+            var modelId = el.data("model");
 
-            if ( !bindings.hasOwnProperty(bindId) ) {
-                bindings[bindId] = [];
+            if ( !models.hasOwnProperty(modelId) ) {
+                models[modelId] = [];
             }
-            bindings[bindId].push(el);
+            models[modelId].push(el);
         });
 
     };
 
     Component.prototype.inflate = function(data) {
-        if ( this.bind === undefined ) {
-            throw "[self.inflate] first set a html node with any data-bind attribute";
+        if ( this.model === undefined ) {
+            throw "[self.inflate] first set a html node with any data-model attribute";
         } else {
 
-            var bindId, value, elements, nodeName, i, format, el, formatParams, formatMatches;
+            var modelId, value, elements, nodeName, i, format, el, formatParams, formatMatches;
             var formatRegExp = /(date|currency)(?:\(([^\)]+)\))/;
 
-            for ( bindId in this.bind ) {
-                value = iris.val(data, bindId);
+            for ( modelId in this.model ) {
+                value = iris.val(data, modelId);
 
                 if ( value !== undefined ) {
-                    elements = this.bind[bindId];
+                    elements = this.model[modelId];
                     formatParams = undefined;
 
                     for ( i = 0; i < elements.length; i++ ) {

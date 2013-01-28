@@ -230,8 +230,8 @@
         });
     });
 
-    asyncTest("Test Bindings", function() {
-        iris.welcome("test/component/bindings.js");
+    asyncTest("Test models", function() {
+        iris.welcome("test/component/models.js");
     
     });
 
