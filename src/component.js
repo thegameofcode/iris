@@ -753,6 +753,7 @@
                 break;
             case this.REPLACE:
                 this.con.replaceWith(tmpl);
+                this.con = {selector: this.con.selector};
                 break;
             case this.PREPEND:
                 this.con.prepend(tmpl);
@@ -911,11 +912,16 @@
             ui = this.uis[f];
 
             if ( ui.con.selector.indexOf(contSelector) !== -1 ) {
-                this.uis.splice(f--, 1);
-                F--;
 
-                ui._destroy();
-                ui.get().remove();
+                if ( ui._tmplMode === this.REPLACE ) {
+                    throw "self.destroyUIs cannot delete " + contSelector + " because was replaced by an UI, use self.destroyUI";
+                } else {
+                    this.uis.splice(f--, 1);
+                    F--;
+
+                    ui._destroy();
+                    ui.get().remove();
+                }
             }
         }
     };

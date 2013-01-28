@@ -157,6 +157,20 @@
         });
     });
 
+    asyncTest("Destroy UIs of container replaced by an UI", function() {
+    
+        expect(10);
+
+        iris.welcome("test/component/welcome.js"); // + 4
+
+        iris.navigate("#/screen"); // +3
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.notify("destroy_ui_replace"); // +1
+            start();
+        });
+    });
+
     asyncTest("Template Params", function() {
 
         expect(8);
