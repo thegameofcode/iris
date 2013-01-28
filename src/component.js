@@ -293,8 +293,8 @@
 
             _getDependecies(newSrc, dependencies, /self\.ui\s*\(\s*[^,]+\s*,\s*["']([^"']+)["']/g);
 
-            // to extract service dependencies
-            _getDependecies(newSrc, dependencies, /iris\.service\s*\(\s*["']([^"']+)["']/g);
+            // to extract resource dependencies
+            _getDependecies(newSrc, dependencies, /iris\.resource\s*\(\s*["']([^"']+)["']/g);
         }
 
 

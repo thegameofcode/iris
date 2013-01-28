@@ -1,9 +1,9 @@
-iris.service(function(self){
+iris.resource(function(self){
 
     self.settings({path : "http://localhost:8080/"});
 
     self.load = function (id, success, error) {
-      self.get("test/service/" + id, success, error);
+      self.get("test/resource/" + id, success, error);
     };
 
     self.create = function (params, success, error) {
@@ -18,4 +18,4 @@ iris.service(function(self){
       self.del("echo/delete/" + id, success, error);
     };
 
-}, "test/service/service.js");
+}, "test/resource/resource.js");

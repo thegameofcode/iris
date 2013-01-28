@@ -122,7 +122,7 @@ window.iris = iris;
     //
     iris.BEFORE_NAVIGATION = "iris_before_navigation";
     iris.AFTER_NAVIGATION = "iris_after_navigation";
-    iris.SERVICE_ERROR = "iris_service_error";
+    iris.RESOURCE_ERROR = "iris_resource_error";
     
     _init();
 

@@ -3,7 +3,7 @@
 /*global notDeepEqual:false, strictEqual:false, notStrictEqual:false, raises:false*/
 (function($) {
 
-  module('Module Service', {
+  module('Module Resource', {
       setup: function() {
           iris.notify("iris-reset");
       },
@@ -20,10 +20,10 @@
   }
 
 
-  asyncTest("Service Get Success", function () {
+  asyncTest("Resource Get Success", function () {
       expect(2);
 
-      iris.service("test/service/service.js").load("test.json", function (json) {
+      iris.resource("test/resource/resource.js").load("test.json", function (json) {
           strictEqual(1, json.id);
           strictEqual("book title", json.title);
           start();
@@ -34,10 +34,10 @@
 
   });
 
-  asyncTest("Service Get Error", function () {
+  asyncTest("Resource Get Error", function () {
       expect(1);
 
-      iris.service("test/service/service.js").load("no_valid", function (json) {
+      iris.resource("test/resource/resource.js").load("no_valid", function (json) {
           ok(false, "Success callback unexpected: " + json);
           start();
       }, function (p_request, p_textStatus, p_errorThrown) {
@@ -48,7 +48,7 @@
   });
 
 
-  asyncTest("Service Put Success", function () {
+  asyncTest("Resource Put Success", function () {
       expect(1);
 
       var id = 1;
@@ -60,7 +60,7 @@
         "data" : params
       };
 
-      iris.service("test/service/service.js").update(id, params, function (json) {
+      iris.resource("test/resource/resource.js").update(id, params, function (json) {
           deepEqual(json, expectedResponse, "the json response is not valid");
           start();
       }, function (p_request, p_textStatus, p_errorThrown) {
@@ -71,7 +71,7 @@
   });
 
 
-  asyncTest("Service Post Success", function () {
+  asyncTest("Resource Post Success", function () {
       expect(1);
 
       var params = 'param1=1&param2=example';
@@ -82,7 +82,7 @@
         "data" : params
       };
       
-      iris.service("test/service/service.js").create(params, function (json) {
+      iris.resource("test/resource/resource.js").create(params, function (json) {
           deepEqual(json, expectedResponse, "the json response is not valid");
           start();
       }, function (p_request, p_textStatus, p_errorThrown) {
@@ -92,7 +92,7 @@
 
   });
 
-  asyncTest("Service Delete Success", function () {
+  asyncTest("Resource Delete Success", function () {
       expect(1);
 
       var id = 1;
@@ -102,7 +102,7 @@
         "url":"/echo/delete/" + id
       };
 
-      iris.service("test/service/service.js").remove(id, function (json) {
+      iris.resource("test/resource/resource.js").remove(id, function (json) {
           deepEqual(json, expectedResponse, "the json response is not valid");
           start();
       }, function (p_request, p_textStatus, p_errorThrown) {

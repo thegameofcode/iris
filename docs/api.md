@@ -53,5 +53,5 @@ Iris exposes all of its methods and properties on the `iris` object.
 ### iris.regional
 
 
-## Service
-### iris.service
+## Resource
+### iris.resource

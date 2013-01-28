@@ -9,7 +9,7 @@ _Creation date: 2012-01-12_
  		[upd] New code style using: http://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml
  		[new] Integration with GruntJs
  		[new] Source code splitted into modules files: core, event, lang, regional, ...
- 		[new] iris services to manage web services calls
+ 		[new] iris resources to manage web services calls
  		[new] `echo-server.js` is a nodejs web server to run qunit tests
  		[new] Qunit tests
  		[upd] Function names are shorter to remember easily. WARNING: No backward with previous versions, old projects must use `iris-legacy` versions

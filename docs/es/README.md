@@ -2404,7 +2404,7 @@ Iris define los siguiente eventos globales:
 ```js
 iris.BEFORE_NAVIGATION = "iris_before_navigation";
 iris.AFTER_NAVIGATION = "iris_after_navigation";
-iris.SERVICE_ERROR = "iris_service_error";
+iris.RESOURCE_ERROR = "iris_resource_error";
 ```
 
 Las funciones que se suscriban a los dos primeros serán notificadas antes y después de que se produzca un cambio en el hash-URL, respectivamente.
@@ -2770,7 +2770,7 @@ var settings = {...};
 var promise = iris.ajax(settings);
 ```
 
-Iris dispone del método *service* que facilita el acceso a servicios *REST*.
+Iris dispone del método *resource* que facilita el acceso a servicios *REST*.
 
 En el siguiente ejemplo se explica como podríamos hacer esto:
 
@@ -2805,7 +2805,7 @@ iris.screen(
    
             self.tmpl("welcome.html");
    
-            iris.service("service.js").load("test.json", function (json) {
+            iris.resource("resource.js").load("test.json", function (json) {
                 self.get("json_container").html(json.title);
             }, function (p_request, p_textStatus, p_errorThrown) {
                 console.log("Error callback unexpected: " + p_errorThrown);
@@ -2818,10 +2818,10 @@ iris.screen(
 );
 ```
 
-En *service.js*:
+En *resource.js*:
 
 ```js
-iris.service(function(self){
+iris.resource(function(self){
 
     //self.settings({path : "http://localhost:8080/"});
 
@@ -2841,26 +2841,26 @@ iris.service(function(self){
       self.del("echo/delete/" + id, success, error);
     };
 
-}, "service.js");
+}, "resource.js");
 
 ```
 
-Observe que hemos creado un fichero *service.js* donde se llama al método *iris.service*. Este método crea un objeto de tipo *Service* que se retorna en la función pasada como argumento y que dispobe de distintos métodos (*get*, *pos*, *put* y *del*) para acceder a servicios REST y pueden recibir una función de éxito o de error en la que se procesará la respuesta obtenida.
+Observe que hemos creado un fichero *resource.js* donde se llama al método *iris.resource*. Este método crea un objeto de tipo *Resource* que se retorna en la función pasada como argumento y que dispobe de distintos métodos (*get*, *pos*, *put* y *del*) para acceder a servicios REST y pueden recibir una función de éxito o de error en la que se procesará la respuesta obtenida.
 
-Desde el Screen *Welcome*, hemos llamado al mismo método anterior, *iris.service*, pero en este caso pasándole un *string* que se corresponde con la ruta de acceso al fichero y que nos permite invocar los métodos definidos en él. En nuestro ejemplo hemos llamado al método *load* pasándole la ruta de acceso al fichero *JSON* que queremos recuperar.
+Desde el Screen *Welcome*, hemos llamado al mismo método anterior, *iris.resource*, pero en este caso pasándole un *string* que se corresponde con la ruta de acceso al fichero y que nos permite invocar los métodos definidos en él. En nuestro ejemplo hemos llamado al método *load* pasándole la ruta de acceso al fichero *JSON* que queremos recuperar.
 
-Iris facilita el trabajo con errores genéricos de tal forma que podemos tratar todos los errores de un determinado tipo sin tener que especificar la misma función en cada llamada a un servicio. Iris notificará cualquier error en un servicio a la función que se haya registrado en el evento iris.SERVICE_ERROR.
+Iris facilita el trabajo con errores genéricos de tal forma que podemos tratar todos los errores de un determinado tipo sin tener que especificar la misma función en cada llamada a un servicio. Iris notificará cualquier error en un servicio a la función que se haya registrado en el evento iris.RESOURCE_ERROR.
 
 Por ejemplo, para hacer esto haríamos:
 
 ```js
-iris.on(iris.SERVICE_ERROR, fn_generic_service_error);
+iris.on(iris.RESOURCE_ERROR, fn_generic_resource_error);
 ```
 
 Esta función recibirá tres parámetros que nos permitirán saber de qué error se trata:
 
 ```js
-function fn_generic_service_error (request, status, error) {
+function fn_generic_resource_error (request, status, error) {
 	....
 }
 ```
@@ -3083,7 +3083,7 @@ $(document).ready(
 
         _setLang();
         
-        iris.on(iris.SERVICE_ERROR, function(p_request, p_textStatus, p_errorThrown) {
+        iris.on(iris.RESOURCE_ERROR, function(p_request, p_textStatus, p_errorThrown) {
             if (p_request.request.status === 401) {
                 window.location.href = "/login?next=/#admin";
             }
@@ -3548,18 +3548,18 @@ var model = {};
         
     };
     
-    model.service = iris.service("/shopping/service.js");
+    model.resource = iris.resource("/shopping/resource.js");
     
-    model.service.app = (function() {
+    model.resource.app = (function() {
         return {
             getCategories: function(success, error) {
-                model.service.load("/json/categories.json", success, error);
+                model.resource.load("/json/categories.json", success, error);
             },
             getProducts: function(idCategory, success, error) {
-                model.service.load("/json/products_" + idCategory + ".json", success, error);
+                model.resource.load("/json/products_" + idCategory + ".json", success, error);
             }            ,
             getAllProducts: function(success, error) {
-                model.service.load("/json/products.json", success, error);
+                model.resource.load("/json/products.json", success, error);
             }
         };
         
@@ -3572,17 +3572,17 @@ Sin entrar en detalle vamos a comentar lo más importante de este fichero:
 
 * Hemos creado una variable global *model* que permite acceder a los métodos públicos definidos.
 * La comunicación con los componentes de *Iris* se realiza a través de *eventos Iris* para lo que se han definido una serie de constantes.
-* Se ha definido un método *model.service* para acceder a los servicios *REST* que ofrece Iris.
-* Se ha definido un objeto *model.service.app* que permite recuperar la información de productos y categorías del servidor.
+* Se ha definido un método *model.resource* para acceder a los servicios *REST* que ofrece Iris.
+* Se ha definido un objeto *model.resource.app* que permite recuperar la información de productos y categorías del servidor.
 
-En el fichero *service.js*, prepararomas las funciones que nos permiten acceder a servicios REST.
+En el fichero *resource.js*, prepararomas las funciones que nos permiten acceder a servicios REST.
 
 ```js
-iris.service(function(self){
+iris.resource(function(self){
     self.load = function (path, success, error) {
         self.get(iris.baseUri() + path, success, error);
     };
-}, "/shopping/service.js");
+}, "/shopping/resource.js");
 ```
 
 
@@ -3608,7 +3608,7 @@ iris.screen(
         
         self.create = function () {
             self.tmpl("/shopping/screen/products/categories.html");
-            model.service.app.getCategories(_inflate);
+            model.resource.app.getCategories(_inflate);
         };
         
         
@@ -3629,7 +3629,7 @@ Y en *categories.html*:
 </div>  
 ```
 
-Observe que llamamos al método *model.service.app.getCategories* para recuperar las categorías desde el servidor. Cuando hayamos recuperado las categorías, iterativamente cargamos el *UI* *category_list_item* pasándole cada categoría como parámetro en el contenedor *list_categories*.
+Observe que llamamos al método *model.resource.app.getCategories* para recuperar las categorías desde el servidor. Cuando hayamos recuperado las categorías, iterativamente cargamos el *UI* *category_list_item* pasándole cada categoría como parámetro en el contenedor *list_categories*.
 
 El *UI* *category_list_item* tendrá los siguientes ficheros:
 
@@ -3718,7 +3718,7 @@ iris.screen(
        
         self.awake = function (params) {
             self.destroyUIs("list_products");
-            model.service.app.getProducts(params.idCategory, _inflate,
+            model.resource.app.getProducts(params.idCategory, _inflate,
                 function (request, textStatus, error) {
                     self.get("msg").html(iris.translate("ERROR") + ": <i>" + error + "</i>");
                 }
@@ -4216,7 +4216,7 @@ Nota: No se ha realizado una prueba exhaustiva sino que se trata de un simple ej
         
     asyncTest("Test getCategories() Method", function() {
         window.expect(1);
-        model.service.app.getCategories(
+        model.resource.app.getCategories(
             function(categories) {
                 window.ok(categories.length === 4, "Categories retrieved");
                 window.start();
@@ -4227,7 +4227,7 @@ Nota: No se ha realizado una prueba exhaustiva sino que se trata de un simple ej
         
     asyncTest("Test getProducts() Method", function() {
         window.expect(1);
-        model.service.app.getAllProducts(
+        model.resource.app.getAllProducts(
             function(products) {
                 window.ok(products.length === 28, "Products retrieved");
                 window.start();
@@ -4467,8 +4467,8 @@ iris.screen(
         
         self.create = function () {
             self.tmpl("/shopping/screen/products/categories.html");
-            model.service.app.getCategories(function(categories){
-                model.service.app.getAllProducts(function(products){
+            model.resource.app.getCategories(function(categories){
+                model.resource.app.getAllProducts(function(products){
                     _inflate(categories, products); 
                 });
             });
@@ -4561,8 +4561,8 @@ Por último, hemos realizado algunas pruebas de pruebas unitarias para la vista 
         window.expect(1);
         iris.on(iris.AFTER_NAVIGATION ,function() {
             iris.off(iris.AFTER_NAVIGATION);
-            model.service.app.getCategories(function(categories){
-                model.service.app.getAllProducts(function(products){
+            model.resource.app.getCategories(function(categories){
+                model.resource.app.getAllProducts(function(products){
                     iris.navigate("#/categories");
                     iris.on(iris.AFTER_NAVIGATION ,function() {
                         setTimeout(function() {
@@ -4582,9 +4582,9 @@ Por último, hemos realizado algunas pruebas de pruebas unitarias para la vista 
         window.expect(1);
         iris.on(iris.AFTER_NAVIGATION ,function() {
             iris.off(iris.AFTER_NAVIGATION);
-            model.service.app.getCategories(function(categories){
+            model.resource.app.getCategories(function(categories){
                 model.categories = categories;
-                model.service.app.getAllProducts(function(products){
+                model.resource.app.getAllProducts(function(products){
                     model.products = products;
                     iris.navigate("#/categories");
                     iris.on(iris.AFTER_NAVIGATION ,function() {
