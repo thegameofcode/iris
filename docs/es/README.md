@@ -127,11 +127,11 @@ En esta sección se van a presentar los principales componentes de Iris y los m�
 
 Iris estructura la aplicación en componentes que interaccionan entre sí.
 
-Cada **componente** permite definir los elementos que conforman la interfaz de usuario. Un componente tiene dos elementos fundamentales: La vista o presentación y el comportamiento.
+Cada **componente** permite definir los elementos que conforman la interfaz de usuario. Un componente tiene dos elementos fundamentales: La vista o presentación (*template*) y el controlador de la vista (*controller*).
 
 La **vista** consiste en un fragmento de código en HTML, típicamente un *DIV*, almacenado en un fichero, normalmente con extensión *.html*.
 
-El **comportamiento** es un fragmento de código en Javascript almacenado en un fichero, típicamente con extensión *.js*. Mediante ste fichero controlamos e interaccionamos con la vista. Cuando un componente se activa (<a href="#awake">ver más adelante</a>), puede recibir parámetros que permiten modificar su comportamiento.
+El **controlador** es un fragmento de código en Javascript almacenado en un fichero, típicamente con extensión *.js*. Mediante ste fichero controlamos e interaccionamos con la vista. Cuando un componente se activa (<a href="#awake">ver más adelante</a>), puede recibir parámetros que permiten modificar su comportamiento.
 
 ![Definición de comportamiento](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/component_equation.png)
 
@@ -178,9 +178,9 @@ Los Screens tienen método callback adicional llamado **canSleep**. Este método
 Toda aplicación Iris debe definir un componente inicial que se cargará al principio y antes de efectuar cualquier operación con Iris. Este componente será un <a href="#screen">Screen</a> especial ya que tiene algunas diferencias con lo explicado anteriormente:
 * El Screen de bienvenida tiene el símbolo *#* como Hash-URL asociado y se carga con el método **welcome** de Iris.
 * En una aplicación Iris, normalmente, no habrá necesidad de refrescar o de modificar la *URL* sobre la que se carga el Screen de bienvenida.
-* Por lo tanto, tampoco será necesario llamar al método *destroy* de este Screen. Es decir, que el ciclo de vida de este Screen se simplifica ya que únicamente se hará una primera llamada al método *create* y nunca se llamará al método *destroy*. Puede haber, sin embargo, varias llamadas a *awake* o a *sleep* cuando se pasan parámetros como se explica más adelante.
+* Por lo tanto, tampoco será necesario llamar al método *destroy* de este Screen. Es decir, que el ciclo de vida de este Screen se simplifica ya que únicamente se hará una primera llamada al método *create* y nunca se llamará la  los métodos *sleep* o *destroy*. Puede haber, sin embargo, varias llamadas a *awake* cuando se pasan parámetros como se explica más adelante. 
 * Lo habitual es que el cometido del Screen de bienvenida sea registrar otros Screens y *llamar* al Hash-URL del Screen inicial de nuestra aplicación.
-* Todos los demás Screens son hijos de este Screen y, por lo tanto, su Hash.URL tendrá la forma "#/...".
+* Todos los demás Screens son hijos de este Screen y, por lo tanto, su Hash-URL tendrá la forma "#/...".
 
 #<a name="starting"></a>Empezando con Iris
 
@@ -191,7 +191,7 @@ Aquí no se pretende crear una aplicación funcional, sino que se comprenda como
 Para hacer más sencilla la explicación, todo el código de esta sección se situará un el directorio raíz de la aplicación. No es conveniente hacer esto en una aplicación real. En la sección *<a href="#paso-a-paso">Construyendo paso a paso una aplicación desde cero</a>* se propone una estructura de directorios más adecuada para trabajar con Iris.
 
 ##<a name="installing"></a>Instalando Iris
-El primer paso será decidir si queremos trabajar con la versión de [desarrollo](https://raw.github.com/iris-js/iris/master/dist/iris.js) o de [producción](https://raw.github.com/iris-js/iris/master/dist/iris.min.js)<!-- TODO revisar enlaces -->y asociarlas a un fichero en HTML.
+El primer paso será decidir si queremos trabajar con la versión de [desarrollo](https://raw.github.com/iris-js/iris/master/dist/iris.js) o de [producción](https://raw.github.com/iris-js/iris/master/dist/iris.min.js)<!-- TODO revisar enlaces y asociarlas a un fichero en HTML. -->
 
 ```html
 <!-- In index.html -->
@@ -257,7 +257,7 @@ Observe que el método *create* ejecuta una llamada al método **tmpl** que perm
 Observe, además, que el método *iris.screen* recibe la función antes mencionada y, como segundo parámetro, la *URL* del fichero *Javascript* asociado. Es muy importante que la *URL* del método *iris.welcome* coincida exactamente con la que aquí pongamos.
 
 
-> El método *self.tmpl()* debe ser llamado una única vez y **OBLIGATORIAMENTE* en el método *self.create()* antes de utilizar ningún otro método del componente (*self.get(), self.destroyUI(), etc*);
+> El método *self.tmpl()* debe ser llamado una única vez y **OBLIGATORIAMENTE** en el método *self.create()* antes de utilizar ningún otro método del componente (*self.get()*, *self.destroyUI()*, etc);
 
 > Los ficheros HTML asociados a componentes de Iris deben tener un único nodo raíz (típicamente un DIV). Si hubiera comentarios en HTML deben estar dentro de este nodo.
 
@@ -499,7 +499,7 @@ Y el fichero *welcome.html*:
 </div>
 ```
 
-Si pulsamos primero sobre el enlace a *#home* y después sobre *#help*, el DOM generado por Iris será:
+Si pulsamos primero sobre el enlace a *#/home* y después sobre *#/help*, el DOM generado por Iris será:
 
 ```html
 <html>
@@ -508,9 +508,9 @@ Si pulsamos primero sobre el enlace a *#home* y después sobre *#help*, el DOM g
   <div style="">
    <h1>Welcome Screen</h1>
    <p>This is the initial screen.</p>
-   <a href="#home">Click to go to Home Screen</a>
+   <a href="#/home">Click to go to Home Screen</a>
    <br>
-   <a href="#help">Click to gets some help</a>
+   <a href="#/help">Click to gets some help</a>
    <div data-id="screens">
     Here is where Iris will load all the Screens
     <div style="display: none;">
@@ -541,7 +541,7 @@ Home Screen Asleep
 Help Screen Awakened 
 </pre>
 
-Si volvemos a pulsar sobre el enlace a *#home*, se producirán los eventos adicionales:
+Si volvemos a pulsar sobre el enlace a *#/home*, se producirán los eventos adicionales:
 
 <pre>
 Help Screen Asleep
@@ -671,16 +671,16 @@ Tampoco es necesario modificar *welcome.html*:
 <div>
     <h1>Welcome Screen</h1>
     <p>This is the initial screen.</p>
-    <a href="#home">Click to go to Home Screen</a>
+    <a href="#/home">Click to go to Home Screen</a>
     </br>
-    <a href="#help">Click to gets some help</a>
+    <a href="#/help">Click to gets some help</a>
     <div data-id="screens">
         Here is where Iris will load all the Screens
     </div>
 </div>
 ```
 
-Si navegamos a "#home" y luego a "#inner_home", la secuencia de eventos que se produce es la que podríamos esperar:
+Si navegamos a "#/home" y luego a "#inner_home", la secuencia de eventos que se produce es la que podríamos esperar:
 
 <pre>
 Welcome Screen Created
@@ -691,7 +691,7 @@ Inner_home Screen Created
 Inner_home Screen Awakened 
 </pre>
 
-Si ahora vamos a "#help", se generarán los eventos adicionales:
+Si ahora vamos a "#/help", se generarán los eventos adicionales:
 
 <pre>
 Inner_home Screen Asleep
@@ -723,9 +723,9 @@ Y en *welcome.html*:
 <div>
     <h1>Welcome Screen</h1>
     <p>This is the initial screen.</p>
-    <a href="#home">Click to go to Home Screen</a>
+    <a href="#/home">Click to go to Home Screen</a>
     </br>
-    <a href="#help">Click to gets some help</a>
+    <a href="#/help">Click to gets some help</a>
     <div data-id="home_screen">
         Here is where Iris will load the Home Screen
     </div>
@@ -864,9 +864,9 @@ Es interesante estudiar el DOM que genera Iris tras pulsar el botón y cargar el
   <div>
    <h1>Welcome Screen</h1>
    <p>This is the initial screen.</p>
-   <a href="#home">Click to go to Home Screen</a>
+   <a href="#/home">Click to go to Home Screen</a>
    <br>
-   <a href="#help">Click to gets some help</a>
+   <a href="#/help">Click to gets some help</a>
    <div data-id="screens">
     Here is where Iris will load all the Screens
     <div style="">
@@ -903,7 +903,7 @@ my_ui UI Created
 my_ui UI Awakened
 </pre>
 
-Hasta aquí nada especial; pero si luego pulsamos sobre el enlace a *#help*:
+Hasta aquí nada especial; pero si luego pulsamos sobre el enlace a *#/help*:
 
 <pre>
 my_ui UI Asleep
@@ -914,7 +914,7 @@ Help Screen Awakened
 
 Obsérvese que se llama al evento *sleep* tanto del UI *my_ui* como del Screen *Home*.
 
-Si ahora volvemos a pulsar sobre *#home*:
+Si ahora volvemos a pulsar sobre *#/home*:
 
 <pre>
 Help Screen Asleep
@@ -1089,7 +1089,7 @@ Observe que tenemos dos botones, uno para ir al Screen Home y otro para destruir
    <br>
    <button data-id="destroy_home_screen">Click to destroy Home Screen</button>
    <br>
-   <a href="#help">Gets some help</a>
+   <a href="#/help">Gets some help</a>
    <div data-id="container"></div>
     <div style="">
      <h1>Help Screen</h1>
@@ -1100,7 +1100,7 @@ Observe que tenemos dos botones, uno para ir al Screen Home y otro para destruir
 </html>
 ```
 
-Observe que el contenido del Screen Home ha sido completamente eliminado. Sin embargo, su hash-URL permanece todavía registrado; si pulsamos sobre el botón se volverá a crear el Screen Home.
+Observe que el contenido del Screen Home ha sido completamente eliminado. La destrucción de *screens* también destruye su registro y, por lo tanto, tampoco se puede volver a navegar a ellos a no ser que se vuelvan a registrar.
 
 Si el Screen destruido contiene UIs, estos también serán destruidos. Para probarlo, modifiquemos el Screen Home de la siguiente manera:
  
@@ -1145,7 +1145,7 @@ Home Screen Destroyed
 
 > No se puede destruir el Screen actual. Es decir, no se puede destruir el Screen asociado al hash-URL que esté mostrando el navegador.
 
-Si, por ejemplo, estamos en el hash-URL #home, no podemos destruir el Screen Home. Puede probarlo con el ejemplo anterior, trate de destruir el Screen Home sin cambiar a *#help*.
+Si, por ejemplo, estamos en el hash-URL *#/home*, no podemos destruir el Screen Home. Puede probarlo con el ejemplo anterior, trate de destruir el Screen Home sin cambiar a *#/help*.
 
 > Tampoco se puede destruir un Screen si el hash-URL actual pertenece a la jerarquía del Screen que se quiere destruir.
 
@@ -1228,11 +1228,11 @@ iris.screen(
 ```
 Observe que estando en el hash-URL *#/home/inner_home*, si pulsamos el botón de destruir el Screen Home, Iris da un error indicando que no podemos destruir el padre del Screen actual.
 
-Si navegamos a *#help*, podremos destruir el Screen Home. Como decíamos antes, la destrucción del Screen Home no eliminará su registro, sin embargo sí se eliminará el registro del Screen Inner_home.
+Si navegamos a *#/help*, podremos destruir el Screen Home. Como decíamos antes, la destrucción del Screen Home no eliminará su registro, sin embargo sí se eliminará el registro del Screen Inner_home.
 
 ##<a name="UIs_destroy"></a>Destruyendo UIs
 
-Recuerde que un UI se destruye cuando se destruye su componente padre. Además:
+Recuerde que un UI se destruye cuando se destruye su componente padre; además:
 
 Para destruir UIs, Iris dispone de dos métodos: *self.destroyUI* y *self.destroyUIs*. Esto métodos son locales al componente que los vaya a destruir a diferencia de *iris.destroyScreen* que es global.
 
@@ -1279,7 +1279,7 @@ self.create = function () {
 
 Observe que eliminamos el UI con el método *destroyUI* a través de la referencia que nos devuelve la llamada al método *ui*.
 
-> El método *self.ui* devuelve una referencia al UI creado.
+> El método *self.ui()* devuelve una referencia al UI creado.
 
 > El método *self.uis()* devuelve la colección de UIs que tiene el componente.
 
@@ -1293,7 +1293,7 @@ self.create = function () {
 };
 ```
 
-En el DOM generado, se ha eliminado todo el contenido del UI. Tampoco aparece ninguna referencia a su contenedor (*data-id='container'*) porque estamos en modo *REPLACE*.
+En el DOM generado, se ha eliminado todo el contenido del UI. Tampoco aparece ninguna referencia a su contenedor (*data-id*='*container*') porque estamos en modo *REPLACE*.
 
 ```html
 <html>
@@ -1517,10 +1517,9 @@ iris.screen(
 );
 ```
 
-Observe que el método *canSleep* devuelve *false*. Esto impedirá ir a *#help* cuando pulsemos sobre el enlace.
+Observe que el método *canSleep* devuelve *false*. Esto impedirá ir a *#/help* cuando pulsemos sobre el enlace.
 
 ##<a name="querystring_params"></a>Enviando parámetros a un Screen
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 En esta y en las siguientes secciones vamos a ver diversas formas de pasar parámetros entre componentes. 
 
@@ -1606,7 +1605,7 @@ iris.screen(
 
 Observe que el parámetro lo podemos recuperar con el objeto *params* que recibimos en el método *awake*.
 
-También podemos pasar un parámetro en el método *navigate* de Iris. Para probar esto hagamos los siguientes cambios:
+También podemos pasar un parámetro en el método *iris.navigate*. Para probar esto hagamos los siguientes cambios:
 
 En *welcome.html* cambiamos el enlace por un botón:
 
@@ -2942,7 +2941,7 @@ Puede probar el funcionamiento de la aplicación en el siguiente [enlace](http:/
 
 La aplicación va a permitir realizar la lista de la compra de una serie de productos agrupados en categorías. En las siguientes imágenes presentamos las principales pantallas de la aplicación:
 
-<a name="home_img"></a>*#home:*
+<a name="home_img"></a>*#/home:*
 ![home](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/shopping_list/home.png)
 
 <a name="categories_img"></a>*#categories:*
@@ -3235,11 +3234,11 @@ Finalmente, el fichero *welcome.html* contendrá:
 </div>
 ```
 
-Observe que en este archivo se definen los menús con *Bootstrap* para acceder a las distintas secciones de la aplicación. En lugar de colocar los textos descriptivos de los menús directamente, se utiliza la sintaxis de Iris para permitir localizarlos en los ficheros de traducción. En la esquina superior derecha, <a href="#home_img">ver imagen</a>, se sitúan iconos para cambiar el idioma. Por último, hay un contenedor donde se cargarán los *screens* de la aplicación.
+Observe que en este archivo se definen los menús con *Bootstrap* para acceder a las distintas secciones de la aplicación. En lugar de colocar los textos descriptivos de los menús directamente, se utiliza la sintaxis de Iris para permitir localizarlos en los ficheros de traducción. En la esquina superior derecha, <a href="#/home_img">ver imagen</a>, se sitúan iconos para cambiar el idioma. Por último, hay un contenedor donde se cargarán los *screens* de la aplicación.
 
 ##<a name="step_by_step_home"></a>*Screen* Home
 
-El <a href="#home_img">*Screen* *Home*</a> es una simple página informativa. Estos son sus ficheros:
+El <a href="#/home_img">*Screen* *Home*</a> es una simple página informativa. Estos son sus ficheros:
 
 En *home.js*:
 
