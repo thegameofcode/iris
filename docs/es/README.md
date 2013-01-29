@@ -2966,13 +2966,13 @@ Vamos a proponer una estructura determinada aunque cualquier otra que cumpla el 
 
 En la siguiente imagen vemos la estructura de directorios y los archivos que contienen:
 
-![www_directories](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/shopping_list/www_directories.png)
+![www_directories](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/shopping_list/shopping_directories.png)
 
 Más detalladamente, el contenido del directorio *shopping* será el siguiente:
 
-![shopping_directories](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/shopping_list/shopping_directories.png)
+![shopping_directories](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/shopping_list/www_directories.png)
 
-Observe que, para hacer más sencillo el ejemplo y no depender de ninguna tecnología de servidor concreto, se ha creado un directorio *json* que permite cargar los productos y las categorías desde el servidor Web sin depender de ninguna tecnología de servidor. En una aplicación real, normalmente los productos estarían almacenados en una base de datos.
+Observe que, para hacer más sencillo el ejemplo, se ha creado un directorio *json* que permite cargar los productos y las categorías desde el servidor Web sin depender de ninguna tecnología de servidor. En una aplicación real, normalmente los productos estarían almacenados en una base de datos y se recuperarían llamando a un servicio.
 
 ##<a name="step_by_step_welcome"></a>*Screen* Welcome
 
