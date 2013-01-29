@@ -28,6 +28,7 @@
  * <a href="#settings">Paso de parámetros con el método *setting*</a><br>
  * <a href="#data-settings">Paso de parámetros utilizando atributos *data-*</a><br>
  * <a href="#settings_ui">Paso de parámetros con el método *self.ui*</a><br>
+ * <a href="#settings_priority">Prioridad en el paso de parámetros</a><br>
  * <a href="#tmpl_settings">Paso de parámetros a la vista con el método *tmpl*</a><br>
  * <a href="#data-model">Paso de parámetros a la vista con el atributo *data-model*</a><br>
  * <a href="#events">Trabajando con eventos</a><br>
@@ -1310,7 +1311,7 @@ En el DOM generado, se ha eliminado todo el contenido del UI. Tampoco aparece ni
 </html>
 ```
 
-Si descomentamos la línea que asigna *APPEND* al *tmplMode* en el fichero *my_ui.js*, y pulsamos varias veces sobre botón que crea el UI seguida de una pulsación sobre el que lo destruye, sólo se eliminará el último UI creado ya que la referencia la habremos ido reemplazando a medida que creamos nuevos UIs.
+Si *descomentamos* la línea que asigna *APPEND* al *tmplMode* en el fichero *my_ui.js*, y pulsamos varias veces sobre botón que crea el UI seguida de una pulsación sobre el que lo destruye, sólo se eliminará el último UI creado ya que la referencia la habremos ido reemplazando a medida que creamos nuevos UIs.
 
 Podríamos eliminar todos los UIs si los hubiéramos ido almacenando en un *array*. Aunque también lo podemos hacer si utilizamos el método *destroyUIs* como se explica en el siguiente ejemplo:
 
@@ -1389,7 +1390,7 @@ my_ui UI Destroyed
 
 ##<a name="canSleep"></a>Evento *canSleep*
 
-Antes de llamar al evento *sleep* de un screen, Iris comprueba si existe un método con el nombre *canSleep*. Si este método devuelve *false*, Iris cancelará la propagación de eventos e imperirá cambiar el hash-URL.
+Antes de llamar al evento *sleep* de un screen, Iris comprueba si existe un método con el nombre *canSleep*. Si este método devuelve *false*, Iris cancelará la propagación de eventos e impedirá cambiar el hash-URL.
 
 Esto puede ser útil si, por ejemplo, el usuario tiene que completar un formulario antes de navegar a otro Screen.
 
@@ -1736,7 +1737,7 @@ Y en *welcome.html*:
 
 Observe que el parámetro *year* se pasa tanto al Screen Welcome como al Screen Home.
 
-> Para pasar un parámetro a un Screen hay que ponerlo después del signo *?* que, a su vez, irá destrás de su hash-URL y antes que sus hijos.
+> Para pasar un parámetro a un Screen hay que ponerlo después del signo *?* que, a su vez, irá detrás de su hash-URL y antes que sus hijos.
 
 > Si se quiere pasar un mismo parámetro a varios Screens hay que repetirlo en cada uno de ellos.
 
@@ -1769,7 +1770,7 @@ Este es un caso particular del ciclo de vida de los *screens*:
 
 Los componentes de Iris (UIs y Screens) pueden recibir parámetros utilizando los métodos *self.setting* o *self.settings*. 
 
-El método *setting* recibe el nombre del parámetro si lo queremos leer y, opcionalmente, el valor del parámetro si lo queremos sobreescribir o crear.
+El método *setting* recibe el nombre del parámetro si lo queremos leer y, opcionalmente, el valor del parámetro si lo queremos sobrescribir o crear.
 
 ```js
 //Read the parameter value
@@ -2031,15 +2032,15 @@ iris.ui(
 
 Observe que el parámetro *year* se pasa en el método *self.ui* del Screen y se recoge en el método *self.setting* del UI.
 
-##<a name="settings_prioroty"></a>Prioridad en el paso de parámetros
+##<a name="settings_priority"></a>Prioridad en el paso de parámetros
 
 Los componentes pueden recibir parámetros de varias formas. Concretamente, los *UIs* pueden recibir parámetros:
 
-1. Con los métodos *self.etting* y *self.settings*.
+1. Con los métodos *self.setting* y *self.settings*.
 2. En el método *self.ui* del componente padre.
 3. Desde la vista con el atributo *data-* en el contenedor del padre del UI.
 
-Todos estas alternativas comparten el mismo objeto *settings* de *javascript* con lo que si pasamos un mismo nombre de parámetro de varias formas diferentes, el valor del parámetro resultará sobreescrito.
+Todos estas alternativas comparten el mismo objeto *settings* de *Javascript* con lo que si pasamos un mismo nombre de parámetro de varias formas diferentes, el valor del parámetro resultará sobrescrito.
 
 El orden de prioridad es el que se ha reflejado en la lista anterior, aunque el valor final resultante dependerá de en qué momento del ciclo de vida fijemos el parámetro.
 
@@ -2108,13 +2109,13 @@ En *my_ui.html*, visualizamos el parámetro:
 </div>
 ```
 
-El valor que se visualizará será *2015* que será el que hemos pasado en el método *self.setting*. La razón de esto es que el contenedor del UI pasa el valor *2013*, pero el método *self.ui* sobreescribe este valor a *2014*. Cuando el método *self.tmpl* del UI *my_ui* retorna, se modifica el valor del parámetro con *self.setting* que es lo que se visualiza.
+El valor que se visualizará será *2015* que será el que hemos pasado en el método *self.setting*. La razón de esto es que el contenedor del UI pasa el valor *2013*, pero el método *self.ui* sobrescribe este valor a *2014*. Cuando el método *self.tmpl* del UI *my_ui* retorna, se modifica el valor del parámetro con *self.setting* que es lo que se visualiza.
 
-Si comentamos la línea que asigna el valor con *self.settings*, el valor mostrado será *2014*, que corresponde con el pasado con *Self.ui*.
+Si comentamos la línea que asigna el valor con *self.settings*, el valor mostrado será *2014*, que corresponde con el pasado con *self.ui*.
 
 Si hacemos varias llamadas a *self.setting* o a *self.settings* el valor del parámetro será el que hayamos asignado en la última llamada.
 
-> Si un parámetro se pasa con el mismo nombre de varias formas, será sobreescrito con la prioridad que se ha indicado antes. Es decir, que el método más prioritario será *setting* ó *settings* prevaleciendo el valor que se haya asignado con este método.
+> Si un parámetro se pasa con el mismo nombre de varias formas, será sobrescrito con la prioridad que se ha indicado antes. Es decir, que el método más prioritario será *setting* o *settings* prevaleciendo el valor que se haya asignado con este método.
 
 > Si se llama varias veces a *setting* o a *settings* con el mismo nombre de parámetro, prevalecerá el último valor asignado.
 
@@ -2146,11 +2147,11 @@ Por ejemplo, en *welcome.html*:
 </div>
 ```
 
-> Los parámetros que se pasan a la vista con el método *tmpl* son **CONSTANTES**. Es decir, que aunque cambie su valor, no serán actualizados en la vista cuando se llame al evento *awake*. La única forma correcta de actualizar los valores recuperados en la vista mediante *##..##*, es destriur y volver a crear la vista.
+> Los parámetros que se pasan a la vista con el método *tmpl* son **CONSTANTES**. Es decir, que aunque cambie su valor, no serán actualizados en la vista cuando se llame al evento *awake*. La única forma correcta de actualizar los valores recuperados en la vista mediante *##..##*, es destruir y volver a crear la vista.
 
 ##<a name="data-model"></a>Paso de parámetros a la vista con el atributo *data-model*
 
-Iris dispone de una forma alternativa de pasar parámetros a la vista utlizando el atributo *data-model*. La diferencia con el anterior es que Iris actualzará el valor de los parámetros pasados mediante *data-model* cuando se invoque el método *self.inflate* en el controlador del componente.
+Iris dispone de una forma alternativa de pasar parámetros a la vista utilizando el atributo *data-model*. La diferencia con el anterior es que Iris actualizará el valor de los parámetros pasados mediante *data-model* cuando se invoque el método *self.inflate* en el controlador del componente.
 
 Veamos un en ejemplo.
 
@@ -2186,15 +2187,17 @@ iris.screen(
 );
 ```
 
-Observe que el contenido del elemento del *DOM* que tenga un atributo *data-model*, cuyo valor coincida con algún atributo del objeto pasado al método *self.inlfate*, será reemplazado. Si el valor de *data-model* no coincide con ningún atributo, el componente del DOM conservará su valor.
+Observe que el contenido del elemento del *DOM* que tenga un atributo *data-model*, cuyo valor coincida con algún atributo del objeto pasado al método *self.inflate*, será reemplazado. Si el valor de *data-model* no coincide con ningún atributo, el componente del DOM conservará su valor.
 
-> El paso de parámetros con *data-model* permite actualziar los valores en la vista, por el contrario el paso con ##...## mantendrá el valor del parámetro en todo el ciclo de vida del componente.
+> El paso de parámetros con *data-model* permite actualizar los valores en la vista, por el contrario el paso con ##...## mantendrá el valor del parámetro en todo el ciclo de vida del componente.
 
 > La utilización de ##...## permite hacer cosas que no se pueden hacer con *data-model*.
 
 Por ejemplo:
 
+```html
 <img src="##logo##.png/>
+```
 
 ##<a name="events"></a>Trabajando con eventos
 
@@ -2769,7 +2772,7 @@ var settings = {...};
 var promise = iris.ajax(settings);
 ```
 
-Iris dispone del método *resource* que facilita el acceso a servicios *REST*.
+Iris dispone del método *iris.resource* que facilita el acceso a servicios *REST*.
 
 En el siguiente ejemplo se explica como podríamos hacer esto:
 
@@ -2844,7 +2847,7 @@ iris.resource(function(self){
 
 ```
 
-Observe que hemos creado un fichero *resource.js* donde se llama al método *iris.resource*. Este método crea un objeto de tipo *Resource* que se retorna en la función pasada como argumento y que dispobe de distintos métodos (*get*, *pos*, *put* y *del*) para acceder a servicios REST y pueden recibir una función de éxito o de error en la que se procesará la respuesta obtenida.
+Observe que hemos creado un fichero *resource.js* donde se llama al método *iris.resource*. Este método crea un objeto de tipo *Resource* que se retorna en la función pasada como argumento y que dispone de distintos métodos (*get*, *pos*, *put* y *del*) para acceder a servicios REST y pueden recibir una función de éxito o de error en la que se procesará la respuesta obtenida.
 
 Desde el Screen *Welcome*, hemos llamado al mismo método anterior, *iris.resource*, pero en este caso pasándole un *string* que se corresponde con la ruta de acceso al fichero y que nos permite invocar los métodos definidos en él. En nuestro ejemplo hemos llamado al método *load* pasándole la ruta de acceso al fichero *JSON* que queremos recuperar.
 
@@ -2878,7 +2881,7 @@ iris.cache(boolean); //True, if you want Iris use the cache browser (This preven
 
 ```js
 iris.noCache(); //If no arguments are passed, returns the cache policy.
-//You can pass it the servers that you do not want them to use the browser cache. For example iris.noCache ("wwww", "localhost");
+//You can pass it the servers that you do not want them to use the browser cache. For example iris.noCache ("www", "localhost");
 ```
 
 ```js
@@ -2892,7 +2895,7 @@ iris.log(arg1, arg2, arg3, arg4); //This shows in the browser console that is pa
 
 ```js
 iris.enableLog(server1, server2,...) //If no arguments are passed, returns the logging policy.
-//Or Ypu can pass the servers that you want to use the Iris logging system.
+//Or You can pass the servers that you want to use the Iris logging system.
 ```
 
 Iris ayuda a la **minificación** de la aplicación. Para reducir el número de ficheros que hay que descargar desde el servidor en una aplicación Iris, podemos *minificar* todos los ficheros *.js* en uno único con la herramienta que queramos (por ejemplo [Grunt](https://github.com/gruntjs/grunt)). Para evitar que Iris tenga que descargarse el fichero del componente y utilice el del archivo *minificado*, tenemos que indicar la ruta de acceso al fichero en el método que crea el componente.
@@ -2937,7 +2940,7 @@ En esta sección vamos utilizar Iris para construir una sencilla aplicación que
 
 Puede descargar la aplicación en el siguiente [enlace](https://github.com/surtich/iris/blob/iris-grunt/docs/iris-shopping.tar.gz?raw=true). <!-- TODO actualizar enlace -->Para probar la aplicación debe descomprimirla y desplegarla en un servidor Web (Apache, Node.js, etc). Si tiene instalado *Grunt* puede, simplemente, situarse en el directorio raíz de la aplicación y ejecutar el comando *grunt*.
 
-Puede probar el funcionamiento de la aplicación en el siguiente [enlace](http://shopping-list-example.appspot.com/)
+Puede probar el funcionamiento de la aplicación en el siguiente [enlace](http://shopping-list-example.appspot.com/) <!-- TODO subir al servidor GAE de IGZ y actualizar enlace -->
 
 La aplicación va a permitir realizar la lista de la compra de una serie de productos agrupados en categorías. En las siguientes imágenes presentamos las principales pantallas de la aplicación:
 
@@ -3574,7 +3577,7 @@ Sin entrar en detalle vamos a comentar lo más importante de este fichero:
 * Se ha definido un método *model.resource* para acceder a los servicios *REST* que ofrece Iris.
 * Se ha definido un objeto *model.resource.app* que permite recuperar la información de productos y categorías del servidor.
 
-En el fichero *resource.js*, prepararomas las funciones que nos permiten acceder a servicios REST.
+En el fichero *resource.js*, preparamos las funciones que nos permiten acceder a servicios REST.
 
 ```js
 iris.resource(function(self){
@@ -4044,7 +4047,7 @@ Y en *shopping.html*:
 Estos son los puntos más relevantes de estos ficheros:
 
 * La función *_asignEvents* asigna la pulsación de los botones del *screen* a eventos de Iris para actuar sobre el modelo. También registra eventos de Iris lanzados desde el modelo.
-* La función *_loadShoppingProducts* carga en el *tbody* de la tabla *shopping_table* los productos de la lista de la compra a través del UI *product_shopping_list_item*. Los productos que no se hayan comprado todavía aparecen primero ordenados por su *idProduct*. Con cada producto se pueden realizar dos acciones: comprar y borrar de la lista. Al cada UI de tipo *product_shopping_list_item* se le pása como parámetro sendas funciones que permiten realizar estas acciones.
+* La función *_loadShoppingProducts* carga en el *tbody* de la tabla *shopping_table* los productos de la lista de la compra a través del UI *product_shopping_list_item*. Los productos que no se hayan comprado todavía aparecen primero ordenados por su *idProduct*. Con cada producto se pueden realizar dos acciones: comprar y borrar de la lista. Al cada UI de tipo *product_shopping_list_item* se le pasa como parámetro sendas funciones que permiten realizar estas acciones.
 * El paso de funciones como parámetros entre componentes o la notificación de eventos, permite reducir el acoplamiento de componentes al mínimo.
 * La función *_destroyShoppingTable* elimina la tabla de la lista de la compra.
 * La función *_createShoppingTable* determina las columnas que se van a mostrar en la tabla de la lista de la compra, el sistema de *paginación* y las columnas por las que se puede realizar ordenación.
@@ -4242,7 +4245,7 @@ Nota: No se ha realizado una prueba exhaustiva sino que se trata de un simple ej
 ```
 Observe que para realizar un test síncrono hay que llamar a la función *test* de *QUnit* y, de forma similar, a la función *asyncTest* cuando el test sea asíncrono. Los dos últimos casos de prueba del ejemplo deben ser asíncronos ya que estamos recuperando datos de una *URL*. Los test asíncronos no comienzan a ejecutarse hasta que no se llame a la función *start*. La función *expect* indica el número de test que se deben pasar exitosamente para que *QUnit* considere el caso de prueba como positivo.
 
-Observe que en el método *setup* hemos incluído una llamada a:
+Observe que en el método *setup* hemos incluido una llamada a:
 
 ```js
 iris.notify("iris-reset");
@@ -4445,7 +4448,7 @@ iris.ui(function(self) {
 }, "/shopping/ui/products/category_list_item.js");
 ```
 
-Observe que se reciben todos los productos pero sólo se añaden a la vista los que correspondan a la caterogía en la que estamos.
+Observe que se reciben todos los productos pero sólo se añaden a la vista los que correspondan a la categoría en la que estamos.
 
 Modificamos *categories.js* para que cargue las categorías y los productos.
 
@@ -4502,33 +4505,10 @@ En *category_list_item.html*:
 
 ```
 
-Por último, hemos realizado algunas pruebas de pruebas unitarias para la vista en *view_test.js*:
+Por último, hemos realizado algunos ejemplos de pruebas unitarias para la vista en *view_test.js*:
 
 ```js
-/*global QUnit:false, module:false, test:false, asyncTest:false, expect:false*/
-/*global start:false, stop:false ok:false, equal:false, notEqual:false, deepEqual:false*/
-/*global notDeepEqual:false, strictEqual:false, notStrictEqual:false, raises:false*/
-(function($) {
 
-    /*
-    ======== A Handy Little QUnit Reference ========
-    http://docs.jquery.com/QUnit
-
-    Test methods:
-      expect(numAssertions)
-      stop(increment)
-      start(decrement)
-    Test assertions:
-      ok(value, [message])
-      equal(actual, expected, [message])
-      notEqual(actual, expected, [message])
-      deepEqual(actual, expected, [message])
-      notDeepEqual(actual, expected, [message])
-      strictEqual(actual, expected, [message])
-      notStrictEqual(actual, expected, [message])
-      raises(block, [expected], [message])
-  */
- 
     iris.cache(false);
     iris.enableLog("localhost");
 
