@@ -2,7 +2,7 @@ iris.screen(function(self) {
 	var _Count = 0;
 	
 	self.create = function() {
-		self.tmpl("screen/example_list.html");
+		self.tmpl(iris.path.example_list_tmpl);
 		self.get("btncreateUI").click(createUI);
 	}
 

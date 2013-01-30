@@ -38,9 +38,13 @@
             iris.notify("iris-reset");
             iris.path = {
               welcome : "test/ui_replacement/welcome.js",
+              welcome_tmpl : "test/ui_replacement/welcome.html",
               main : "test/ui_replacement/main.js",
+              main_tmpl : "test/ui_replacement/main.html",
               my_ui : "test/ui_replacement/my_ui.js",
-              my_ui2 : "test/ui_replacement/my_ui2.js"
+              my_ui_tmpl : "test/ui_replacement/my_ui.html",
+              my_ui2 : "test/ui_replacement/my_ui2.js",
+              my_ui2_tmpl : "test/ui_replacement/my_ui2.html"
             };
         },
         teardown: function () {

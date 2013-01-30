@@ -36,13 +36,15 @@
             iris.notify("iris-reset");
             iris.path = {
                 welcome : "test/bad_practices/welcome.js",
+                welcome_tmpl : "test/bad_practices/welcome.html",
+                welcome_calls_tmpl : "test/bad_practices/welcome_calls_tmpl.js",
                 welcome_format : "test/bad_practices/welcome_format.js",
                 welcome_screens_calls : "test/bad_practices/welcome_screens_calls.js",
                 welcome_same_jsurl : "test/bad_practices/welcome_same_jsurl.js",
                 welcome_same_hash : "test/bad_practices/welcome_same_hash.js",
-                welcome_tmpl : "test/bad_practices/welcome_tmpl.js",
                 welcome_reuse_screen_container : "test/bad_practices/welcome_reuse_screen_container.js",
-                my_ui : "test/bad_practices/my_ui.js"
+                my_ui : "test/bad_practices/my_ui.js",
+                my_ui_tmpl : "test/bad_practices/my_ui.html"
             };
         },teardown: function () {
             clearBody();
@@ -94,7 +96,7 @@
     asyncTest("Check if iris prevents multiple calls to the self.tmpl() method", function() {
 
         expect(1);
-        iris.welcome(iris.path.welcome_tmpl);
+        iris.welcome(iris.path.welcome_calls_tmpl);
         
 
     });

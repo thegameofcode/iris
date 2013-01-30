@@ -7,7 +7,7 @@ iris.ui(function (self) {
 	self.create = function() {
 		
 		self.tmplMode(self.APPEND);
-		self.tmpl("ui/todo_item.html");
+		self.tmpl(iris.path.todo_item_tmpl);
 
 		self.get("check").on("click", toggle);
 		self.get("destroy").on("click", destroyTodo);

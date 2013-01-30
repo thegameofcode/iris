@@ -43,7 +43,9 @@
                 screen2 : "test/advanced_navigation/screen2.js",
                 screen2_1 : "test/advanced_navigation/screen2_1.js",
                 screen2_2 : "test/advanced_navigation/screen2_2.js",
-                ui : "test/advanced_navigation/ui.js"
+                ui : "test/advanced_navigation/ui.js",
+                ui_tmpl : "test/advanced_navigation/ui.html",
+                empty_tmpl : "test/advanced_navigation/empty.html"
             };
         },
         teardown: function () {

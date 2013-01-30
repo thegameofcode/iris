@@ -21,7 +21,9 @@ $(document).ready(
 
         iris.path = {
             welcome : "screen/welcome.js",
-            todo_item : "ui/todo_item.js"
+            welcome_tmpl : "screen/welcome.html",
+            todo_item : "ui/todo_item.js",
+            todo_item_tmpl : "ui/todo_item.html"
         };
         
         iris.welcome(iris.path.welcome);

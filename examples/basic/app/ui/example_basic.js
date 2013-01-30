@@ -1,7 +1,7 @@
 iris.ui(function(self) {
 	
 	self.create = function() {
-		self.tmpl("ui/example_basic.html");
+		self.tmpl(iris.path.ui_example_basic);
 	};
 	
-},"ui/example_basic.js");
+},iris.path.ui_example_basic);

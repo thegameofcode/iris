@@ -5,7 +5,7 @@ iris.screen(function(self) {
 	;
 	
 	self.create = function() {
-		self.tmpl("screen/example_screen_params.html");
+		self.tmpl(iris.path.example_screen_params_tmpl);
 		
 		paramValue = self.get("input_param_value");
 		codeExample = self.get("code_example");

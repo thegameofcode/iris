@@ -10,6 +10,6 @@ iris.screen(function(self) {
 			}
 		};
 		
-		self.tmpl("screen/example_template_params.html", params);
+		self.tmpl(iris.path.example_template_params_tmpl, params);
 	}
 }, iris.path.example_template_params);

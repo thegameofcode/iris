@@ -3,7 +3,7 @@ iris.screen(
     function (self) {
         self.create = function () {
             window.console.log("Welcome Screen Created");
-            self.tmpl("test/bad_practices/welcome.html");
+            self.tmpl(iris.path.welcome_tmpl);
             
             window.raises(function () {
                 self.tmpl("test/bad_practices/welcome.html");
@@ -13,4 +13,4 @@ iris.screen(
         };
 
     },
-    iris.path.welcome_tmpl);
+    iris.path.welcome_calls_tmpl);

@@ -7,8 +7,11 @@
       setup: function() {
           iris.notify("iris-reset");
           iris.path = {
-            resource : "test/resource/resource.js"
+            resource : "test/resource/resource.js",
+            empty_tmpl : "test/resource/empty.html",
+            welcome : "test/resource/welcome.js"
           };
+          iris.welcome(iris.path.welcome);
       },
       teardown: function () {
           clearBody();
@@ -26,13 +29,15 @@
   asyncTest("Resource Get Success", function () {
       expect(2);
 
-      iris.resource(iris.path.resource).load("test.json", function (json) {
-          strictEqual(1, json.id);
-          strictEqual("book title", json.title);
-          start();
-      }, function (p_request, p_textStatus, p_errorThrown) {
-          ok(false, "Error callback unexpected: " + p_errorThrown);
-          start();
+      iris.on(iris.AFTER_NAVIGATION,function () {
+        iris.resource(iris.path.resource).load("test.json", function (json) {
+            strictEqual(1, json.id);
+            strictEqual("book title", json.title);
+            start();
+        }, function (p_request, p_textStatus, p_errorThrown) {
+            ok(false, "Error callback unexpected: " + p_errorThrown);
+            start();
+        });
       });
 
   });
@@ -40,12 +45,14 @@
   asyncTest("Resource Get Error", function () {
       expect(1);
 
-      iris.resource(iris.path.resource).load("no_valid", function (json) {
-          ok(false, "Success callback unexpected: " + json);
-          start();
-      }, function (p_request, p_textStatus, p_errorThrown) {
-          ok(true);
-          start();
+      iris.on(iris.AFTER_NAVIGATION,function () {
+        iris.resource(iris.path.resource).load("no_valid", function (json) {
+            ok(false, "Success callback unexpected: " + json);
+            start();
+        }, function (p_request, p_textStatus, p_errorThrown) {
+            ok(true);
+            start();
+        });
       });
 
   });
@@ -54,21 +61,24 @@
   asyncTest("Resource Put Success", function () {
       expect(1);
 
-      var id = 1;
-      var params = 'param1=1&param2=2';
+      iris.on(iris.AFTER_NAVIGATION,function () {
 
-      var expectedResponse = {
-        "method":"PUT",
-        "url":"/echo/put/" + id,
-        "data" : params
-      };
+        var id = 1;
+        var params = 'param1=1&param2=2';
 
-      iris.resource(iris.path.resource).update(id, params, function (json) {
-          deepEqual(json, expectedResponse, "the json response is not valid");
-          start();
-      }, function (p_request, p_textStatus, p_errorThrown) {
-          ok(false, "Error callback unexpected: " + p_errorThrown);
-          start();
+        var expectedResponse = {
+          "method":"PUT",
+          "url":"/echo/put/" + id,
+          "data" : params
+        };
+
+        iris.resource(iris.path.resource).update(id, params, function (json) {
+            deepEqual(json, expectedResponse, "the json response is not valid");
+            start();
+        }, function (p_request, p_textStatus, p_errorThrown) {
+            ok(false, "Error callback unexpected: " + p_errorThrown);
+            start();
+        });
       });
 
   });
@@ -77,20 +87,22 @@
   asyncTest("Resource Post Success", function () {
       expect(1);
 
-      var params = 'param1=1&param2=example';
+      iris.on(iris.AFTER_NAVIGATION,function () {
+        var params = 'param1=1&param2=example';
 
-      var expectedResponse = {
-        "method":"POST",
-        "url":"/echo/create",
-        "data" : params
-      };
-      
-      iris.resource(iris.path.resource).create(params, function (json) {
-          deepEqual(json, expectedResponse, "the json response is not valid");
-          start();
-      }, function (p_request, p_textStatus, p_errorThrown) {
-          ok(false, "Error callback unexpected: " + p_errorThrown);
-          start();
+        var expectedResponse = {
+          "method":"POST",
+          "url":"/echo/create",
+          "data" : params
+        };
+        
+        iris.resource(iris.path.resource).create(params, function (json) {
+            deepEqual(json, expectedResponse, "the json response is not valid");
+            start();
+        }, function (p_request, p_textStatus, p_errorThrown) {
+            ok(false, "Error callback unexpected: " + p_errorThrown);
+            start();
+        });
       });
 
   });
@@ -98,19 +110,22 @@
   asyncTest("Resource Delete Success", function () {
       expect(1);
 
-      var id = 1;
+      iris.on(iris.AFTER_NAVIGATION,function () {
 
-      var expectedResponse = {
-        "method":"DELETE",
-        "url":"/echo/delete/" + id
-      };
+        var id = 1;
 
-      iris.resource(iris.path.resource).remove(id, function (json) {
-          deepEqual(json, expectedResponse, "the json response is not valid");
-          start();
-      }, function (p_request, p_textStatus, p_errorThrown) {
-          ok(false, "Error callback unexpected: " + p_errorThrown);
-          start();
+        var expectedResponse = {
+          "method":"DELETE",
+          "url":"/echo/delete/" + id
+        };
+
+        iris.resource(iris.path.resource).remove(id, function (json) {
+            deepEqual(json, expectedResponse, "the json response is not valid");
+            start();
+        }, function (p_request, p_textStatus, p_errorThrown) {
+            ok(false, "Error callback unexpected: " + p_errorThrown);
+            start();
+        });
       });
 
   });

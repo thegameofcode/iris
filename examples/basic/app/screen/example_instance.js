@@ -1,7 +1,7 @@
 iris.screen(function(self) {
 
 	self.create = function() {
-		self.tmpl("screen/example_instance.html");
+		self.tmpl(iris.path.example_instance_tmpl);
 		self.get("btncreateUI").click(instanceUi);
 	}
 

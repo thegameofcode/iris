@@ -3,8 +3,8 @@ iris.ui(function (self) {
 	self.create = function() {
 		
 		self.tmplMode(self.APPEND);
-		self.tmpl("ui/example.html");
+		self.tmpl(iris.path.ui_example_tmpl);
 
 	};
 
-},"ui/example.js");
+},iris.path.ui_example);

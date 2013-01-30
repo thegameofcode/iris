@@ -1,6 +1,6 @@
 iris.screen(function(self) {
 	self.create = function() {
-		self.tmpl("screen/welcome.html");
+		self.tmpl(iris.path.welcome_tmpl);
 
 		self.screens("screens", 
 			[

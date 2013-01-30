@@ -50,22 +50,20 @@
     iris.resource = function (resourceOrPath, path) {
 
         if ( typeof resourceOrPath === "string" ) {
-
             // resourceOrPath == path
-           iris.include(resourceOrPath);
-           return resources[resourceOrPath];
+            if ( !resources.hasOwnProperty(resourceOrPath) ) {
+                throw "add service[" + resourceOrPath + "] to iris.path";
+            }
+            return resources[resourceOrPath];
 
         } else {
-
             // resourceOrPath == resource
-
             var serv = new Resource();
             serv.cfg = {};
             serv.settings({ type: "json", path: "" });
             resourceOrPath(serv);
 
             resources[path] = serv;
-            iris.include(path, true);
         }
 
     };

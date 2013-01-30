@@ -4,7 +4,7 @@ iris.screen(function(self) {
 
 	self.create = function() {
 		
-		self.tmpl("screen/welcome.html");
+		self.tmpl(iris.path.welcome_tmpl);
 
 		newTodo = self.get("new-todo").on("keyup", newTodoOnKeyUp);
 		setAllBtn = self.get("toggle-all").on("click", setAll);

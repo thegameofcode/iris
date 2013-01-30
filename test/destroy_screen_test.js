@@ -43,11 +43,17 @@
             iris.notify("iris-reset");
             iris.path = {
                 welcome : "test/destroy_screen/welcome.js",
+                welcome_tmpl : "test/destroy_screen/welcome.html",
                 home : "test/destroy_screen/home.js",
+                home_tmpl : "test/destroy_screen/home.html",
                 home2 : "test/destroy_screen/home2.js",
+                home2_tmpl : "test/destroy_screen/home2.html",
                 home3 : "test/destroy_screen/home3.js",
+                home3_tmpl : "test/destroy_screen/home3.html",
                 help : "test/destroy_screen/help.js",
-                main : "test/destroy_screen/main.js"
+                help_tmpl : "test/destroy_screen/help.html",
+                main : "test/destroy_screen/main.js",
+                main_tmpl : "test/destroy_screen/main.html"
             };
             gotoMain();
         },

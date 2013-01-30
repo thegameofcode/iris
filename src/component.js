@@ -53,7 +53,6 @@
     }
 
     function _welcome(p_jsUrl) {
-        
         if (_welcomeCreated === true) {
             throw "the welcome screen already exists";
         }
@@ -109,7 +108,6 @@
 
         var path, script;
         for (var i = 0; i < paths.length; i++) {
-
             if ( !_includes.hasOwnProperty(paths[i]) ) {
                 _dependencyCount++;
 
@@ -141,7 +139,7 @@
     }
 
     function _templateLoaded (data, textStatus, jqXHR) {
-        _includes[this.componentPath] = _parseLangTags(data);
+        _includes[this.componentPath] = data;
         _checkLoadFinish();
     }
 
@@ -313,7 +311,6 @@
     function _parseLangTags(p_html) {
         var html = p_html;
         var matches = html.match(/@@[A-Za-z_\.]+@@/g);
-
         if(matches) {
             var f, F = matches.length;
             for(f = 0; f < F; f++) {
@@ -386,6 +383,7 @@
     }
 
     function _instanceScreen (p_screenPath) {
+
         var jsUrl = _screenJsUrl[p_screenPath];
         var screenObj = new Screen();
         _includes[jsUrl](screenObj);
@@ -579,7 +577,8 @@
         
         this.fileTmpl = p_htmlUrl;
 
-        var tmplHtml = p_params ? _tmplParse(_includes[p_htmlUrl], p_params, p_htmlUrl) : _includes[p_htmlUrl];
+        var tmplTranslated = _parseLangTags(_includes[p_htmlUrl]);
+        var tmplHtml = p_params ? _tmplParse(tmplTranslated, p_params, p_htmlUrl) : tmplTranslated;
         var tmpl = $(tmplHtml);
 
         this.template = tmpl;

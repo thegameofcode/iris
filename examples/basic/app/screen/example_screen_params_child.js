@@ -1,7 +1,7 @@
 iris.screen(function(self) {
 	
 	self.create = function() {
-		self.tmpl("screen/example_screen_params_child.html");
+		self.tmpl(iris.path.example_screen_params_child_tmpl);
 	}
 	
 	self.awake = function(params) {

@@ -4,7 +4,7 @@ iris.screen(function(self) {
 	;
 	
 	self.create = function() {
-		self.tmpl("screen/example_destroy.html");
+		self.tmpl(iris.path.example_destroy_tmpl);
 
 		self.get("btncreateUI").click(createUI);
 		self.get("btn_destroy").click(deleteUI);

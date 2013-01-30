@@ -3,9 +3,9 @@ iris.screen(function (self) {
 	var PARAM_VAL = "param_value";
 
 	self.create = function() {
-
 		iris.translations("test-lang-into-tmpl", {"TEST" : "TEST"});
 		iris.locale("test-lang-into-tmpl");
+
 		self.tmpl("test/component/welcome.html", {param:PARAM_VAL});
 
 		self.screens("screens",  [["screen", iris.path.screen]]);
@@ -22,7 +22,7 @@ iris.screen(function (self) {
 	};
 
 	function templateLangs () {
-		window.strictEqual(self.get("lang_values").text(), iris.translate("TEST"));
+		window.strictEqual(self.get("lang_values").text(), iris.translate("TEST","test-lang-into-tmpl"));
 	}
 
 	function templateParams () {

@@ -36,23 +36,21 @@
             iris.notify("iris-reset");
             iris.path = {
                 welcome : "test/component/welcome.js",
+                welcome_tmpl : "test/component/welcome.html",
                 ui_replace : "test/component/ui_replace.js",
+                ui_replace_tmpl : "test/component/ui_replace.html",
                 ui : "test/component/ui.js",
+                ui_tmpl : "test/component/ui.html",
                 screen : "test/component/screen.js",
-                models : "test/component/models.js"
+                screen_tmpl : "test/component/screen.html",
+                models : "test/component/models.js",
+                models_tmpl : "test/component/models.html"
             };
         },
         teardown: function () {
             clearBody();
         }
     });
-
-    /*asyncTest("Include JS", function() {
-        expect(1);
-
-        iris.include("test/component/include_test.js");
-
-    });*/
 
     asyncTest("Welcome Screen", function() {
 
