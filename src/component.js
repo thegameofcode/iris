@@ -7,7 +7,6 @@
     _prevHash,
     _prevHashString,
     _includes,
-    _lastIncludePath,
     _welcomeCreated,
     _gotoCancelled,
     _lastFullHash,
@@ -17,9 +16,6 @@
     _lastLoadedDependencies,
     _dependency,
     _notCreatedScreenHashses,
-    _navigating,
-    _newHashToNavigate,
-    _lastLoadedHash,
     _paths
     ;
 
@@ -39,7 +35,6 @@
 
         _prevHash = undefined;
         _includes = {};
-        _lastIncludePath = undefined;
         _welcomeCreated = false;
         _gotoCancelled = false;
         _lastFullHash = "";
@@ -52,14 +47,7 @@
         _lastLoadedDependencies = [];
         _dependency={};
 
-        // Indicate if the navigation has been finished or not yet
-        _navigating = false;
-        _lastLoadedHash = "";
-
         _paths = [];
-
-        // Set the new hash to navigate if a _navigating == true
-        _newHashToNavigate = "";
 
         iris.on("iris-reset", _init);
     }
@@ -79,7 +67,7 @@
             _loadPaths(iris.path);
         }
         if ( _paths.length > 0 ) {
-            _loadJs(_paths, _pathsLoaded);
+            _load(_paths, _pathsLoaded);
         } else {
             throw "set paths in iris.path object";
         }
@@ -114,23 +102,50 @@
     //
     // Scripts load
     //
-    function _loadJs (paths, callback) {
+    function _load (paths, callback) {
         iris.log("[load-js]", paths);
 
         _loadJsCallback = callback;
 
+        var path, script;
         for (var i = 0; i < paths.length; i++) {
-            var script= document.createElement('script');
-            script.type= 'text/javascript';
-            script.src= iris.baseUri() + paths[i];
-            script.onload = _loadJsOnLoad;
-            _head.appendChild(script);
+
+            if ( !_includes.hasOwnProperty(paths[i]) ) {
+                _dependencyCount++;
+
+                path = String(iris.baseUri() + paths[i]);
+
+                if ( !iris.cache() ) {
+                    path += "?_=" + new Date().getTime();
+                } else if( iris.cacheVersion() ) {
+                    path += "?_=" + iris.cacheVersion();
+                }
                 
-            _dependencyCount++;
+                if ( /.html$/.test(paths[i]) ) {
+                    iris.ajax({
+                        url: path,
+                        dataType: "html",
+                        async: true,
+                        componentPath: paths[i]
+                    })
+                    .done(_templateLoaded);
+                } else {
+                    script= document.createElement('script');
+                    script.type= 'text/javascript';
+                    script.src= path;
+                    script.onload = _checkLoadFinish;
+                    _head.appendChild(script);
+                }
+            }
         }
     }
 
-    function _loadJsOnLoad () {
+    function _templateLoaded (data, textStatus, jqXHR) {
+        _includes[this.componentPath] = _parseLangTags(data);
+        _checkLoadFinish();
+    }
+
+    function _checkLoadFinish () {
         if ( --_dependencyCount === 0 ) {
             _loadJsCallback();
         }
@@ -171,16 +186,7 @@
             return false;
         }
 
-        // If the navigation has not been finished, do nothing and save the new hash that will be used by _loadNewScreens
-        if ( _navigating ) {
-            e.preventDefault();
-            _newHashToNavigate = hash;
-            _prevHash = _lastLoadedHash;
-            return false;
-        }
-
         iris.log("Starting a new navigation["+hash+"]");
-        _navigating = true;
         _lastFullHash = hash;
         iris.notify(iris.BEFORE_NAVIGATION);
 
@@ -220,31 +226,26 @@
             if ( firstNodeToSleep !== -1 ) {
 
                 // check if can sleep
-                for ( i = _lastLoadedHash.length-1; i >= firstNodeToSleep; i-- ) {
-                    screenPath = _getScreenPath(_lastLoadedHash, i);
+                for ( i = _prevHash.length-1; i >= firstNodeToSleep; i-- ) {
+                    screenPath = _getScreenPath(_prevHash, i);
                     if( _screen[screenPath].canSleep() === false ) {
                         _gotoCancelled = true;
                         document.location.href = _prevHashString;
                         return false;
                     }
                 }
+
+                // hide previous screens
+                for ( i = _prevHash.length - 1; i >= firstNodeToSleep; i-- ) {
+                    var screenToSleep = _screen[ _getScreenPath(_prevHash, i) ];
+                    screenToSleep._sleep();
+                    screenToSleep.hide();
+                }
             }
 
         } else {
             // No previous screens loaded
             firstDiffNode = 0;
-        }
-
-        
-
-        if ( firstNodeToSleep !== -1 ) {
-
-            // hide previous screens
-            for ( i = _lastLoadedHash.length - 1; i >= firstNodeToSleep; i-- ) {
-                var screenToSleep = _screen[ _getScreenPath(_lastLoadedHash, i) ];
-                screenToSleep._sleep();
-                screenToSleep.hide();
-            }
         }
         
         if ( firstDiffNode !== -1 ) {
@@ -277,8 +278,6 @@
         _prevHashString = hash;
 
         iris.log("Navigation finished");
-        _navigating = false;
-        _lastLoadedHash = _prevHash;
         iris.notify(iris.AFTER_NAVIGATION);
     }
 
@@ -309,65 +308,6 @@
             path += "/" + _removeURLParams( paths[i] );
         }
         return path.substr(1);
-    }
-
-
-    //
-    // INCLUDE
-    //
-
-    function _include(p_uiFile, p_value) {
-
-        if ( p_value !== undefined ) {
-            _includes[p_uiFile] = p_value;
-            
-        } else if(!_includes.hasOwnProperty(p_uiFile)) {
-
-            _includes[p_uiFile] = true;
-
-            var fileUrl = p_uiFile.indexOf("http") === 0 ? p_uiFile : iris.baseUri() + p_uiFile;
-            iris.log("[include]", fileUrl);
-
-            if(p_uiFile.lastIndexOf(".css") > -1) {
-                var link = document.createElement('link');
-                link.rel = 'stylesheet';
-                link.type = 'text/css';
-                link.href = fileUrl;
-                _head.appendChild(link);
-            } else {
-                var isHtml = p_uiFile.lastIndexOf(".html") > -1;
-
-                var ajaxSettings = {
-                    url: fileUrl,
-                    dataType: (isHtml ? "html" : "text"),
-                    async: false,
-                    cache: iris.cache()
-                };
-
-                if(iris.cache() && iris.cacheVersion()) {
-                    ajaxSettings.data = "_=" + iris.cacheVersion();
-                }
-
-                iris.ajax(ajaxSettings)
-                .done(function(p_data) {
-                    _lastIncludePath = p_uiFile;
-
-                    if(isHtml) {
-                        _includes[p_uiFile] = _parseLangTags(p_data);
-                    } else {
-                        var script = document.createElement("script");
-                        script.language = "javascript";
-                        script.type = "text/javascript";
-                        script.text = p_data + '//@ sourceURL=/'+p_uiFile;
-                        _head.appendChild(script);
-                    }
-
-                }).fail(function(p_err) {
-                    delete _includes[fileUrl];
-                    throw "error [" + p_err.status + "] loading file '" + fileUrl + "'";
-                });
-            }
-        }
     }
 
     function _parseLangTags(p_html) {
@@ -637,9 +577,7 @@
             throw "self.tmpl() has already been called in '" + this.fileJs + "'";
         }
         
-        
         this.fileTmpl = p_htmlUrl;
-        iris.include(p_htmlUrl);
 
         var tmplHtml = p_params ? _tmplParse(_includes[p_htmlUrl], p_params, p_htmlUrl) : _includes[p_htmlUrl];
         var tmpl = $(tmplHtml);
@@ -934,7 +872,6 @@
         }
     };
     
-    iris.include = _include;
     iris.screen = _registerScreen;
     iris.destroyScreen = _destroyScreenByPath;
     iris.welcome = _welcome;
