@@ -35,4 +35,4 @@ iris.screen(
         };
 
     },
-    "test/destroy_screen/home2.js");
+    iris.path.home2);

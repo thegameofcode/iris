@@ -29,4 +29,4 @@ iris.screen(
         };
 
     },
-    "test/destroy_screen/home3.js");
+    iris.path.home3);

@@ -40,4 +40,4 @@ iris.screen(
         };
 
     },
-    "test/destroy_screen/home.js");
+    iris.path.home);
