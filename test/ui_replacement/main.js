@@ -7,7 +7,7 @@ iris.screen(
             self.tmpl("test/ui_replacement/main.html");
             self.get("create_my_ui").click(
                 function() {
-                    self.ui("container", "test/ui_replacement/my_ui.js");
+                    self.ui("container", iris.path.my_ui);
                 }
                 );
             try { 
@@ -49,4 +49,4 @@ iris.screen(
     },
     
     
-    "test/ui_replacement/main.js");
+    iris.path.main);

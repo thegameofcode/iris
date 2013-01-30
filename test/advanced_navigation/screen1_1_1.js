@@ -38,4 +38,4 @@ iris.screen(function (self) {
 		window.navigations.push(msg);
 	};
 
-}, "test/advanced_navigation/screen1_1_1.js");
+}, iris.path.screen1_1_1);

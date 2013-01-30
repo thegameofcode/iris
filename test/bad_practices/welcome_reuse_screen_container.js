@@ -21,5 +21,5 @@ iris.screen(
             window.start();
             
         };
-    },"test/bad_practices/welcome_reuse_screen_container.js"
+    },iris.path.welcome_reuse_screen_container
 );

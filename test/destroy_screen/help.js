@@ -19,4 +19,4 @@ iris.screen(
     },
     
     
-    "test/destroy_screen/help.js");
+    iris.path.help);

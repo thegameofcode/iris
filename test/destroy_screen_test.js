@@ -34,13 +34,21 @@
     }
     
     function gotoMain() {
-        iris.welcome("test/destroy_screen/welcome.js");
+        iris.welcome(iris.path.welcome);
     }
     
     
     module( "Module Destroy Screen", {
         setup: function() {
             iris.notify("iris-reset");
+            iris.path = {
+                welcome : "test/destroy_screen/welcome.js",
+                home : "test/destroy_screen/home.js",
+                home2 : "test/destroy_screen/home2.js",
+                home3 : "test/destroy_screen/home3.js",
+                help : "test/destroy_screen/help.js",
+                main : "test/destroy_screen/main.js"
+            };
             gotoMain();
         },
         teardown: function () {

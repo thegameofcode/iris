@@ -4,7 +4,7 @@ iris.ui(function (self) {
 		self.tmpl("test/component/ui_replace.html");
 
 		window.strictEqual(self.id, "container", "UI-Replace Creation: check id");
-		window.strictEqual(self.fileJs, "test/component/ui_replace.js", "UI-Replace Creation: check fileJs");
+		window.strictEqual(self.fileJs, iris.path.ui_replace, "UI-Replace Creation: check fileJs");
 
 	};
 
@@ -12,4 +12,4 @@ iris.ui(function (self) {
 		window.ok(true, "The overriden function destroy is called");
 	};
 
-},"test/component/ui_replace.js");
+},iris.path.ui_replace);

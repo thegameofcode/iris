@@ -36,6 +36,12 @@
         setup: function() {
             clearBody();
             iris.notify("iris-reset");
+            iris.path = {
+              welcome : "test/ui_replacement/welcome.js",
+              main : "test/ui_replacement/main.js",
+              my_ui : "test/ui_replacement/my_ui.js",
+              my_ui2 : "test/ui_replacement/my_ui2.js"
+            };
         },
         teardown: function () {
         }
@@ -43,7 +49,7 @@
     
     asyncTest("Test Create my_ui", function() {        
         window.expect(4);
-        iris.welcome("test/ui_replacement/welcome.js");
+        iris.welcome(iris.path.welcome);
 
         iris.on(iris.AFTER_NAVIGATION, function () {
             iris.off(iris.AFTER_NAVIGATION);

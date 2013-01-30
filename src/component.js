@@ -16,13 +16,11 @@
     _dependencyCount,
     _lastLoadedDependencies,
     _dependency,
-    _firstDiffNode,
     _notCreatedScreenHashses,
-    _lastScreenPathLoaded,
     _navigating,
     _newHashToNavigate,
-    _firstNodeToSleep,
-    _lastLoadedHash
+    _lastLoadedHash,
+    _paths
     ;
 
     function _init() {
@@ -54,16 +52,11 @@
         _lastLoadedDependencies = [];
         _dependency={};
 
-        // Last hash-path loaded
-        _lastScreenPathLoaded = "";
-
-        // Indicate the first screen that is different of the previos hash-url
-        _firstDiffNode = 0;
-        _firstNodeToSleep = -1;
-
         // Indicate if the navigation has been finished or not yet
         _navigating = false;
         _lastLoadedHash = "";
+
+        _paths = [];
 
         // Set the new hash to navigate if a _navigating == true
         _newHashToNavigate = "";
@@ -82,8 +75,31 @@
             window.console.log("[iris] noCache[" + iris.noCache() + "] enableLog[" + iris.enableLog() + "]");
         }
 
+        if ( iris.hasOwnProperty("path") ) {
+            _loadPaths(iris.path);
+        }
+        if ( _paths.length > 0 ) {
+            _loadJs(_paths, _pathsLoaded);
+        } else {
+            throw "set paths in iris.path object";
+        }
+
         _screenJsUrl["#"] = p_jsUrl;
         _screenContainer["#"] = $(document.body);
+        
+    }
+
+    function _loadPaths (paths) {
+        if ( typeof paths === "string" ) {
+            _paths.push(paths);
+        } else {
+            for ( var p in paths ) {
+                _loadPaths(paths[p]);
+            }
+        }
+    }
+
+    function _pathsLoaded () {
         
         // check hashchange event support
         if(!("onhashchange" in window)) {
@@ -169,7 +185,7 @@
         iris.notify(iris.BEFORE_NAVIGATION);
 
         
-        var i, screenPath, firstDiffNode = -1, curr = hash.split("/");
+        var i, screenPath, firstDiffNode = -1, curr = hash.split("/"), firstNodeToSleep;
 
         // Call to canSleeps and sleeps of previous screens
         if ( _prevHash !== undefined ) {
@@ -182,17 +198,17 @@
                 }
             }
             
-            _firstNodeToSleep = firstDiffNode;
+            firstNodeToSleep = firstDiffNode;
 
             // For cases like this: prev = #/s1/s2, curr = #/s1
-            // we need sleep s2, therefor _firstNodeToSleep = curr.length
-            if ( (_firstNodeToSleep === -1) && (curr.length < _prevHash.length) ) {
-                _firstNodeToSleep = curr.length;
+            // we need sleep s2, therefor firstNodeToSleep = curr.length
+            if ( (firstNodeToSleep === -1) && (curr.length < _prevHash.length) ) {
+                firstNodeToSleep = curr.length;
 
             // if welcome screen has been changed firstDiffNode == 0, and there are not previous screens to sleep, _prevHash.length == 1
-            // ignore cansleep and sleep of welcome screen, _firstNodeToSleep = -1
+            // ignore cansleep and sleep of welcome screen, firstNodeToSleep = -1
             } else if ( firstDiffNode === 0 && _prevHash.length === 1 ) {
-                _firstNodeToSleep = -1;
+                firstNodeToSleep = -1;
             }
 
             // if goto welcome screen [curr.length === 1] and there are not differents [firstDiffNode === -1],
@@ -201,10 +217,10 @@
                 firstDiffNode = 1;
             }
 
-            if ( _firstNodeToSleep !== -1 ) {
+            if ( firstNodeToSleep !== -1 ) {
 
                 // check if can sleep
-                for ( i = _lastLoadedHash.length-1; i >= _firstNodeToSleep; i-- ) {
+                for ( i = _lastLoadedHash.length-1; i >= firstNodeToSleep; i-- ) {
                     screenPath = _getScreenPath(_lastLoadedHash, i);
                     if( _screen[screenPath].canSleep() === false ) {
                         _gotoCancelled = true;
@@ -219,160 +235,46 @@
             firstDiffNode = 0;
         }
 
-        // get not created screens
-        _notCreatedScreenHashses = [];
-        if ( firstDiffNode !== -1 ) {
-            for ( i = firstDiffNode; i < curr.length; i++ ) {
+        
 
-                screenPath = _getScreenPath(curr, i);
-                if(!_screen.hasOwnProperty(screenPath)) {
-                    _notCreatedScreenHashses.push(screenPath);
-                }
-            }
-        }
-
-        // set navigation variables to the next hashchange event
-        _prevHash = curr;
-        _prevHashString = hash;
-        _firstDiffNode = firstDiffNode;
-
-        if ( _notCreatedScreenHashses.length > 0 ) {
-            _loadNewScreens();
-        }
-        else {
-            _finishHashChange();
-        }
-    }
-
-    function _loadNewScreens () {
-
-        iris.log("Loading new screens...");
-
-        if (_lastScreenPathLoaded !== "" ) {
-            iris.log("A previous screen was loaded [" + _lastScreenPathLoaded + "], creating...");
-
-            var screenObj = _instanceScreen(_lastScreenPathLoaded);
-            screenObj.create();
-            _lastScreenPathLoaded = "";
-        }
-
-        if ( _checkNewNavigation() ) {
-            return false;
-        }
-
-        if ( _notCreatedScreenHashses.length > 0 ) {
-            var path = _notCreatedScreenHashses.splice(0,1)[0];
-            var fileJs = _screenJsUrl[path];
-
-            if ( fileJs !== undefined ) {
-                _lastScreenPathLoaded = path;
-                _loadJs([fileJs], _loadNewDependencies);
-                _lastLoadedDependencies = [fileJs];
-            } else {
-                throw "The path[" + path + "] hasn't associated screen, use self.screens to register the screen first";
-            }
-            
-        } else {
-            _finishHashChange();
-        }
-
-    }
-
-    function _loadNewDependencies () {
-        iris.log("Finding new dependencies...");
-
-        // to extract ui dependencies
-        var dependencies = [];
-        var i, newSrc;
-        for ( i = 0; i < _lastLoadedDependencies.length; i++ ) {
-
-            newSrc = _includes[ _lastLoadedDependencies[i] ].toString();
-
-            // remove comments blocks
-            newSrc = newSrc.replace(/\/\/.*/g, "").replace(/\/\*[\s\S]*\*\//g, "");
-
-            _getDependecies(newSrc, dependencies, /self\.ui\s*\(\s*[^,]+\s*,\s*["']([^"']+)["']/g);
-
-            // to extract resource dependencies
-            _getDependecies(newSrc, dependencies, /iris\.resource\s*\(\s*["']([^"']+)["']/g);
-        }
-
-
-        if ( dependencies.length > 0 ) {
-            _lastLoadedDependencies = dependencies;
-            _loadJs(dependencies, _loadNewDependencies);
-        } else {
-            iris.log("No dependencies found.");
-            _loadNewScreens();
-        }
-
-    }
-
-    function _getDependecies (newSrc, dependencies, regex) {
-        var matches = regex.exec(newSrc);
-        while (matches) {
-
-            if ( !_includes.hasOwnProperty(matches[1]) ) {
-                iris.log("New dependency found: " + matches[1]);
-
-                dependencies.push(matches[1]);
-
-                _includes[matches[1]] = true;
-            }
-            matches = regex.exec(newSrc);
-        }
-    }
-
-    function _checkNewNavigation () {
-        if ( _newHashToNavigate !== "" ) {
-            iris.log("Stop current navigation, new navigation ["+ _newHashToNavigate +"]");
-            document.location.hash = _newHashToNavigate;
-
-            _navigating = false;
-            _newHashToNavigate = "";
-
-            _startHashChange();
-
-            return true;
-        }
-        return false;
-    }
-
-    function _finishHashChange () {
-
-        if ( _checkNewNavigation() ) {
-            return false;
-        }
-
-        var i, screenPath;
-
-        if ( _firstNodeToSleep !== -1 ) {
+        if ( firstNodeToSleep !== -1 ) {
 
             // hide previous screens
-            for ( i = _lastLoadedHash.length - 1; i >= _firstNodeToSleep; i-- ) {
+            for ( i = _lastLoadedHash.length - 1; i >= firstNodeToSleep; i-- ) {
                 var screenToSleep = _screen[ _getScreenPath(_lastLoadedHash, i) ];
                 screenToSleep._sleep();
                 screenToSleep.hide();
             }
         }
         
-        if ( _firstDiffNode !== -1 ) {
+        if ( firstDiffNode !== -1 ) {
             // show new screens
-            for ( i = _firstDiffNode; i < _prevHash.length; i++ ) {
+            for ( i = firstDiffNode; i < curr.length; i++ ) {
 
-                screenPath = _getScreenPath(_prevHash, i);
+                screenPath = _getScreenPath(curr, i);
 
                 if ( !_screenContainer.hasOwnProperty(screenPath) ) {
                     throw "'" + screenPath + "' must be registered using self.screens()";
                 } else {
+
+                    if ( !_screen.hasOwnProperty(screenPath) ) {
+                        var screenObj = _instanceScreen(screenPath);
+                        screenObj.create();
+                        _screen[screenPath] = screenObj;
+                    }
+
                     var screenInstance = _screen[screenPath];
-                    var screenParams = _navGetParams(_prevHash[i]);
+                    var screenParams = _navGetParams(curr[i]);
                     screenInstance._awake(screenParams);
                     screenInstance.show();
                 }
 
             }
         }
+
+        // set navigation variables to the next hashchange event
+        _prevHash = curr;
+        _prevHashString = hash;
 
         iris.log("Navigation finished");
         _navigating = false;
@@ -491,7 +393,6 @@
     }
 
     function _instanceUI(p_$container, p_uiId, p_jsUrl, p_uiSettings, p_templateMode) {
-        //iris.include(p_jsUrl);
 
         var uiInstance = new UI();
         uiInstance.id = p_uiId;

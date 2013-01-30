@@ -6,6 +6,9 @@
   module('Module Resource', {
       setup: function() {
           iris.notify("iris-reset");
+          iris.path = {
+            resource : "test/resource/resource.js"
+          };
       },
       teardown: function () {
           clearBody();
@@ -23,7 +26,7 @@
   asyncTest("Resource Get Success", function () {
       expect(2);
 
-      iris.resource("test/resource/resource.js").load("test.json", function (json) {
+      iris.resource(iris.path.resource).load("test.json", function (json) {
           strictEqual(1, json.id);
           strictEqual("book title", json.title);
           start();
@@ -37,7 +40,7 @@
   asyncTest("Resource Get Error", function () {
       expect(1);
 
-      iris.resource("test/resource/resource.js").load("no_valid", function (json) {
+      iris.resource(iris.path.resource).load("no_valid", function (json) {
           ok(false, "Success callback unexpected: " + json);
           start();
       }, function (p_request, p_textStatus, p_errorThrown) {
@@ -60,7 +63,7 @@
         "data" : params
       };
 
-      iris.resource("test/resource/resource.js").update(id, params, function (json) {
+      iris.resource(iris.path.resource).update(id, params, function (json) {
           deepEqual(json, expectedResponse, "the json response is not valid");
           start();
       }, function (p_request, p_textStatus, p_errorThrown) {
@@ -82,7 +85,7 @@
         "data" : params
       };
       
-      iris.resource("test/resource/resource.js").create(params, function (json) {
+      iris.resource(iris.path.resource).create(params, function (json) {
           deepEqual(json, expectedResponse, "the json response is not valid");
           start();
       }, function (p_request, p_textStatus, p_errorThrown) {
@@ -102,7 +105,7 @@
         "url":"/echo/delete/" + id
       };
 
-      iris.resource("test/resource/resource.js").remove(id, function (json) {
+      iris.resource(iris.path.resource).remove(id, function (json) {
           deepEqual(json, expectedResponse, "the json response is not valid");
           start();
       }, function (p_request, p_textStatus, p_errorThrown) {

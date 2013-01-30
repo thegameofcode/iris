@@ -9,8 +9,8 @@ iris.screen(function (self) {
 		self.tmpl("test/advanced_navigation/empty.html");
 
 		self.screens("screens", [
-			["screen1_1", "test/advanced_navigation/screen1_1.js"],
-			["screen1_2", "test/advanced_navigation/screen1_2.js"]
+			["screen1_1", iris.path.screen1_1],
+			["screen1_2", iris.path.screen1_2]
 		]);
 
 	};
@@ -50,4 +50,4 @@ iris.screen(function (self) {
 		window.navigations.push(msg);
 	};
 
-}, "test/advanced_navigation/screen1.js");
+}, iris.path.screen1);

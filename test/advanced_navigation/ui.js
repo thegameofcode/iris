@@ -14,7 +14,7 @@ iris.ui(function (self) {
 		self.tmpl("test/advanced_navigation/empty.html");
 
 		if ( self.setting("createOtherUI") ) {
-			self.ui("screens", "test/advanced_navigation/ui.js", {createOtherUI:false});
+			self.ui("screens", iris.path.ui, {createOtherUI:false});
 		}
 
 	};
@@ -47,4 +47,4 @@ iris.ui(function (self) {
 		window.navigations.push(msg);
 	};
 
-}, "test/advanced_navigation/ui.js");
+}, iris.path.ui);

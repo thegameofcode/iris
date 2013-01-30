@@ -24,7 +24,7 @@ iris.screen(function (self) {
 
 	function createUi () {
 
-		ui = self.ui("container", "test/component/ui.js", {"setting-param":"setting_value"});
+		ui = self.ui("container", iris.path.ui, {"setting-param":"setting_value"});
 
 		window.strictEqual(self.uis.length, 1);
 	}
@@ -36,11 +36,11 @@ iris.screen(function (self) {
 	}
 
 	function destroyUiReplace () {
-		var ui = self.ui("container", "test/component/ui_replace.js");
+		var ui = self.ui("container", iris.path.ui_replace);
 
 		window.raises(function () {
 			self.destroyUIs("container");
 		}, "A replaced container cannot be deleted");
 	}
 
-},"test/component/screen.js");
+},iris.path.screen);

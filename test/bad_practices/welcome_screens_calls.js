@@ -19,4 +19,4 @@ iris.screen(
         };
 
     },
-    "test/bad_practices/welcome_screens_calls.js");
+    iris.path.welcome_screens_calls);

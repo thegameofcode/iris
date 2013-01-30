@@ -34,18 +34,25 @@
     module('Module Component', {
         setup: function() {
             iris.notify("iris-reset");
+            iris.path = {
+                welcome : "test/component/welcome.js",
+                ui_replace : "test/component/ui_replace.js",
+                ui : "test/component/ui.js",
+                screen : "test/component/screen.js",
+                models : "test/component/models.js"
+            };
         },
         teardown: function () {
             clearBody();
         }
     });
 
-    asyncTest("Include JS", function() {
+    /*asyncTest("Include JS", function() {
         expect(1);
 
         iris.include("test/component/include_test.js");
 
-    });
+    });*/
 
     asyncTest("Welcome Screen", function() {
 

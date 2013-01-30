@@ -8,4 +8,4 @@ iris.screen(
         };
 
     },
-    "test/bad_practices/welcome.js");
+    iris.path.welcome);

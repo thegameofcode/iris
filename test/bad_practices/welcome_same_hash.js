@@ -16,4 +16,4 @@ iris.screen(
         };
 
     },
-    "test/bad_practices/welcome8.js");
+    iris.path.welcome_same_hash);

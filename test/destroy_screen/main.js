@@ -14,5 +14,5 @@ iris.screen(
         
     },
     
+    iris.path.main);
     
-    "test/destroy_screen/main.js");

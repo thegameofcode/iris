@@ -18,4 +18,4 @@ iris.ui(
    window.console.log("my_ui2 UI Destroyed");
   };
  },
-"test/ui_replacement/my_ui2.js");
+iris.path.my_ui2);

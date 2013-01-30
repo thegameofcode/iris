@@ -33,11 +33,11 @@ iris.ui(function (self) {
 	}
 
 	self.onNestedUI = function () {
-		var ui = self.ui("container", "test/component/ui.js", {nested:true, "setting-param":"nested_value"});
+		var ui = self.ui("container", iris.path.ui, {nested:true, "setting-param":"nested_value"});
 
 		window.strictEqual(ui.setting("default-param"), "default_value", "UI Nested Settings: check default value");
 		window.strictEqual(ui.setting("template-param"), "overridden_val", "UI Nested Settings: check default value");
 		window.strictEqual(ui.setting("setting-param"), "nested_value", "UI Nested Settings: check default value");
 	};
 
-},"test/component/ui.js");
+},iris.path.ui);

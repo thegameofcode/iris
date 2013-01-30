@@ -18,4 +18,4 @@ iris.screen(
         };
 
     },
-    "test/bad_practices/welcome_same_jsurl.js");
+    iris.path.welcome_same_jsurl);

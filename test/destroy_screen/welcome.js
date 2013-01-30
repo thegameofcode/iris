@@ -5,11 +5,11 @@ iris.screen(
             window.console.log("Welcome Screen Created");
             self.tmpl("test/destroy_screen/welcome.html");
             self.screens("screens", [[
-                "home", "test/destroy_screen/home.js"
+                "home", iris.path.home
             ], [
-                "help", "test/destroy_screen/help.js"
+                "help", iris.path.help
             ], [
-                "main", "test/destroy_screen/main.js"
+                "main", iris.path.main
             ]]);
             self.get("destroy_home").click(
                 function() {
@@ -19,4 +19,4 @@ iris.screen(
         };
 
     },
-    "test/destroy_screen/welcome.js");
+    iris.path.welcome);

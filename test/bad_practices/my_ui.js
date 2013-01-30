@@ -17,4 +17,4 @@ iris.ui(
             window.console.log("my_ui UI Destroyed");
         };
     },
-    "test/bad_practices/my_ui.js");
+    iris.path.my_ui);

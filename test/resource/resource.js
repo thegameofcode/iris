@@ -18,4 +18,4 @@ iris.resource(function(self){
       self.del("echo/delete/" + id, success, error);
     };
 
-}, "test/resource/resource.js");
+}, iris.path.resource);

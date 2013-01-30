@@ -9,7 +9,7 @@ iris.screen(function (self) {
 		self.tmpl("test/advanced_navigation/empty.html");
 
 
-		self.ui("screens", "test/advanced_navigation/ui.js");
+		self.ui("screens", iris.path.ui);
 	};
 
 	self.awake = function () {
@@ -41,4 +41,4 @@ iris.screen(function (self) {
 		window.navigations.push(msg);
 	};
 
-}, "test/advanced_navigation/screen2_1.js");
+}, iris.path.screen2_1);

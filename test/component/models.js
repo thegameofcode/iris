@@ -60,4 +60,4 @@ iris.screen(function (self) {
 
     };
 
-},"test/component/models.js");
+},iris.path.models);
