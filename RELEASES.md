@@ -12,7 +12,7 @@ _Creation date: 2012-01-12_
  		[new] iris resources to manage web services calls
  		[new] `echo-server.js` is a nodejs web server to run qunit tests
  		[new] Qunit tests
- 		[upd] Function names are shorter to remember easily. WARNING: No backward with previous versions, old projects must use `iris-legacy` versions
+ 		[upd] Function names are shorter to remember easily. WARNING: No backward with previous versions
  		[upd] fixed small bugs and big code refactoring
 
 

@@ -4,8 +4,8 @@ iris.locale(
         monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
         dateFormat: "d/m/Y H:i:s",
         currency: {
-            formatPos: "n",
-            formatNeg: "- n",
+            formatPos: "n s",
+            formatNeg: "- n s",
             decimal: ",",
             thousand: ".",
             precision: 2
