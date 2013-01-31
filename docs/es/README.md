@@ -9,6 +9,7 @@
  * <a href="#welcome">Screen de bienvenida</a><br>
 * <a href="#starting">Empezando con Iris</a></br>
  * <a href="#installing">Instalando Iris</a><br>
+ * <a href="iris_path">Objeto *iris.path*</a><br>
  * <a href="#calling_welcome">Llamando al Screen de bienvenida</a><br>
  * <a href="#register">Registrando y mostrando un Screen</a><br>
  * <a href="#showing_screen_js">Mostrando un Screen desde Javascript</a><br>
@@ -199,6 +200,18 @@ El primer paso será decidir si queremos trabajar con la versión de [desarrollo
 <script src="jquery-min.js"></script> <!--Iris just depends on JQuery-->
 <script src="iris.js"></script> <!-- TODO Change URL -->
 ```
+Nota: Las aplicaciones de Iris deben estar situadas en un servidor Web.
+
+##<a name="iris_path"></a>Objeto *iris.path*
+
+Iris requiere que se defina un objeto llamado *iris.path*. Debemos asociar (*mapear*) sus atributos a las URLs de acceso a los componentes que vayamos a utilizar. Obligatoriamente, tenemos que definir los controladores (ficheros de Javascript) de todos los componentes (sreens y uis) y opcionalmente podemos también incluir también sus vistas.
+
+Puede estruturar el objeto *iris.path* como mejor le convenga: separando *screens* de *uis*, por módulos, con un sólo nivel o con varios, lo único realmente importante es que, todos los controladores tengan un atributo en el objeto iris.path que sea de tipo *string* y que contenga la ruta de acceso al fichero *javascript* del componente.
+
+En una aplicación real, el objeto *iris.path* puede llegar a ser muy grande y será conveniente que lo sitúe en un fichero independiente.
+
+Antes de instanciar el Screen de bienvenida, Iris procesará el objeto *iris.path* y cargará en memoria todos los ficheros asociados en él. Si los ficheros ya se hubieran precargado, porque se está utilizando una herramienta de *minificación*, Iris no volvería a cargar los ficheros.
+
 
 ##<a name="calling_welcome"></a>Llamando al Screen de bienvenida
 Desde Javascript, llamamos al método **welcome** de Iris para cargar el fichero de comportamiento del Screen de bienvenida.
@@ -207,11 +220,15 @@ Desde Javascript, llamamos al método **welcome** de Iris para cargar el fichero
 //In any Javascrit file or in a "<script>" section of an HTML file ... 
 $(document).ready(
     function () {
-         iris.baseUri("./"); //Optional: It sets de base directory of the application
-         iris.welcome("welcome.js"); //It loads the behavior file of the welcome Screen
+        iris.path = {
+            welcome: {js: "welcome.js", html: "welcome.html"}
+        }; //Mandatory: It maps application URLs to iris.path object
+        iris.baseUri("./"); //Optional: It sets de base directory of the application
+        iris.welcome(iris.path.welcome.js); //It loads the behavior file of the welcome Screen
     }
 );
 ```
+Observe que hemos creado un objeto llamado *iris.path* y, en este caso, hemos decidido cargar tango controlador como vista en una estructura de dos niveles. Al método *iris.welcome* se le pasa el atributo que contiene la ruta de acceso al controlador del Screen Welcome (*iris.path.welcome.js*).
 
 El fichero *welcome.js* antes referido tendrá la siguiente estructura:
 
@@ -223,7 +240,7 @@ iris.screen(
  
         self.create = function () {
             console.log("Welcome Screen Created");
-            self.tmpl("welcome.html");
+            self.tmpl(iris.path.welcome.html);
         };
 
         self.awake = function () {
@@ -239,7 +256,7 @@ iris.screen(
         };
   
     },
-    "welcome.js"  
+    iris.path.welcome.js  
  );
 ```
 
@@ -255,8 +272,7 @@ Cuando se ejecute el método *iris.welcome*, Iris creará un objeto de tipo Scre
 
 Observe que el método *create* ejecuta una llamada al método **tmpl** que permite cargar en el DOM el contenido del archivo *welcome.html* pasado como parámetro.
 
-Observe, además, que el método *iris.screen* recibe la función antes mencionada y, como segundo parámetro, la *URL* del fichero *Javascript* asociado. Es muy importante que la *URL* del método *iris.welcome* coincida exactamente con la que aquí pongamos.
-
+Observe, además, que el método *iris.screen* recibe la función antes mencionada y, como segundo parámetro, el atributo del objeto *iris.path* que contiene la *URL* del fichero *Javascript* asociado. 
 
 > El método *self.tmpl()* debe ser llamado una única vez y **OBLIGATORIAMENTE** en el método *self.create()* antes de utilizar ningún otro método del componente (*self.get()*, *self.destroyUI()*, etc);
 
@@ -293,13 +309,22 @@ En esta sección vamos a registrar un *Screen* y luego navegar a él.
 
 Primero creamos el *Screen Home* con una estructura muy parecida a la anterior.
 
+El objeto *iris.path* será:
+
+```js
+iris.path = {
+    welcome: {js: "welcome.js", html: "welcome.html"},
+    home: {js: "home.js", html: "home.html"}
+};
+```
+
 ```js
 //In home.js
 iris.screen(
     function (self) {
         self.create = function () {   
             console.log("Home Screen Created");
-            self.tmpl("home.html");
+            self.tmpl(iris.path.home.html);
         };
         self.awake = function () {   
             console.log("Home Screen Awakened");
@@ -313,7 +338,7 @@ iris.screen(
             console.log("Home Screen Destroyed");
         };
     },
-    "home.js"
+    iris.path.home.js
 );
 ```
 
@@ -330,10 +355,11 @@ Modificamos el método *create* del Screen Welcome:
 ```js
 self.create = function () {
     console.log("Welcome Screen Created");
-    self.tmpl("welcome.html");
+    self.tmpl(iris.path.welcome.html);
     self.screens("screens", [
-        ["home", "home.js"]
- ]);
+        ["home", iris.path.home.js]
+    ]
+)};
 ```
 
 Y dejamos el fichero asociado *welcome.html* de la siguiente manera:
@@ -418,9 +444,9 @@ Y en el fichero *welcome.js*:
 ```js
 self.create = function () {
     console.log("Welcome Screen Created");
-    self.tmpl("welcome.html");
+    self.tmpl(iris.path.welcome.html);
     self.screens("screens", [
-        ["home", "home.js"]
+        ["home", iris.path.home.js]
     ]);
     //The get method returns de JQuery element associated with the data-id parameter
     self.get("navigate_home").click( function() {
@@ -436,6 +462,16 @@ Si al método *get* no se le pasara ningún argumento, Iris devolverá el objeto
 
 En este apartado vamos a crear un tercer Screen llamado Help.
 
+Primeramente, redefinimos *iris.path*:
+
+```js
+iris.path = {
+    welcome: {js: "welcome.js", html: "welcome.html"},
+    home: {js: "home.js", html: "home.html"},
+    help: {js: "help.js", html: "help.html"}
+};
+```
+
 Los ficheros asociados serán los habituales:
 
 *help.js*:
@@ -445,7 +481,7 @@ Los ficheros asociados serán los habituales:
 iris.screen(
     function (self) {
         self.create = function () {   
-            self.tmpl("help.html");
+            self.tmpl(iris.path.help.html);
             console.log("Help Screen Created");
         };
         self.awake = function () {   
@@ -460,7 +496,7 @@ iris.screen(
             console.log("Help Screen Destroyed");
         };
     },
-    "help.js"
+    iris.path.help.js
 );
 ```
 
@@ -477,10 +513,10 @@ El método *create* de *welcome.js* quedará así:
 ```js
 self.create = function () {
     console.log("Welcome Screen Created");
-    self.tmpl("welcome.html");
+    self.tmpl(iris.path.welcome.html);
     self.screens("screens", [
-        ["home", "home.js"],
-        ["help", "help.js"]
+        ["home", iris.path.home.js],
+        ["help", iris.path.help.js]
     ]);
 };
 ```
@@ -555,6 +591,18 @@ Un Screen puede registrar otros *screens*. Cuando navegamos al screen *interno*,
 
 Podemos comprender esto mejor con un ejemplo. Para ello creamos el Screen *Inner Home*.
 
+No debemos olvidar modificar *iris.path*:
+
+```js
+iris.path = {
+    welcome: {js: "welcome.js", html: "welcome.html"},
+    home: {js: "home.js", html: "home.html"},
+    help: {js: "help.js", html: "help.html"},
+    inner_home: {js: "inner_home.js", html: "inner_home.html"}
+};
+```
+
+
 En *inner_home.js*:
 
 ```js
@@ -562,7 +610,7 @@ En *inner_home.js*:
 iris.screen(
     function (self) {
         self.create = function () {   
-            self.tmpl("inner_home.html");
+            self.tmpl(iris.path.inner_home.html);
             console.log("Inner_home Screen Created");
         };
         self.awake = function () {   
@@ -577,7 +625,7 @@ iris.screen(
             console.log("Inner_home Screen Destroyed");
         };
     },
-    "inner_home.js"
+    iris.path.inner_home.js
 );
 ```
 
@@ -600,9 +648,9 @@ iris.screen(
     function (self) {
         self.create = function () {   
             console.log("Home Screen Created");
-            self.tmpl("home.html");
+            self.tmpl(iris.path.home.html);
             self.screens("inner_home_container", [
-                ["inner_home", "inner_home.js"]
+                ["inner_home", iris.path.inner_home.js]
             ]);
         };
         self.awake = function () {   
@@ -617,7 +665,7 @@ iris.screen(
             console.log("Home Screen Destroyed");
         };
     },
-    "home.js"
+    iris.path.home.js
 );
 ```
 
@@ -635,34 +683,22 @@ En *home.html*:
 El fichero *welcome.js* queda inalterado:
 
 ```js
-//In welcome.js
 iris.screen(
-	
     function (self) {
- 
         self.create = function () {
             console.log("Welcome Screen Created");
-            self.tmpl("welcome.html");
+            self.tmpl(iris.path.welcome.html);
             self.screens("screens", [
-                ["home", "home.js"],
-                ["help", "help.js"]
-            ]);
+                ["home", iris.path.home.js],
+                ["help", iris.path.help.js]
+                ]
+            );
         };
-
         self.awake = function () {
-            console.log("Welcome Screen Awakened");
+            console.log("Welcome Screen Awaked");
         };
-		
-        self.sleep = function () {
-            console.log("Welcome Screen Asleep"); //Never called
-        };
-  
-        self.destroy = function () {
-            console.log("Welcome Screen Destroyed");//Never called
-        };
-  
     },
-    "welcome.js"
+    iris.path.welcome.js
 );
 ```
 
@@ -712,9 +748,9 @@ En *welcome.js* tendremos:
 ```js
 self.create = function () {
     console.log("Welcome Screen Created");
-    self.tmpl("welcome.html");
-    self.screens("home_screen", [["home", "home.js"]]);
-    self.screens("help_screen", [["help", "help.js"]]);
+    self.tmpl(iris.path.welcome.html);
+    self.screens("home_screen", [["home", iris.path.home.js]]);
+    self.screens("help_screen", [["help", iris.path.help.js]]);
 };
 ```
 
@@ -743,9 +779,9 @@ Otra cosa que debemos evitar es hacer cosas como la siguiente:
 
 ```js
 self.screens("screens", [
-    ["home", "home.js"]
+    ["home", iris.path.home.js]
     ,
-    ["home", "help.js"]
+    ["home", iris.path.help.js]
 ]);
 ```
 
@@ -755,9 +791,9 @@ Por último, tampoco es posible hacer lo siguiente:
 
 ```js
 self.screens("screens", [
-    ["home", "home.js"]
+    ["home", iris.path.home.js]
     ,
-    ["help", "home.js"]
+    ["help", iris.path.home.js]
 ]);
 ```
 
@@ -789,6 +825,17 @@ Vamos a crear un UI en el Screen Home del apartado anterior.
 
 El código del UI va a ser:
 
+En *iris.path*:
+
+```js
+iris.path = {
+    welcome: {js: "welcome.js", html: "welcome.html"},
+    home: {js: "home.js", html: "home.html"},
+    help: {js: "help.js", html: "help.html"},
+    my_ui: {js: "my_ui.js", html: "my_ui.html"}
+};
+```
+
 En my_ui.js:
 
 ```js
@@ -797,7 +844,7 @@ iris.ui(
     function (self) {
         self.create = function () {
             console.log("my_ui UI Created");
-            self.tmpl("my_ui.html");
+            self.tmpl(iris.path.my_ui.html);
         };
         self.awake = function () {   
             console.log("my_ui UI Awakened");
@@ -810,7 +857,7 @@ iris.ui(
             console.log("my_ui UI Destroyed");
         };
     },
-    "my_ui.js"
+    iris.path.my_ui.js
 );
 ```
 La única diferencia que encontramos aquí con respecto a lo explicado en los Screens es que el método se llama **iris.ui** en vez de *iris.screen*.
@@ -843,7 +890,7 @@ En el método *create* del fichero *home.js* tendremos lo siguiente:
 //In home.js
 self.create = function () {   
     console.log("Home Screen Created");
-    self.tmpl("home.html");
+    self.tmpl(iris.path.home.html);
     self.get("my_ui_loader").click(
         function() {
             self.ui("ui_container", "my_ui.js");
@@ -927,7 +974,19 @@ Se llama al evento *awake* tanto del UI *my_ui* como del Screen *Home* ya que el
 
 ##<a name="inner_UIs"></a>UIs contenidos en otros UIs
 
-Un UI puede contener otros UIs. Para probar esto creemos otro UI llamado *inner_ui* con los siguientes ficheros:
+Un UI puede contener otros UIs. Para probar esto creemos otro UI llamado *inner_ui* con los siguientes ficheros.
+
+Primero modificamos *iris.path*:
+
+```js
+iris.path = {
+    welcome: {js: "welcome.js", html: "welcome.html"},
+    home: {js: "home.js", html: "home.html"},
+    help: {js: "help.js", html: "help.html"},
+    my_ui: {js: "my_ui.js", html: "my_ui.html"},
+    inner_ui: {js: "inner_ui.js", html: "inner_ui.html"}
+};
+```
 
 En *inner_ui.js*:
 
@@ -937,7 +996,7 @@ iris.ui(
     function (self) {
         self.create = function () {
             console.log("inner_ui UI Created");
-            self.tmpl("inner_ui.html");
+            self.tmpl(iris.path.inner_ui.html);
         };
         self.awake = function () {   
             console.log("inner_ui UI Awakened");
@@ -950,7 +1009,7 @@ iris.ui(
             console.log("inner_ui UI Destroyed");
         };
     },
-    "inner_ui.js"
+    iris.path.inner_ui.js
 );
 ```
 
@@ -968,8 +1027,8 @@ En el método *create* del UI *my_ui*:
 ```js
 self.create = function () {
     console.log("my_ui UI Created");
-    self.tmpl("my_ui.html");
-    self.ui("inner_ui_container", "inner_ui.js");
+    self.tmpl(iris.path.my_ui.html);
+    self.ui("inner_ui_container", iris.path.inner_ui.js);
 };
 ```
 
