@@ -3091,7 +3091,6 @@ En *index.html*:
 
 ```html
 <!DOCTYPE HTML>
-<!DOCTYPE HTML>
 <html>
     <head>
         <title>iris shopping</title>
@@ -3208,7 +3207,7 @@ $(document).ready(
             resource: {
               js: "/shopping/resource.js"  
             }
-        }
+        };
         
         iris.baseUri(".");
         iris.enableLog("localhost");
