@@ -9,7 +9,7 @@
  * <a href="#welcome">Screen de bienvenida</a><br>
 * <a href="#starting">Empezando con Iris</a></br>
  * <a href="#installing">Instalando Iris</a><br>
- * <a href="iris_path">Objeto *iris.path*</a><br>
+ * <a href="#iris_path">Objeto *iris.path*</a><br>
  * <a href="#calling_welcome">Llamando al Screen de bienvenida</a><br>
  * <a href="#register">Registrando y mostrando un Screen</a><br>
  * <a href="#showing_screen_js">Mostrando un Screen desde Javascript</a><br>
@@ -204,13 +204,13 @@ Nota: Las aplicaciones de Iris deben estar situadas en un servidor Web.
 
 ##<a name="iris_path"></a>Objeto *iris.path*
 
-Iris requiere que se defina un objeto llamado *iris.path*. Debemos asociar (*mapear*) sus atributos a las URLs de acceso a los componentes que vayamos a utilizar. Obligatoriamente, tenemos que definir los controladores (ficheros de Javascript) de todos los componentes (sreens y uis) y opcionalmente podemos también incluir también sus vistas.
+Iris requiere que se defina un objeto llamado *iris.path*. Debemos asociar (*mapear*) sus atributos a las URLs de acceso a los componentes que vayamos a utilizar. Obligatoriamente, tenemos que definir los controladores (ficheros de Javascript) de todos los componentes (*sreens* y *uis*) y opcionalmente podemos también incluir también sus vistas. También es obligatorio definir los archivos de recursos o servicios de red.
 
-Puede estruturar el objeto *iris.path* como mejor le convenga: separando *screens* de *uis*, por módulos, con un sólo nivel o con varios, lo único realmente importante es que, todos los controladores tengan un atributo en el objeto iris.path que sea de tipo *string* y que contenga la ruta de acceso al fichero *javascript* del componente.
+Puede estruturar el objeto *iris.path* como mejor le convenga: separando *screens* de *uis*, por módulos, con un sólo nivel o con varios, lo único realmente importante es que, todos los controladores tengan un atributo en el objeto *iris.path* que sea de tipo *string* y que contenga la ruta de acceso al fichero *javascript* del componente.
 
 En una aplicación real, el objeto *iris.path* puede llegar a ser muy grande y será conveniente que lo sitúe en un fichero independiente.
 
-Antes de instanciar el Screen de bienvenida, Iris procesará el objeto *iris.path* y cargará en memoria todos los ficheros asociados en él. Si los ficheros ya se hubieran precargado, porque se está utilizando una herramienta de *minificación*, Iris no volvería a cargar los ficheros.
+Antes de instanciar el Screen de bienvenida, Iris procesará el objeto *iris.path* y cargará en memoria todos los ficheros asociados en él. Si los ficheros ya se hubieran precargado, porque se está utilizando una herramienta de *minificación*, Iris no volvería a cargar los ficheros. Puede consultar el apartado de <a href="#minifcation">minificación</a> para una explicación más detallada.
 
 
 ##<a name="calling_welcome"></a>Llamando al Screen de bienvenida
@@ -893,7 +893,7 @@ self.create = function () {
     self.tmpl(iris.path.home.html);
     self.get("my_ui_loader").click(
         function() {
-            self.ui("ui_container", "my_ui.js");
+            self.ui("ui_container", iris.path.my_ui.js);
         }
     );   
 };
@@ -1054,7 +1054,7 @@ Para mostrar como hacer esto, modifiquemos el método *create* del UI *my_ui*:
 self.create = function () {   
     console.log("my_ui UI Created");
     self.tmplMode(self.APPEND);
-    self.tmpl("my_ui.html");
+    self.tmpl(iris.path.my_ui.html);
 };
 ```
 
@@ -1076,12 +1076,12 @@ Por ejemplo, el siguiente código producirá un error:
 //In welcome.js
 self.create = function () {
     console.log("Welcome Screen Created");
-    self.tmpl("welcome.html");
+    self.tmpl(iris.path.welcome.html);
     self.screens("screens", [
-        ["home", "home.js"],
-        ["help", "help.js"]
+        ["home", iris.path.home.js],
+        ["help", iris.path.help.js]
     ]);
-    self.ui("screens", "my_ui.js");
+    self.ui("screens", iris.path.my_ui.js);
 };
 ```
 
@@ -1116,10 +1116,10 @@ Y en el método *create* *welcome.js*:
 ```js
 self.create = function () {
     console.log("Welcome Screen Created");
-    self.tmpl("welcome.html"); 
+    self.tmpl(iris.path.welcome.html); 
     self.screens("screens", [
-        ["home", "home.js"],
-        ["help", "help.js"]
+        ["home", iris.path.home.js],
+        ["help", iris.path.help.js]
     ]);
 
     self.get("create_home_screen").click(
@@ -1160,7 +1160,7 @@ Observe que tenemos dos botones, uno para ir al Screen Home y otro para destruir
 </html>
 ```
 
-Observe que el contenido del Screen Home ha sido completamente eliminado. La destrucción de *screens* también destruye su registro y, por lo tanto, tampoco se puede volver a navegar a ellos a no ser que se vuelvan a registrar.
+Observe que el contenido del Screen Home ha sido completamente eliminado. La destrucción de *screens* también destruye su registro y, por lo tanto, no se puede volver a navegar a ellos a no ser que se vuelvan a registrar.
 
 Si el Screen destruido contiene UIs, estos también serán destruidos. Para probarlo, modifiquemos el Screen Home de la siguiente manera:
  
@@ -1179,8 +1179,8 @@ Y en el método *create* de *home.js*:
 ```js
 self.create = function () {
     console.log("Home Screen Created");
-    self.tmpl("home.html");
-    self.ui("ui_container", "my_ui.js"); 
+    self.tmpl(iris.path.home.html);
+    self.ui("ui_container", iris.path.my_ui.js); 
 };
 ```
 
@@ -1218,7 +1218,7 @@ En *inner_home.js*:
 iris.screen(
     function (self) {
         self.create = function () {   
-            self.tmpl("inner_home.html");
+            self.tmpl(iris.path.inner_home.html);
             console.log("Inner_home Screen Created");
         };
         self.awake = function () {   
@@ -1233,7 +1233,7 @@ iris.screen(
             console.log("Inner_home Screen Destroyed");
         };
     },
-    "inner_home.js"
+    iris.path.inner_home.js
 );
 ```
 
@@ -1265,9 +1265,9 @@ iris.screen(
         //In home.js
         self.create = function () {   
             console.log("Home Screen Created");
-            self.tmpl("home.html");
+            self.tmpl(iris.path.home.html);
             self.screens("container", [
-                ["inner_home", "inner_home.js"]
+                ["inner_home", iris.path.inner_home.js]
             ]);
         };   
         self.awake = function () {   
@@ -1283,7 +1283,7 @@ iris.screen(
             console.log("Home Screen Destroyed");
         };
     },
-    "home.js"
+    iris.path.home.js
 );
 ```
 Observe que estando en el hash-URL *#/home/inner_home*, si pulsamos el botón de destruir el Screen Home, Iris da un error indicando que no podemos destruir el padre del Screen actual.
@@ -1316,14 +1316,14 @@ En el método *create* de *welcome.js*:
 ```js
 self.create = function () {
     console.log("Welcome Screen Created");
-    self.tmpl("welcome.html"); 
+    self.tmpl(iris.path.welcome.html); 
 
     var my_ui = null;
 
     self.get("create_my_ui").click(
 
         function() {   
-            my_ui = self.ui("container", "my_ui.js");
+            my_ui = self.ui("container", iris.path.my_ui.js);
         }
     );
 
@@ -1349,7 +1349,7 @@ En *my_ui.js*:
 self.create = function () {   
     console.log("my_ui UI Created");
     //self.tmplMode(self.APPEND);
-    self.tmpl("my_ui.html");
+    self.tmpl(iris.path.my_ui.html);
 };
 ```
 
@@ -1381,11 +1381,11 @@ El método *create* de *welcome.js*:
 ```js
 self.create = function () {
     console.log("Welcome Screen Created");
-    self.tmpl("welcome.html"); 
+    self.tmpl(iris.path.welcome.html); 
 
     self.get("create_my_ui").click(
         function() {   
-            self.ui("container", "my_ui.js");
+            self.ui("container", iris.path.my_ui.js);
         }
     );
 
@@ -1404,7 +1404,7 @@ Y el método *create* de *my_ui.js*:
 self.create = function () {   
     console.log("my_ui UI Created");
     self.tmplMode(self.APPEND);
-    self.tmpl("my_ui.html");
+    self.tmpl(iris.path.my_ui.html);
 };
 ```
 
@@ -1480,10 +1480,10 @@ iris.screen(
  
         self.create = function () {
             console.log("Welcome Screen Created");
-            self.tmpl("welcome.html"); 
+            self.tmpl(iris.path.welcome.html); 
             self.screens("screens", [
-                ["home", "home.js"],
-                ["help", "help.js"]
+                ["home", iris.path.home.js],
+                ["help", iris.path.help.js]
             ]);
         };
         self.awake = function () {
@@ -1500,7 +1500,7 @@ iris.screen(
         };
   
     },
-    "welcome.js"
+    iris.path.welcome.js
 );
 ```
 
@@ -1518,7 +1518,7 @@ En *help.html*:
 iris.screen(
     function (self) {
         self.create = function () {   
-            self.tmpl("help.html");
+            self.tmpl(iris.path.help.html);
             console.log("Help Screen Created");
         };
         self.awake = function () {   
@@ -1533,7 +1533,7 @@ iris.screen(
             console.log("Help Screen Destroyed");
         };
     },
-    "help.js"
+    iris.path.help.js
 );
 ```
 
@@ -1554,7 +1554,7 @@ iris.screen(
     function (self) {
         self.create = function () {   
             console.log("Home Screen Created");
-            self.tmpl("home.html");
+            self.tmpl(iris.path.home.html);
         };   
         self.awake = function () {   
             console.log("Home Screen Awakened");
@@ -1573,7 +1573,7 @@ iris.screen(
             console.log("Home Screen Destroyed");
         };
     },
-    "home.js"
+    iris.path.home.js
 );
 ```
 
@@ -1611,15 +1611,14 @@ iris.screen(
     function (self) {
         self.create = function () {
             console.log("Welcome Screen Created");
-            self.tmpl("welcome.html"); 
+            self.tmpl(iris.path.welcome.html); 
             self.screens("screens", [
-                ["home", "home.js"]
-                ,
-                ["help", "help.js"]
+                ["home", iris.path.home.js],
+                ["help", iris.path.help.js]
             ]);
         };
     },
-    "welcome.js"
+    iris.path.welcome.js
 );
 ```
 
@@ -1643,7 +1642,7 @@ iris.screen(
     function (self) {
         self.create = function () {   
             console.log("Home Screen Created");
-            self.tmpl("home.html");
+            self.tmpl(iris.path.home.html);
         };
   
         self.awake = function (params) {  
@@ -1659,7 +1658,7 @@ iris.screen(
             console.log("Home Screen Destroyed");
         };
     },
-    "home.js"
+    iris.path.home.js
 );
 ```
 
@@ -1691,11 +1690,10 @@ iris.screen(
     function (self) {
         self.create = function () {
             console.log("Welcome Screen Created");
-            self.tmpl("welcome.html"); 
+            self.tmpl(iris.path.welcome.html); 
             self.screens("screens", [
-                ["home", "home.js"]
-                ,
-                ["help", "help.js"]
+                ["home", iris.path.home.js],
+                ["help", iris.path.help.js]
             ]);
             self.get("navigate_home").click(
                 function() {
@@ -1705,7 +1703,7 @@ iris.screen(
         };
         
     },
-    "welcome.js"
+    iris.path.welcome.js
 );
 ```
 
@@ -1721,7 +1719,7 @@ iris.screen(
     function (self) {
         self.create = function () {   
             console.log("Home Screen Created");
-            self.tmpl("home.html");
+            self.tmpl(iris.path.home.html);
         };
   
         self.awake = function (params) {  
@@ -1737,7 +1735,7 @@ iris.screen(
             console.log("Home Screen Destroyed");
         };
     },
-    "home.js"
+    iris.path.home.js
 );
 ```
 
@@ -1758,9 +1756,9 @@ iris.screen(
     function (self) {
         self.create = function () {
             console.log("Welcome Screen Created");
-            self.tmpl("welcome.html"); 
+            self.tmpl(iris.path.welcome.html); 
             self.screens("screens", [
-                ["home", "home.js"]
+                ["home", iris.path.home.js]
             ]);
             self.awake= function (params) {
                 console.log("Welcome Screen Awaked");
@@ -1772,7 +1770,7 @@ iris.screen(
             };
         };
     },
-    "welcome.js"
+    iris.path.welcome.js
 );
 ```
 
@@ -1864,19 +1862,19 @@ iris.screen(
     function (self) {
         self.create = function () {
             console.log("Welcome Screen Created");
-            self.tmpl("welcome.html");
+            self.tmpl(iris.path.welcome.html);
             var ui_number = 0;
             self.get("create_my_ui").click(
                 function() {
                     ui_number++;
-                    self.ui("ui_container", "my_ui.js", {
+                    self.ui("ui_container", iris.path.my_ui.js, {
                         "ui_number": ui_number
                     }, self.APPEND);
                 }
             );
         };
     },
-    "welcome.js"
+    iris.path.welcome.js
 );
 ```
 
@@ -1888,7 +1886,7 @@ iris.ui(
     function (self) {
         self.create = function () {   
             console.log("my_ui UI Created");  
-            self.tmpl("my_ui.html");
+            self.tmpl(iris.path.my_ui.html);
         };
   
         self.awake = function () {  
@@ -1896,7 +1894,7 @@ iris.ui(
             self.get("ui_number").text("This is the " + self.setting("ui_number") + " muyUI UI.");
         };
     },
-    "my_ui.js"
+    iris.path.my_ui.js
 );
 ```
 
@@ -1965,15 +1963,15 @@ iris.screen(
     function (self) {
         self.create = function () {   
             console.log("Welcome Screen Created");
-            self.tmpl("welcome.html");
+            self.tmpl(iris.path.welcome.html);
             self.get("my_ui_loader").click(
                 function() {
-                    self.ui( "ui_container", "my_ui.js");
+                    self.ui( "ui_container", iris.path.my_ui.js);
                 }
             );   
         };
     },
-    "welcome.js"
+    iris.path.welcome.js
 );
 ```
 
@@ -1997,7 +1995,7 @@ iris.ui(
     function (self) {
         self.create = function () {
             console.log("my_ui UI Created");
-            self.tmpl("my_ui.html");
+            self.tmpl(iris.path.my_ui.html);
         };
         self.awake = function () {   
             console.log("my_ui UI Awakened");
@@ -2011,7 +2009,7 @@ iris.ui(
             console.log("my_ui UI Destroyed");
         };
     },
-    "my_ui.js"
+    iris.path.my_ui.js
 );
 ```
 
@@ -2041,15 +2039,15 @@ iris.screen(
         //In home.js
         self.create = function () {   
             console.log("Welcome Screen Created");
-            self.tmpl("welcome.html");
+            self.tmpl(iris.path.welcome.html);
             self.get("my_ui_loader").click(
                 function() {
-                    self.ui( "ui_container", "my_ui.js", {year: 2013} );
+                    self.ui( "ui_container", iris.path.my_ui.js, {year: 2013} );
                 }
             );   
         };
     },
-    "welcome.js"
+    iris.path.welcome.js
 );
 ```
 
@@ -2071,7 +2069,7 @@ iris.ui(
     function (self) {
         self.create = function () {
             console.log("my_ui UI Created");
-            self.tmpl("my_ui.html");
+            self.tmpl(iris.path.my_ui.html);
         };
         self.awake = function () {   
             console.log("my_ui UI Awakened");
@@ -2085,7 +2083,7 @@ iris.ui(
             console.log("my_ui UI Destroyed");
         };
     },
-    "my_ui.js"
+    iris.path.my_ui.js
 );
 ```
 
@@ -2113,11 +2111,11 @@ iris.screen(
     function (self) {
         self.create = function () {   
             console.log("Welcome Screen Created");
-            self.tmpl("welcome.html");
-            self.ui( "ui_container", "my_ui.js", {year: 2014});
+            self.tmpl(iris.path.welcome.html);
+            self.ui( "ui_container", iris.path.my_ui.js, {year: 2014});
         };
     },
-    "welcome.js"
+    iris.path.welcome.js
 );
 ```
 
@@ -2139,7 +2137,7 @@ iris.ui(
     function (self) {
         self.create = function () {
             console.log("my_ui UI Created");
-            self.tmpl("my_ui.html");
+            self.tmpl(iris.path.my_ui.html);
             self.setting("year", 2015);
         };
         self.awake = function () {   
@@ -2154,7 +2152,7 @@ iris.ui(
             console.log("my_ui UI Destroyed");
         };
     },
-    "my_ui.js"
+    iris.path.my_ui.js
 );
 ```
 
@@ -2190,7 +2188,7 @@ iris.screen(
     function (self) {
         self.create = function () {
             console.log("Welcome Screen Created");
-            self.tmpl("welcome.html", {"name":"John"}); 
+            self.tmpl(iris.path.welcome.html, {"name":"John"}); 
         };
     }
 );
@@ -2234,7 +2232,7 @@ iris.screen(
     function (self) {
         self.create = function () {   
             console.log("Welcome Screen Created");
-            self.tmpl("welcome.html");
+            self.tmpl(iris.path.welcome.html);
             self.get("update_date").click(
                 function() {
                     self.inflate({date: new Date()});
@@ -2242,7 +2240,7 @@ iris.screen(
             );   
         };
     },
-    "welcome.js"
+    iris.path.welcome.js
 );
 ```
 
@@ -2293,7 +2291,7 @@ iris.screen(
   
         self.create = function () {
             console.log("Welcome Screen Created");
-            self.tmpl("welcome.html"); 
+            self.tmpl(iris.path.welcome.html); 
             //The method allows for subscription on an event
             iris.on("MY_UI_CREATED_event", fn_my_uiCreatedEvent);
             ////When "MY_UI_CREATED_event" event happens, Iris will call to "fn_my_uiCreatedEvent" function.
@@ -2301,7 +2299,7 @@ iris.screen(
    
             self.get("create_my_ui").click(
                 function() {   
-                    self.ui("ui_container", "my_ui.js");
+                    self.ui("ui_container", iris.path.my_ui.js);
                 }
             );
 
@@ -2323,7 +2321,7 @@ iris.screen(
             self.get("my_ui_number").html(my_ui_number);
         }
     },
-    "welcome.js"
+    iris.path.welcome.js
 );
 ```
 
@@ -2345,11 +2343,11 @@ iris.ui(
         self.create = function () {
             console.log("my_ui UI Created");
             self.tmplMode(self.APPEND);
-            self.tmpl("my_ui.html");   
+            self.tmpl(iris.path.my_ui.html);   
             iris.notify("MY_UI_CREATED_event"); //This notifies subscribers that the "MY_UI_CREATED_event" event has occurred 
         };
     },
-    "my_ui.js"
+    iris.path.my_ui.js
 );
 ```
 
@@ -2394,7 +2392,7 @@ iris.screen(
   
         self.create = function () {
             console.log("Welcome Screen Created");
-            self.tmpl("welcome.html"); 
+            self.tmpl(iris.path.welcome.html); 
             //The method allows for subscription on an event
             iris.on(EVENT.MY_UI_CREATED, fn_my_ui_event);
             ////When "MY_UI_CREATED_event" event happens, Iris will call to "fn_my_uiCreatedEvent" function.
@@ -2402,7 +2400,7 @@ iris.screen(
    
             self.get("create_my_ui").click(
                 function() {   
-                    self.ui("ui_container", "my_ui.js");
+                    self.ui("ui_container", iris.path.my_ui.js);
                 }
             );
 
@@ -2431,7 +2429,7 @@ iris.screen(
         }
   
     },
-    "welcome.js"
+    iris.path.welcome.js
 );
 
 ```
@@ -2445,11 +2443,11 @@ iris.ui(
         self.create = function () {
             console.log("my_ui UI Created");
             self.tmplMode(self.APPEND);
-            self.tmpl("my_ui.html");   
+            self.tmpl(iris.path.my_ui.html);   
             iris.notify(EVENT.MY_UI_CREATED, EVENT.MY_UI_CREATED);
         };
     },
-    "my_ui.js"
+    iris.path.my_ui.js
 );
 ```
 
@@ -2597,11 +2595,11 @@ iris.screen(
 
         self.create = function () {
             console.log("Welcome Screen Created");
-            self.tmpl("welcome.html");   
+            self.tmpl(iris.path.welcome.html);   
             self.get("greeting").html(iris.translate("GREETINGS.MORNING"));
         };  
     },
-    "welcome.js"
+    iris.path.welcome.js
 );
 ```
 Iris puede aplicar formatos a fechas, números y monedas adaptándolos a la variación **regional** que se haya seleccionado. Esto se puede hacer desde el código Javascript o bien desde el código HTML de un componente. En este último caso, los datos a formatear se pasarán en el método *tmpl*.
@@ -2659,7 +2657,7 @@ iris.screen(
 
             iris.locale("en_US");
    
-            self.tmpl("welcome.html");
+            self.tmpl(iris.path.welcome.html);
    
             var s ="Regionals Examples From Javascript";
    
@@ -2674,7 +2672,7 @@ iris.screen(
         };
 
     },
-    "welcome.js"
+    iris.path.welcome.js
 );
 ```
 
@@ -2785,12 +2783,12 @@ iris.screen(
                 }
             };
    
-            self.tmpl("welcome.html", params);
+            self.tmpl(iris.path.welcome.html, params);
    
         };
 
     },
-    "welcome.js"
+    iris.path.welcome.js
 );
 ```
 
@@ -2864,18 +2862,16 @@ iris.screen(
         self.create = function () {
             console.log("Welcome Screen Created");
    
-            self.tmpl("welcome.html");
+            self.tmpl(iris.path.welcome.html);
    
-            iris.resource("resource.js").load("test.json", function (json) {
+            iris.resource(iris.path.resource.js).load("test.json", function (json) {
                 self.get("json_container").html(json.title);
             }, function (p_request, p_textStatus, p_errorThrown) {
                 console.log("Error callback unexpected: " + p_errorThrown);
-            });
-   
+            });   
         };
-
     },
-    "welcome.js"
+    iris.path.welcome.js
 );
 ```
 
@@ -2902,8 +2898,17 @@ iris.resource(function(self){
       self.del("echo/delete/" + id, success, error);
     };
 
-}, "resource.js");
+}, iris.path.resource.js);
+```
 
+La variable *iris.path* debe tener una entrada al recurso:
+
+```js
+iris.path = {
+    welcome: {js: "welcome.js", html: "welcome.html"},
+    ...
+    resource: {js: "resource.js"}
+};
 ```
 
 Observe que hemos creado un fichero *resource.js* donde se llama al método *iris.resource*. Este método crea un objeto de tipo *Resource* que se retorna en la función pasada como argumento y que dispone de distintos métodos (*get*, *pos*, *put* y *del*) para acceder a servicios REST y pueden recibir una función de éxito o de error en la que se procesará la respuesta obtenida.
@@ -2957,35 +2962,78 @@ iris.enableLog(server1, server2,...) //If no arguments are passed, returns the l
 //Or You can pass the servers that you want to use the Iris logging system.
 ```
 
-Iris ayuda a la **minificación** de la aplicación. Para reducir el número de ficheros que hay que descargar desde el servidor en una aplicación Iris, podemos *minificar* todos los ficheros *.js* en uno único con la herramienta que queramos (por ejemplo [Grunt](https://github.com/gruntjs/grunt)). Para evitar que Iris tenga que descargarse el fichero del componente y utilice el del archivo *minificado*, tenemos que indicar la ruta de acceso al fichero en el método que crea el componente.
+<a name="minification"></a>Iris ayuda a la **minificación** de la aplicación. Para reducir el número de ficheros que hay que descargar desde el servidor en una aplicación Iris, podemos *minificar* todos los ficheros *.js* en uno único con la herramienta que queramos (por ejemplo [Grunt](https://github.com/gruntjs/grunt)).
 
-Por ejemplo, si el fichero *welcome.js* está en el fichero raíz de la aplicación, el parámetro se añadiría de la siguiente forma:
+El segundo parámetro que pasamos a las funciones *iris.screen*, *iris.ui* e *iris.resource* es el que permite a Iris evitar la descarga del fichero del componente y que utilice el archivo *minificado*. Iris buscará todas las rutas que contenga la variable *iris.path* y se descargará aquellos que no se encuentren en el fichero *minificado*.
+
+Por ejemplo, si el fichero *welcome.js* está en el fichero raíz de la aplicación, el segundo parámetro indicará a Iris la ruta de acceso al fichero:
 
 ```js
 //In welcome.js
 iris.screen(
     function (self) {
         ...
-    }, "welcome.js");
+    }, iris.path.welcome.js);
 ```
 
 Y la llamada que crea el Screen *welcome* sería:
 
 ```js
-iris.welcome("welcome.js");
+iris.welcome(iris.path.welcome.js);
 ```
 
-Observe que el método *iris.screen* recibe dos parámetros, la función del ciclo de vida y una cadena de texto que indica dónde se encuentra el fichero. Este parámetro tiene que coincidir exactamente con el parámetro que se pasa al método *iris.welcome*. Cuando se vaya a crear el Screen, Iris buscará si ya hay cargado en memoria un fichero que corresponda a este *Screen* en lugar de cargarlo desde el servidor. Y, por lo tanto, se utilizará el fichero *minificado* si se dispone de él.
+En el objeto *iris.path* debe existir el atributo que antes hemos utilizado conteniendo la ruta de acceso al fichero:
 
-La misma técnica se utilizará cuando se cree un *Screen* al navegar a él por primera vez o cuando se llame al método *navigate* para crear un *Screen*. Igualmente, en los UIs deberemos definir el *UI* con el parámetro adicional que permite a Iris localizarlo. Por ejemplo, si el *UI* *my_ui* está en el directorio raíz:
+```js
+iris.path = {
+    welcome: {js: "welcome.js", html: "welcome.html"},
+    ....
+};
+```
+Iris cargará todos los ficheros contenidos en *iris.path* antes de utilizar ningún componente.
+
+Observe que el método *iris.screen* recibe dos parámetros, la función del ciclo de vida y una cadena de texto que indica dónde se encuentra el fichero. Este parámetro tiene que coincidir exactamente con el parámetro que se pasa al método *iris.welcome*.
+
+Igualmente, en los UIs debemos definir el *UI* con el parámetro adicional que permite a Iris localizarlo. Por ejemplo, si el *UI* *my_ui* está en el directorio raíz:
 
 ```js
 //In my_ui.js
 iris.ui(
     function (self) {
        ...
-    }, "my_ui.js");
+    }, iris.path.my_ui.js);
 ```
+
+Se deben evitar prácticas como las siguientes:
+
+En *iris.path*:
+
+```js
+iris.path = {
+    welcome: {js: "welcome.js", html: "welcome.html"},
+    ....
+};
+```
+
+Y en *welcome.js*:
+
+```js
+//In welcome.js
+iris.screen(
+    function (self) {
+        ...
+    }, "./welcome.js");
+```
+
+Observe que en *iris.welcome* se ha pasado un literal en vez del atributo del objeto *iris.path* y que, aunque la ruta sea la misma, se ha indicado de forma ligeramente diferente ya que se ha antepuesto "./". Esto es una mala práctica ya que Iris no será capaz de localizar el fichero *welcome.js* asociado.
+
+Lo mismo ocurriría si la llamada al método *iris.welcome* la hiciéramos de esta forma:
+
+```js
+iris.welcome("./welcome.js");
+```
+
+> Al definir o crear componentes se debe indicar la ruta de acceso con el objeto *iris.path* en vez de usar literales de cadena, ya que así garantizamos una correcpondencia exacta.
 
 ##<a name="unit_test"></a>Pruebas de unidad en Iris
 
@@ -3021,7 +3069,7 @@ Además de Iris, se ha utilizado [Twitter Bootstrap](http://twitter.github.com/b
 
 En Iris debemos crear un fichero *html* y otro *js* por cada componente. En aplicaciones de tamaño medio/grande, lo normal es que haya decenas e incluso centenares de archivos. Es importante que, desde el principio, definamos una estructura de directorios que nos permita localizar fácilmente cada uno de estos archivos.
 
-Vamos a proponer una estructura determinada aunque cualquier otra que cumpla el propósito anterior será igualmente válida. En nuestro ejemplo, vamos a crear un fichero *shopping* para almacenar los componentes de Iris y fuera de este fichero guardaremos, librerías, estilos, imágenes, que no sean específicos de Iris. En el directorio *shopping* vamos almacenar por separado los componentes de tipo *Screen* de los de tipo *UI*, creando un directorio para cada tipo. Además vamos a crear subdirectorios para almacenar los  componentes que definen un mismo estado de la aplicación.
+Vamos a proponer una estructura determinada aunque cualquier otra que cumpla el propósito anterior será igualmente válida. En nuestro ejemplo, vamos a crear un fichero *shopping* para almacenar los componentes de Iris y fuera de este fichero guardaremos, librerías, estilos, imágenes, etc. que no sean específicos de Iris. En el directorio *shopping* vamos almacenar por separado los componentes de tipo *Screen* de los de tipo *UI*, creando un directorio para cada tipo. Además vamos a crear subdirectorios para almacenar los  componentes que definen un mismo estado de la aplicación.
 
 En la siguiente imagen vemos la estructura de directorios y los archivos que contienen:
 
@@ -3043,6 +3091,7 @@ En *index.html*:
 
 ```html
 <!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <html>
     <head>
         <title>iris shopping</title>
@@ -3058,8 +3107,7 @@ En *index.html*:
         <script type='text/javascript' src='./js/jquery.dataTables.js'></script>
         
         <script type='text/javascript' src='./js/iris.js'></script>
-        
-        <!-- <script type='text/javascript' src='./js/shopping_list.js'></script> -->
+        <script type='text/javascript' src='./js/shopping_list.js'></script>
         
         <script type='text/javascript' src='./js/init.js'></script>
 
@@ -3144,25 +3192,35 @@ $(document).ready(
 
         _setLang();
         
-        iris.on(iris.RESOURCE_ERROR, function(p_request, p_textStatus, p_errorThrown) {
-            if (p_request.request.status === 401) {
-                window.location.href = "/login?next=/#admin";
+        iris.path = {
+            screen: {
+                welcome: {js: "/shopping/screen/welcome.js", html: "/shopping/screen/welcome.html"},
+                home: {js: "/shopping/screen/home.js", html: "/shopping/screen/home.html"},
+                categories: {js: "/shopping/screen/products/categories.js", html: "/shopping/screen/products/categories.html"},
+                products: {js: "/shopping/screen/products/products.js", html: "/shopping/screen/products/products.html"},
+                shopping: {js: "/shopping/screen/list/shopping.js", html: "/shopping/screen/list/shopping.html"}
+            },
+            ui: {
+                category_list_item: {js: "/shopping/ui/products/category_list_item.js", html: "/shopping/ui/products/category_list_item.html"},
+                product_list_item: {js: "/shopping/ui/products/product_list_item.js", html: "/shopping/ui/products/product_list_item.html"},
+                product_shopping_list_item: {js: "/shopping/ui/list/product_shopping_list_item.js", html: "/shopping/ui/list/product_shopping_list_item.html"}
+            },
+            resource: {
+              js: "/shopping/resource.js"  
             }
-        });
+        }
         
         iris.baseUri(".");
         iris.enableLog("localhost");
-        iris.include("/js/shopping_list.js");
-        model.init();
-        iris.welcome("/shopping/screen/welcome.js");
+        iris.welcome(iris.path.screen.welcome.js);
     }
     );
 ```
 Observe que lo primero que hacemos en este *script* es cargar algunas de las traducciones que vamos a necesitar. Hemos decidido que cada fichero de *Javascript* cargue las traducciones que vaya a utilizar. En el caso de *init.js* vamos a cargar las traducciones comunes en toda la aplicación. Una alternativa perfectamente aceptable sería tener un único punto donde definiríamos todas las traducciones de la aplicación. Otra posible solución sería almacenar las traducciones en una base de datos y recuperarlas mediante un objeto *JSON*.
 
-Después llamamos a la función *_setLang* que nos permite definir el idioma de la aplicación. El idioma se seleccionará a partir del parámetro *lang* que se haya pasado en el *Query String* de la *URL*. Si no se ha pasado este parámetro se seleccionará el idioma por defecto.
+Después, llamamos a la función *_setLang* que nos permite definir el idioma de la aplicación. El idioma se seleccionará a partir del parámetro *lang* que se haya pasado en el *Query String* de la *URL*. Si no se ha pasado este parámetro se seleccionará el idioma por defecto.
 
-A continuación incluímos el fichero *shopping_list.js* que va a ser nuestro modelo de objetos en el cliente.
+Lo siguiente que hacemos es definir el objeto *iris.path* que contiene un *mapeo* de las rutas de acceso a los componentes que vamos a utilizar.
 
 Por último cargamos el *Screen* Welcome.
 
@@ -3184,10 +3242,10 @@ iris.screen(
             
         function _createScreens() {
             self.screens("screens", [
-                ["home", "/shopping/screen/home.js"],
-                ["categories", "/shopping/screen/products/categories.js"],
-                ["products", "/shopping/screen/products/products.js"],
-                ["shopping", "/shopping/screen/list/shopping.js"]
+                ["home", iris.path.screen.home.js],
+                ["categories", iris.path.screen.categories.js],
+                ["products", iris.path.screen.products.js],
+                ["shopping", iris.path.screen.shopping.js]
                 ]);
         }
         
@@ -3236,7 +3294,9 @@ iris.screen(
         
         self.create = function () {
             
-            self.tmpl("/shopping/screen/welcome.html");
+            model.init();
+            
+            self.tmpl(iris.path.screen.welcome.html);
             
             _ajaxPrepare();
             
@@ -3254,9 +3314,10 @@ iris.screen(
                 iris.navigate("#/home"); //Default page
             }
         };
-    } , "/shopping/screen/welcome.js");
+    } , iris.path.screen.welcome.js);
 ```
 Lo más relevante de este fichero es:
+* Llamamos a la función *model.init()* para inicializar el modelo.
 * La función *_ajaxPrepare* permite poner un texto *cargando...* cada vez que se efectúa una llamada *AJAX*.
 * La función *_createScreens* registra los *screens* de la aplicación.
 * La función *_changeLang* recarga la aplicación añadiendo el código del idioma que se haya seleccionado como un parámetro del *Query String*.
@@ -3324,10 +3385,10 @@ iris.screen(
         });
             
         self.create = function () {    
-            self.tmpl("/shopping/screen/home.html");
+            self.tmpl(iris.path.screen.home.html);
         };
         
-    }, "/shopping/screen/home.js");
+    }, iris.path.screen.home.js);
 ```
 
 En *home.html*:
@@ -3371,7 +3432,25 @@ var model = {};
     
     
     function _init () {
+        
         model.shoppingList = new model.ShoppingList();
+        
+        model.resource = iris.resource(iris.path.resource.js);
+    
+        model.resource.app = (function() {
+            return {
+                getCategories: function(success, error) {
+                    model.resource.load("/json/categories.json", success, error);
+                },
+                getProducts: function(idCategory, success, error) {
+                    model.resource.load("/json/products_" + idCategory + ".json", success, error);
+                } ,
+                getAllProducts: function(success, error) {
+                    model.resource.load("/json/products.json", success, error);
+                }
+            };
+        
+        })();
         
         iris.on(model.event.PRODUCTS.REMOVE, model.shoppingList.removeShoppingProduct);
         iris.on(model.event.PRODUCTS.ADD, model.shoppingList.addShoppingProduct);
@@ -3609,23 +3688,6 @@ var model = {};
         
     };
     
-    model.resource = iris.resource("/shopping/resource.js");
-    
-    model.resource.app = (function() {
-        return {
-            getCategories: function(success, error) {
-                model.resource.load("/json/categories.json", success, error);
-            },
-            getProducts: function(idCategory, success, error) {
-                model.resource.load("/json/products_" + idCategory + ".json", success, error);
-            }            ,
-            getAllProducts: function(success, error) {
-                model.resource.load("/json/products.json", success, error);
-            }
-        };
-        
-    })();
-    
 })(jQuery);
 ```
 
@@ -3643,7 +3705,7 @@ iris.resource(function(self){
     self.load = function (path, success, error) {
         self.get(iris.baseUri() + path, success, error);
     };
-}, "/shopping/resource.js");
+}, iris.path.resource.js);
 ```
 
 
@@ -3660,7 +3722,7 @@ iris.screen(
         function _inflate(categories) {
             $.each(categories,
                 function(index, category) {						
-                    self.ui("list_categories", "/shopping/ui/products/category_list_item.js", {
+                    self.ui("list_categories", iris.path.ui.category_list_item.js, {
                         "category": category
                     });
                 }
@@ -3668,12 +3730,12 @@ iris.screen(
         }
         
         self.create = function () {
-            self.tmpl("/shopping/screen/products/categories.html");
+            self.tmpl(iris.path.screen.categories.html);
             model.resource.app.getCategories(_inflate);
         };
         
         
-    }, "/shopping/screen/products/categories.js");
+    }, iris.path.screen.categories.js);
 ```
 
 Y en *categories.html*:
@@ -3702,10 +3764,10 @@ iris.ui(function(self) {
     self.create = function() {
         self.tmplMode(self.APPEND);
         var category = self.setting("category");
-        self.tmpl("/shopping/ui/products/category_list_item.html", category);
+        self.tmpl(iris.path.ui.category_list_item.html, category);
     };	
     
-}, "/shopping/ui/products/category_list_item.js");
+}, iris.path.ui.category_list_item.js);
 ```
 
 En *category_list_item.html*:
@@ -3765,7 +3827,7 @@ iris.screen(
             self.get("msg").html(iris.translate("PRODUCTS.CHOOSE_PRODUCTS") + ":"); 
             $.each(products,
                 function(index, product) {
-                    self.ui("list_products", "/shopping/ui/products/product_list_item.js", {
+                    self.ui("list_products", iris.path.ui.product_list_item.js, {
                         "product": product
                     });
                 }
@@ -3774,7 +3836,7 @@ iris.screen(
         
         
         self.create = function () { 
-            self.tmpl("/shopping/screen/products/products.html");
+            self.tmpl(iris.path.screen.products.html);
         };
        
         self.awake = function (params) {
@@ -3786,7 +3848,7 @@ iris.screen(
                 );
 
         };
-    }, "/shopping/screen/products/products.js");
+    }, iris.path.screen.products.js);
 ```
 
 En *products.html*:
@@ -3824,7 +3886,7 @@ iris.ui(function(self) {
     self.create = function() {  
         self.tmplMode(self.APPEND);
         product = self.setting("product");
-        self.tmpl("/shopping/ui/products/product_list_item.html", product);
+        self.tmpl(iris.path.ui.product_list_item.html, product);
         self.get("product").change(function (event) {
             if (this.checked) {
                 iris.notify(model.event.PRODUCTS.ADD, product);
@@ -3842,7 +3904,7 @@ iris.ui(function(self) {
             self.get("product").prop('checked', false);
         }
     };
-}, "/shopping/ui/products/product_list_item.js");
+}, iris.path.ui.product_list_item.js);
 ```
 
 Y en *product_list_item.html*:
@@ -3923,7 +3985,7 @@ iris.screen(
             
         self.create = function () {
             
-            self.tmpl("/shopping/screen/list/shopping.html");            
+            self.tmpl(iris.path.screen.shopping.html);            
             _asignEvents();
         };
                 
@@ -3985,7 +4047,7 @@ iris.screen(
             if (products.length > 0) {                
                 $.each(products,
                     function(index, product) {
-                        var ui = self.ui("shoppingList_products", "/shopping/ui/list/product_shopping_list_item.js", {
+                        var ui = self.ui("shoppingList_products", iris.path.ui.product_shopping_list_item.js, {
                             "product": product,
                             "removeProduct": function() {
                                 var idProduct = product.idProduct;
@@ -4067,8 +4129,7 @@ iris.screen(
             iris.off(model.event.SHOPPING.CHANGE_STATE, _changeStateButtons);                
         };
         
-    },"/shopping/screen/list/shopping.js");
-    
+    }, iris.path.screen.shopping.js);
 ```
 
 Y en *shopping.html*:
@@ -4122,7 +4183,7 @@ iris.ui(function(self) {
     self.create = function() {
         self.tmplMode(self.APPEND);
         var product = self.setting("product");                
-        self.tmpl("/shopping/ui/list/product_shopping_list_item.html", product);
+        self.tmpl(iris.path.ui.product_shopping_list_item.html, product);
         if (product.purchased === true) {
             self.get("order").addClass("purchased");
             self.get("nameProduct").addClass("purchased");
@@ -4143,7 +4204,7 @@ iris.ui(function(self) {
         self.get("remove").off("click");
         self.get("buy").off("click");
     };
-}, "/shopping/ui/list/product_shopping_list_item.js");
+}, iris.path.ui.product_shopping_list_item.js);
 ```
 
 Y en *product_shopping_list_item.html*:
