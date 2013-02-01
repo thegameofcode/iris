@@ -1,0 +1,16 @@
+{
+  "name": "iris",
+  "version": "0.5.0-SNAPSHOT",
+
+  "dependencies": {
+    "async": "0.1.x"
+    ,"cookies": "0.3.x"
+    ,"q"	: "0.8.x"
+  },
+  
+  "engines": {
+    "node": "0.8.x",
+    "npm": "1.1.x"
+  }
+}
+
