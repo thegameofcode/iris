@@ -49,6 +49,7 @@
  * <a href="#step_by_step_qunit">Pruebas unitarias con *QUnit*</a><br>
  * <a href="#step_by_step_grunt">Automatizando procesos con *Grunt*</a><br>
  * <a href="#step_by_step_exercise">Ejercicio: Modificando la aplicación</a><br>
+ * <a href="#step_by_step_exercise2">Ejercicio: Integrando Knockout</a><br>
 
 #<a name="what_is_it"></a>¿Qué es Iris?
 
@@ -204,13 +205,13 @@ Nota: Las aplicaciones de Iris deben estar situadas en un servidor Web.
 
 ##<a name="iris_path"></a>Objeto *iris.path*
 
-Iris requiere que se defina un objeto llamado *iris.path*. Debemos asociar (*mapear*) sus atributos a las URLs de acceso a los componentes que vayamos a utilizar. Obligatoriamente, tenemos que definir los controladores (ficheros de Javascript) de todos los componentes (*sreens* y *uis*) y opcionalmente podemos también incluir también sus vistas. También es obligatorio definir los archivos de recursos o servicios de red.
+Iris requiere que se defina un objeto llamado *iris.path*. Debemos asociar (*mapear*) sus atributos a las URLs de acceso a los componentes que vayamos a utilizar. Obligatoriamente, tenemos que definir los controladores (ficheros de Javascript) de todos los componentes (*screens* y *uis*) y opcionalmente podemos también incluir también sus vistas. También es obligatorio definir los archivos de recursos o servicios de red.
 
-Puede estruturar el objeto *iris.path* como mejor le convenga: separando *screens* de *uis*, por módulos, con un sólo nivel o con varios, lo único realmente importante es que, todos los controladores tengan un atributo en el objeto *iris.path* que sea de tipo *string* y que contenga la ruta de acceso al fichero *javascript* del componente.
+Puede estructurar el objeto *iris.path* como mejor le convenga: separando *screens* de *uis*, por módulos, con un sólo nivel o con varios, lo único realmente importante es que, todos los controladores tengan un atributo en el objeto *iris.path* que sea de tipo *string* y que contenga la ruta de acceso al fichero *javascript* del componente.
 
 En una aplicación real, el objeto *iris.path* puede llegar a ser muy grande y será conveniente que lo sitúe en un fichero independiente.
 
-Antes de instanciar el Screen de bienvenida, Iris procesará el objeto *iris.path* y cargará en memoria todos los ficheros asociados en él. Si los ficheros ya se hubieran precargado, porque se está utilizando una herramienta de *minificación*, Iris no volvería a cargar los ficheros. Puede consultar el apartado de <a href="#minifcation">minificación</a> para una explicación más detallada.
+Antes de instanciar el Screen de bienvenida, Iris procesará el objeto *iris.path* y cargará en memoria todos los ficheros asociados en él. Si los ficheros ya se hubieran precargado, porque se está utilizando una herramienta de *minificación*, Iris no volvería a cargar los ficheros. Puede consultar el apartado de <a href="#minificación">minificación</a> para una explicación más detallada.
 
 
 ##<a name="calling_welcome"></a>Llamando al Screen de bienvenida
@@ -3033,7 +3034,7 @@ Lo mismo ocurriría si la llamada al método *iris.welcome* la hiciéramos de es
 iris.welcome("./welcome.js");
 ```
 
-> Al definir o crear componentes se debe indicar la ruta de acceso con el objeto *iris.path* en vez de usar literales de cadena, ya que así garantizamos una correcpondencia exacta.
+> Al definir o crear componentes se debe indicar la ruta de acceso con el objeto *iris.path* en vez de usar literales de cadena, ya que así garantizamos una correspondencia exacta.
 
 ##<a name="unit_test"></a>Pruebas de unidad en Iris
 
@@ -3293,8 +3294,6 @@ iris.screen(
         
         self.create = function () {
             
-            model.init();
-            
             self.tmpl(iris.path.screen.welcome.html);
             
             _ajaxPrepare();
@@ -3315,8 +3314,8 @@ iris.screen(
         };
     } , iris.path.screen.welcome.js);
 ```
+
 Lo más relevante de este fichero es:
-* Llamamos a la función *model.init()* para inicializar el modelo.
 * La función *_ajaxPrepare* permite poner un texto *cargando...* cada vez que se efectúa una llamada *AJAX*.
 * La función *_createScreens* registra los *screens* de la aplicación.
 * La función *_changeLang* recarga la aplicación añadiendo el código del idioma que se haya seleccionado como un parámetro del *Query String*.
@@ -3409,10 +3408,13 @@ var model = {};
 
 (function($) {
     
+    model.initialized = false; 
+    model.categories = {};
+    model.products = {};
     model.event = {
         
         PRODUCTS: {
-            ADD:- "shopping:products:add",
+            ADD: "shopping:products:add",
             REMOVE: "shopping:products:remove",
             REMOVED: "shopping:products:removed"
         },
@@ -3430,47 +3432,62 @@ var model = {};
     };
     
     
-    function _init () {
-        
-        model.shoppingList = new model.ShoppingList();
-        
-        model.resource = iris.resource(iris.path.resource.js);
-    
-        model.resource.app = (function() {
-            return {
-                getCategories: function(success, error) {
-                    model.resource.load("/json/categories.json", success, error);
-                },
-                getProducts: function(idCategory, success, error) {
-                    model.resource.load("/json/products_" + idCategory + ".json", success, error);
-                } ,
-                getAllProducts: function(success, error) {
-                    model.resource.load("/json/products.json", success, error);
-                }
-            };
-        
-        })();
-        
-        iris.on(model.event.PRODUCTS.REMOVE, model.shoppingList.removeShoppingProduct);
-        iris.on(model.event.PRODUCTS.ADD, model.shoppingList.addShoppingProduct);
-        iris.on(model.event.SHOPPING.CHANGE_STATE, model.shoppingList.changeStateShoppingProduct);        
-        iris.on(model.event.SHOPPING.REMOVE_ALL, model.shoppingList.removeAll);
-        iris.on(model.event.SHOPPING.CHECK_ALL, model.shoppingList.checkAll);
-        iris.on(model.event.SHOPPING.UNCHECK_ALL, model.shoppingList.uncheckAll);        
-        iris.on(model.event.SHOPPING.INVERT_CHECK, model.shoppingList.invertCheck);  //Cuando un evento no existe no de ningún aviso, Me he vuelto loco porque no sabía que pasaba
-        iris.on(model.event.SHOPPING.REMOVE_CHECKED, model.shoppingList.removePurchased);
+    function _init (force, next) {
+        if (typeof force  === "function") {
+            next = force;
+            force = false;
+        }
+        if (force || !model.initialized) {
+            model.shoppingList = new model.ShoppingList();
+
+            model.resource = iris.resource(iris.path.resource.js);
+
+            model.resource.app = (function() {
+                return {
+                    getCategories: function(success, error) {
+                        model.resource.load("/json/categories.json", success, error);
+                    },
+                    getProducts: function(idCategory, success, error) {
+                        model.resource.load("/json/products_" + idCategory + ".json", success, error);
+                    } ,
+                    getAllProducts: function(success, error) {
+                        model.resource.load("/json/products.json", success, error);
+                    }
+                };
+
+            })();
+
+
+            iris.on(this.event.PRODUCTS.REMOVE, this.shoppingList.removeShoppingProduct);
+            iris.on(this.event.PRODUCTS.ADD, this.shoppingList.addShoppingProduct);
+            iris.on(this.event.SHOPPING.CHANGE_STATE, this.shoppingList.changeStateShoppingProduct);
+
+            model.resource.app.getCategories(function(categories){
+                model.categories = categories;
+                model.resource.app.getAllProducts(function(products){
+                    model.products = products;
+                    model.initialized = true;
+                    if (next) {
+                        next();
+                    }
+
+                });
+            });
+        } else {
+            if (next) {
+                next();
+            }
+        }
     }
     
     function _destroy () {
-        iris.off(model.event.PRODUCTS.REMOVE, model.shoppingList.removeShoppingProduct);
-        iris.off(model.event.PRODUCTS.ADD, model.shoppingList.addShoppingProduct);
-        iris.off(model.event.SHOPPING.CHANGE_STATE, model.shoppingList.changeStateShoppingProduct);        
-        iris.off(model.event.SHOPPING.REMOVE_ALL, model.shoppingList.removeAll);
-        iris.off(model.event.SHOPPING.CHECK_ALL, model.shoppingList.checkAll);
-        iris.off(model.event.SHOPPING.UNCHECK_ALL, model.shoppingList.uncheckAll);        
-        iris.off(model.event.SHOPPING.INVERT_CHECK, model.shoppingList.invertCheck);  //Cuando un evento no existe no de ningún aviso, Me he vuelto loco porque no sabía que pasaba
-        iris.off(model.event.SHOPPING.REMOVE_CHECKED, model.shoppingList.removePurchased);        
-        model.shoppingList = null;
+        model.initialized = false;
+        iris.off(this.event.PRODUCTS.REMOVE, this.shoppingList.removeShoppingProduct);
+        iris.off(this.event.PRODUCTS.ADD, this.shoppingList.addShoppingProduct);
+        iris.off(this.event.SHOPPING.CHANGE_STATE, this.shoppingList.changeStateShoppingProduct);
+        this.shoppingList = null;
+        model.categories = {};
+        model.products = {};
     }
     
     model.init = _init;
@@ -3730,7 +3747,9 @@ iris.screen(
         
         self.create = function () {
             self.tmpl(iris.path.screen.categories.html);
-            model.resource.app.getCategories(_inflate);
+            model.init(false, function(){
+                _inflate(model.categories); 
+            });
         };
         
         
@@ -3751,7 +3770,7 @@ Y en *categories.html*:
 </div>  
 ```
 
-Observe que llamamos al método *model.resource.app.getCategories* para recuperar las categorías desde el servidor. Cuando hayamos recuperado las categorías, iterativamente cargamos el *UI* *category_list_item* pasándole cada categoría como parámetro en el contenedor *list_categories*.
+Observe que llamamos al método *model.init* para recuperar las categorías y los productos desde el servidor. Cuando hayamos recuperado las categorías, iterativamente cargamos el *UI* *category_list_item* pasándole cada categoría como parámetro en el contenedor *list_categories*.
 
 El *UI* *category_list_item* tendrá los siguientes ficheros:
 
@@ -3984,12 +4003,15 @@ iris.screen(
             
         self.create = function () {
             
-            self.tmpl(iris.path.screen.shopping.html);            
+            self.tmpl(iris.path.screen.shopping.html);
+            self.get("div_shopping").hide();            
             _asignEvents();
         };
                 
         self.awake = function (params) {
-            _inflate();
+            model.init(false, function(){
+                _inflate(); 
+            });
         };
         
         function _asignEvents() {
@@ -4282,6 +4304,9 @@ El módulo para probar el modelo lo almacenamos en el fichero *model_test.js*:
 Nota: No se ha realizado una prueba exhaustiva sino que se trata de un simple ejemplo para comprender el funcionamiento de *QUnit*.
 
 ```js
+(function($) {
+
+ 
     function init() {
         iris.baseUri("..");
         iris.cache(false);
@@ -4349,45 +4374,50 @@ Nota: No se ha realizado una prueba exhaustiva sino que se trata de un simple ej
         }
     });
     
-    asyncTest("Test addShoppingProduct() method", function() {
+        asyncTest("Test addShoppingProduct() method", function() {
         window.expect(1);
         
         iris.on(iris.AFTER_NAVIGATION, function() {
             iris.off(iris.AFTER_NAVIGATION);
-            model.shoppingList.addShoppingProduct({
-                "idProduct":1 , 
-                "nameProduct":"Carrots"
+            model.init( function () {
+                
+                model.shoppingList.addShoppingProduct({
+                    "idProduct":1 , 
+                    "nameProduct":"Carrots"
+                });
+                model.shoppingList.addShoppingProduct({
+                    "idProduct":15 , 
+                    "nameProduct":"Bacon"
+                });
+                window.ok(model.shoppingList.getShoppingProducts().length === 2, "Two Prodcuts added to the Shopping List");
+                window.start();
             });
-            model.shoppingList.addShoppingProduct({
-                "idProduct":15 , 
-                "nameProduct":"Bacon"
-            });
-            window.ok(model.shoppingList.getShoppingProducts().length === 2, "Two Prodcuts added to the Shopping List");
-            window.start();
         });
         
     }
     );
     
-    asyncTest("Test removehoppingProduct() method", function() {
+    asyncTest("Test removeShoppingProduct() method", function() {
         window.expect(1);
         
         iris.on(iris.AFTER_NAVIGATION, function() {
             iris.off(iris.AFTER_NAVIGATION);
-            model.shoppingList.addShoppingProduct({
-                "idProduct":1 , 
-                "nameProduct":"Carrots"
-            });
-            model.shoppingList.addShoppingProduct({
-                "idProduct":15 , 
-                "nameProduct":"Bacon"
-            });
+            model.init( function () {
+                model.shoppingList.addShoppingProduct({
+                    "idProduct":1 , 
+                    "nameProduct":"Carrots"
+                });
+                model.shoppingList.addShoppingProduct({
+                    "idProduct":15 , 
+                    "nameProduct":"Bacon"
+                });
         
-            model.shoppingList.removeShoppingProduct(1);
-            model.shoppingList.removeShoppingProduct(20);
+                model.shoppingList.removeShoppingProduct(1);
+                model.shoppingList.removeShoppingProduct(20);
         
-            window.ok(model.shoppingList.getShoppingProducts().length === 1, "One product removed from the Shopping List");
-            window.start();
+                window.ok(model.shoppingList.getShoppingProducts().length === 1, "One product removed from the Shopping List");
+                window.start();
+            });
         });
         
     }
@@ -4399,19 +4429,21 @@ Nota: No se ha realizado una prueba exhaustiva sino que se trata de un simple ej
         
         iris.on(iris.AFTER_NAVIGATION, function() {
             iris.off(iris.AFTER_NAVIGATION);
-            model.shoppingList.addShoppingProduct({
-                "idProduct":1 , 
-                "nameProduct":"Carrots"
-            });
-            model.shoppingList.addShoppingProduct({
-                "idProduct":15 , 
-                "nameProduct":"Bacon"
-            });
+            model.init(function() {
+                model.shoppingList.addShoppingProduct({
+                    "idProduct":1 , 
+                    "nameProduct":"Carrots"
+                });
+                model.shoppingList.addShoppingProduct({
+                    "idProduct":15 , 
+                    "nameProduct":"Bacon"
+                });
         
         
-            window.ok(model.shoppingList.getShoppingProduct(15).nameProduct === "Bacon", "Bacon product retrieved from the Shoppiing List");
-            window.ok(model.shoppingList.getShoppingProduct(20) === null, "The idProduct 20 is not in the Shopping List");
-            window.start();
+                window.ok(model.shoppingList.getShoppingProduct(15).nameProduct === "Bacon", "Bacon product retrieved from the Shoppiing List");
+                window.ok(model.shoppingList.getShoppingProduct(20) === null, "The idProduct 20 is not in the Shopping List");
+                window.start();
+            });
         });
         
     }
@@ -4423,23 +4455,25 @@ Nota: No se ha realizado una prueba exhaustiva sino que se trata de un simple ej
         
         iris.on(iris.AFTER_NAVIGATION, function() {
             iris.off(iris.AFTER_NAVIGATION);
-            model.shoppingList.addShoppingProduct({
-                "idProduct":1 , 
-                "nameProduct":"Carrots"
+            model.init(function () {
+                model.shoppingList.addShoppingProduct({
+                    "idProduct":1 , 
+                    "nameProduct":"Carrots"
+                });
+                model.shoppingList.addShoppingProduct({
+                    "idProduct":15 , 
+                    "nameProduct":"Bacon"
+                });
+        
+                model.shoppingList.changeStateShoppingProduct(15);
+        
+                window.ok(model.shoppingList.getShoppingProduct(15).purchased === true, "Bacon has been purchased");
+        
+                model.shoppingList.changeStateShoppingProduct(15);
+        
+                window.ok(model.shoppingList.getShoppingProduct(15).purchased === false, "Bacon has not been purchased");
+                window.start();
             });
-            model.shoppingList.addShoppingProduct({
-                "idProduct":15 , 
-                "nameProduct":"Bacon"
-            });
-        
-            model.shoppingList.changeStateShoppingProduct(15);
-        
-            window.ok(model.shoppingList.getShoppingProduct(15).purchased === true, "Bacon has been purchased");
-        
-            model.shoppingList.changeStateShoppingProduct(15);
-        
-            window.ok(model.shoppingList.getShoppingProduct(15).purchased === false, "Bacon has not been purchased");
-            window.start();
         });
         
     }
@@ -4451,13 +4485,14 @@ Nota: No se ha realizado una prueba exhaustiva sino que se trata de un simple ej
         window.expect(1);
         iris.on(iris.AFTER_NAVIGATION, function() {
             iris.off(iris.AFTER_NAVIGATION);
-            model.init();
-            model.resource.app.getCategories(
-                function(categories) {
-                    window.ok(categories.length === 4, "Categories retrieved");
-                    window.start();
-                }
-                );
+            model.init(function () {
+                model.resource.app.getCategories(
+                    function(categories) {
+                        window.ok(categories.length === 4, "Categories retrieved");
+                        window.start();
+                    }
+                    );
+            });
         }
         );
     });
@@ -4466,15 +4501,14 @@ Nota: No se ha realizado una prueba exhaustiva sino que se trata de un simple ej
         window.expect(1);
         iris.on(iris.AFTER_NAVIGATION, function() {
             iris.off(iris.AFTER_NAVIGATION);
-            model.init();
-            model.resource.app.getAllProducts(
-                function(products) {
-                    window.ok(products.length === 28, "Products retrieved");
-                    window.start();
-                }
-                ),function(request, status, error) {
-                console.log(error);
-            };
+            model.init( function() {
+                model.resource.app.getAllProducts(
+                    function(products) {
+                        window.ok(products.length === 28, "Products retrieved");
+                        window.start();
+                    }
+                    );
+            });
         }
         );
     });
@@ -4734,10 +4768,8 @@ iris.screen(
         
         self.create = function () {
             self.tmpl(iris.path.screen.categories.html);
-            model.resource.app.getCategories(function(categories){
-                model.resource.app.getAllProducts(function(products){
-                    _inflate(categories, products); 
-                });
+            model.init(false, function(){
+                _inflate(model.categories, model.products); 
             });
         };
         
@@ -4772,29 +4804,8 @@ En *category_list_item.html*:
 Por último, hemos realizado algunos ejemplos de pruebas unitarias para la vista en *view_test.js*:
 
 ```js
-/*global QUnit:false, module:false, test:false, asyncTest:false, expect:false*/
-/*global start:false, stop:false ok:false, equal:false, notEqual:false, deepEqual:false*/
-/*global notDeepEqual:false, strictEqual:false, notStrictEqual:false, raises:false*/
 (function($) {
 
-    /*
-    ======== A Handy Little QUnit Reference ========
-    http://docs.jquery.com/QUnit
-
-    Test methods:
-      expect(numAssertions)
-      stop(increment)
-      start(decrement)
-    Test assertions:
-      ok(value, [message])
-      equal(actual, expected, [message])
-      notEqual(actual, expected, [message])
-      deepEqual(actual, expected, [message])
-      notDeepEqual(actual, expected, [message])
-      strictEqual(actual, expected, [message])
-      notStrictEqual(actual, expected, [message])
-      raises(block, [expected], [message])
-  */
  
      function init() {
         iris.baseUri("..");
@@ -4866,16 +4877,15 @@ Por último, hemos realizado algunos ejemplos de pruebas unitarias para la vista
         window.expect(1);
         iris.on(iris.AFTER_NAVIGATION ,function() {
             iris.off(iris.AFTER_NAVIGATION);
-            model.resource.app.getCategories(function(categories){
-                model.resource.app.getAllProducts(function(products){
-                    iris.navigate("#/categories");
-                    iris.on(iris.AFTER_NAVIGATION ,function() {
-                        setTimeout(function() {
-                            $("input[type='checkbox']", "[id^='collapse_category']").trigger('click');
-                            window.ok(model.shoppingList.getShoppingProducts().length === products.length, "All products are selected");
-                            window.start();
-                        },1000);
-                    });
+            model.init(function(){
+                iris.navigate("#/categories");
+                iris.on(iris.AFTER_NAVIGATION ,function() {
+                    setTimeout(function() {
+                        $("input[type='checkbox']", "[id^='collapse_category']").trigger('click');
+                        window.ok(model.shoppingList.getShoppingProducts().length === model.products.length, "All products are selected");
+                        window.start();
+                    },1000);
+                
                 });
             });
             
@@ -4883,30 +4893,27 @@ Por último, hemos realizado algunos ejemplos de pruebas unitarias para la vista
     });
         
     asyncTest("Test remove purchased products", function() {
-        var products = [];
         window.expect(1);
         iris.on(iris.AFTER_NAVIGATION ,function() {
             iris.off(iris.AFTER_NAVIGATION);
-            model.resource.app.getCategories(function(categories){
-                model.categories = categories;
-                model.resource.app.getAllProducts(function(products){
-                    model.products = products;
-                    iris.navigate("#/categories");
-                    iris.on(iris.AFTER_NAVIGATION ,function() {
-                        iris.off(iris.AFTER_NAVIGATION);
-                        setTimeout(function() {
-                            $("input[type='checkbox']", "[id^='collapse_category']").trigger('click');
-                            iris.navigate("#/shopping");
-                            iris.on(iris.AFTER_NAVIGATION ,function() {
-                                $("button[data-id='buy']").first().trigger("click");
-                                $("button[data-id='btn_remove_checked']").trigger("click");
-                                //model.ShoppingList.prototype.removePurchased();
-                                window.ok(model.shoppingList.getShoppingProducts().length === products.length - 1, "Removed 1 purchased product");
-                                window.start();
-                            });
-                        },1000);
-                    });
+            model.init(function(){                    
+                iris.navigate("#/categories");
+                iris.on(iris.AFTER_NAVIGATION ,function() {
+                    iris.off(iris.AFTER_NAVIGATION);
+                    setTimeout(function() {
+                        $("input[type='checkbox']", "[id^='collapse_category']").trigger('click');
+                        iris.navigate("#/shopping");
+                        iris.on(iris.AFTER_NAVIGATION ,function() {
+                            iris.off(iris.AFTER_NAVIGATION);
+                            $("button[data-id='buy']").first().trigger("click");
+                            //$("button[data-id='btn_remove_checked']").trigger("click");
+                            model.ShoppingList.prototype.removePurchased();
+                            window.ok(model.shoppingList.getShoppingProducts().length === model.products.length - 1, "Removed 1 purchased product");
+                            window.start();
+                        });
+                    },1000);
                 });
+                
             });
             
         });
@@ -4919,3 +4926,57 @@ Por último, hemos realizado algunos ejemplos de pruebas unitarias para la vista
 Observe que se ha utilizado el evento método *window.setTimeout* para dar tiempo a que se llame a los servicios.
 
 Puede descargar la aplicación modificada en el siguiente [enlace](https://github.com/surtich/iris/blob/iris-grunt/docs/iris-shopping2.tar.gz?raw=true).
+
+##<a name="step_by_step_exercise2"></a>Ejercicio: Integrando Knockout
+
+[Knockout](http://knockoutjs.com/) es una librería de Javascript que implementa el patrón Model-View-View-Model.
+
+La ventaja que aportan *frameworks* como Knockout es que permiten un vínculo (*binging*) bidireccional entre la vista y el modelo de datos del cliente; automatizando el proceso mostrar y actualizar datos, ya que cuando cambia el modelo, la vista se refresca para mostrar la nueva información y, viceversa, cuando se introduce información en un formulario de la vista, es el modelo el que recibe los cambios.
+
+Esto se traduce en una gran reducción del código en *Javascript* que es necesario para mostrar los datos del modelo.
+
+Puede descargar la aplicación integrada con Knockout en el siguiente [enlace](https://github.com/surtich/iris/blob/iris-grunt/docs/iris-shopping-knockout.tar.gz?raw=true).
+
+Vamos a explicar el resultado de la integración del UI Products.
+
+En *products.js*:
+
+```js
+iris.ui(function(self) {	
+    self.create = function() {  
+        self.tmplMode(self.APPEND);
+        self.tmpl("/shopping/ui/products/products.html");
+    };
+}, "/shopping/ui/products/products.js");
+```
+
+En *products.html*
+
+```html
+<div class="accordion-inner" data-bind="foreach: $root.products">
+    <!-- ko if: $data.category == $parent.idCategory -->
+        <label class="checkbox">
+            <input type="checkbox" data-bind="attr: { 'data-product':$data.idProduct }, click: function (data, event) {return $root.shoppingList.addOrRemoveShoppingProduct(data, event.target.checked);}, checked: $root.shoppingList.getShoppingProduct($data.idProduct) !== null">
+            <!--ko text: $data.nameProduct--><!--/ko-->
+        </label> 
+    <!-- /ko -->
+
+</div>
+```
+
+Observe que desde el controlador lo único que hacemos es cargar la vista y, que en la vista, iteramos por los productos y asociamos con *data-bind* las etiquetas *HTML* a datos o a métodos del modelo.
+
+Un inconveniente que tiene esta solución es que la vista es más compleja ya que tiene elementos que no son puramente código HTML. Para paliar este problema, se puede desplazar la asociación de la vista al controlador. 
+
+Por ejemplo,
+
+El si al *input* le hubiéramos asignado el atributo *data-id='product'*, podríamos realizar el vínculo del evento *click* en el controlador de esta manera:
+
+```js
+//Alternative to data-bind in products.html
+$("[data-id='product']").live("click", function(event) {
+    return model.shoppingList.addOrRemoveShoppingProduct(ko.dataFor(this), event.target.checked);
+});
+```
+
+
