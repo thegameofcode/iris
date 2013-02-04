@@ -874,6 +874,27 @@
             }
         }
     };
+
+    function _registerRes (resourceOrPath, path) {
+
+        if ( typeof resourceOrPath === "string" ) {
+            // resourceOrPath == path
+            if ( !_includes.hasOwnProperty(resourceOrPath) ) {
+                throw "add service[" + resourceOrPath + "] to iris.path";
+            }
+            return _includes[resourceOrPath];
+
+        } else {
+            // resourceOrPath == resource
+            var serv = new iris.Resource();
+            serv.cfg = {};
+            serv.settings({ type: "json", path: "" });
+            resourceOrPath(serv);
+
+            _includes[path] = serv;
+        }
+
+    }
     
     iris.screen = _registerScreen;
     iris.destroyScreen = _destroyScreenByPath;
@@ -881,6 +902,7 @@
     iris.navigate = _goto;
     iris.ui = _registerUI;
     iris.tmpl = _registerTmpl;
+    iris.resource = _registerRes;
 
     //
     // Classes

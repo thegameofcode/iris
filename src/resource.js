@@ -1,11 +1,5 @@
 (function() {
 
-    var resources;
-
-    function _init () {
-        resources = {};
-    }
-
     var Resource = function() {};
 
     Resource.prototype = new iris.Settable();
@@ -47,29 +41,6 @@
         return this.ajax("POST", p_path, p_params, f_success, f_error);
     };
 
-    iris.resource = function (resourceOrPath, path) {
-
-        if ( typeof resourceOrPath === "string" ) {
-            // resourceOrPath == path
-            if ( !resources.hasOwnProperty(resourceOrPath) ) {
-                throw "add service[" + resourceOrPath + "] to iris.path";
-            }
-            return resources[resourceOrPath];
-
-        } else {
-            // resourceOrPath == resource
-            var serv = new Resource();
-            serv.cfg = {};
-            serv.settings({ type: "json", path: "" });
-            resourceOrPath(serv);
-
-            resources[path] = serv;
-        }
-
-    };
-
-    _init();
-
-    iris.on("iris-reset", _init);
+    iris.Resource = Resource;
 
 })();
