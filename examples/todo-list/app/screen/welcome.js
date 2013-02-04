@@ -61,7 +61,7 @@ iris.screen(function(self) {
 		if ( e.target.nodeName.toLowerCase() === "a") {
 			$(".selected", filters).each(function () {
 				$(this).removeClass("selected");
-			})
+			});
 			$(e.target).addClass("selected");
 		}
 	}
