@@ -57,6 +57,8 @@
             throw "the welcome screen already exists";
         }
         _welcomeCreated = true;
+        _screenJsUrl["#"] = p_jsUrl;
+        _screenContainer["#"] = $(document.body);
 
         if ( window.console && window.console.log ) {
             window.console.log("[iris] noCache[" + iris.noCache() + "] enableLog[" + iris.enableLog() + "]");
@@ -68,17 +70,15 @@
         if ( _paths.length > 0 ) {
             _load(_paths, _pathsLoaded);
         } else {
-            throw "set paths in iris.path object";
+            _pathsLoaded();
         }
-
-        _screenJsUrl["#"] = p_jsUrl;
-        _screenContainer["#"] = $(document.body);
-        
     }
 
     function _loadPaths (paths) {
         if ( typeof paths === "string" ) {
-            _paths.push(paths);
+            if ( !_includes.hasOwnProperty(paths) ) {
+                _paths.push(paths);
+            }
         } else {
             for ( var p in paths ) {
                 _loadPaths(paths[p]);
@@ -325,8 +325,12 @@
     // UI
     //
 
-    function _registerUI(f_ui, path) {
-        _includes[path] = f_ui;
+    function _registerTmpl(path, html) {
+        _includes[path] = html;
+    }
+
+    function _registerUI(ui, path) {
+        _includes[path] = ui;
     }
 
     function _instanceUI(p_$container, p_uiId, p_jsUrl, p_uiSettings, p_templateMode) {
@@ -876,6 +880,7 @@
     iris.welcome = _welcome;
     iris.navigate = _goto;
     iris.ui = _registerUI;
+    iris.tmpl = _registerTmpl;
 
     //
     // Classes

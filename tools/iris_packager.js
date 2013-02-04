@@ -1,123 +1,95 @@
-/*
+var fs = require('fs');
+var compressor = require('node-minify');
 
-Dependencies:
+var html = [];
+var js = [];
+var outputFile;
+var initJs;
 
-	npm install node-minify
+function init () {
+	var inputPath, outputPath;
 
-*/
+	process.argv.forEach(
+		function (val, index, array) {
+			var param;
 
-var fs = require('fs'),
-	compressor = require('node-minify'),
-	irisFilePath   = "",
-	irisOutputFile = "",
-	path = null,
-	promises = 0,
-	html = [],
-	js = [];
+			param = getParam("input=", val);
+			if ( param !== null ) {
+				inputPath = param;
+			}
 
+			param = getParam("output=", val);
+			if ( param !== null ) {
+				outputPath = param;
+			}
 
-process.argv.forEach(
-	function (val, index, array) {
-		var paramInput = "path=";
-		var paramOutput = "output=";
-		var idx;
-
-		idx = val.indexOf(paramInput);
-  		if ( idx>-1 ) {
-  			irisFilePath = val.substring( idx+paramInput.length );
-  		}
-
-		idx = val.indexOf(paramOutput);
-  		if ( idx>-1 ) {
-  			irisOutputFile = val.substring( idx+paramOutput.length );
-  		}
-	}
-);
-
-if ( !irisOutputFile ) {
-	console.error("you must specify the parameter output=./myoutputfile.js");
-}
-
-if ( !irisFilePath ) {
-	console.error("you must specify the parameter path=./mypathfile.js");
-}
-
-console.log("loading...", irisFilePath);
-
-fs.readFile(
-	irisFilePath
-	, "utf8"
-	, function(err, data) {
-    	if(err) { 
-    		console.error("not found valid json file in the path '" + irisFilePath + "'");
-    	}
-    	path = JSON.parse(data);
-    	searchTree(path);
-    	processPromises();
-	}
-);
-
-function searchTree(p_node){
-	for ( var name in p_node ) {
-		searchNode(p_node[name]);
-	}	
-}
-
-function searchNode(p_node){
-	if ( typeof p_node === "string" ) {
-		addPromise(p_node);
-	}
-	else if ( typeof p_node === "object" ) {
-		searchTree(p_node);
-	}
-}
-
-function checkPromises(){
-	if (  promises === html.length ) {
-		compressJs();
-	}
-}
-
-function processPromises(){
-	for ( var f=0, F=html.length;f<F; f++ ) {
-		html[f].call(f);
-	}
-}
-function addPromise(p_path){
-	if ( p_path.indexOf(".html") > -1 ) {
-		html.push( { path : p_path, content : "", call : callPromise } );
-	}
-	else {
-		js.push(p_path);
-	} 
-}
-
-function callPromise(p_idx){
-	fs.readFile(
-		html[p_idx].path
-		, "utf8"
-		, function(err, data) {
-	    	if(err) { 
-	    		console.error("error loading path");
-	    	}
-	    	html[p_idx].content    =  data.replace(/\n/g,"").replace(/\t/g, "");
-	    	html[p_idx].contentMin =  data;
-	    	promises++;
-	    	checkPromises();
+			param = getParam("init=", val);
+			if ( param !== null ) {
+				initJs = param;
+			}
 		}
 	);
+
+
+	if ( !inputPath ) {
+		throw "you must specify the parameter input=path/";
+	}
+
+	if ( !outputPath ) {
+		throw "you must specify the parameter output=path/";
+	}
+
+	if ( !initJs ) {
+		throw "you must specify the parameter init=file.js";
+	}
+
+	outputFile = outputPath + initJs;
+
+	js.push(initJs);
+	console.log("scanning '" + inputPath + "'...");
+	scanPath(inputPath);
+	generateOutput();
 }
 
-function compressJs () {
+function getParam (label, value) {
+	var idx = value.indexOf(label);
+	if ( idx > -1 ) {
+		return value.substring( idx + label.length );
+	}
+	return null;
+}
 
-	// Using Google Closure
+function scanPath (path) {
+	var filenames = fs.readdirSync(path);
+	var fullPath;
+	filenames.forEach(function(file) {
+		fullPath = path + file;
+		console.log("found '" + fullPath + "'...");
+
+	 	if ( file.substr(-5) == '.html' ) {
+	 		var content = fs.readFileSync(fullPath, "utf8").replace(/\n/g,"").replace(/\t/g, "");
+	 		html.push({path : fullPath, content : content});
+
+	 	} else if ( file.substr(-3) == '.js' ) {
+	 		js.push(fullPath)
+
+	 	} else {
+	 		scanPath(fullPath + "/");
+	 	}
+	});
+}
+
+
+function generateOutput () {
+
+	// Compress using Google Closure
 	new compressor.minify({
 	    type: 'gcc',
 	    fileIn: js,
-	    fileOut: irisOutputFile,
+	    fileOut: outputFile,
 	    callback: function(err){
 	    	if ( err ) {
-	        	console.error(err);
+	        	throw err;
 	    	} else {
 	    		concatTemplates();
 	    	}
@@ -138,15 +110,17 @@ function concatTemplates(){
 	}
 
 	fs.appendFile(
-		irisOutputFile,
+		outputFile,
 		content.join(""),
 		function(err) {
     		if(err) {
 	        	console.error(err);
 	    	} 
 	    	else {
-	    		console.log("the file was saved in " + irisOutputFile);
+	    		console.log("the file was saved in " + outputFile);
 	    	}
 		}
-	);
+	);	
 }
+
+init();
