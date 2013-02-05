@@ -128,13 +128,20 @@
                     })
                     .done(_templateLoaded);
                 } else {
-                    script= document.createElement('script');
-                    script.type= 'text/javascript';
-                    script.src= path;
+                    script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = path;
                     script.onload = _checkLoadFinish;
+                    script.onreadystatechange = onReadyStateChange;
                     _head.appendChild(script);
                 }
             }
+        }
+    }
+
+    function onReadyStateChange () {
+        if ( this.readyState === "complete" ) {
+            _checkLoadFinish();
         }
     }
 
