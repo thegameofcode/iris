@@ -18,25 +18,21 @@ function init () {
 			param = getParam("input=", val);
 			if ( param !== null ) {
 				inputPath = param;
-				console.log("inputPath=" + inputPath);
 			}
 
 			param = getParam("output=", val);
 			if ( param !== null ) {
 				outputPath = param;
-				console.log("outputPath=" + outputPath);
 			}
 
 			param = getParam("init=", val);
 			if ( param !== null ) {
 				initJs = param;
-				console.log("initJs=" + initJs);
 			}
 
 			param = getParam("base=", val);
 			if ( param !== null ) {
 				pathBase = param;
-				console.log("pathBase=" + pathBase);
 			}
 		}
 	);
@@ -44,14 +40,18 @@ function init () {
 
 	if ( !inputPath ) {
 		throw "you must specify the parameter input=path/";
+	} else {
+		inputPath = validatePath(inputPath);
 	}
 
 	if ( !outputPath ) {
 		throw "you must specify the parameter output=path/";
+	} else {
+		outputPath = validatePath(outputPath);
 	}
 
 	if ( !initJs ) {
-		throw "you must specify the parameter init=file.js";
+		throw "you must specify the parameter init=path/file.js";
 	}
 
 	outputFile = outputPath + initJs.match(/[^/]+\.js$/);
@@ -62,6 +62,13 @@ function init () {
 	console.log("scanning '" + initPath + "'...");
 	scanPath(initPath);
 	generateOutput();
+}
+
+function validatePath (path) {
+	if ( path.substr(-1) !== "/" ) {
+		path = path + "/";
+	}
+	return path;
 }
 
 function getParam (label, value) {
