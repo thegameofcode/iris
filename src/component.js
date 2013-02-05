@@ -140,7 +140,7 @@
     }
 
     function onReadyStateChange () {
-        if ( this.readyState === "complete" ) {
+        if ( this.readyState === "loaded" ) {
             _checkLoadFinish();
         }
     }
