@@ -180,8 +180,7 @@
 
                 if ( document.location.hash === navigationHash ) {
                     window.history.back(); // return to #, then +3 of canSleep, +3 sleep
-
-                } else if ( document.location.hash === "" ) {
+                } else if ( document.location.hash === "" || document.location.hash === "#" ) {
                     // +1
                     strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #/screen1,[awake] #/screen1,[create] #/screen1/screen1_1,[awake] #/screen1/screen1_1,[create] #/screen1/screen1_1/screen1_1_1,[awake] #/screen1/screen1_1/screen1_1_1,[canSleep] #/screen1/screen1_1/screen1_1_1,[canSleep] #/screen1/screen1_1,[canSleep] #/screen1,[sleep] #/screen1/screen1_1/screen1_1_1,[sleep] #/screen1/screen1_1,[sleep] #/screen1", "The navigation map is correct");
                     start();
