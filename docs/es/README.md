@@ -37,6 +37,7 @@
  * <a href="#locals">Utilizando locales y regionales</a><br>
  * <a href="#ajax">Llamadas Ajax y servicios REST</a><br>
  * <a href="#production">Paso a producción</a><br>
+ * <a href="#iris_packager">Utilizando *iris_packager.js*</a><br>
  * <a href="#unit_test">Pruebas de unidad en Iris</a><br>
 * <a href="#step_by_step">Construyendo paso a paso una aplicación desde cero</a><br>
  * <a href="#directories">Estructura de directorios</a><br>
@@ -213,6 +214,7 @@ En una aplicación real, el objeto *iris.path* puede llegar a ser muy grande y s
 
 Antes de instanciar el Screen de bienvenida, Iris procesará el objeto *iris.path* y cargará en memoria todos los ficheros asociados en él. Si los ficheros ya se hubieran precargado, porque se está utilizando una herramienta de *minificación*, Iris no volvería a cargar los ficheros. Puede consultar el apartado de <a href="#minificación">minificación</a> para una explicación más detallada.
 
+Si se utiliza la [herramienta de minificación](https://raw.github.com/iris-js/iris/iris-grunt/tools/iris_packager.js) que incorpora Iris, es importante que la varible *iris.path* se defina fuera de cualquier función, incluso *$(document).ready()* y *window.onload*.
 
 ##<a name="calling_welcome"></a>Llamando al Screen de bienvenida
 Desde Javascript, llamamos al método **welcome** de Iris para cargar el fichero de comportamiento del Screen de bienvenida.
@@ -2963,7 +2965,7 @@ iris.enableLog(server1, server2,...) //If no arguments are passed, returns the l
 //Or You can pass the servers that you want to use the Iris logging system.
 ```
 
-<a name="minification"></a>Iris ayuda a la **minificación** de la aplicación. Para reducir el número de ficheros que hay que descargar desde el servidor en una aplicación Iris, podemos *minificar* todos los ficheros *.js* en uno único con la herramienta que queramos (por ejemplo [Grunt](https://github.com/gruntjs/grunt)).
+<a name="minification"></a>Iris ayuda a la **minificación** de la aplicación. Para reducir el número de ficheros que hay que descargar desde el servidor en una aplicación Iris, podemos *minificar* todos los ficheros *.js* y *html*" en uno único utilizando cualquier con la herramienta que queramos (por ejemplo [Grunt](https://github.com/gruntjs/grunt)) o con la que se suministra con Iris ([iris_packager.js](https://raw.github.com/iris-js/iris/iris-grunt/tools/iris_packager.js)).
 
 El segundo parámetro que pasamos a las funciones *iris.screen*, *iris.ui* e *iris.resource* es el que permite a Iris evitar la descarga del fichero del componente y que utilice el archivo *minificado*. Iris buscará todas las rutas que contenga la variable *iris.path* y se descargará aquellos que no se encuentren en el fichero *minificado*.
 
@@ -3035,6 +3037,50 @@ iris.welcome("./welcome.js");
 ```
 
 > Al definir o crear componentes se debe indicar la ruta de acceso con el objeto *iris.path* en vez de usar literales de cadena, ya que así garantizamos una correspondencia exacta.
+
+##<a name="iris_packager"></a>Utilizando *iris_packager.js*
+
+Iris incluye una herramienta de *minificación* llamada [*iris_packager.js*](https://raw.github.com/iris-js/iris/iris-grunt/tools/iris_packager.js). Esta aplicación requiere tener instalado [node.js](http://nodejs.org/) y la dependencia *node-minify* (*npm install node-minify*). Para utilizarla hay que suministrar tres parámetros:
+
+- El directorio que contiene los archivos *html* y *js* que se quieren minificar.
+- El nombre de un directorio que no exista. *iris_packager* lo utilizará como directorio temporal y para generar el nombre del fichero *minificado* como se explica más adelante.
+- La ruta de acceso al fichero en el que se haya definido la variable *iris.path*. Es muy importante que esta variable, *iris.path*, se defina fuera de cualquier función, incluso *$(document).ready()* y *window.onload*.
+
+*iris_packager* *minificará* los ficheros *js* y *html* que encuentren en el directorio de origen y que, además, estén referenciados por la variable *iris.path*.
+
+Si, por ejemplo, los ficheros que queremos *minificar* estuvieran en el directorio *wwww/shopping*; el fichero que define la variable *iris.path* fuera *www/js/init.js* y quisiéramos que se creará un fichero llamado *www/shopping_packed_init.js*; estando en el directorio que contiene el fichero *iris_packager.js*, tendríamos que ejecutar el comando:
+
+<pre>
+node iris_packager.js www/shopping/ www/shopping_packed_ www/js/init.js
+</pre>
+
+Podemos crear un *script* que nos facilite la tarea:
+
+```
+#!/bin/bash
+# File packager.sh
+# $1 = source directory (contains html and js files)
+# $2 = destination directory
+# $3 = iris.path file definition
+rm -Rf $2
+mkdir $2
+node iris_packager.js input=$1 output=$2 init=$3
+rm -Rf $2
+```
+Tras ejecutar este *script*, obtendremos un fichero llamado *www/shopping_packed_init.js* que contendrá en este orden:
+
+1 El fichero *init.js* *minificado*
+2 Todos los ficheros *js* encontrados en *www/shopping*
+3 Llamadas al método *iris.tmpl* que contienen el contenido de los ficheros *html*.
+
+El método *iris.tmpl* recibe dos parámetros, la ruta de acceso al fichero *html* y su contenido.
+
+Tras realizar la minificación, debemos eliminar la referencia al archivo *init.js* de la página *html* de inicio y a cualquier otro fichero que hubiéramos *minificado* e incluir el archivo *minificado*:
+
+```html
+    <script type='text/javascript' src='./shopping_packedinit.js'></script>
+    <!--<script type='text/javascript' src='./js/init.js'></script>-->
+```
 
 ##<a name="unit_test"></a>Pruebas de unidad en Iris
 
