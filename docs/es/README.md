@@ -56,7 +56,7 @@
 
 [Iris](https://github.com/iris-js/iris) es un *framework* escrito en Javascript para construir el *front-end* de una aplicación Web que, aplicando distintas técnicas, permite que las aplicaciones sean eficientes, rápidas, estructuradas y modulares.
 
-Iris es completamente independiente de la tecnología que se utilice en el servidor; así, podemos utilizar Iris en aplicaciones basadas en Java, PHP, Python, GAE, .NET, Ruby, etc.
+Iris es completamente independiente de la tecnología que se utilice en el servidor; así, podemos utilizar Iris en aplicaciones basadas en Node.js, Python, Java, PHP, .NET, Ruby, etc.
 
 #<a name="features"></a>Características de Iris
 
@@ -64,8 +64,8 @@ Las principales características de Iris son:
 
 * Código libre ([licencia New BSD License](https://raw.github.com/iris-js/iris/iris-grunt/LICENSE-New-BSD)).
 * Ejecución 100% en cliente.
-* Ligero y rápido (<15 KB).
-* Independiente de servidor (Apache, Node.js, IIS, GAE, etc).
+* Ligero y rápido (<16 KB).
+* Independiente de servidor (Apache, IIS, Jetty, etc).
 * Estructura organizada de ficheros.
 * Independiente de navegador (Chrome, Firefox e Internet Explorer; basado en jQuery -1.5 o superior-)
 * Fuertemente enfocado a Aplicaciones Orientadas a Objetos.
@@ -77,7 +77,7 @@ Las principales características de Iris son:
 * Motor de plantillas sencillo y eficiente.
 * Soporte multiidioma y presentación regional de números, monedas, fechas, etc.
 * Soporte para el paso de desarrollo a producción.
-* Integrable y totalmente compatible con otros populares Frameworks como Backbone o BootStrap.
+* Integrable y totalmente compatible con otros populares Frameworks como Backbone, Knockout o BootStrap.
 * Bien documentado.
 
 #<a name="why"></a>¿Por qué Iris?
@@ -135,7 +135,7 @@ Cada **componente** permite definir los elementos que conforman la interfaz de u
 
 La **vista** consiste en un fragmento de código en HTML, típicamente un *DIV*, almacenado en un fichero, normalmente con extensión *.html*.
 
-El **controlador** es un fragmento de código en Javascript almacenado en un fichero, típicamente con extensión *.js*. Mediante ste fichero controlamos e interaccionamos con la vista. Cuando un componente se activa (<a href="#awake">ver más adelante</a>), puede recibir parámetros que permiten modificar su comportamiento.
+El **controlador** es un fragmento de código en Javascript almacenado en un fichero, típicamente con extensión *.js*. Mediante este fichero controlamos e interaccionamos con la vista. Cuando un componente se activa (<a href="#awake">ver más adelante</a>), puede recibir parámetros que permiten modificar su comportamiento.
 
 ![Definición de comportamiento](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/component_equation.png)
 
@@ -175,14 +175,14 @@ Podemos ver esto gráficamente:
 
 ![Ciclo de vida](https://raw.github.com/surtich/iris/iris-grunt/docs/images/iris_life_cycle.png)
 
-Los Screens tienen método callback adicional llamado **canSleep**. Este método será invocado por Iris antes de llamar al método *Sleep*. Si el método *canSleep* devuelve *false*, Iris no navegará al Screen deseado e interrumpirá la navegación evitando que se llame al evento *sleep*. Este evento es útil si, por ejemplo, no hemos completado un formulario y queremos advertir al usuario que debe hacerlo antes de navegar a otro Screen.
+Los Screens tienen un método adicional llamado **canSleep**. Este método será invocado por Iris antes de llamar al método *Sleep*. Si el método *canSleep* devuelve *false*, Iris no navegará al Screen deseado e interrumpirá la navegación evitando que se llame al evento *sleep*. Este evento es útil si, por ejemplo, no hemos completado un formulario y queremos advertir al usuario que debe hacerlo antes de navegar a otro Screen.
 
 ##<a name="welcome"></a>Screen de bienvenida
 
 Toda aplicación Iris debe definir un componente inicial que se cargará al principio y antes de efectuar cualquier operación con Iris. Este componente será un <a href="#screen">Screen</a> especial ya que tiene algunas diferencias con lo explicado anteriormente:
 * El Screen de bienvenida tiene el símbolo *#* como Hash-URL asociado y se carga con el método **welcome** de Iris.
 * En una aplicación Iris, normalmente, no habrá necesidad de refrescar o de modificar la *URL* sobre la que se carga el Screen de bienvenida.
-* Por lo tanto, tampoco será necesario llamar al método *destroy* de este Screen. Es decir, que el ciclo de vida de este Screen se simplifica ya que únicamente se hará una primera llamada al método *create* y nunca se llamará la  los métodos *sleep* o *destroy*. Puede haber, sin embargo, varias llamadas a *awake* cuando se pasan parámetros como se explica más adelante. 
+* Por lo tanto, tampoco será necesario llamar al método *destroy* de este Screen. Es decir, que el ciclo de vida de este Screen se simplifica ya que únicamente se hará una primera llamada al método *create* y nunca se llamará a los métodos *sleep* o *destroy*. Puede haber, sin embargo, varias llamadas a *awake* cuando se pasan parámetros como se explica más adelante. 
 * Lo habitual es que el cometido del Screen de bienvenida sea registrar otros Screens y *llamar* al Hash-URL del Screen inicial de nuestra aplicación.
 * Todos los demás Screens son hijos de este Screen y, por lo tanto, su Hash-URL tendrá la forma "#/...".
 
@@ -195,22 +195,22 @@ Aquí no se pretende crear una aplicación funcional, sino que se comprenda como
 Para hacer más sencilla la explicación, todo el código de esta sección se situará un el directorio raíz de la aplicación. No es conveniente hacer esto en una aplicación real. En la sección *<a href="#paso-a-paso">Construyendo paso a paso una aplicación desde cero</a>* se propone una estructura de directorios más adecuada para trabajar con Iris.
 
 ##<a name="installing"></a>Instalando Iris
-El primer paso será decidir si queremos trabajar con la versión de [desarrollo](https://raw.github.com/iris-js/iris/master/dist/iris.js) o de [producción](https://raw.github.com/iris-js/iris/master/dist/iris.min.js)<!-- TODO revisar enlaces y asociarlas a un fichero en HTML. -->
+El primer paso será decidir si queremos trabajar con la versión de [desarrollo](https://raw.github.com/iris-js/iris/master/dist/iris.js) o de [producción](https://raw.github.com/iris-js/iris/master/dist/iris.min.js) minificada.
 
 ```html
-<!-- In index.html -->
-<script src="jquery-min.js"></script> <!--Iris just depends on JQuery-->
-<script src="iris.js"></script> <!-- TODO Change URL -->
+<!-- index.html -->
+<script src="jquery-min.js"></script> <!-- jQuery 1.5+ -->
+<script src="iris.js"></script>
 ```
 Nota: Las aplicaciones de Iris deben estar situadas en un servidor Web.
 
 ##<a name="iris_path"></a>Objeto *iris.path*
 
-Iris requiere que se defina un objeto llamado *iris.path*. Debemos asociar (*mapear*) sus atributos a las URLs de acceso a los componentes que vayamos a utilizar. Obligatoriamente, tenemos que definir los controladores (ficheros de Javascript) de todos los componentes (*screens* y *uis*) y opcionalmente podemos también incluir también sus vistas. También es obligatorio definir los archivos de recursos o servicios de red.
+Iris requiere que se defina un objeto llamado *iris.path*. Debemos asociar (*mapear*) sus atributos a las URLs de acceso a los componentes que vayamos a utilizar. Se tienen que definir los ficheros js y html de todos los componentes (*screens* y *uis*). También es obligatorio definir los archivos de recursos o servicios de red (resources).
 
-Puede estructurar el objeto *iris.path* como mejor le convenga: separando *screens* de *uis*, por módulos, con un sólo nivel o con varios, lo único realmente importante es que, todos los controladores tengan un atributo en el objeto *iris.path* que sea de tipo *string* y que contenga la ruta de acceso al fichero *javascript* del componente.
+Puede estructurar el objeto *iris.path* como mejor le convenga: separando *screens* de *uis*, por módulos, con un sólo nivel o con varios, lo único realmente importante es que, todos los controladores tengan un atributo en el objeto *iris.path* que sea de tipo *string* y que contenga la ruta de acceso al fichero.
 
-En una aplicación real, el objeto *iris.path* puede llegar a ser muy grande y será conveniente que lo sitúe en un fichero independiente.
+En una aplicación real, el objeto *iris.path* puede llegar a ser muy grande y será conveniente que lo sitúe en el script de inicio de la aplicación. Este script es el único que se incluye en la página, en él se define *iris.path*, se suscribe al evento ready de la página para ejecutar `iris.welcome` que inicia la aplicación.
 
 Antes de instanciar el Screen de bienvenida, Iris procesará el objeto *iris.path* y cargará en memoria todos los ficheros asociados en él. Si los ficheros ya se hubieran precargado, porque se está utilizando una herramienta de *minificación*, Iris no volvería a cargar los ficheros. Puede consultar el apartado de <a href="#minificación">minificación</a> para una explicación más detallada.
 
@@ -220,12 +220,14 @@ Si se utiliza la [herramienta de minificación](https://raw.github.com/iris-js/i
 Desde Javascript, llamamos al método **welcome** de Iris para cargar el fichero de comportamiento del Screen de bienvenida.
 
 ```js
+//Mandatory: It maps application URLs to iris.path object
+iris.path = {
+    welcome: {js: "welcome.js", html: "welcome.html"}
+};
+
 //In any Javascrit file or in a "<script>" section of an HTML file ... 
 $(document).ready(
     function () {
-        iris.path = {
-            welcome: {js: "welcome.js", html: "welcome.html"}
-        }; //Mandatory: It maps application URLs to iris.path object
         iris.baseUri("./"); //Optional: It sets de base directory of the application
         iris.welcome(iris.path.welcome.js); //It loads the behavior file of the welcome Screen
     }
@@ -290,7 +292,7 @@ Por ejemplo:
 </div>
 ```
 
-Nota: Para que Iris funciona correctamente, debe situar los archivos anteriores en un servidor Web (Apache, Node.js, GAE, etc).
+Nota: Para que Iris funcione correctamente, debe situar los archivos anteriores en un servidor Web (Apache, Jetty, IIS, etc).
 
 Tras ejecutarse los métodos *create* y *awake* se generará y visualizará el DOM siguiente:
 
@@ -321,8 +323,8 @@ iris.path = {
 };
 ```
 
+*home.js*:
 ```js
-//In home.js
 iris.screen(
     function (self) {
         self.create = function () {   
@@ -480,7 +482,6 @@ Los ficheros asociados serán los habituales:
 *help.js*:
 
 ```js
-//In help.js
 iris.screen(
     function (self) {
         self.create = function () {   
@@ -994,16 +995,17 @@ iris.path = {
 En *inner_ui.js*:
 
 ```js
-//In inner_ui.js
 iris.ui(
     function (self) {
         self.create = function () {
             console.log("inner_ui UI Created");
             self.tmpl(iris.path.inner_ui.html);
         };
+
         self.awake = function () {   
             console.log("inner_ui UI Awakened");
         };
+
         self.sleep = function () {
             console.log("inner_ui UI Asleep");
         };
@@ -2840,8 +2842,9 @@ En primer lugar, creamos el fichero *test.json* con el siguiente contenido:
 
 ```json
 {
-   "id" : 1,
-   "title" : "book title"
+   "id" : 1015,
+   "title" : "book title",
+   "author" : { "name" : "Jonh Doe" }
 }
 ```
 
@@ -2853,7 +2856,8 @@ En *welcome.html*:
 <div>
     <h1>Welcome Screen</h1>
     <p>This is the initial screen.</p>
-    <div data-id="json_container"/>
+    <div data-model="title"></div>
+    <div data-model="author.name"></div>
 </div>
 ```
 
@@ -2867,10 +2871,12 @@ iris.screen(
    
             self.tmpl(iris.path.welcome.html);
    
-            iris.resource(iris.path.resource.js).load("test.json", function (json) {
-                self.get("json_container").html(json.title);
-            }, function (p_request, p_textStatus, p_errorThrown) {
-                console.log("Error callback unexpected: " + p_errorThrown);
+            iris.resource(iris.path.resource.js).load(1015)
+            .done(function (json) {
+                self.inflate(json);
+            })
+            .fail( function (request, textStatus, errorThrown) {
+                console.log("Error on book load");
             });   
         };
     },
@@ -2883,22 +2889,20 @@ En *resource.js*:
 ```js
 iris.resource(function(self){
 
-    //self.settings({path : "http://localhost:8080/"});
-
-    self.load = function (id, success, error) {
-      self.get("./" + id, success, error);
+    self.load = function (id) {
+      return self.get("service/book/" + id);
     };
 
-    self.create = function (params, success, error) {
-      self.post("echo/create", params, success, error);
+    self.create = function (params) {
+      return self.post("service/book", params);
     };
 
-    self.update = function (id, params, success, error) {
-      self.put("echo/put/" + id, params, success, error);
+    self.update = function (id, params) {
+      return self.put("service/book/" + id, params);
     };
 
-    self.remove = function (id, success, error) {
-      self.del("echo/delete/" + id, success, error);
+    self.remove = function (id) {
+      return self.del("service/book/" + id);
     };
 
 }, iris.path.resource.js);
@@ -2916,20 +2920,20 @@ iris.path = {
 
 Observe que hemos creado un fichero *resource.js* donde se llama al método *iris.resource*. Este método crea un objeto de tipo *Resource* que se retorna en la función pasada como argumento y que dispone de distintos métodos (*get*, *pos*, *put* y *del*) para acceder a servicios REST y pueden recibir una función de éxito o de error en la que se procesará la respuesta obtenida.
 
-Desde el Screen *Welcome*, hemos llamado al mismo método anterior, *iris.resource*, pero en este caso pasándole un *string* que se corresponde con la ruta de acceso al fichero y que nos permite invocar los métodos definidos en él. En nuestro ejemplo hemos llamado al método *load* pasándole la ruta de acceso al fichero *JSON* que queremos recuperar.
+Desde el Screen *Welcome*, hemos llamado al mismo método anterior, *iris.resource*, pero en este caso pasándole un *string* que se corresponde con la ruta de acceso al fichero y que nos permite invocar los métodos definidos en él. En nuestro ejemplo hemos llamado al método *load* pasándole el identificador del libro que queremos recuperar.
 
 Iris facilita el trabajo con errores genéricos de tal forma que podemos tratar todos los errores de un determinado tipo sin tener que especificar la misma función en cada llamada a un servicio. Iris notificará cualquier error en un servicio a la función que se haya registrado en el evento iris.RESOURCE_ERROR.
 
 Por ejemplo, para hacer esto haríamos:
 
 ```js
-iris.on(iris.RESOURCE_ERROR, fn_generic_resource_error);
+iris.on(iris.RESOURCE_ERROR, onResourceError);
 ```
 
 Esta función recibirá tres parámetros que nos permitirán saber de qué error se trata:
 
 ```js
-function fn_generic_resource_error (request, status, error) {
+function onResourceError (request, textStatus, errorThrown) {
 	....
 }
 ```
@@ -2995,7 +2999,7 @@ iris.path = {
 ```
 Iris cargará todos los ficheros contenidos en *iris.path* antes de utilizar ningún componente.
 
-Observe que el método *iris.screen* recibe dos parámetros, la función del ciclo de vida y una cadena de texto que indica dónde se encuentra el fichero. Este parámetro tiene que coincidir exactamente con el parámetro que se pasa al método *iris.welcome*.
+Observe que el método *iris.screen* recibe dos parámetros, la función que define al *screen* y una cadena de texto que indica dónde se encuentra el fichero. Este parámetro tiene que coincidir exactamente con el parámetro que se pasa al método *iris.welcome*.
 
 Igualmente, en los UIs debemos definir el *UI* con el parámetro adicional que permite a Iris localizarlo. Por ejemplo, si el *UI* *my_ui* está en el directorio raíz:
 
