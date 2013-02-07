@@ -46,20 +46,22 @@ $(document).ready(
 </script>
 ```
 ## Documentation
- * Spanish: Take a look at the [documentation table of contents][docs/es] for all the things.
- * English: _(Coming soon)_
+ * Take a look at the [documentation table of contents](docs) for all the things.
+ * Iris guide: [Spanish](docs/es), English __(Coming soon)__
 
 ## Examples
- * [Basic][examples/basic] explains how to do basic operations with iris.
- * [Todo-list][examples/todo-list]  is a port of the famous backbone todos example app.
- * [Shopping-list][examples/shopping-list] a completed sample application to manage the shopping list.
-
 You simply can run the tests doing `grunt test`, then open `http://localhost:8080/examples/index.html` in your browser.
+
+ * [Basic](examples/basic) explains how to do basic operations with iris.
+ * [Todo-list](examples/todo-list)  is a port of the famous backbone todos example app.
+ * [Shopping-list](examples/shopping-list) a completed sample application to manage the shopping list.
+
+
 
 ## License
 Copyright (c) 2013 Iris
-Licensed under the New-BSD license.
-<https://github.com/iris-js/iris/blob/master/LICENSE-New-BSD>
+
+Licensed under the New-BSD license: <https://github.com/iris-js/iris/blob/master/LICENSE-New-BSD>
 
 [issues]: /iris-js/iris/issues
 [docs]: /iris-js/iris/blob/master/docs/toc.md

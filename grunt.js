@@ -52,12 +52,7 @@ module.exports = function(grunt) {
         iris: true,
         $: true
       }
-    },
-    uglify: {}/*,
-    server: {
-      port: 8080,
-      base: '.'
-    }*/
+    }
   });
 
   grunt.registerTask('server', 'Start a custom echo web server', function() {
