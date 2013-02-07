@@ -28,8 +28,9 @@ iris.path = {
 
 $(document).ready(
     function () {
+        iris.translations("es-ES", "./app/lang/es-es.js");
 
-        iris.translations("es-ES", "lang/es-es.js");
+        iris.baseUri("./");
         
         
         iris.locale(

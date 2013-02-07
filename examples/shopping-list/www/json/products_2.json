@@ -1,0 +1,11 @@
+[
+    {"idProduct":8,"nameProduct":"Apples","category":2},
+    {"idProduct":9,"nameProduct":"Bananas","category":2},
+    {"idProduct":10,"nameProduct":"Grapes","category":2},
+    {"idProduct":11,"nameProduct":"Kiwis","category":2},
+    {"idProduct":12,"nameProduct":"Lemons","category":2},
+    {"idProduct":13,"nameProduct":"Melon","category":2},
+    {"idProduct":14,"nameProduct":"Oranges","category":2},
+    {"idProduct":15,"nameProduct":"Peaches","category":2},
+    {"idProduct":16,"nameProduct":"Plums","category":2}
+]

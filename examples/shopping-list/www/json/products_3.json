@@ -1,0 +1,8 @@
+[
+    {"idProduct":18,"nameProduct":"Bacon","category":3},
+    {"idProduct":19,"nameProduct":"Beef","category":3},
+    {"idProduct":20,"nameProduct":"Chicken","category":3},
+    {"idProduct":21,"nameProduct":"Turkey","category":3},
+    {"idProduct":22,"nameProduct":"Pork","category":3},
+    {"idProduct":23,"nameProduct":"Hot dogs","category":3}
+]
