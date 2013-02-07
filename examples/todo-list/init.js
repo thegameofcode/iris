@@ -8,7 +8,6 @@ iris.path = {
 
 $(document).ready(
     function () {
-        iris.baseUri(".");
         iris.welcome(iris.path.welcome);
     }
 );
