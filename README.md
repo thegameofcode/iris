@@ -46,8 +46,8 @@ $(document).ready(
 </script>
 ```
 ## Documentation
- * Take a look at the [documentation table of contents](docs) for all the things.
- * Iris guide: [Spanish](docs/es), English __(Coming soon)__
+ * Take a look at the [documentation table of contents](docs/toc.md) for all the things.
+ * Iris guide: [Spanish](docs/es/README.md), English __(Coming soon)__
 
 ## Examples
 You simply can run the tests doing `grunt test`, then open `http://localhost:8080/examples/index.html` in your browser.
@@ -64,4 +64,3 @@ Copyright (c) 2013 Iris
 Licensed under the New-BSD license: <https://github.com/iris-js/iris/blob/master/LICENSE-New-BSD>
 
 [issues]: /iris-js/iris/issues
-[docs]: /iris-js/iris/blob/master/docs/toc.md

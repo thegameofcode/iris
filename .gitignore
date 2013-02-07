@@ -9,3 +9,5 @@ iris-example/.settings/org.eclipse.jdt.core.prefs
 
 *.prefs
 
+node_modules/*
+examples/todo-list/packed/*
