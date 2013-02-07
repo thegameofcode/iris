@@ -1,42 +1,42 @@
 iris.path = {
     screen: {
         welcome: {
-            js: "/shopping/screen/welcome.js", 
-            html: "/shopping/screen/welcome.html"
+            js: "shopping/screen/welcome.js", 
+            html: "shopping/screen/welcome.html"
         },
         home: {
-            js: "/shopping/screen/home.js", 
-            html: "/shopping/screen/home.html"
+            js: "shopping/screen/home.js", 
+            html: "shopping/screen/home.html"
         },
         categories: {
-            js: "/shopping/screen/products/categories.js", 
-            html: "/shopping/screen/products/categories.html"
+            js: "shopping/screen/products/categories.js", 
+            html: "shopping/screen/products/categories.html"
         },
         products: {
-            js: "/shopping/screen/products/products.js", 
-            html: "/shopping/screen/products/products.html"
+            js: "shopping/screen/products/products.js", 
+            html: "shopping/screen/products/products.html"
         },
         shopping: {
-            js: "/shopping/screen/list/shopping.js", 
-            html: "/shopping/screen/list/shopping.html"
+            js: "shopping/screen/list/shopping.js", 
+            html: "shopping/screen/list/shopping.html"
         }
     },
     ui: {
         category_list_item: {
-            js: "/shopping/ui/products/category_list_item.js", 
-            html: "/shopping/ui/products/category_list_item.html"
+            js: "shopping/ui/products/category_list_item.js", 
+            html: "shopping/ui/products/category_list_item.html"
         },
         product_list_item: {
-            js: "/shopping/ui/products/product_list_item.js", 
-            html: "/shopping/ui/products/product_list_item.html"
+            js: "shopping/ui/products/product_list_item.js", 
+            html: "shopping/ui/products/product_list_item.html"
         },
         product_shopping_list_item: {
-            js: "/shopping/ui/list/product_shopping_list_item.js", 
-            html: "/shopping/ui/list/product_shopping_list_item.html"
+            js: "shopping/ui/list/product_shopping_list_item.js", 
+            html: "shopping/ui/list/product_shopping_list_item.html"
         }
     },
     resource: {
-        js: "/shopping/resource.js"  
+        js: "shopping/resource.js"  
     }
 };
 
@@ -110,9 +110,8 @@ $(document).ready(
 
         _setLang();
         
-        
-        iris.baseUri(".");
-        iris.enableLog("localhost");
+        iris.baseUri("./");
+
         iris.welcome(iris.path.screen.welcome.js);
     }
     );

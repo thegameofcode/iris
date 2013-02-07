@@ -428,7 +428,7 @@
             // if url=http://example.com/#, the document.location.hash="" empty string
             // check if current screen is welcome screen (hash !== "")
             // check if the current hash belongs to the path to delete
-            if ( && hash !== "#" && hash !== "" && (p_screenPath.indexOf(hash) === 0 || hash.indexOf(p_screenPath) === 0) ) {
+            if ( hash !== "#" && hash !== "" && (p_screenPath.indexOf(hash) === 0 || hash.indexOf(p_screenPath) === 0) ) {
                 throw "Cannot delete the current screen or its parents";
             }
 

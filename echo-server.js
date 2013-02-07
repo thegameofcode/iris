@@ -79,7 +79,10 @@ require('http').createServer(function (request, response) {
 
     var pathname = url.parse(request.url).pathname;
     if ( !pathname || pathname=="/" || pathname.length<3) {
-      pathname = "test/iris.html";
+      response.writeHead(302, {
+        'Location': "test/iris.html"
+      });
+      response.end();
     }
     var ext = pathname.lastIndexOf(".")>-1 ? pathname.substring( pathname.lastIndexOf(".") ) : "";
 
