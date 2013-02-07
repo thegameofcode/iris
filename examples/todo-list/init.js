@@ -8,7 +8,7 @@ iris.path = {
 
 $(document).ready(
     function () {
-        iris.baseUri(iris.baseUri() + "examples/todo-list/");
+        iris.baseUri(".");
         iris.welcome(iris.path.welcome);
     }
 );

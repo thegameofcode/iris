@@ -29,7 +29,7 @@ iris.path = {
 $(document).ready(
     function () {
 
-        iris.baseUri(iris.baseUri() + "examples/basic/app/");
+        iris.baseUri(".");
         iris.translations("es-ES", "lang/es-es.js");
         
         
