@@ -25,39 +25,34 @@
 
     function _loadTranslations(p_locale, p_uri, p_settings) {
         
-        if (p_uri.indexOf("http") !== 0) {
-            p_uri = iris.baseUri() + p_uri;
-        }
-        
         iris.log("[translations]", p_locale, p_uri);
 
         var ajaxSettings = {
             url: p_uri,
             dataType: "json",
             async: false,
-            cache: iris.cache(),
-            success: function _loadTranslationsSuccess(p_data) {
-                _addTranslations(p_locale, p_data);
-                iris.log("[translations]", p_data);
-
-                if(p_settings && p_settings.hasOwnProperty("success")) {
-                    p_settings.success(p_locale);
-                }
-            },
-            error: function(p_err) {
-                if(p_settings && p_settings.hasOwnProperty("error")) {
-                    p_settings.error(p_locale);
-                }
-                throw "Error " + p_err.status + " loading lang file[" + p_uri + "]";
-            }
+            cache: iris.cache()
         };
-
 
         if(iris.cache() && iris.cacheVersion()) {
             ajaxSettings.data = "_=" + iris.cacheVersion();
         }
 
-        iris.ajax(ajaxSettings);
+        iris.ajax(ajaxSettings)
+        .done(function (p_data) {
+            _addTranslations(p_locale, p_data);
+            iris.log("[translations]", p_data);
+
+            if(p_settings && p_settings.hasOwnProperty("success")) {
+                p_settings.success(p_locale);
+            }
+        })
+        .fail(function(p_err) {
+            if(p_settings && p_settings.hasOwnProperty("error")) {
+                p_settings.error(p_locale);
+            }
+            throw "Error " + p_err.status + " loading lang file[" + p_uri + "]";
+        });
     }
 
 
