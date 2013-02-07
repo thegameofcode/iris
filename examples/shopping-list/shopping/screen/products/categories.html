@@ -1,0 +1,13 @@
+<div class="accordion" id="accordion_categories" data-id="list_categories" data-bind="foreach: categories">
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion_categories" href="#" data-bind="attr: { href:'#collapse_category_' + $data.idCategory }, text: $data.nameCategory">
+                nameCategory
+            </a>
+
+        </div>
+        <div id="collapse_category" data-id="list_products" class="accordion-body collapse" data-bind="attr: { id:'collapse_category_' + $data.idCategory }">
+            
+        </div>
+    </div>    
+</div>

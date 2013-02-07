@@ -1,0 +1,18 @@
+<div class="container" data-id="div_shopping">
+    <div data-bind="visible: getShoppingProducts().length == 0">@@SHOPPING_LIST.EMPTY@@</div>
+    <div  data-bind="visible: getShoppingProducts().length > 0" style="display:none">
+        <div class="control-group">  
+            <form class="well">
+                <button type="button" class="btn btn-danger" data-id="btn_remove_all" data-bind="click: removeAll, enable: getShoppingProducts().length > 0"><i class="icon-trash icon-white"></i>@@SHOPPING_LIST.REMOVE_ALL@@</button>
+                <button type="button" class="btn btn-success" data-id="btn_check_all" data-bind="click: checkAll, enable: hasNoPurchasedProducts()"><i class="icon-shopping-cart icon-white"></i>@@SHOPPING_LIST.CHECK_ALL@@</button>
+                <button type="button" class="btn btn-info" data-id="btn_uncheck_all" data-bind="click: uncheckAll, enable: hasPurchasedProducts()"><i class="icon-shopping-cart-remove"></i>@@SHOPPING_LIST.UNCHECK_ALL@@</button>
+                <button type="button" class="btn btn-primary" data-id="btn_invert_check" data-bind="click: invertCheck, enable: getShoppingProducts().length > 0"><i class="icon-shopping-cart-invert"></i>@@SHOPPING_LIST.INVERT_ALL@@</button>
+                <button type="button" class="btn btn-warning" data-id="btn_remove_checked" data-bind="click: removePurchased, enable: hasPurchasedProducts()"><i class="icon-shopping-cart-remove-checked"></i>@@SHOPPING_LIST.REMOVE_PURCHASED@@</button>
+            </form>
+        </div>
+        <div data-id="shoppingList_products">
+
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,9 @@
+<div class="accordion-inner" data-bind="foreach: $root.products">
+    <!-- ko if: $data.category == $parent.idCategory -->
+        <label class="checkbox">
+            <input type="checkbox" data-bind="attr: { 'data-product':$data.idProduct }, click: function (data, event) {return $root.shoppingList.addOrRemoveShoppingProduct(data, event.target.checked);}, checked: $root.shoppingList.getShoppingProduct($data.idProduct) !== null">
+            <!--ko text: $data.nameProduct--><!--/ko-->
+        </label> 
+    <!-- /ko -->
+
+</div>
