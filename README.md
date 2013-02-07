@@ -2,17 +2,16 @@
 
 Iris is not only another framework.
 
-Iris provides different client-side optimization techniques for front construction. It is independent and compatible with any server-side technology: JAVA, PHP, Python, GOOGLE APP ENGINE, .NET...
+Iris provides different client-side optimization techniques for front construction. It is independent and compatible with any server-side technology: Node.js, Java, PHP, Python, Google App Engine, .NET...
 Iris is not only another framework. It is a methodology that will help you to build structured and organized Web applications:
 
 * Strong object oriented coding and file system organization
 * Presenter-View-Resource pattern
 * Easy and fast templating engine
-* Load resources on demand and self-controlled dependencies
 * One page navigation using Hash-URL
 * 100% Client multilanguage support
-* Crossbrowser: Chrome, Firefox e Internet Explorer
-* Light and fast: 14 KB
+* Crossbrowser: Chrome, Firefox & Internet Explorer
+* Light and fast: 16 KB
 * Open source: New BSD License
 
 _Remmeber that you can [make suggestions][issues] or [report bugs][issues]!_
@@ -29,22 +28,36 @@ In your web page:
 <script src="jquery.js"></script>
 <script src="dist/iris.min.js"></script>
 <script>
+
+// register iris components
+//   - welcome.js are the initial screen and welcome.html its template
+iris.path = {
+	welcome : { js : "welcome.js", html : "welcome.html" }
+};
+
 $(document).ready(
 	function () {
-		iris.welcome("welcome.js");
+
+		// initialize application
+		iris.welcome( iris.path.welcome.js );
 	}
 );
+
 </script>
 ```
-
 ## Documentation
-Take a look at the [documentation table of contents][docs] for all the things.
+ * Spanish: Take a look at the [documentation table of contents][docs/es] for all the things.
+ * English: _(Coming soon)_
 
 ## Examples
-_(Coming soon)_
+ * [Basic][examples/basic] explains how to do basic operations with iris.
+ * [Todo-list][examples/todo-list]  is a port of the famous backbone todos example app.
+ * [Shopping-list][examples/shopping-list] a completed sample application to manage the shopping list.
+
+You simply can run the tests doing `grunt test`, then open `http://localhost:8080/examples/index.html` in your browser.
 
 ## License
-Copyright (c) 2012 Iris
+Copyright (c) 2013 Iris
 Licensed under the New-BSD license.
 <https://github.com/iris-js/iris/blob/master/LICENSE-New-BSD>
 

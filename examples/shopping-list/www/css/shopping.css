@@ -1,0 +1,53 @@
+.icon-shopping-cart-remove {
+    background-image: url("../img/icon-shopping-cart-remove.png");
+    background-position: center center;
+}
+
+.icon-shopping-cart-invert {
+    background-image: url("../img/icon-shopping-cart-invert.png");
+    background-position: center center;
+}
+
+.icon-shopping-cart-remove-checked {
+    background-image: url("../img/icon-shopping-cart-remove-checked.png");
+    background-position: center center;
+}
+
+.icon-spain-flag {
+    background-image: url("../img/icon-spain.png");
+    background-position: center center;
+    width: 24px;
+    height: 24px;
+}
+
+.icon-united-kingdom-flag {
+    background-image: url("../img/icon-united-kingdom.png");
+    background-position: center center;
+    width: 24px;
+    height: 24px;
+}
+
+
+.purchased {
+    text-decoration:line-through;
+}
+
+.loading {
+    cursor: wait;
+    display: none;
+    z-index: 999;
+}
+
+.divElement {    
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;    
+}
+
+.divContainer {
+    width: 100%;
+    height: 500px;
+    position: relative
+}

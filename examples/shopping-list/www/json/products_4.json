@@ -1,0 +1,10 @@
+[
+    {"idProduct":25,"nameProduct":"Catfish","category":4},
+    {"idProduct":26,"nameProduct":"Crab","category":4},
+    {"idProduct":27,"nameProduct":"Lobster","category":4},
+    {"idProduct":28,"nameProduct":"Mussels","category":4},
+    {"idProduct":29,"nameProduct":"Oysters","category":4},
+    {"idProduct":30,"nameProduct":"Salmon","category":4},
+    {"idProduct":31,"nameProduct":"Tilapia","category":4},
+    {"idProduct":32,"nameProduct":"Tuna","category":4}
+]

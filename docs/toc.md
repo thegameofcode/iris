@@ -9,7 +9,6 @@
 * [The iris API](api.md) - Complete API documentation here!
 * [FAQ](faq.md) - Frequently asked questions, along with their answers.
 * [Iris Life Cycle](lifecycle.md) - Iris lifecycle.
-* _(more documentation coming soon)_
 
 ## Development
 
