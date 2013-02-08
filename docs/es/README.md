@@ -221,7 +221,7 @@ El objeto *iris.path* debe situarse en el *script* de inicio de la aplicación y
 
 Antes de instanciar el Screen de bienvenida, Iris procesará el objeto *iris.path* y cargará en memoria todos los ficheros asociados en él. Si los ficheros ya se hubieran precargado, porque se está utilizando una herramienta de *minificación*, Iris no volvería a cargar los ficheros. Puede consultar el apartado de <a href="#minificación">minificación</a> para una explicación más detallada.
 
-Si se utiliza la [herramienta de minificación](https://raw.github.com/iris-js/iris/master/tools/iris_packager.js) que incorpora Iris, es importante que la varible *iris.path* se defina fuera de cualquier función, incluso *$(document).ready()* y *window.onload*.
+Si se utiliza la [herramienta de minificación](https://raw.github.com/iris-js/iris/master/tools/iris_packager.js) que incorpora Iris, es importante que la variable *iris.path* se defina fuera de cualquier función, incluso *$(document).ready()* y *window.onload*.
 
 ##<a name="calling_welcome"></a>Llamando al Screen de bienvenida
 Desde Javascript, llamamos al método **welcome** de Iris para cargar el fichero de comportamiento del Screen de bienvenida.
@@ -399,7 +399,7 @@ Por ejemplo, en nuestro caso registramos el Screen *Home* que pertecene al Scree
 
 > Un Screen puede llamar al método *screens* una única vez.
 
-En nuestro ejemplo, para *navegar* al Screen debemos pulsar sobre el enlace que hemos añadido en *welcome.html* y que contine el Hash-URL del Screen al que queremos ir.
+En nuestro ejemplo, para *navegar* al Screen debemos pulsar sobre el enlace que hemos añadido en *welcome.html* y que contiene el Hash-URL del Screen al que queremos ir.
 
 > Para navegar a un Screen ponemos la ruta **absoluta** de acceso al Screen.
 
@@ -1905,7 +1905,7 @@ iris.ui(
   
         self.awake = function () {  
             console.log("my_ui UI Awakened");
-            self.get("ui_number").text("This is the " + self.setting("ui_number") + " muyUI UI.");
+            self.get("ui_number").text("This is the " + self.setting("ui_number") + " muy_ui UI.");
         };
     },
     iris.path.my_ui.js
@@ -2372,7 +2372,7 @@ Observe que con el método *self.on* nos suscribimos al evento *text_changed*. C
 
 Observe que los tres *UIs* se actualizan de forma desacoplada con el valor que haya en la caja de texto.
 
-El método *self.off* nos permite eleiminar la suscripción a un evento.
+El método *self.off* nos permite eliminar la suscripción a un evento.
 
 Veamos, ahora, un ejemplo sencillo de eventos globales que consiste en contar cuantos UIs de tipo my_ui se han creado:
 
@@ -2932,7 +2932,7 @@ Y Year, 4 digits. '1999'
 
 ##<a name="data-format"></a>Formateando con *data-format*
 
-Los formatos aplicados en la sección anterior no se pueden cambiar una vez que se hayan fijado. El atributo *data-format* permite modficiar al formato de la misma forma que lo hacíamos con *data-model*, es decir, llamando al método *self.inflate* del componente.
+Los formatos aplicados en la sección anterior no se pueden cambiar una vez que se hayan fijado. El atributo *data-format* permite modificar al formato de la misma forma que lo hacíamos con *data-model*, es decir, llamando al método *self.inflate* del componente.
 
 Por ejemplo, si en el método *create* de *welcome.js*, tuviéramos:
 
@@ -3206,7 +3206,7 @@ Tras ejecutar este *script*, obtendremos un fichero llamado *www/shopping/init.j
 
 El método *iris.tmpl* recibe dos parámetros, la ruta de acceso al fichero *html* y su contenido.
 
-Tras realizar la minificación, debemos asegurar que el directorio donde hemos almacenado el archivo *minificado*, contine el resto de archivos que necesita la aplicación: librerías, ficheros de configuración, ficheros de estilo, *index.html*, etc.
+Tras realizar la minificación, debemos asegurar que el directorio donde hemos almacenado el archivo *minificado*, contiene el resto de archivos que necesita la aplicación: librerías, ficheros de configuración, ficheros de estilo, *index.html*, etc.
 
 ##<a name="unit_test"></a>Pruebas de unidad en Iris
 
