@@ -3,7 +3,7 @@
 * <a href="#features">Características de Iris</a><br>
 * <a href="#why">¿Por qué Iris?</a><br>
 * <a href="#how_it_works">¿Cómo funciona Iris?</a><br>
- * <a href="#components">Componentes</a><br>
+ * <a href="#RVP">Resource-View-Presenter</a><br>
  * <a href="#screens_UIs">Screens y UIs</a></br>
  * <a href="#life_cycle">Ciclo de vida de un componente</a></br>
  * <a href="#welcome">Screen de bienvenida</a><br>
@@ -30,11 +30,12 @@
  * <a href="#data-settings">Paso de parámetros utilizando atributos *data-*</a><br>
  * <a href="#settings_ui">Paso de parámetros con el método *self.ui*</a><br>
  * <a href="#settings_priority">Prioridad en el paso de parámetros</a><br>
- * <a href="#tmpl_settings">Paso de parámetros a la vista con el método *tmpl*</a><br>
- * <a href="#data-model">Paso de parámetros a la vista con el atributo *data-model*</a><br>
+ * <a href="#tmpl_settings">Paso de parámetros al *template* con el método *tmpl*</a><br>
+ * <a href="#data-model">Paso de parámetros al *template* con el atributo *data-model*</a><br>
  * <a href="#events">Trabajando con eventos</a><br>
- * <a href="#events_globals">Eventos globales</a><br>
+ * <a href="#events_globals">Eventos predefinidos</a><br>
  * <a href="#locals">Utilizando locales y regionales</a><br>
+ * <a href="#data-format">Formateando con *data-format*</a><br>
  * <a href="#ajax">Llamadas Ajax y servicios REST</a><br>
  * <a href="#production">Paso a producción</a><br>
  * <a href="#iris_packager">Utilizando *iris_packager.js*</a><br>
@@ -54,7 +55,7 @@
 
 #<a name="what_is_it"></a>¿Qué es Iris?
 
-[Iris](https://github.com/iris-js/iris) es un *framework* escrito en Javascript para construir el *front-end* de una aplicación Web que, aplicando distintas técnicas, permite que las aplicaciones sean eficientes, rápidas, estructuradas y modulares.
+[Iris](http://iris-js.github.com/iris/) es un *framework* escrito en Javascript para construir el *front-end* de una aplicación Web que, aplicando distintas técnicas, permite que las aplicaciones sean eficientes, rápidas, estructuradas y modulares.
 
 Iris es completamente independiente de la tecnología que se utilice en el servidor; así, podemos utilizar Iris en aplicaciones basadas en Node.js, Python, Java, PHP, .NET, Ruby, etc.
 
@@ -62,7 +63,7 @@ Iris es completamente independiente de la tecnología que se utilice en el servi
 
 Las principales características de Iris son:
 
-* Código libre ([licencia New BSD License](https://raw.github.com/iris-js/iris/iris-grunt/LICENSE-New-BSD)).
+* Código libre ([licencia New BSD License](https://raw.github.com/iris-js/iris/master/README.md)).
 * Ejecución 100% en cliente.
 * Ligero y rápido (<16 KB).
 * Independiente de servidor (Apache, IIS, Jetty, etc).
@@ -71,7 +72,7 @@ Las principales características de Iris son:
 * Fuertemente enfocado a Aplicaciones Orientadas a Objetos.
 * Orientado a eventos, para la coordinación de elementos.
 * Alta escalabilidad y alta reutilización de código.
-* Patrón Resource-View-Presenter.
+* Basado en el Patrón Resource-View-Presenter.
 * Soporta cualquier tipo de tecnología de consumo de datos (servicios REST, almacenamiento local, distintas estrategias de caché...).
 * Navegación sin cambiar de página, empleado Hash-URL.
 * Motor de plantillas sencillo y eficiente.
@@ -127,17 +128,23 @@ Iris está especialmente diseñado para dar respuesta a ambos problemas:
 
 En esta sección se van a presentar los principales componentes de Iris y los métodos para crear, destruir o interaccionar con ellos. No se preocupe si no entiende algunos conceptos, ya que lo único que se pretende en este momento es que se vaya familiarizando con la forma de trabajo de Iris.  Más adelante se propondrán ejemplos de código que le permitirán clarificar y profundizar lo aquí esbozado.
 
-##<a name="components"></a>Componentes
+##<a name="RVP"></a>Resource-View-Presenter
 
-Iris estructura la aplicación en componentes que interaccionan entre sí.
+Iris está basado en el patrón Resource-View-Presenter. Este patrón es una variante del MVC (Model View Controller) especialmente concebido para construir interfaces de usuario Web en las que la lógica de la aplicación está en el cliente pero los datos se recuperan desde el servidor.
 
-Cada **componente** permite definir los elementos que conforman la interfaz de usuario. Un componente tiene dos elementos fundamentales: La vista o presentación (*template*) y el controlador de la vista (*controller*).
+Iris consta de los siguientes elementos:
 
-La **vista** consiste en un fragmento de código en HTML, típicamente un *DIV*, almacenado en un fichero, normalmente con extensión *.html*.
+**Resource**: Permite recuperar y enviar datos al servidor y definir el modelo de datos.
 
-El **controlador** es un fragmento de código en Javascript almacenado en un fichero, típicamente con extensión *.js*. Mediante este fichero controlamos e interaccionamos con la vista. Cuando un componente se activa (<a href="#awake">ver más adelante</a>), puede recibir parámetros que permiten modificar su comportamiento.
+**Componentes** definen los elementos que conforman la interfaz de usuario y su comportamiento. Un componente está constituido por: La plantilla, *template* en adelante, y su controlador, *presenter* en adelante.
 
-![Definición de comportamiento](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/component_equation.png)
+El **template** consiste en un fragmento de código en HTML, típicamente un *DIV*, almacenado en un fichero, normalmente con extensión *.html*. Es la interfaz de usuario y su cometido es meramente pasivo ya que simplemente presenta la información que ha sido preparada por el *presenter*; retorna al *presenter* los datos introducidos por el usuario y le cominica los eventos que se han producido.
+
+El **presenter** es un fragmento de código en Javascript almacenado en un fichero, típicamente con extensión *.js*. Mediante este fichero controlamos e interaccionamos con el *template*, definiendo su comportamiento. El *presenter* recupera y almacena datos en el *resource* y los adapta para ser mostrador en el *template*
+
+Con Iris la lógica de la aplicación la podemos situar en el *presenter* o en el *resource* o repartirla entre ambos.
+
+![Definición de comportamiento](https://raw.github.com/iris-js/iris/master/docs/images/component_equation.png)
 
 Cuando Iris carga un componente, visualiza el código de su fichero HTML asociado y ejecuta su fichero de Javascript según se haya definido en su ciclo de vida (<a href="#life_cycle">ver más adelante</a>).
 
@@ -147,11 +154,11 @@ El código HTML del componente se inserta en el DOM de la página. La inserción
 
 Iris utiliza dos tipos de componentes principales: Screens y UIs.
 
-Recuérdese que ambos son componentes y, por lo tanto, se definen mediante dos ficheros: Uno en HTML para establecer la vista o presentación y otro en Javascript para el comportamiento. 
+Recuérdese que ambos son componentes y, por lo tanto, se definen mediante dos ficheros: Uno en HTML para establecer el *template* o presentación y otro en Javascript para el comportamiento. 
 
-Un **UI** es un elemento sencillo. Puede ser un simple botón o un elemento en una lista. Un UI se puede componer de otros UIs y, así, tener un grado de complejidad mayor.
+Un **UI** es un componente **reutilizable**. Puede ser tan simple como un simple botón o tan complejo como sea preciso. Un UI se puede componer de otros UIs. Si queremos conseguir una reutilización efectiva, debemos diseñar el UI de tal forma que su *presenter* trabaje de la forma más desacoplada y cohesiva posible. Iris tiene mecanismos como los eventos o el paso de parámetros que facilitan esta labor.
 
-Un <a name="screen"></a>**Screen** es un elemento de navegación. Cada Screen está asociado a un Hash-URL. Si en la barra de direcciones del navegador, escribimos el Hash-URL al que está asociado un Screen, Iris cargará su fichero HTML y ejecutará el fichero en Javascript según su ciclo de vida.
+Un <a name="screen"></a>**Screen** es un elemento de **navegación**. Cada Screen está asociado a un Hash-URL. Si en la barra de direcciones del navegador, escribimos el Hash-URL al que está asociado un Screen, Iris cargará su fichero HTML y ejecutará el fichero en Javascript según su ciclo de vida.
 
 En un Screen podemos registrar otros Screens y visualizarlos al modificar el Hash-URL de la barra de direcciones del navegador.
 
@@ -173,7 +180,7 @@ Por último, el evento **sleep** es el complementario de *awake*, y se efectuar�
 
 Podemos ver esto gráficamente:
 
-![Ciclo de vida](https://raw.github.com/surtich/iris/iris-grunt/docs/images/iris_life_cycle.png)
+![Ciclo de vida](https://raw.github.com/iris-js/iris/master/docs/images/iris_life_cycle.png)
 
 Los Screens tienen un método adicional llamado **canSleep**. Este método será invocado por Iris antes de llamar al método *Sleep*. Si el método *canSleep* devuelve *false*, Iris no navegará al Screen deseado e interrumpirá la navegación evitando que se llame al evento *sleep*. Este evento es útil si, por ejemplo, no hemos completado un formulario y queremos advertir al usuario que debe hacerlo antes de navegar a otro Screen.
 
@@ -206,15 +213,15 @@ Nota: Las aplicaciones de Iris deben estar situadas en un servidor Web.
 
 ##<a name="iris_path"></a>Objeto *iris.path*
 
-Iris requiere que se defina un objeto llamado *iris.path*. Debemos asociar (*mapear*) sus atributos a las URLs de acceso a los componentes que vayamos a utilizar. Se tienen que definir los ficheros js y html de todos los componentes (*screens* y *uis*). También es obligatorio definir los archivos de recursos o servicios de red (resources).
+Iris requiere que se defina un objeto llamado *iris.path*. Debemos asociar, *mapear*, sus atributos a las URLs de acceso a los componentes que vayamos a utilizar. Se tienen que definir los ficheros *js* y *html* de todos los componentes, *screens* y *uis*. También es obligatorio definir el *resource*.
 
-Puede estructurar el objeto *iris.path* como mejor le convenga: separando *screens* de *uis*, por módulos, con un sólo nivel o con varios, lo único realmente importante es que, todos los controladores tengan un atributo en el objeto *iris.path* que sea de tipo *string* y que contenga la ruta de acceso al fichero.
+Puede estructurar el objeto *iris.path* como mejor le convenga: separando *screens* de *uis*, por módulos, con un sólo nivel o con varios, etc. Lo único realmente importante es que, todos los *templates*, *presenters* y *resources* tengan un atributo en el objeto *iris.path* que sea de tipo *string* y que contenga la ruta de acceso al fichero.
 
-En una aplicación real, el objeto *iris.path* puede llegar a ser muy grande y será conveniente que lo sitúe en el script de inicio de la aplicación. Este script es el único que se incluye en la página, en él se define *iris.path*, se suscribe al evento ready de la página para ejecutar `iris.welcome` que inicia la aplicación.
+El objeto *iris.path* debe situarse en el *script* de inicio de la aplicación y antes de llamar al método *iris.welcome*.
 
 Antes de instanciar el Screen de bienvenida, Iris procesará el objeto *iris.path* y cargará en memoria todos los ficheros asociados en él. Si los ficheros ya se hubieran precargado, porque se está utilizando una herramienta de *minificación*, Iris no volvería a cargar los ficheros. Puede consultar el apartado de <a href="#minificación">minificación</a> para una explicación más detallada.
 
-Si se utiliza la [herramienta de minificación](https://raw.github.com/iris-js/iris/iris-grunt/tools/iris_packager.js) que incorpora Iris, es importante que la varible *iris.path* se defina fuera de cualquier función, incluso *$(document).ready()* y *window.onload*.
+Si se utiliza la [herramienta de minificación](https://raw.github.com/iris-js/iris/master/tools/iris_packager.js) que incorpora Iris, es importante que la variable *iris.path* se defina fuera de cualquier función, incluso *$(document).ready()* y *window.onload*.
 
 ##<a name="calling_welcome"></a>Llamando al Screen de bienvenida
 Desde Javascript, llamamos al método **welcome** de Iris para cargar el fichero de comportamiento del Screen de bienvenida.
@@ -233,7 +240,7 @@ $(document).ready(
     }
 );
 ```
-Observe que hemos creado un objeto llamado *iris.path* y, en este caso, hemos decidido cargar tango controlador como vista en una estructura de dos niveles. Al método *iris.welcome* se le pasa el atributo que contiene la ruta de acceso al controlador del Screen Welcome (*iris.path.welcome.js*).
+Observe que hemos creado un objeto llamado *iris.path* y, en este caso, hemos decidido cargar tanto *presenter* como *template* en una estructura de dos niveles. Al método *iris.welcome* se le pasa el atributo que contiene la ruta de acceso al controlador del Screen Welcome, *iris.path.welcome.js*.
 
 El fichero *welcome.js* antes referido tendrá la siguiente estructura:
 
@@ -275,11 +282,13 @@ Y el del archivo *welcome.html*:
 
 Cuando se ejecute el método *iris.welcome*, Iris creará un objeto de tipo Screen. Este objeto será pasado a la función que recibe el método *iris.screen* definido en el fichero *welcome.js* y se ejecutarán los métodos del ciclo de vida que se hayan definido en esta función. Concretamente, en nuestro ejemplo, se ejecutarán sucesivamente los métodos *create* y *awake*.
 
+El uso de la variable *self* permite evitar referencias erróneas a *this* en las que se cae con frecuencia cuando se programa con *Javascript*. Recuerde que el objeto *this* es contextual a la función que se esté ejecutando y que se producirá un cambio de contexto, por ejemplo, cuando *Javascript* esté ejecutando un *closure*. Utilizando la variable *self*, que reciben todos los componentes de Iris, no tendremos este problema. Puede ampliar información [aquí](http://alistapart.com/article/getoutbindingsituations).
+
 Observe que el método *create* ejecuta una llamada al método **tmpl** que permite cargar en el DOM el contenido del archivo *welcome.html* pasado como parámetro.
 
 Observe, además, que el método *iris.screen* recibe la función antes mencionada y, como segundo parámetro, el atributo del objeto *iris.path* que contiene la *URL* del fichero *Javascript* asociado. 
 
-> El método *self.tmpl()* debe ser llamado una única vez y **OBLIGATORIAMENTE** en el método *self.create()* antes de utilizar ningún otro método del componente (*self.get()*, *self.destroyUI()*, etc);
+> El método *self.tmpl()* debe ser llamado una única vez y **OBLIGATORIAMENTE** en el método *self.create()* antes de utilizar ningún otro método del componente, ( *self.get()*, *self.destroyUI()*, etc);
 
 > Los ficheros HTML asociados a componentes de Iris deben tener un único nodo raíz (típicamente un DIV). Si hubiera comentarios en HTML deben estar dentro de este nodo.
 
@@ -390,7 +399,7 @@ Por ejemplo, en nuestro caso registramos el Screen *Home* que pertecene al Scree
 
 > Un Screen puede llamar al método *screens* una única vez.
 
-En nuestro ejemplo, para *navegar* al Screen debemos pulsar sobre el enlace que hemos añadido en *welcome.html* y que contine el Hash-URL del Screen al que queremos ir.
+En nuestro ejemplo, para *navegar* al Screen debemos pulsar sobre el enlace que hemos añadido en *welcome.html* y que contiene el Hash-URL del Screen al que queremos ir.
 
 > Para navegar a un Screen ponemos la ruta **absoluta** de acceso al Screen.
 
@@ -884,7 +893,7 @@ El fichero *home.html* tendrá un botón que nos permita cargar el UI y un conte
     <h1>Home Screen</h1>
     <p>This is the home screen.</p>
     <button data-id="my_ui_loader">Load my_ui</button>
-    <div data-id='ui_container'/>
+    <div data-id='ui_container'></div>
 </div>
 ```
 
@@ -940,7 +949,7 @@ Observe que el contenedor con *data-id='ui_container'* ha sido reemplazado por e
 
 Aunque se puede modificar, como explicaremos posteriormente, este es el comportamiento por defecto de los UIs:
 
-> De forma predeterminada, cuando se carga un **UI**, se reemplaza el contenedor por la vista del UI. Por el contrario, cuando se carga un **Screen**, su vista se añade al contenedor.
+> De forma predeterminada, cuando se carga un **UI**, se reemplaza el contenedor por el *template* del UI. Por el contrario, cuando se carga un **Screen**, su *template* se añade al contenedor.
 
 Comprender esto es esencial ya que si, por ejemplo, volviéramos a pulsar el botón, se trataría de cargar el UI *my_ui* sin éxito debido a que el contenedor que le estamos pasando en el método *ui* ya no está presente en el DOM. Iris mostrará un mensaje en la consola de error advirtiendo de esta circunstancia.
 
@@ -1051,7 +1060,7 @@ Aquí hay poco que comentar. Tan sólo que los UIs, al igual que los Screens, ti
 
 ##<a name="some_UIs"></a>Añadiendo varios UIs a un mismo contenedor
 
-Anteriormente hemos visto que cuando añadimos un UI, su contenedor es reemplazado por la vista del UI. Este comportamiento se puede cambiar.
+Anteriormente hemos visto que cuando añadimos un UI, su contenedor es reemplazado por el *template* del UI. Este comportamiento se puede cambiar.
 
 Para mostrar como hacer esto, modifiquemos el método *create* del UI *my_ui*:
 
@@ -1175,7 +1184,7 @@ En *home.html*:
 <div>
     <h1>Home Screen</h1>
     <p>This is the home screen.</p> 
-    <div data-id='ui_container'/>
+    <div data-id='ui_container'></div>
 </div>
 
 ```
@@ -1257,7 +1266,7 @@ En *home.html*:
 <div>
     <h1>Home Screen</h1>
     <p>This is the home screen.</p>
-    <div data-id='container'/>
+    <div data-id='container'></div>
 </div>
 ```
 
@@ -1358,7 +1367,7 @@ self.create = function () {
 };
 ```
 
-En el DOM generado, se ha eliminado todo el contenido del UI. Tampoco aparece ninguna referencia a su contenedor (*data-id*='*container*') porque estamos en modo *REPLACE*.
+En el DOM generado, se ha eliminado todo el contenido del UI. Tampoco aparece ninguna referencia a su contenedor, *data-id*='*container*', porque estamos en modo *REPLACE*.
 
 ```html
 <html>
@@ -1896,7 +1905,7 @@ iris.ui(
   
         self.awake = function () {  
             console.log("my_ui UI Awakened");
-            self.get("ui_number").text("This is the " + self.setting("ui_number") + " muyUI UI.");
+            self.get("ui_number").text("This is the " + self.setting("ui_number") + " muy_ui UI.");
         };
     },
     iris.path.my_ui.js
@@ -1954,8 +1963,7 @@ En *welcome.html*:
     <h1>Welcome Screen</h1>
     <p>This is the initial screen.</p>
     <button data-id="my_ui_loader">Load my_ui</button>
-    <div data-id="ui_container" data-year="2013"/>
-</div>
+    <div data-id="ui_container" data-year="2013"></div>
 ```
 
 Observe que el parámetro se pasa con el atributo *data-year* en el contenedor del UI *my_ui*.
@@ -2031,7 +2039,7 @@ En *welcome.html*:
     <h1>Welcome Screen</h1>
     <p>This is the initial screen.</p>
     <button data-id="my_ui_loader">Load my_ui</button>
-    <div data-id='ui_container'/>
+    <div data-id='ui_container'></div>
 </div>
 ```
 
@@ -2100,7 +2108,7 @@ Los componentes pueden recibir parámetros de varias formas. Concretamente, los 
 
 1. Con los métodos *self.setting* y *self.settings*.
 2. En el método *self.ui* del componente padre.
-3. Desde la vista con el atributo *data-* en el contenedor del padre del UI.
+3. Desde el *template* con el atributo *data-* en el contenedor del padre del UI.
 
 Todos estas alternativas comparten el mismo objeto *settings* de *Javascript* con lo que si pasamos un mismo nombre de parámetro de varias formas diferentes, el valor del parámetro resultará sobrescrito.
 
@@ -2130,7 +2138,7 @@ En *welcome.html*, pasamos el mismo parámetro en el contenedor del padre:
 <div>
     <h1>Welcome Screen</h1>
     <p>This is the initial screen.</p>
-    <div data-id="ui_container" data-year="2013"/>
+    <div data-id="ui_container" data-year="2013"></div>
 </div>
 ```
 
@@ -2181,9 +2189,28 @@ Si hacemos varias llamadas a *self.setting* o a *self.settings* el valor del par
 
 > Si se llama varias veces a *setting* o a *settings* con el mismo nombre de parámetro, prevalecerá el último valor asignado.
 
-##<a name="tmpl_settings"></a>Paso de parámetros a la vista con el método *tmpl*
+Si el método *self.setting* lo hubiéramos situado fuera de las métodos de ciclo de vida, por ejemplo:
 
-Podemos pasar parámetros a la vista a través del método *tmpl*. Para hacerlo, debemos añadir un segundo parámetro a este método. Este parámetro será un objeto con los nombres de variables que queramos pasar y sus valores.
+```js
+//In my_ui.js
+iris.ui(
+    function (self) {
+        self.setting("year", 2015);
+        self.create = function () {
+            console.log("my_ui UI Created");
+            self.tmpl(iris.path.my_ui.html);
+
+        };
+    }
+    ...
+);
+```
+En este caso, la asignación del parámetro *year* será sobrescrita por cualquier otra forma de paso de parámetros que utilicemos. Podríamos considerar, por lo tanto, que esta es la forma de pasar **parámetros por defecto** a un componente.
+
+
+##<a name="tmpl_settings"></a>Paso de parámetros al *template* con el método *tmpl*
+
+Podemos pasar parámetros al *template* a través del método *tmpl*. Para hacerlo, debemos añadir un segundo parámetro a este método. Este parámetro será un objeto con los nombres de variables que queramos pasar y sus valores.
 
 Por ejemplo, en *welcome.js*:
 
@@ -2198,7 +2225,7 @@ iris.screen(
     }
 );
 ```
-Para recuperar el valor de un parámetro, en la vista, pondremos su nombre entre símbolos *##*.
+Para recuperar el valor de un parámetro, en el *template*, pondremos su nombre entre símbolos *##*.
 
 Por ejemplo, en *welcome.html*:
 
@@ -2209,11 +2236,11 @@ Por ejemplo, en *welcome.html*:
 </div>
 ```
 
-> Los parámetros que se pasan a la vista con el método *tmpl* son **CONSTANTES**. Es decir, que aunque cambie su valor, no serán actualizados en la vista cuando se llame al evento *awake*. La única forma correcta de actualizar los valores recuperados en la vista mediante *##..##*, es destruir y volver a crear la vista.
+> Los parámetros que se pasan al *template* con el método *tmpl* son **CONSTANTES**. Es decir, que aunque cambie su valor, no serán actualizados en el *template* cuando se llame al evento *awake*. La única forma correcta de actualizar los valores recuperados en el *template* con *##..##*, es destruir y volver a crear el *template*.
 
-##<a name="data-model"></a>Paso de parámetros a la vista con el atributo *data-model*
+##<a name="data-model"></a>Paso de parámetros al *template* con el atributo *data-model*
 
-Iris dispone de una forma alternativa de pasar parámetros a la vista utilizando el atributo *data-model*. La diferencia con el anterior es que Iris actualizará el valor de los parámetros pasados mediante *data-model* cuando se invoque el método *self.inflate* en el controlador del componente.
+Iris dispone de una forma alternativa de pasar parámetros al *template* utilizando el atributo *data-model*. La diferencia con el anterior es que Iris actualizará el valor de los parámetros pasados mediante *data-model* cuando se invoque el método *self.inflate* en el controlador del componente.
 
 Veamos un en ejemplo.
 
@@ -2251,21 +2278,103 @@ iris.screen(
 
 Observe que el contenido del elemento del *DOM* que tenga un atributo *data-model*, cuyo valor coincida con algún atributo del objeto pasado al método *self.inflate*, será reemplazado. Si el valor de *data-model* no coincide con ningún atributo, el componente del DOM conservará su valor.
 
-> El paso de parámetros con *data-model* permite actualizar los valores en la vista, por el contrario el paso con ##...## mantendrá el valor del parámetro en todo el ciclo de vida del componente.
+> El paso de parámetros con *data-model* permite actualizar los valores en el *template*, por el contrario el paso con ##...## mantendrá el valor del parámetro en todo el ciclo de vida del componente.
 
 > La utilización de ##...## permite hacer cosas que no se pueden hacer con *data-model*.
 
 Por ejemplo:
 
 ```html
-<img src="##logo##.png/>
+<img src="##logo##.png"/>
 ```
 
 ##<a name="events"></a>Trabajando con eventos
 
-Iris implementa el patrón "Publish–subscribe" para trabajar con eventos. Los eventos en Iris, a diferencia de los de JQuery, no están ligados a ningún objeto del DOM.
+Iris implementa el patrón [Publish–subscribe](http://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) para trabajar con eventos. Los eventos en Iris, a diferencia de los de JQuery, no están ligados a ningún objeto del DOM.
 
-Veamos un ejemplo sencillo que consiste en contar cuantos UIs de tipo my_ui se han creado:
+El uso de eventos permite que dos componentes se comuniquen de forma desacoplada.
+
+En Iris tenemos dos tipos de eventos, los eventos globales y los eventos asociados a componentes. Los eventos globales se crean con el método *iris.on* y los asociados a componentes con el método *self.on*, donde *self* puede ser un *ui* o un *screen*. La principal diferencia es que, para destruir los primeros, habrá que invocar explícitamente el método *iris.off*, mientras que los segundos se podrán destruir explícitamente (self.off) o implícitamente cuando el componente sea destruído por Iris.
+
+Empecemos con un ejemplo de eventos asociados a componentes:
+
+En *welcome.js*:
+
+```js
+iris.screen(
+    function (self) {
+        self.create = function () {
+            console.log("Welcome Screen Created");            
+            self.tmpl(iris.path.welcome.html);
+            self.ui("my_ui_container", iris.path.my_ui.js);
+            self.ui("my_ui_container", iris.path.my_ui.js);
+            self.ui("my_ui_container", iris.path.my_ui.js);
+            
+            var input = self.get("name_input");
+            input.keyup(function () {
+                self.notify("text_changed", input.val());
+            });
+        };
+    },
+iris.path.welcome.js);
+```
+
+Y en *welcome.html*:
+
+```html
+<div>
+    <h1>Welcome Screen</h1>
+    <p>This is the initial screen.</p>
+    <input type="text" data-id="name_input"/>
+    <div data-id="my_ui_container"></div>
+</div>
+```
+
+Observe que hemos creado tres UIs, y que cuando pulsamos una tecla sobre la caja de texto, notificamos un evento con la función *self.notify*. Esta función recibe el nombre del evento y, opcionalmente, un objeto de *Javascript* con los valores que queremos pasar cuando se reciba la notificación. En nuestro caso, el texto introducido. 
+
+En *my_ui.js*:
+
+```js
+//In my_ui.js
+iris.ui(
+    function (self) {
+        function updateDiv(text) {
+            self.get("name_div").text(text);
+        }
+        
+        self.create = function () {
+            console.log("my_ui UI Created");
+            self.tmplMode(self.APPEND);
+            self.tmpl(iris.path.my_ui.html);
+            self.on("text_changed", updateDiv);
+        };
+        
+        self.destroy = function () {
+            console.log("my_ui UI Destroyed");                        
+            self.off("text_changed",updateDiv);
+        };
+        
+    },
+iris.path.my_ui.js);
+```
+
+Y en *my_ui.html*:
+
+```html
+<div>
+    <h1>my_ui UI</h1>
+    <p>This is the my_ui template.</p>
+    The text input contains: <div data-id="name_div"></div>
+</div>
+```
+
+Observe que con el método *self.on* nos suscribimos al evento *text_changed*. Cuando ese evento sea notificado, se ejecutará la función que se indique como segundo parámetro. Esta función recibirá el objeto de *Javascript* que se haya indicado en la notificación. En nuestro caso, la función *updateDiv*, recibirá el valor de la caja de texto y lo mostrará en el *div*.
+
+Observe que los tres *UIs* se actualizan de forma desacoplada con el valor que haya en la caja de texto.
+
+El método *self.off* nos permite eliminar la suscripción a un evento.
+
+Veamos, ahora, un ejemplo sencillo de eventos globales que consiste en contar cuantos UIs de tipo my_ui se han creado:
 
 En *welcome.html*:
 
@@ -2461,9 +2570,9 @@ Podemos utilizar el método *iris.destroyEvents* como alternativa al método *ir
 ```js
 iris.destroyEvents(EVENT.MY_UIS_DESTROYED, [fn_my_ui_event]);
 ```
-##<a name="events_globals"></a>Eventos globales
+##<a name="events_globals"></a>Eventos predefinidos
 
-Iris define los siguiente eventos globales:
+Iris tiene los siguiente eventos predefinidos:
 
 ```js
 iris.BEFORE_NAVIGATION = "iris_before_navigation";
@@ -2570,7 +2679,7 @@ En *welcome.html*:
     <p>This is the initial screen.</p>
     Morning Greeting from HTML: @@GREETINGS.MORNING@@
     </br>
-    Morning Greeting from Javascript: <span data-id="greeting"/>
+    Morning Greeting from Javascript: <span data-id="greeting"></div>
 </div>
 ```
 Y en *welcome.js*:
@@ -2821,6 +2930,26 @@ y Year, 2 digits. '99'
 Y Year, 4 digits. '1999'
 </pre>
 
+##<a name="data-format"></a>Formateando con *data-format*
+
+Los formatos aplicados en la sección anterior no se pueden cambiar una vez que se hayan fijado. El atributo *data-format* permite modificar al formato de la misma forma que lo hacíamos con *data-model*, es decir, llamando al método *self.inflate* del componente.
+
+Por ejemplo, si en el método *create* de *welcome.js*, tuviéramos:
+
+```js
+var data = { person: { name:"test name", money: -67890.678, region: { country: "country test" }, lastLogin: 1358506927400, updated: "Fri Jan 18 2013 13:09:47 GMT+0100 (CET)" } };
+
+self.inflate(data);
+```
+
+Podríamos formatear el *template*, *welcome.js*, de la siguiente manera:
+
+```html
+<span data-model="person.money" data-format="currency"></span>
+<span data-model="person.lastLogin" data-format="date"></span>
+<span data-model="person.updated" data-format="date(y-m-d)"></span>
+```
+
 ##<a name="ajax"></a>Llamadas Ajax y servicios REST
 
 Iris tiene funciones que son *wrappers* al método *ajax()* de *JQuery*.
@@ -2834,7 +2963,7 @@ var settings = {...};
 var promise = iris.ajax(settings);
 ```
 
-Iris dispone del método *iris.resource* que facilita el acceso a servicios *REST*.
+Iris dispone del método *iris.resource* que permite definir elementos de tipo *Resource* y que facilitan el acceso a servicios *REST* así como la definición de la lógica de la aplciación.
 
 En el siguiente ejemplo se explica como podríamos hacer esto:
 
@@ -2918,7 +3047,7 @@ iris.path = {
 };
 ```
 
-Observe que hemos creado un fichero *resource.js* donde se llama al método *iris.resource*. Este método crea un objeto de tipo *Resource* que se retorna en la función pasada como argumento y que dispone de distintos métodos (*get*, *pos*, *put* y *del*) para acceder a servicios REST y pueden recibir una función de éxito o de error en la que se procesará la respuesta obtenida.
+Observe que hemos creado un fichero *resource.js* donde se llama al método *iris.resource*. Este método crea un objeto de tipo *Resource* que se retorna en la función pasada como argumento y que dispone de distintos métodos, *get*, *pos*, *put* y *del*, para acceder a servicios REST y pueden recibir una función de éxito o de error en la que se procesará la respuesta obtenida.
 
 Desde el Screen *Welcome*, hemos llamado al mismo método anterior, *iris.resource*, pero en este caso pasándole un *string* que se corresponde con la ruta de acceso al fichero y que nos permite invocar los métodos definidos en él. En nuestro ejemplo hemos llamado al método *load* pasándole el identificador del libro que queremos recuperar.
 
@@ -2969,7 +3098,7 @@ iris.enableLog(server1, server2,...) //If no arguments are passed, returns the l
 //Or You can pass the servers that you want to use the Iris logging system.
 ```
 
-<a name="minification"></a>Iris ayuda a la **minificación** de la aplicación. Para reducir el número de ficheros que hay que descargar desde el servidor en una aplicación Iris, podemos *minificar* todos los ficheros *.js* y *html*" en uno único utilizando cualquier con la herramienta que queramos (por ejemplo [Grunt](https://github.com/gruntjs/grunt)) o con la que se suministra con Iris ([iris_packager.js](https://raw.github.com/iris-js/iris/iris-grunt/tools/iris_packager.js)).
+<a name="minification"></a>Iris ayuda a la **minificación** de la aplicación. Para reducir el número de ficheros que hay que descargar desde el servidor en una aplicación Iris, podemos *minificar* todos los ficheros *.js* y *html*" en uno único utilizando cualquier con la herramienta que queramos (por ejemplo [Grunt](https://github.com/gruntjs/grunt)) o con la que se suministra con Iris ([iris_packager.js](https://raw.github.com/iris-js/iris/master/tools/iris_packager.js)).
 
 El segundo parámetro que pasamos a las funciones *iris.screen*, *iris.ui* e *iris.resource* es el que permite a Iris evitar la descarga del fichero del componente y que utilice el archivo *minificado*. Iris buscará todas las rutas que contenga la variable *iris.path* y se descargará aquellos que no se encuentren en el fichero *minificado*.
 
@@ -3044,18 +3173,18 @@ iris.welcome("./welcome.js");
 
 ##<a name="iris_packager"></a>Utilizando *iris_packager.js*
 
-Iris incluye una herramienta de *minificación* llamada [*iris_packager.js*](https://raw.github.com/iris-js/iris/iris-grunt/tools/iris_packager.js). Esta aplicación requiere tener instalado [node.js](http://nodejs.org/) y la dependencia *node-minify* (*npm install node-minify*). Para utilizarla hay que suministrar tres parámetros:
+Iris incluye una herramienta de *minificación* llamada [*iris_packager.js*](https://raw.github.com/iris-js/iris/master/tools/iris_packager.js). Esta aplicación requiere tener instalado [node.js](http://nodejs.org/) y la dependencia *node-minify*, *npm install node-minify*. Para utilizarla hay que suministrar tres parámetros:
 
 - El directorio que contiene los archivos *html* y *js* que se quieren minificar.
-- El nombre de un directorio que no exista. *iris_packager* lo utilizará como directorio temporal y para generar el nombre del fichero *minificado* como se explica más adelante.
+- El nombre de un directorio que no exista. *iris_packager* lo utilizará para almacenar el fichero *minificado* como se explica más adelante.
 - La ruta de acceso al fichero en el que se haya definido la variable *iris.path*. Es muy importante que esta variable, *iris.path*, se defina fuera de cualquier función, incluso *$(document).ready()* y *window.onload*.
 
 *iris_packager* *minificará* los ficheros *js* y *html* que encuentren en el directorio de origen y que, además, estén referenciados por la variable *iris.path*.
 
-Si, por ejemplo, los ficheros que queremos *minificar* estuvieran en el directorio *wwww/shopping*; el fichero que define la variable *iris.path* fuera *www/js/init.js* y quisiéramos que se creará un fichero llamado *www/shopping_packed_init.js*; estando en el directorio que contiene el fichero *iris_packager.js*, tendríamos que ejecutar el comando:
+Si, por ejemplo, los ficheros que queremos *minificar* estuvieran en el directorio *wwww/shopping*; el fichero que define la variable *iris.path* fuera *www/js/init.js* y quisiéramos que se creará un en *www/shopping_packed/init.js*; estando en el directorio que contiene el fichero *iris_packager.js*, tendríamos que ejecutar el comando:
 
 <pre>
-node iris_packager.js www/shopping/ www/shopping_packed_ www/js/init.js
+node iris_packager.js www/shopping/ www/shopping_packed www/js/init.js
 </pre>
 
 Podemos crear un *script* que nos facilite la tarea:
@@ -3066,53 +3195,46 @@ Podemos crear un *script* que nos facilite la tarea:
 # $1 = source directory (contains html and js files)
 # $2 = destination directory
 # $3 = iris.path file definition
-rm -Rf $2
 mkdir $2
 node iris_packager.js input=$1 output=$2 init=$3
-rm -Rf $2
 ```
-Tras ejecutar este *script*, obtendremos un fichero llamado *www/shopping_packed_init.js* que contendrá en este orden:
+Tras ejecutar este *script*, obtendremos un fichero llamado *www/shopping/init.js* que contendrá en este orden:
 
 1 El fichero *init.js* *minificado*
 2 Todos los ficheros *js* encontrados en *www/shopping*
-3 Llamadas al método *iris.tmpl* que contienen el contenido de los ficheros *html*.
+3 Llamadas al método *iris.tmpl* almacenan el contenido de los ficheros *html*.
 
 El método *iris.tmpl* recibe dos parámetros, la ruta de acceso al fichero *html* y su contenido.
 
-Tras realizar la minificación, debemos eliminar la referencia al archivo *init.js* de la página *html* de inicio y a cualquier otro fichero que hubiéramos *minificado* e incluir el archivo *minificado*:
-
-```html
-    <script type='text/javascript' src='./shopping_packedinit.js'></script>
-    <!--<script type='text/javascript' src='./js/init.js'></script>-->
-```
+Tras realizar la minificación, debemos asegurar que el directorio donde hemos almacenado el archivo *minificado*, contiene el resto de archivos que necesita la aplicación: librerías, ficheros de configuración, ficheros de estilo, *index.html*, etc.
 
 ##<a name="unit_test"></a>Pruebas de unidad en Iris
 
 Para probar su correcto funcionamiento y detectar errores, se han realizado pruebas de unidad de todos los métodos de Iris. Las pruebas de unidad se han realizado con la librería [QUnit](http://qunitjs.com/).
 
-Las pruebas de unidad son una fuente adicional para conocer el funcionamiento de Iris. Puede consultar las pruebas realizadas en el directorio [test](https://github.com/iris-js/iris/tree/iris-grunt/test).<!-- TODO cambiar enlace -->
+Las pruebas de unidad son una fuente adicional para conocer el funcionamiento de Iris. Puede consultar las pruebas realizadas en el directorio [test](https://github.com/iris-js/iris/tree/master/test).
 
 #<a name="step_by_step"></a>Construyendo paso a paso una aplicación desde cero
 
 En esta sección vamos utilizar Iris para construir una sencilla aplicación que nos permita comprender como integrar todo lo visto anteriormente.
 
-Puede descargar la aplicación en el siguiente [enlace](https://github.com/surtich/iris/blob/iris-grunt/docs/iris-shopping.tar.gz?raw=true). <!-- TODO actualizar enlace -->Para probar la aplicación debe descomprimirla y desplegarla en un servidor Web (Apache, Node.js, etc). Si tiene instalado *Grunt* puede, simplemente, situarse en el directorio raíz de la aplicación y ejecutar el comando *grunt*.
+Puede descargar la aplicación en el siguiente [enlace](https://github.com/iris-js/iris/blob/master/docs/iris-shopping.tar.gz?raw=true). Para probar la aplicación debe descomprimirla y desplegarla en un servidor Web (Apache, Node.js, etc). Si tiene instalado *Grunt* puede, simplemente, situarse en el directorio raíz de la aplicación y ejecutar el comando *grunt*.
 
-Puede probar el funcionamiento de la aplicación en el siguiente [enlace](http://shopping-list-example.appspot.com/) <!-- TODO subir al servidor GAE de IGZ y actualizar enlace -->
+Puede probar el funcionamiento de la aplicación en el siguiente [enlace](http://iris-js.github.com/iris/examples/shopping-list/www/index.htm).
 
 La aplicación va a permitir realizar la lista de la compra de una serie de productos agrupados en categorías. En las siguientes imágenes presentamos las principales pantallas de la aplicación:
 
 <a name="home_img"></a>*#/home:*
-![home](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/shopping_list/home.png)
+![home](https://raw.github.com/iris-js/iris/master/docs/images/shopping_list/home.png)
 
 <a name="categories_img"></a>*#categories:*
-![categories](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/shopping_list/categories.png)
+![categories](https://raw.github.com/iris-js/iris/master/docs/images/shopping_list/categories.png)
 
 <a name="products_img"></a>*#products:*
-![products](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/shopping_list/products.png)
+![products](https://raw.github.com/iris-js/iris/master/docs/images/shopping_list/products.png)
 
 <a name="shopping_img"></a>*#shopping:*
-![shopping](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/shopping_list/shopping_list.png)
+![shopping](https://raw.github.com/iris-js/iris/master/docs/images/shopping_list/shopping_list.png)
 
 Además de Iris, se ha utilizado [Twitter Bootstrap](http://twitter.github.com/bootstrap/) para *maquetar* la aplicación y [JQuery DataTables](http://www.datatables.net/) para presentar los productos de la lista de la compra. En esta sección no se va a explicar el uso de estas librerías aunque su conocimiento no es esencial para comprender el funcionamiento de la aplicación.
 
@@ -3124,11 +3246,11 @@ Vamos a proponer una estructura determinada aunque cualquier otra que cumpla el 
 
 En la siguiente imagen vemos la estructura de directorios y los archivos que contienen:
 
-![www_directories](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/shopping_list/shopping_directories.png)
+![www_directories](https://raw.github.com/iris-js/iris/master/docs/images/shopping_list/shopping_directories.png)
 
 Más detalladamente, el contenido del directorio *shopping* será el siguiente:
 
-![shopping_directories](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/shopping_list/www_directories.png)
+![shopping_directories](https://raw.github.com/iris-js/iris/master/docs/images/shopping_list/www_directories.png)
 
 Observe que, para hacer más sencillo el ejemplo, se ha creado un directorio *json* que permite cargar los productos y las categorías desde el servidor Web sin depender de ninguna tecnología de servidor. En una aplicación real, normalmente los productos estarían almacenados en una base de datos y se recuperarían llamando a un servicio.
 
@@ -3400,7 +3522,7 @@ Finalmente, el fichero *welcome.html* contendrá:
     </div>
     <div class="divContainer">
         <div data-id="loading" class="divElement loading">@@LOADING@@</div>
-        <div class="container divElement" data-id="screens"/>        
+        <div class="container divElement" data-id="screens"></div>        
     </div>
 </div>
 ```
@@ -3859,8 +3981,8 @@ Y el fichero *categories.json* contendrá la siguiente información:
 
 Observe lo siguiente:
 * El método *tmplMode* tiene el valor *APPEND* para que las categorías se añadan y no se reemplacen.
-* La categoría pasada como parámetro desde el *Screen* *Categories* se recupera y se pasa a la vista en el método *tmpl*.
-* En la vista podemos utilizar las propiedades del objeto *Category* recuperado.
+* La categoría pasada como parámetro desde el *Screen* *Categories* se recupera y se pasa al *template* en el método *tmpl*.
+* En el *template* podemos utilizar las propiedades del objeto *Category* recuperado.
 * Los *UIs* creados contienen un enlace que permite navegar al *Screen* con *Hash-URL* *#/products*.
 * Este *Screen* recibe el parámetro *idCategory* para conocer de qué categoría queremos recuperar los productos.
 
@@ -4724,7 +4846,7 @@ grunt test
 
 En esta sección vamos a discutir que cambios son necesarios en la aplicación para que los productos se seleccionen en la misma pantalla en la que se cargan las categorías tal y como se muestra en la siguiente imagen:
 
-![categories2](https://raw.github.com/surtich/iris/iris-grunt/docs/images/shopping_list/categories2.png)
+![categories2](https://raw.github.com/surtich/iris/master/docs/images/shopping_list/categories2.png)
 
 El problema que se nos plantea es que, en la aplicación actual, los productos se cargan a través del Screen *#/products* y, sin embargo, cada categoría se carga en el UI *category_list_item* desde la que se navega al Screen *#/products* pasándole el *idCategory* correspondiente. Iris no permite registrar un Screen dentro de un UI por lo que no podremos cargar el Screen *#/products* en el UI *category_list_item*.
 
@@ -4797,7 +4919,7 @@ iris.ui(function(self) {
 }, iris.path.ui.category_list_item.js);
 ```
 
-Observe que se reciben todos los productos pero sólo se añaden a la vista los que correspondan a la categoría en la que estamos.
+Observe que se reciben todos los productos pero sólo se añaden al *template* los que correspondan a la categoría en la que estamos.
 
 Modificamos *categories.js* para que cargue las categorías y los productos.
 
@@ -4975,17 +5097,17 @@ Por último, hemos realizado algunos ejemplos de pruebas unitarias para la vista
 
 Observe que se ha utilizado el evento método *window.setTimeout* para dar tiempo a que se llame a los servicios.
 
-Puede descargar la aplicación modificada en el siguiente [enlace](https://github.com/surtich/iris/blob/iris-grunt/docs/iris-shopping2.tar.gz?raw=true).
+Puede descargar la aplicación modificada en el siguiente [enlace](https://github.com/surtich/iris/blob/master/docs/iris-shopping2.tar.gz?raw=true).
 
 ##<a name="step_by_step_exercise2"></a>Ejercicio: Integrando Knockout
 
 [Knockout](http://knockoutjs.com/) es una librería de Javascript que implementa el patrón Model-View-View-Model.
 
-La ventaja que aportan *frameworks* como Knockout es que permiten un vínculo (*binging*) bidireccional entre la vista y el modelo de datos del cliente; automatizando el proceso mostrar y actualizar datos, ya que cuando cambia el modelo, la vista se refresca para mostrar la nueva información y, viceversa, cuando se introduce información en un formulario de la vista, es el modelo el que recibe los cambios.
+La ventaja que aportan *frameworks* como Knockout es que permiten un vínculo, *binging*, bidireccional entre la vista y el modelo de datos del cliente; automatizando el proceso mostrar y actualizar datos, ya que cuando cambia el modelo, la vista se refresca para mostrar la nueva información y, viceversa, cuando se introduce información en un formulario de la vista, es el modelo el que recibe los cambios.
 
 Esto se traduce en una gran reducción del código en *Javascript* que es necesario para mostrar los datos del modelo.
 
-Puede descargar la aplicación integrada con Knockout en el siguiente [enlace](https://github.com/surtich/iris/blob/iris-grunt/docs/iris-shopping-knockout.tar.gz?raw=true).
+Puede descargar la aplicación integrada con Knockout en el siguiente [enlace](https://github.com/surtich/iris/blob/master/docs/iris-shopping-knockout.tar.gz?raw=true).
 
 Vamos a explicar el resultado de la integración del UI Products.
 
@@ -5014,9 +5136,9 @@ En *products.html*
 </div>
 ```
 
-Observe que desde el controlador lo único que hacemos es cargar la vista y, que en la vista, iteramos por los productos y asociamos con *data-bind* las etiquetas *HTML* a datos o a métodos del modelo.
+Observe que desde el *presenter* lo único que hacemos es cargar el *template* y, que en el *template*, iteramos por los productos y asociamos con *data-bind* las etiquetas *HTML* a datos o a métodos del modelo.
 
-Un inconveniente que tiene esta solución es que la vista es más compleja ya que tiene elementos que no son puramente código HTML. Para paliar este problema, se puede desplazar la asociación de la vista al controlador. 
+Un inconveniente que tiene esta solución es que el *template* es más complejo ya que tiene elementos que no son puramente código HTML. Para paliar este problema, se puede desplazar la asociación del *template* al *presenter*. 
 
 Por ejemplo,
 
