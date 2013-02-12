@@ -17,6 +17,7 @@ iris.ui(function (self) {
 		self.on("filter-todos", onFilter);
 
 		self.get().on("dblclick", edit);
+  self.get("text").on("blur", onTextBlur);
 		self.get("text").on("change", onTextBlur);
 
 		self.get().hide().fadeIn("slow");
@@ -27,7 +28,7 @@ iris.ui(function (self) {
 		self.setting("completed", !self.setting("completed"));
 		
 		self.get().toggleClass("completed");
-		self.get("check").attr("checked", self.setting("completed"));
+		self.get("check").prop("checked", self.setting("completed"));
 
 		self.notify("toggle-todo", self.setting("completed"));
 	}
