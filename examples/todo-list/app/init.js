@@ -1,14 +1,23 @@
 iris.path = {
-    welcome : "app/screen/welcome.js",
-    welcome_tmpl : "app/screen/welcome.html",
-    todo_item : "app/ui/todo_item.js",
-    todo_item_tmpl : "app/ui/todo_item.html"
+	screen : {
+	    todo : { 
+	    	js: "app/screen/todo_screen.js",
+	    	html: "app/screen/todo_screen.html"
+	    }
+    },ui: {
+    	todo : { 
+	    	js: "app/ui/todo_item.js",
+	    	html : "app/ui/todo_item.html"
+	    }
+    },res : {
+    	todo : "app/resource/todo.js"
+    }
 };
 
 
 $(document).ready(
     function () {
     	iris.baseUri("./");
-        iris.welcome(iris.path.welcome);
+        iris.welcome(iris.path.screen.todo.js);
     }
 );
