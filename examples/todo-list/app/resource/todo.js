@@ -10,6 +10,8 @@ iris.resource(function (self) {
 		} else {
 			++incomplete;
 		}
+
+		applyFilter(todo);
 		iris.notify("change-todos");
 	};
 	
@@ -23,6 +25,10 @@ iris.resource(function (self) {
 		iris.notify("change-todos");
 		return todo;
 	};
+
+	self.edit = function (todo, text) {
+		todo.text = text;
+	}
 
 	self.len = function () {
 		return todos.length;
