@@ -1,20 +1,9 @@
 iris.resource(function (self) {
 
-	var incomplete = 0, todos = [], currentFilter = "all";
+	var incomplete = 0;
+	var todos = [];
+	var currentFilter = "all";
 
-	self.toggle = function (todo) {
-		todo.completed = !todo.completed;
-
-		if ( todo.completed ) {
-			--incomplete;
-		} else {
-			++incomplete;
-		}
-
-		applyFilter(todo);
-		iris.notify("change-todos");
-	};
-	
 	self.new = function (ui, text) {
 		var todo = { text: text, completed: false, ui: ui };
 		todos.push(todo);
@@ -28,23 +17,36 @@ iris.resource(function (self) {
 
 	self.edit = function (todo, text) {
 		todo.text = text;
-	}
+	};
+
+	self.toggle = function (todo) {
+		todo.completed = !todo.completed;
+
+		if ( todo.completed ) {
+			--incomplete;
+		} else {
+			++incomplete;
+		}
+
+		applyFilter(todo);
+		iris.notify("change-todos");
+	};
 
 	self.len = function () {
 		return todos.length;
-	}
+	};
 
 	self.incomplete = function () {
 		return incomplete;
-	}
+	};
 
 	self.completed = function () {
 		return todos.length - incomplete;
-	}
+	};
 
 	self.allCompleted = function () {
 		return incomplete === 0;
-	}
+	};
 
 	function deleteTodo (i, todo) {
 		todos.splice(i, 1);
@@ -74,7 +76,7 @@ iris.resource(function (self) {
 			}
 		}
 		iris.notify("change-todos");
-	}
+	};
 
 	self.setAll = function (completed) {
 		for (var i = 0; i < todos.length; i++ ) {
@@ -87,7 +89,7 @@ iris.resource(function (self) {
 		incomplete = ( completed ) ? 0 : todos.length;
 
 		iris.notify("change-todos");
-	}
+	};
 
 	self.filter = function (filter) {
 		currentFilter = filter;
@@ -95,7 +97,7 @@ iris.resource(function (self) {
 		for (i = 0; i < todos.length; i++ ) {
 			applyFilter(todos[i]);
 		}
-	}
+	};
 
 	function applyFilter (todo) {
 		if ( currentFilter === "all" || (todo.completed && currentFilter === "completed") || (!todo.completed && currentFilter === "active") ) {
