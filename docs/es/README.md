@@ -140,7 +140,7 @@ Iris consta de los siguientes elementos:
 
 El **template** consiste en un fragmento de código en HTML, típicamente un *DIV*, almacenado en un fichero, normalmente con extensión *.html*. Es la interfaz de usuario y su cometido es meramente pasivo ya que simplemente presenta la información que ha sido preparada por el *presenter*; retorna al *presenter* los datos introducidos por el usuario y le cominica los eventos que se han producido.
 
-El **presenter** es un fragmento de código en Javascript almacenado en un fichero, típicamente con extensión *.js*. Mediante este fichero controlamos e interaccionamos con el *template*, definiendo su comportamiento. El *presenter* recupera y almacena datos en el *resource* y los adapta para ser mostrador en el *template*
+El **presenter** es un fragmento de código en Javascript almacenado en un fichero, típicamente con extensión *.js*. Mediante este fichero controlamos e interaccionamos con el *template*, definiendo su comportamiento. El *presenter* recupera y almacena datos en el *resource* y los adapta para ser mostrados en el *template*.
 
 Con Iris la lógica de la aplicación la podemos situar en el *presenter* o en el *resource* o repartirla entre ambos.
 
