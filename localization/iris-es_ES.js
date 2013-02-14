@@ -8,7 +8,8 @@ iris.locale(
             formatNeg: "- n s",
             decimal: ",",
             thousand: ".",
-            precision: 2
+            precision: 2,
+            symbol : "€"
         },
         number : {
             decimal: ",",
