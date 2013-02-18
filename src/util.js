@@ -57,10 +57,6 @@
         }
     }
 
-    //
-    // Public
-    //
-
     iris.date = function (p_date, p_format) {
         if ( p_date === null ) {
             return "";
@@ -81,6 +77,10 @@
         return dateFormat;
     };
 
+
+    //
+    // Public
+    //
 
     iris.ajax = function (p_settings) {
         return $.ajax(p_settings);
