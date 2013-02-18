@@ -3,11 +3,13 @@ iris.resource(function (self) {
 	var models = [],
 		remaining = 0,
 		localStorageEnabled = false,
-		currentFilter = "all";
+		currentFilter = "all",
+		manager,
+		uis;
 
-	self.init = function (manager) {
-		self.manager = manager;
-		self.uis = [];
+	self.init = function (screen) {
+		manager = screen;
+		uis = [];
 
 		if ( Storage !== undefined ) {
 			localStorageEnabled = true;
@@ -21,14 +23,14 @@ iris.resource(function (self) {
 				}
 			}
 		}
-		self.manager.render();
+		manager.render();
 	}
 
 	function createUI (todo) {
-		var ui = self.manager.ui("todo-list", iris.path.todo.js);
+		var ui = manager.ui("todo-list", iris.path.todo.js);
 		ui.render(todo);
 		applyFilter(ui);
-		self.uis.push(ui);
+		uis.push(ui);
 	}
 
 	function save () {
@@ -54,8 +56,8 @@ iris.resource(function (self) {
 
 	self.filter = function (filter) {
 		currentFilter = filter;
-		for (var i = 0; i < self.uis.length; i++ ) {
-			applyFilter(self.uis[i]);
+		for (var i = 0; i < uis.length; i++ ) {
+			applyFilter(uis[i]);
 		}
 	};
 
@@ -64,7 +66,7 @@ iris.resource(function (self) {
 		var todo = {text: text, completed: false};
 		models.push(todo);
 		createUI(todo);
-		self.manager.render();
+		manager.render();
 		save();
 	};
 
@@ -73,9 +75,9 @@ iris.resource(function (self) {
 		if ( !todo.completed ) --remaining;
 		var idx = models.indexOf(todo);
 		models.splice(idx, 1);
-		self.uis.splice(idx, 1);
-		self.manager.destroyUI(todoUI);
-		self.manager.render();
+		uis.splice(idx, 1);
+		manager.destroyUI(todoUI);
+		manager.render();
 		save();
 	};
 
@@ -87,7 +89,7 @@ iris.resource(function (self) {
 		else ++remaining;
 
 		todoUI.render();
-		self.manager.render();
+		manager.render();
 		save();
 	};
 
@@ -95,11 +97,11 @@ iris.resource(function (self) {
 		for ( var i = models.length-1; i >= 0 ; i-- ) {
 			if (models[i].completed) {
 				models.splice(i, 1);
-				var todoUI = self.uis.splice(i, 1)[0];
-				self.manager.destroyUI(todoUI);
+				var todoUI = uis.splice(i, 1)[0];
+				manager.destroyUI(todoUI);
 			}
 		}
-		self.manager.render();
+		manager.render();
 		save();
 	};
 
@@ -107,11 +109,11 @@ iris.resource(function (self) {
 		for (var i = 0; i < models.length; i++ ) {
 			if ( models[i].completed !== completed ) {
 				models[i].completed = completed;
-				self.uis[i].render();
+				uis[i].render();
 			}
 		}
 		remaining = ( completed ) ? 0 : models.length;
-		self.manager.render();
+		manager.render();
 		save();
 	};
 
