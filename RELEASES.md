@@ -5,6 +5,9 @@ _Creation date: 2012-01-12_
 [version] date -> authors
   * upd|fix|new|dep|rmv - description
 
+[0.5.1]
+ * [fix] Fixed initial navigation bug issue #94
+
 [0.5.0] 2013-02-07
  * [upd] New code style using: http://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml
  * [new] Integration with GruntJs
