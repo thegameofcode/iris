@@ -20,7 +20,6 @@
     ;
 
     function _init() {
-
         // _screenJsUrl["#hash"] return the js-url associated with #hash
         _screenJsUrl = {};
 
@@ -39,9 +38,6 @@
         _gotoCancelled = false;
         _lastFullHash = "";
 
-        $(window).off("hashchange");
-        document.location.hash = "#";
-
         // dependencies
         _dependencyCount = 0;
         _lastLoadedDependencies = [];
@@ -49,8 +45,14 @@
 
         _paths = [];
 
-        iris.on("iris-reset", _init);
+        iris.on("iris-reset", function () {
+            $(window).off("hashchange");
+            document.location.hash = "#";
+
+            _init();
+        });
     }
+
 
     function _welcome(p_jsUrl) {
         if (_welcomeCreated === true) {
