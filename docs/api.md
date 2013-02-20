@@ -100,9 +100,10 @@ iris.log("obj = ", obj);
 ### iris.ajax(settings)
 *Since*: `v0.5.0`
 
-Do an Ajax request.
+Perform an HTTP (Ajax) request.
 Accepts the same parameters as *jQuery.ajax()*
 See <a href="http://api.jquery.com/jQuery.ajax/">JQuery Ajax</a> for more details.
+Returns a jQuery [jqXHR](http://api.jquery.com/Types/#jqXHR) object.
 
 ```javascript
 iris.ajax({
@@ -720,7 +721,7 @@ Inherit methods from Settable class
 #### self.get
 *Since*: `v0.5.0`
 
-Perform an asynchronous HTTP (Ajax) request of type `GET`, [jQuery.ajax](http://api.jquery.com/jQuery.ajax/).
+Perform an asynchronous HTTP ([Ajax](http://api.jquery.com/jQuery.ajax/)) request of type `GET`.
 Returns a jQuery [jqXHR](http://api.jquery.com/Types/#jqXHR) object.
 
 ```javascript
@@ -734,7 +735,7 @@ Returns a jQuery [jqXHR](http://api.jquery.com/Types/#jqXHR) object.
 #### self.post
 *Since*: `v0.5.0`
 
-Perform an asynchronous HTTP (Ajax) request of type `POST`, [jQuery.ajax](http://api.jquery.com/jQuery.ajax/).
+Perform an asynchronous HTTP ([Ajax](http://api.jquery.com/jQuery.ajax/)) request of type `POST`.
 Returns a jQuery [jqXHR](http://api.jquery.com/Types/#jqXHR) object.
 
 ```javascript
@@ -748,7 +749,7 @@ Returns a jQuery [jqXHR](http://api.jquery.com/Types/#jqXHR) object.
 #### self.put
 *Since*: `v0.5.0`
 
-Perform an asynchronous HTTP (Ajax) request of type `PUT`, [jQuery.ajax](http://api.jquery.com/jQuery.ajax/).
+Perform an asynchronous HTTP ([Ajax](http://api.jquery.com/jQuery.ajax/)) request of type `PUT`.
 Returns a jQuery [jqXHR](http://api.jquery.com/Types/#jqXHR) object.
 
 ```javascript
@@ -762,7 +763,7 @@ Returns a jQuery [jqXHR](http://api.jquery.com/Types/#jqXHR) object.
 #### self.del
 *Since*: `v0.5.0`
 
-Perform an asynchronous HTTP (Ajax) request of type `DEL`, [jQuery.ajax](http://api.jquery.com/jQuery.ajax/).
+Perform an asynchronous HTTP ([Ajax](http://api.jquery.com/jQuery.ajax/)) request of type `DEL`.
 Returns a jQuery [jqXHR](http://api.jquery.com/Types/#jqXHR) object.
 
 ```javascript
