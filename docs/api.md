@@ -386,28 +386,36 @@ iris.translations("fr_FR", "./lang_FR.json", {"success" : onFRSuccess, "error" :
 *Since*: `v0.5.0`
 
 Defines or sets the locale format.
+You can use the [available locales](../localization).
 
 ```javascript
-//To define the locale
 iris.locale(
- "en_US", {
-  dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-  monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-  dateFormat: "m/d/Y h:i:s",
-  currency: {
-   formatPos: "n",
-   formatNeg: "(n)",
-   decimal: ".",
-   thousand: ",",
-   precision: 2
-  }
- }
+    "en_US", {
+        dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+        dateFormat: "m/d/Y h:i:s",
+        currency: {
+            formatPos: "s n",
+            formatNeg: "(s n)",
+            decimal: ".",
+            thousand: ",",
+            precision: 2
+        },
+        number : {
+            decimal: ".",
+            thousand: ",",
+            precision: 2
+        }
+    }
 );
 ```
 
 ```javascript
 //To set the locale
 iris.locale("en_US");
+
+//To get the current locale
+var locale = iris.locale();
 ```
 
 ### iris.regional
