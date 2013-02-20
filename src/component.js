@@ -133,8 +133,11 @@
                     script = document.createElement("script");
                     script.type = "text/javascript";
                     script.src = path;
-                    script.onload = _checkLoadFinish;
-                    script.onreadystatechange = onReadyStateChange;
+                    if ($.browser.msie  && parseInt($.browser.version, 10) < 9) {
+                    	script.onreadystatechange = onReadyStateChange;
+                    } else {
+                    	script.onload = _checkLoadFinish;
+                    }
                     _head.appendChild(script);
                 }
             }
