@@ -19,7 +19,7 @@ Iris exposes all of its methods and properties on the `iris` object:
 ##<a name="core"></a> Core
 
 ### iris.baseUri([path])
-Set the base URL applied to load iris components like screens, UIs & resources.
+Set the base URL applied to load Iris components like screens, UIs & resources.
 
 ```javascript
 // You can define paths as
@@ -41,7 +41,7 @@ iris.baseUri("./path/to/iris/components/");
 ```
 
 ### iris.cache([enabled])
-Set or get a value that indicates whether iris' calls are cached or not.
+Set or get a boolean value that indicates whether Iris' calls are cached or not.
 In local environments (localhost, 127.0.0.1) the cache are disabled by default.
 
 ```javascript
@@ -53,8 +53,8 @@ iris.cache(true);
 ```
 
 ### iris.cacheVersion
-Set or get a value that will be added as a parameter in all iris' ajax calls.
-You can use it to force iris components to be cached with a version string.
+Set or get a value that will be added as a parameter in all Iris' ajax calls.
+You can use it to force Iris components to be cached with a version string.
 
 ```javascript
 iris.cacheVersion("v1.0");
@@ -69,7 +69,7 @@ iris.noCache("localhost", "127.0.0.1");
 ```
 
 ### iris.enableLog(enabled)
-Enable or disable the iris.log outputs.
+Enable or disable the *iris.log* outputs.
 
 ```javascript
 iris.enableLog(false);
@@ -77,7 +77,7 @@ iris.log("test"); // "test" is not printed
 ```
 
 ### iris.log(value1[, value2, value3, value4])
-Console prints the values for debugging purposes. Only if iris logging is enabled, see `iris.enableLog` for more details.
+Prints the parameters values to the console for debugging purposes.
 
 ```javascript
 iris.log("obj = ", obj);
@@ -87,7 +87,7 @@ iris.log("obj = ", obj);
 ##<a name="util"></a> Util
 ### iris.ajax(settings)
 Do an Ajax request.
-Accepts the same parameters as jQuery.ajax()
+Accepts the same parameters as *jQuery.ajax()*
 See <a href="http://api.jquery.com/jQuery.ajax/">JQuery Ajax</a> for more details.
 
 ```javascript
@@ -98,7 +98,7 @@ iris.ajax({
 ```
 
 ### iris.val(obj, label)
-Get value from javascript object using a label string.
+Get value from Javascript object using a label string.
 You can use dot to get object's children.
 
 ```javascript
@@ -222,7 +222,7 @@ iris.currency(5600.899, { symbol : "" }); // "5.600,90"
 ##<a name="event"></a> Event
 
 ### iris.notify(eventId[, params])
-Trigger an event.
+Triggers an event.
 See `iris.on` and `iris.off` for more details.
 
 ```javascript
@@ -231,10 +231,8 @@ iris.notify("my-event", {param : value});
 iris.notify("my-event");
 ```
 
-
-
 ### iris.on(eventId, callback)
-Add an event listener.
+Adds an event listener.
 See `iris.notify` and `iris.off` for more details.
 
 ```javascript
@@ -242,7 +240,7 @@ iris.on("my-event", callback);
 ```
 
 ### iris.off(eventId[, callback])
-Remove an event listener.
+Removes an event listener.
 See `iris.notify` and `iris.on` for more details.
 If callback is not specified, all callback are removed.
 
@@ -253,18 +251,33 @@ iris.off("my-event"); // remove all callbacks
 ```
 
 ### iris.destroyEvents(eventId, callbacks)
-Remove a collection of event listeners.
+Removes a collection of event listeners.
 
 ```javascript
 iris.destroyEvents("my-event", [callback1, callback2]);
 ```
 
 ### iris.Event class
+
 #### self.on
+Adds an event listener associated with a component. When the component is destroyed, the listener will be deleted.
+
+For more details, see `iris.on`.
+
+```javascript
+self.on("my-event", callback);
+```
+
 #### self.off
+Removes an event listener.
+See `iris.off` for more details.
+
 #### self.notify
+Removes an event listener.
+See `iris.notify` for more details.
 
 ### Iris Events
+
 #### iris.BEFORE_NAVIGATION
 Event fired before do a navigation.
 
@@ -294,43 +307,378 @@ iris.on(iris.RESOURCE_ERROR, function (request, textStatus, errorThrown) {
 
 ##<a name="lang"></a> Language & Regional
 ### iris.translate
+Translates a text using the locale.
+
+```javascript
+iris.translate(text, [locale]);
+```
+If no locale is passed, Iris will use the default locale.
+
+
 ### iris.translations
+Adds translations in a particular language. This method can be called multiple times with the same language.
+
+```javascript
+iris.translations("en_US", {
+    GREETING: "Hi!",
+    GREETINGS: {
+        MORNING: "Good Morning",
+        AFTERNOON: "Good Afternoon",
+        NIGHT: "Good Night"
+    }
+});
+```
+
+The translations can be in a JSON file.
+
+```javascript
+iris.translations("fr_FR", "./lang_FR.json", {"success" : onFRSuccess, "error" : onFRError });
+```
+
 ### iris.locale
+
+Defines or sets the locale format.
+
+
+
+```javascript
+//To define the locale
+iris.locale(
+ "en_US", {
+  dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+  monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+  dateFormat: "m/d/Y h:i:s",
+  currency: {
+   formatPos: "n",
+   formatNeg: "(n)",
+   decimal: ".",
+   thousand: ",",
+   precision: 2
+  }
+ }
+);
+```
+
+```javascript
+//To set the locale
+iris.locale("en_US");
+```
+
 ### iris.regional
 
+Gets a regional value.
+
+```javascript
+iris.locale("dayNames");
+```
 
 ##<a name="components"></a> Components
 ### iris.welcome
+
+Establishes and navigates to the Welcome screen component.
+
+```javascript
+iris.welcome("screen/welcome.js");
+```
+
+Or
+
+```javascript
+iris.welcome(iris.path.welcome.js);
+```
+
 ### iris.navigate
+
+Navigates to a Screen Component.
+
+```javascript
+iris.navigate("screen/help");
+```
+
+```javascript
+iris.navigate(iris.path.help.js);
+```
+
 ### iris.screen
+
+Defines a Screen component.
+
+```javascript
+iris.screen(
+
+ function (self) {
+
+  //Called once when the Component is created
+  self.create = function () {
+   self.tmpl(iris.path.help.html);
+  };
+
+  //Called when the Component is showed.
+  self.awake = function () {
+   ...
+  };
+
+  //Called when the component is hidden because you navigate to another Screen
+  self.sleep = function () {
+   ...
+  };
+
+  //Called before hiding component.
+  //If the method returns false, the navigation is interrupted and not hidden nor self.seelp method is called
+  //This method only is applied to the Screens components
+  self.canSleep = function () {
+   ...
+  };
+
+
+  //Called when the component is destroyed
+  self.destroy = function () {
+   ...
+  };
+
+ }, iris.path.help.js  
+);
+```
+
 ### iris.destroyScreen
+
+Destroys a Screen component.
+
+```javascript
+iris.destroyScreen(iris.path.help.js);
+```
+
 ### iris.ui
+
+Defines an UI Component.
+
+```javascript
+iris.ui(function(self){...});
+```
+
+See `iris.screen` for more details.
+
 ### iris.tmpl
+
+Loads the template in memory and associates it to a path.
+
+```javascript
+iris.tmpl("screen/welcome.html","<div>...</div>");
+```
+See `self.tmpl` for more details.
+
 ### iris.resource
+Defines or creates a Resource Component.
+
+```javascript
+//To define
+iris.resource(function(self){
+
+    //Some RESTful methods
+    self.load = function (id) {
+      return self.get("service/book/" + id);
+    };
+
+    self.create = function (params) {
+      return self.post("service/book", params);
+    };
+
+    self.update = function (id, params) {
+      return self.put("service/book/" + id, params);
+    };
+
+    self.remove = function (id) {
+      return self.del("service/book/" + id);
+    };
+
+}, iris.path.resource.js);
+```
+
+```javascript
+//To create
+iris.resource(iris.path.resource.js);
+```
 
 ###<a name="settable"></a> iris.Settable Class
 #### self.setting
+Gets o sets a value attribute.
+
+```javascript
+//To set
+self.setting("attribute_name", {...});
+```
+
+```javascript
+//To get
+var attribute_value = self.setting("attribute_name");
+```
+
 #### self.settings
+Sets multiples and complex attributes values.
+
+```javascript
+self.settings({ person: { name:"test name"}, money: -67890.678, region: { country: "country test" }});
+var attribute_value = self.setting("person.name");
+```
 
 ###<a name="component"></a> iris.Component Class
+
 #### self.tmpl
+
+Loads the template of the component into the DOM.
+
+This method must be called in the *self.create* method of the Component.
+
+```javascript
+self.tmpl(url, [params], [mode]);
+```
+
+Example:
+
+```javascript
+self.tmpl(iris.path.ui.login.html, {"name":"John"}, self.APPEND);
+```
+
+The parameters will be replaced in the template where ##parameter_name## is found.
+
+```htmpl
+<p>The name is ##name##</p>
+```
+When *self.APPEND* is passed as the third parameter, the template container will not be replaced with the template, otherwise the container will be replaced by the template	
+
 #### self.get
+
+Gets the JQuery object whose ID matches with the param.
+
+```htmpl
+<p data-id="paragraph">The name is John</p>
+```
+```javascript
+self.get("paragraph").text("Anna");
+```
+
 #### self.inflate
+
+Replaces in the template the object passed as parameter.
+The text of the DOM elements that have an *data-model* attribute that match some attribute of the object passed, will be replaced.
+
+```javascript
+self.inflate({date: new Date()});
+```
+
+```htmpl
+<span data-model="date">Not set yet</span>
+```
+
 #### self.ui
+
+Create a new UI Component and replaces or adds it to the container.
+
+```js
+self(container, path, [settings], [templateMode]);
+```
+
+Example:
+
+In the template of the parent:
+
+```html
+...
+<div data-id="ui_container"></div>
+...
+```
+
+In the presenter of the parent:
+
+```javascript
+...
+self.ui("ui_container", iris.path.ui.my_ui.js, {name: "John"}, self.APPEND);
+//The name parameter may be recovered in my_ui's presenter with the *self.setting* method.
+...
+```
+
+For help about the *templateMode* parameter see *self.tmpl* method.
+
 #### self.destroyUI
+
+Destroy the UI component.
+
+```javascript
+var my_ui = self.ui("ui_container", iris.path.ui.my_ui.js);
+self.destroyUI(my_ui);
+```
+
 #### self.destroyUIs
+
+Destroy all the UI in a container.
+
+```javascript
+var my_ui = self.ui("ui_container", iris.path.ui.my_ui.js);
+self.destroyUIs("ui_container");
+```
+
 
 ###<a name="ui"></a> iris.UI Class
 Inherit methods from Component, Settable & Event classes
+
 #### self.tmplMode
+Sets the template mode. This method must be called before the *tmpl.method*.
+
+The possible values ​​are:
+
+```javascript
+self.APPEND //Adds the UI to as the last element in the container
+self.PREPEND //Adds the UI to as the first element in the container
+self.REPLACE //Replace the container with the UI template. This is the default behavior
+```
+
 
 ###<a name="screen"></a> iris.Screen Class
 Inherit methods from Component, Settable & Event classes
 #### self.screens
 
+Registers Screens and allows to navigate to them.
+This method can be called once for each component.
+
+```javascript
+self.screens("screens", [
+ ["home", iris.path.home.js],
+ ["help", iris.path.help.js]
+]);
+
+//The first parameter is the data-id attribute of the container
+```
+
 ###<a name="resource"></a> iris.Resource Class
 Inherit methods from Settable class
 #### self.get
+
+Makes a jQuery.ajax call with de GET method.
+
+```javascript
+ self.get(path, success_function, error_function);
+```
+
 #### self.post
+Makes a jQuery.ajax call with de POST method.
+
+```javascript
+ self.get(path, params, success_function, error_function);
+```
+
 #### self.put
+
+Makes a jQuery.ajax call with de GET method.
+
+```javascript
+ self.get(path, params, success_function, error_function);
+```
+
 #### self.del
+
+Makes a jQuery.ajax call with de DEL method.
+
+```javascript
+ self.get(path, success_function, error_function);
+```
+
