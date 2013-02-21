@@ -1,4 +1,4 @@
-/*! Iris - v0.5.0 - 2013-02-07
+/*! Iris - v0.5.1-SNAPSHOT - 2013-02-21
 * http://iris-js.github.com/iris
 * Copyright (c) 2013 Iris; Licensed New-BSD */
 
@@ -551,7 +551,6 @@ window.iris = iris;
     ;
 
     function _init() {
-
         // _screenJsUrl["#hash"] return the js-url associated with #hash
         _screenJsUrl = {};
 
@@ -570,9 +569,6 @@ window.iris = iris;
         _gotoCancelled = false;
         _lastFullHash = "";
 
-        $(window).off("hashchange");
-        document.location.hash = "#";
-
         // dependencies
         _dependencyCount = 0;
         _lastLoadedDependencies = [];
@@ -580,8 +576,14 @@ window.iris = iris;
 
         _paths = [];
 
-        iris.on("iris-reset", _init);
+        iris.on("iris-reset", function () {
+            $(window).off("hashchange");
+            document.location.hash = "#";
+
+            _init();
+        });
     }
+
 
     function _welcome(p_jsUrl) {
         if (_welcomeCreated === true) {
@@ -662,8 +664,11 @@ window.iris = iris;
                     script = document.createElement("script");
                     script.type = "text/javascript";
                     script.src = path;
-                    script.onload = _checkLoadFinish;
-                    script.onreadystatechange = onReadyStateChange;
+                    if ($.browser.msie  && parseInt($.browser.version, 10) < 9) {
+                        script.onreadystatechange = onReadyStateChange;
+                    } else {
+                        script.onload = _checkLoadFinish;
+                    }
                     _head.appendChild(script);
                 }
             }

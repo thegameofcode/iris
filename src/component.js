@@ -134,9 +134,9 @@
                     script.type = "text/javascript";
                     script.src = path;
                     if ($.browser.msie  && parseInt($.browser.version, 10) < 9) {
-                    	script.onreadystatechange = onReadyStateChange;
+                        script.onreadystatechange = onReadyStateChange;
                     } else {
-                    	script.onload = _checkLoadFinish;
+                        script.onload = _checkLoadFinish;
                     }
                     _head.appendChild(script);
                 }
