@@ -324,7 +324,7 @@ function concatTemplates(callback){
 }
  
 function deleteFiles(callback) {
- if (config.mode === "test" || !config.deleteInputs) {
+ if (config.mode === "test" || !config.deleteInputs || !config.cssSuffix) {
   callback(null, "deleteFiles");
   return;
  }
@@ -339,8 +339,6 @@ function deleteFiles(callback) {
   }
  }
  callback(null, "deleteFiles");
-  
-  
 } 
 
 function calculateInputStats(item) {
