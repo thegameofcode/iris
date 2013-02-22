@@ -1,15 +1,54 @@
 
 var fs = require('fs');
 var compressor = require('node-minify');
+var extend = require('node.extend');
+var fileset = require('fileset');
+var util = require('util');
+var path = require('path');
+var async = require('async');
 
-var html = [];
-var js = [];
-var outputFile;
-var initJs;
-var pathBase = "";
+var config = {
+ html: [],
+ js: [],
+ css: [],
+ outputFile: "",
+ initJs: "",
+ pathBase: "",
+ inputPaths: [],
+ excludePaths: [],
+ extension: {
+  html: true,
+  js: true,
+  css: true
+ },
+ outputPath: "",
+ cssSuffix:"-min",
+ mode: "",
+ deleteInputs: false
+}
+
+function ItemStats() {
+ this.numFiles = 0;
+ this.inputSize = 0;
+ this.outputSize = 0;
+ this.compression = function () {
+  return parseInt((this.inputSize - this.outputSize) / this.inputSize * 100) + "%";
+ };
+}
+
+var globalStats = {
+ js:  new ItemStats(), 
+ html:new ItemStats(),
+ css: new ItemStats(),
+ total: new ItemStats()
+};
 
 function init () {
- var inputPaths, outputPath;
+ var file_config = null;
+ if (fs.existsSync("iris_packager.json") && fs.statSync("iris_packager.json").isFile()) {
+  file_config = fs.readFileSync("iris_packager.json");
+  config = extend(true, config, JSON.parse(file_config));
+ }
 
  process.argv.forEach(
   function (val, index, array) {
@@ -17,67 +56,118 @@ function init () {
 
    param = getParam("input=", val);
    if ( param !== null ) {
-    inputPaths = param.split(",");
+    config.inputPaths = param.split(",");
    }
 
+   
+   param = getParam("exclude=", val);
+   if ( param !== null ) {
+    config.excludePaths = param.split(",");
+   }
+   
+   param = getParam("ext=", val);
+   if ( param !== null ) {
+    config.extension = (function toObject(arr) {
+     var rv = {};
+     for (var i = 0; i < arr.length; ++i)
+      rv[arr[i]] = true;
+     return rv;
+    })(param.split(","));
+   }
+   
+   
    param = getParam("output=", val);
    if ( param !== null ) {
-    outputPath = param;
+    config.outputPath = param;
+    config.outputFile = "";
    }
 
    param = getParam("init=", val);
    if ( param !== null ) {
-    initJs = param;
+    config.initJs = param;
    }
 
    param = getParam("base=", val);
    if ( param !== null ) {
-    pathBase = param;
+    config.pathBase = param;
+   }
+   
+   param = getParam("cssSuffix=", val);
+   if ( param !== null ) {
+    config.cssSuffix = param;
+   }
+   
+   param = getParam("mode=", val);
+   if ( param !== null ) {
+    config.mode = param;
+   }
+   
+   param = getParam("delete=", val);
+   if ( param !== null ) {
+    config.deleteInputs = param;
    }
   }
   );
 
- if ( !inputPaths ) {
-  throw "you must specify the parameter input=path_to_directory/,path_to_file...";
+ if ( !config.inputPaths ) {
+ //throw "you must specify the parameter input=path_to_directory/,path_to_file...";
  }
  
- if ( !outputPath ) {
+ if ( !config.outputPath && !config.outputFile ) {
   throw "you must specify the parameter output=path/";
  }
 
- if ( !initJs ) {
+ if ( !config.initJs ) {
   throw "you must specify the parameter init=path/file.js";
  }
 
- if (fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory()) {
-  outputFile = validatePath(outputPath) + initJs.match(/[^/]+\.js$/);
- } else {
-  outputFile = outputPath;
+ if (!config.outputFile) {
+  if (fs.existsSync(config.outputPath) && fs.statSync(config.outputPath).isDirectory()) {
+   config.outputFile = validatePath(config.outputPath) + config.initJs.match(/[^/]+\.js$/);
+  } else {
+   config.outputFile = config.outputPath;
+  }
  }
  
- js.push(initJs);
+ config.js.push(config.initJs);
+ console.log("***************************************************************************************"); 
+ console.log("config = " + util.inspect(config));
+ console.log("***************************************************************************************");
  
- var numInputPathsProccessed = 0
- for (var i = 0; i < inputPaths.length; i++) {
-  var initPath = pathBase + inputPaths[i];
-  console.log("scanning '" + initPath + "'...");
-  (function(path) {
-   fs.stat(path, function(err, stats) {
-    if (err) throw err;
+ var includes = "";
+ var excludes = "";
+ if (config.inputPaths.length > 0) {
+  for (var i = 0; i < config.inputPaths.length; i++) {
+   config.inputPaths[i] = config.pathBase + config.inputPaths[i];
+  }
+  includes = config.inputPaths.join(" ");
+  if (config.excludePaths.length > 0) {
+   for (i = 0; i < config.excludePaths.length; i++) {
+    config.excludePaths[i] = config.pathBase + config.excludePaths[i];
+   }
+   excludes = config.excludePaths.join(" ");
+  }
+  
+  fileset(includes,  excludes, function(err, files) {
+   if (err) return console.error(err);
+   for (var i = 0; i < files.length; i++) {
+    var initPath = files[i];
+    console.log("scanning '" + initPath + "'...");
+   
+   
+    var stats = fs.statSync(initPath);
     if (stats.isFile()) {
-     scanFile(path);
+     scanFile(initPath);
     } else {
-     scanPath(validatePath(path));
+     scanPath(validatePath(initPath));
     }
-    numInputPathsProccessed++;
-    if (numInputPathsProccessed === inputPaths.length) {
-     generateOutput();
-    }
-   }); 
-  })(initPath);
+   }
+  
+  }).on('end', function() {
+   
+   generateOutput();
+  }); 
  }
- 
- 
 }
 
 function validatePath (path) {
@@ -111,62 +201,175 @@ function scanPath (path) {
 }
 
 function scanFile(file) {
- if ( file.substr(-5) === '.html' ) {
-  console.log("found html '" + file + "'...");
-  var content = fs.readFileSync(file, "utf8").replace(/[\r\n\t]/g,"");
-  html.push({
-   path : file, 
-   content : content
-  });
-
- } else if ( file.substr(-3) === '.js' ) {
-  console.log("found js '" + file + "'...");
-  js.push(file)
-
+ 
+ var ext = path.extname(file).replace(".","");
+ 
+ if (ext === "html" || ext === "js" || ext === "css") {
+  console.log("found " + ext + " '" + file + "'...");
+  config[ext].push(file);
  }
 }
 
-function generateOutput () {
 
+function generateOutput () {
+ console.log("Gerenating output. Wait please...");
+ 
+ calculateInputStats("js");
+ calculateInputStats("html");
+ calculateInputStats("css");
+ 
+ async.series([
+  function(callback) {
+   minifyJs(callback);
+  },
+  function(callback) {
+   minifyCSS(callback);
+  },
+  function(callback) {
+   concatTemplates(callback);
+  },
+  function(callback) {
+   deleteFiles(callback);
+  }
+  ,function(callback) {
+   printResults(callback);
+  }
+  ]);
+}
+
+function minifyJs(callback) {
+ if (!config.extension.js || config.js.length == 0 || config.mode === "test") {
+  callback(null, "minifyJs");
+  return;
+ }
+ console.log("Minimizing JS...");
+ 
  // Compress using Google Closure
  new compressor.minify({
   type: 'gcc',
-  fileIn: js,
-  fileOut: outputFile,
+  fileIn: config.js,
+  fileOut: config.outputFile,
   callback: function(err){
    if ( err ) {
-    throw err;
+    callback(err, "minifyJs");
    } else {
-    concatTemplates();
+    globalStats.js.outputSize += fs.statSync(this.fileOut).size;
+    callback(null, "minifyJs");
    }
   }
  });
 }
 
-function concatTemplates(){
+function minifyCSS(callback) {
+ if (!config.extension.css || config.css.length == 0 || config.mode === "test") {
+  callback(null, "minifyCSS");
+  return;
+ }
+ console.log("Minimizing CSS...");
+ var filesProcessed = 0;
+ for ( var f=0, F=config.css.length;f<F; f++ ) {
+  var inCSS = config.css[f];
+  (function (fileIn) {
+   var outCSS = path.dirname(fileIn) + "/" + path.basename(fileIn, ".css") + config.cssSuffix + ".css";
+   new compressor.minify({
+    type: 'yui-css',
+    fileIn: fileIn,
+    fileOut: outCSS,
+    callback: function(err){
+     if ( err ) {
+      callback(err, "minifyCSS");
+     } else {
+      filesProcessed++;
+      globalStats.css.outputSize += fs.statSync(outCSS).size;
+      if (filesProcessed == config.css.length) {
+       callback(null, "minifyCSS");
+      }
+     }
+    }
+   });  
+  })(inCSS);
+ }
+}
+
+function concatTemplates(callback){ 
+ if (!config.extension.html || config.html.length == 0 || config.mode === "test") {
+  callback(null, "concatTemplates");
+  return;
+ }
+ console.log("Concatenating HTML...");
  var content = [];
- for ( var f=0, F=html.length;f<F; f++ ) {
+ for ( var f=0, F=config.html.length;f<F; f++ ) {
+  var data = fs.readFileSync(config.html[f], "utf8").replace(/[\r\n\t]/g,"");
   content.push(
-   "iris.Tmpl('"
-   + html[f].path.replace(pathBase, "")
+   "iris.tmpl('"
+   + config.html[f].replace(config.pathBase, "")
    +"','"
-   + html[f].content.replace(/\'/g, "\\\'")
+   + data.replace(/\'/g, "\\\'")
    + "');\n"
    );
  }
 
  fs.appendFile(
-  outputFile,
+  config.outputFile,
   content.join(""),
   function(err) {
    if(err) {
-    console.error(err);
-   } 
-   else {
-    console.log("the file was saved in " + outputFile);
+    callback(err, "concatTemplates");
+   } else {
+    globalStats.html.outputSize = fs.statSync(config.outputFile).size - globalStats.js.outputSize;
+    callback(null, "concatTemplates");
    }
   }
   );	
+}
+ 
+function deleteFiles(callback) {
+ if (config.mode === "test" || !config.deleteInputs) {
+  callback(null, "deleteFiles");
+  return;
+ }
+ console.log("Removing files...");
+ for (var ext in config.extension) {
+  if (ext) {
+   for (var i = 0 ; i < config[ext].length; i++) {
+    var file = config[ext][i];
+    console.log("Removing " + file + "...");
+    fs.unlinkSync(file);
+   }
+  }
+ }
+ callback(null, "deleteFiles");
+  
+  
+} 
+
+function calculateInputStats(item) {
+ for (var i = 0; i < config[item].length; i++) {
+  globalStats[item].numFiles++;
+  globalStats[item].inputSize += fs.statSync(config[item][i]).size;
+ }
+}
+
+
+function printResults(callback) {
+ globalStats.total.numFiles = globalStats.js.numFiles + globalStats.html.numFiles + globalStats.css.numFiles;
+ globalStats.total.inputSize = globalStats.js.inputSize + globalStats.html.inputSize + globalStats.css.inputSize;
+ if (config.mode != "test") {
+  globalStats.total.outputSize = fs.statSync(config.outputFile).size + globalStats.css.outputSize;
+ }
+ 
+ for (item in globalStats) {
+  globalStats[item].compression = globalStats[item].compression();
+  if (globalStats[item].compression === "NaN%" || config.mode === "test" || (!config.extension[item] && item != "total") ) {
+   globalStats[item].compression = "0%";
+  }
+ }
+ 
+ console.log("***************************************************************************************");
+ console.log("STATS = " + util.inspect(globalStats));
+ console.log("***************************************************************************************");
+ console.log("\nthe file was saved in " + config.outputFile);
+ callback(null, "printResults");
 }
 
 init();
