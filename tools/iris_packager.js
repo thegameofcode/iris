@@ -1,4 +1,3 @@
-
 var fs = require('fs');
 var compressor = require('node-minify');
 var extend = require('node.extend');
@@ -6,6 +5,7 @@ var fileset = require('fileset');
 var util = require('util');
 var path = require('path');
 var async = require('async');
+var b64img = require('css-b64-images');
 
 var config = {
  html: [],
@@ -19,12 +19,13 @@ var config = {
  extension: {
   html: true,
   js: true,
-  css: true
+  css: false
  },
  outputPath: "",
  cssSuffix:"-min",
  mode: "",
- deleteInputs: false
+ deleteInputs: false,
+ base64images: false
 }
 
 function ItemStats() {
@@ -105,6 +106,11 @@ function init () {
    param = getParam("delete=", val);
    if ( param !== null ) {
     config.deleteInputs = param;
+   }
+
+   param = getParam("b64=", val);
+   if ( param !== null ) {
+    config.base64images = param;
    }
   }
   );
@@ -205,6 +211,12 @@ function scanFile(file) {
  var ext = path.extname(file).replace(".","");
  
  if (ext === "html" || ext === "js" || ext === "css") {
+  for (var i = 0; i < config[ext].length; i++) {
+   if (config[ext][i] === file) {
+    console.log("duplicate " + ext + " '" + file + "'...");
+    return;
+   }
+  }
   console.log("found " + ext + " '" + file + "'...");
   config[ext].push(file);
  }
@@ -224,6 +236,9 @@ function generateOutput () {
   },
   function(callback) {
    minifyCSS(callback);
+  },
+  function(callback) {
+   b64(callback);
   },
   function(callback) {
    concatTemplates(callback);
@@ -291,6 +306,33 @@ function minifyCSS(callback) {
  }
 }
 
+function b64(callback) {
+ if (!config.extension.css || config.css.length == 0 || config.mode === "test" || !config.base64images) {
+  callback(null, "b64");
+  return;
+ }
+ console.log("Coding Base64 CSS Images...");
+ var filesProcessed = 0;
+ for ( var f=0, F=config.css.length;f<F; f++ ) {
+  var inCSS = config.css[f];
+  (function (fileIn) {
+   var outCSS = path.dirname(fileIn) + "/" + path.basename(fileIn, ".css") + config.cssSuffix + ".css";
+   b64img.fromFile(outCSS, __dirname,   function(err, css){
+    if ( err ) {
+      callback(err, "b64");
+     } else {
+      fs.writeFileSync(outCSS, css);
+      filesProcessed++;
+      globalStats.css.outputSize += fs.statSync(outCSS).size;
+      if (filesProcessed == config.css.length) {
+       callback(null, "b64");
+      }
+     }
+   });  
+  })(inCSS);
+ }
+}
+
 function concatTemplates(callback){ 
  if (!config.extension.html || config.html.length == 0 || config.mode === "test") {
   callback(null, "concatTemplates");
@@ -324,7 +366,7 @@ function concatTemplates(callback){
 }
  
 function deleteFiles(callback) {
- if (config.mode === "test" || !config.deleteInputs || !config.cssSuffix) {
+ if (config.mode === "test" || !config.deleteInputs) {
   callback(null, "deleteFiles");
   return;
  }
@@ -339,6 +381,8 @@ function deleteFiles(callback) {
   }
  }
  callback(null, "deleteFiles");
+  
+  
 } 
 
 function calculateInputStats(item) {
