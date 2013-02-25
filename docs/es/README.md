@@ -3173,23 +3173,259 @@ iris.welcome("./welcome.js");
 
 ##<a name="iris_packager"></a>Utilizando *iris_packager.js*
 
-Iris incluye una herramienta de *minificación* llamada [*iris_packager.js*](https://raw.github.com/iris-js/iris/master/tools/iris_packager.js). Esta aplicación requiere tener instalado [node.js](http://nodejs.org/) y la dependencia *node-minify*, *npm install node-minify*. Para utilizarla hay que suministrar tres parámetros:
-
-- El directorio que contiene los archivos *html* y *js* que se quieren minificar.
-- El nombre de un directorio que no exista. *iris_packager* lo utilizará para almacenar el fichero *minificado* como se explica más adelante.
-- La ruta de acceso al fichero en el que se haya definido la variable *iris.path*. Es muy importante que esta variable, *iris.path*, se defina fuera de cualquier función, incluso *$(document).ready()* y *window.onload*.
-
-*iris_packager* *minificará* los ficheros *js* y *html* que encuentren en el directorio de origen y que, además, estén referenciados por la variable *iris.path*.
-
-Si, por ejemplo, los ficheros que queremos *minificar* estuvieran en el directorio *wwww/shopping*; el fichero que define la variable *iris.path* fuera *www/js/init.js* y quisiéramos que se creará un en *www/shopping_packed/init.js*; estando en el directorio que contiene el fichero *iris_packager.js*, tendríamos que ejecutar el comando:
+Iris incluye una herramienta de *minificación* llamada [*iris_packager.js*](https://raw.github.com/iris-js/iris/master/tools/iris_packager.js). Esta aplicación requiere tener instalado [node.js](http://nodejs.org/) y las dependencias del fichero *package.json*. Para instalar las dependencias, nos situamos en el directorio que contiene este fichero y ejecutamos:
 
 <pre>
-node iris_packager.js www/shopping/ www/shopping_packed www/js/init.js
+npm install
 </pre>
 
-Podemos crear un *script* que nos facilite la tarea:
+Este *script* permite minificar los ficheros *.js* y *.html* en un único fichero. También permite la minificación de los ficheros *.css* y la conversión de las imágenes que usemos en los ficheros *.css* al formato [base64](http://en.wikipedia.org/wiki/Base64).
 
+*iris_packager* indicará los archivos que ha procesado y mostrará las estadísticas de compresión conseguidas.
+
+Para ejecutar *iris_packager.js* debemos situarnos en el directorio en el que se encuentre y ejecutar:
+
+<pre>
+node iris_packager [params]
+</pre>
+
+A *iris_packager* se le pueden pasar parámetros desde la línea de comandos o en el fichero *iris_packager.json*. Si un parámetro se pasa de ambas formas se utilizará el valor pasado en la línea de comandos.
+
+###Parámetros de *iris_packager*
+
+Los parámetros que admite son:
+
+**Rutas o ficheros de entrada** (obligatorio):
+Indican los archivos que se quieren procesar con *iris_packager*.
+
+Se pueden pasar rutas a directorios, a archivos o expresiones regulares, vea [minimatch]( https://npmjs.org/package/minimatch).
+
+Si se desean pasar varias rutas, se separarán con comas (,).
+
+*iris_packager* buscará aquellos ficheros con extensión *.js*, *.html*, *css* que haya en las rutas pasadas eliminando las rutas duplicadas.
+
+En línea de comandos se pasa con el parámetro *input*.  Ejemplo:
+
+<pre>
+node iris_packager input=shopping/,lib/**/*.js,js/my_lib.js ...
+</pre>
+
+En el fichero *iris_package.json*, se pasan con el parámetro *include_paths*. Ejemplo
+
+```json
+{
+	…
+	"includePaths": ["shopping/", "lib/**/*.js", "js/my_lib.js"]
+	…
+}
 ```
+
+**Rutas o ficheros excluidos** (opcional):
+Permite excluir algunos de los ficheros que se han incluido con el parámetro anterior.
+
+En línea de comandos el parámetro es *exclude*.
+
+En el fichero *iris_packager.json* el atributo es *exlcudePaths*.
+
+
+**Ruta base** (opcional):
+Fragmento de ruta que se concatenará a las rutas definidas como *rutas de entrada* y como *rutas excluidas* para formar la ruta de acceso completa.
+
+Sirve para que se pueda ejecutar *iris_packager* desde cualquier directorio y aún así que las rutas generadas coincidan con las definidas en la variable *iris.path*.
+
+En línea de comandos el parámetro es *base*. Por ejemplo:
+
+<pre>
+node iris_packager input=shopping/,lib/**/*.js,js/my_lib.js base=./www/ ...
+</pre>
+
+En el fichero *iris_package.json" el atributo es *pathBase*.
+
+**Fichero init** (obligatorio):
+
+Define la ruta al fichero de *Javascript* donde se ha definido la variable *iris.path*.
+
+Este fichero se utilizará para minificar los ficheros *.js* y *.html* encontrados.
+
+Este fichero resultará minificado aunque no se haya incluido como *ruta de entrada*.
+
+La ruta no se verá afectada por el parámetro *base*.
+
+En línea de comandos se configura con la variable *init*. Ejemplo:
+
+<pre>
+node iris_packager input=shopping/,lib/**/*.js,js/my_lib.js base=./www/ init=./www/js/init.js ...
+</pre>
+
+En *iris_packager.json* se utilizará el atributo *initJs*.
+
+
+**Directorio o fichero de salida** (obligatorio):
+
+Define el directorio o el fichero donde se realizará la *minificación* de los ficheros *.js* y *.html* encontrados.
+
+Si como salida se indica la ruta a un directorio, el fichero *minificado* se almacenará en este directorio con el mismo nombre del fichero indicado en el parámetro *init*.
+
+Si como salida se indica la ruta a un archivo, el fichero *minificado* se almacenará en este archivo.
+
+En la línea de comandos, el parámetro es *output*. Ejemplo:
+
+<pre>
+node iris_packager input=shopping/,lib/**/*.js,js/my_lib.js base=./www/ init=./www/js/init.js output=./www/js/init-min.js
+</pre>
+
+En el fichero *iris_packager.json* el atributo es *outputPath*. Se podría utilizar también *outputFile* cuando lo que se pasa es un fichero (esto último no sirve cuando sea un directorio).
+
+**Extensiones** (opcional):
+
+Establece las extensiones que se van a procesar.
+
+Sólo se pueden procesar archivos con extensión *js*, *html* y *css*.
+
+Por defecto se procesarán las extensiones *js* y *html*.
+
+En línea de comandos, se configura con el parámetro *ext*. Por ejemplo, para procesar las tres extensiones:
+
+<pre>
+node iris_packager input=shopping/,lib/**/*.js,js/my_lib.js base=./www/ init=./www/js/init.js output=./www/js/init-min.js ext=js,html,css
+</pre>
+
+En el fichero *iris_packager.json* el atributo es *extension*. Por ejemplo:
+
+```json
+{
+	…
+	"extension": {
+		"js": true,
+		"html": true,
+		"css": true,
+	}
+	…
+}
+```
+
+**Modo prueba** (opcional):
+
+Si se activa, permite conocer los archivos afectados por la *minificación* se llegar a realizarla.
+
+Este modo sirve para evitar errores, como sobrescribir archivos u olvidar incluir algún archivo.
+
+En línea de comandos se activa con el parámetro *mode=test*
+
+En el fichero *iris_packager.json* el atributo es *mode*.
+
+**Sufijo CSS** (opcional):
+
+La minificación de los ficheros *css*, crea unos nuevos ficheros *css* comprimidos en la misma ubicación y con el mismo nombre originales pero añadíendole el sufijo *-min* al nombre del fichero resultante.
+
+En línea de comandos, se puede cambiar este comportamiento con el parámetro *cssSuffix*.
+
+Para indicar que se desean sobrescribir los archivos *css* originales:
+
+<pre>
+node iris_packager ... cssSuffix=
+</pre>
+
+Para poner otro sufijo:
+
+<pre>
+node iris_packager ... cssSuffix=_min
+</pre>
+
+En el fichero *iris_packager.json* el atributo también es *cssSuffix*.
+
+Para sobrescribir los ficheros originales:
+
+```json
+{
+	…
+	"cssSuffix": ""
+	…
+}
+```
+
+Para poner otro sufijo:
+
+
+```json
+{
+	…
+	"cssSuffix": "_min"
+	…
+}
+```
+
+**Codificación base64** (opcional):
+
+En la minificación de los ficheros *css*, se pueden incluir las imágenes referenciadas por éstos con la codificación [base64](http://en.wikipedia.org/wiki/Base64).
+
+Por defecto la funcionalidad está desactivada.
+
+Para activarla en línea de comandos el parámetro es *b64*.
+
+<pre>
+node iris_packager ... cssSuffix=_min ext=js,html,css b64=true
+</pre>
+
+En el fichero *iris_packager.json* el atributo es *base64images*.
+
+```json
+{
+	…
+	"cssSuffix": "_min",
+	"extension": {
+		"js": true,
+		"html": true,
+		"css": true,
+	},
+	"base64images": true
+	…
+}
+```
+
+**Borrar ficheros procesados** (opcional):
+
+Por defecto, *iris_packager* mantiene los ficheros originales que se han utilizado para la *minificación*.
+
+Para borrar los ficheros originales tras el proceso de minificación en línea de comandos:
+
+<pre>
+node iris_packager ... delete=true
+</pre>
+
+En el fichero *iris_packager.json* el atributo es *deleteInputs*.
+
+```json
+{
+	…
+	"deleteInputs": true
+	…
+}
+```
+
+**Atributos js, html y css**
+
+El fichero *iris_packager.json* permite definir los atributos *js*, *html* y *css* para procesar archivos que no tengan las extensiones *.js*, *.html* y *.css*, respectivamente.
+
+No hay un equivalente en la línea de comandos para hacer esto mismo.
+
+Sólo son válidas rutas a archivos, no siendo válidas rutas a directorios o expresiones regulares.
+
+Si por ejemplo, se quisiera incluir algún archivo con extensión *.htm* en vez de *.html*:
+
+```json
+{
+	…
+	"html": ["shopping/index.htm", ...]
+	…
+}
+```
+
+###Script para *iris_packager*
+
+Para facilitar el paso de parámetros desde línea de comandos, podemos crear un *script*:
+
+<pre>
 #!/bin/bash
 # File packager.sh
 # $1 = source directory (contains html and js files)
@@ -3197,12 +3433,19 @@ Podemos crear un *script* que nos facilite la tarea:
 # $3 = iris.path file definition
 mkdir $2
 node iris_packager.js input=$1 output=$2 init=$3
-```
-Tras ejecutar este *script*, obtendremos un fichero llamado *www/shopping/init.js* que contendrá en este orden:
+</pre>
+
+Si por ejemplo, este *script* tuviera el nombre *minify.sh*, lo podríamos llamar de esta forma:
+
+<pre>
+minify.sh www/shopping/ www/shopping_packed www/js/init.js
+</pre>
+
+Tras ejecutar este *script*, obtendremos un fichero llamado *www/shopping_packed/init.js* que contendrá en este orden:
 
 1 El fichero *init.js* *minificado*
 2 Todos los ficheros *js* encontrados en *www/shopping*
-3 Llamadas al método *iris.tmpl* almacenan el contenido de los ficheros *html*.
+3 Llamadas al método *iris.tmpl* que almacenan el contenido de los ficheros *html*.
 
 El método *iris.tmpl* recibe dos parámetros, la ruta de acceso al fichero *html* y su contenido.
 
