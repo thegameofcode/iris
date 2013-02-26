@@ -3,6 +3,7 @@ rm -Rf packed
 mkdir packed
 cp index.html packed
 mkdir packed/css
-cp css/base.css packed/css
+mkdir packed/app
+cp css/* packed/css
 
-node ../../tools/iris_packager.js input='app' output='packed' init='app/init.js'
+node ../../tools/iris_packager.js base='app/' input='' output='packed/app' init='app/init.js'
