@@ -56,7 +56,7 @@ iris.cache();
 iris.cache(true);
 ```
 
-### iris.cacheVersion
+### iris.cacheVersion([value])
 *Since*: `v0.5.0`
 
 Set or get a value that will be added as a parameter in all Iris' ajax calls.
@@ -290,7 +290,7 @@ iris.destroyEvents("my-event", [callback1, callback2]);
 
 ### iris.Event class
 
-#### self.on
+#### self.on(eventId, callback)
 *Since*: `v0.5.0`
 
 Adds an event listener associated with a component. When the component is destroyed, the listener will be deleted.
@@ -301,13 +301,13 @@ For more details, see `iris.on`.
 self.on("my-event", callback);
 ```
 
-#### self.off
+#### self.off(eventId[, callback])
 *Since*: `v0.5.0`
 
 Removes an event listener.
 See `iris.off` for more details.
 
-#### self.notify
+#### self.notify(eventId[, params])
 *Since*: `v0.5.0`
 
 Removes an event listener.
@@ -318,7 +318,7 @@ See `iris.notify` for more details.
 #### iris.BEFORE_NAVIGATION
 *Since*: `v0.5.0`
 
-Event fired before do a navigation.
+EventId fired before do a navigation.
 
 ```javascript
 iris.on(iris.BEFORE_NAVIGATION, function () {
@@ -329,7 +329,7 @@ iris.on(iris.BEFORE_NAVIGATION, function () {
 #### iris.AFTER_NAVIGATION
 *Since*: `v0.5.0`
 
-Event fired after do a navigation.
+EventId fired after do a navigation.
 
 ```javascript
 iris.on(iris.AFTER_NAVIGATION, function () {
@@ -340,7 +340,7 @@ iris.on(iris.AFTER_NAVIGATION, function () {
 #### iris.RESOURCE_ERROR
 *Since*: `v0.5.0`
 
-Event fired when a resource ajax call fails.
+EventId fired when a resource ajax call fails.
 
 ```javascript
 iris.on(iris.RESOURCE_ERROR, function (request, textStatus, errorThrown) {
@@ -349,7 +349,7 @@ iris.on(iris.RESOURCE_ERROR, function (request, textStatus, errorThrown) {
 ```
 
 ##<a name="lang"></a> Language & Regional
-### iris.translate
+### iris.translate(text[, locale])
 *Since*: `v0.5.0`
 
 Translates a text using the locale.
@@ -360,10 +360,16 @@ iris.translate(text, [locale]);
 If no locale is passed, Iris will use the default locale.
 
 
-### iris.translations
+### iris.translations(locale, [terms]|[file, [callbacks]])
 *Since*: `v0.5.0`
 
 Adds translations in a particular language. This method can be called multiple times with the same language.
+
+*terms*: Object containing the definitions in format *text: definition*. It admits a multi level hierarchy. See example.
+
+*file*: Path to a file with the terms definitions in JSON format.
+
+Object with two attributes (*success* and *error*) containing the functions called after retrieve the terms.
 
 ```javascript
 iris.translations("en_US", {
@@ -376,19 +382,20 @@ iris.translations("en_US", {
 });
 ```
 
-The translations can be in a JSON file.
+The translations can be in a JSON file. The call is asynchronous.
 
 ```javascript
 iris.translations("fr_FR", "./lang_FR.json", {"success" : onFRSuccess, "error" : onFRError });
 ```
 
-### iris.locale
+### iris.locale([locale][, regional])
 *Since*: `v0.5.0`
 
-Defines or sets the locale format.
+Defines or gets the locale format.
 You can use the [available locales](../localization).
 
 ```javascript
+//Example of regional definition. Sets de locale to "en_US" if locale is not set:
 iris.locale(
     "en_US", {
         dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -411,6 +418,7 @@ iris.locale(
 );
 ```
 
+
 ```javascript
 //To set the locale
 iris.locale("en_US");
@@ -419,17 +427,19 @@ iris.locale("en_US");
 var locale = iris.locale();
 ```
 
-### iris.regional
+### iris.regional([label])
 *Since*: `v0.5.0`
 
-Gets a regional value.
+Gets a regional value acording to the setting locale.
+
+If *label* is not passed, returns all the regional definition.
 
 ```javascript
 iris.locale("dayNames");
 ```
 
 ##<a name="components"></a> Components
-### iris.welcome
+### iris.welcome(path)
 *Since*: `v0.5.0`
 
 Establishes and navigates to the Welcome screen component.
@@ -444,7 +454,7 @@ Or
 iris.welcome(iris.path.welcome.js);
 ```
 
-### iris.navigate
+### iris.navigate(path)
 *Since*: `v0.5.0`
 
 Navigates to a Screen Component.
@@ -457,7 +467,7 @@ iris.navigate("screen/help");
 iris.navigate(iris.path.help.js);
 ```
 
-### iris.screen
+### iris.screen(function(self){...}, path)
 *Since*: `v0.5.0`
 
 Defines a Screen component.
@@ -499,7 +509,7 @@ iris.screen(
 );
 ```
 
-### iris.destroyScreen
+### iris.destroyScreen(path)
 *Since*: `v0.5.0`
 
 Destroys a Screen component.
@@ -508,7 +518,7 @@ Destroys a Screen component.
 iris.destroyScreen(iris.path.help.js);
 ```
 
-### iris.ui
+### iris.ui(function(self){...}, path)
 *Since*: `v0.5.0`
 
 Defines an UI Component.
@@ -519,7 +529,7 @@ iris.ui(function(self){...});
 
 See `iris.screen` for more details.
 
-### iris.tmpl
+### iris.tmpl(path, html)
 *Since*: `v0.5.0`
 
 Loads the template in memory and associates it to a path.
@@ -529,7 +539,7 @@ iris.tmpl("screen/welcome.html","<div>...</div>");
 ```
 See `self.tmpl` for more details.
 
-### iris.resource
+### iris.resource(function(self){...}, path)
 *Since*: `v0.5.0`
 
 Defines or creates a Resource Component.
@@ -564,7 +574,7 @@ iris.resource(iris.path.resource.js);
 ```
 
 ###<a name="settable"></a> iris.Settable Class
-#### self.setting
+#### self.setting(label[, value])
 *Since*: `v0.5.0`
 
 Gets o sets a value attribute.
@@ -579,7 +589,7 @@ self.setting("attribute_name", {...});
 var attribute_value = self.setting("attribute_name");
 ```
 
-#### self.settings
+#### self.settings(params)
 *Since*: `v0.5.0`
 
 Sets multiples and complex attributes values.
@@ -591,16 +601,13 @@ var attribute_value = self.setting("person.name");
 
 ###<a name="component"></a> iris.Component Class
 
-#### self.tmpl
+#### self.tmpl(path[, params, tmpl_mode])
 *Since*: `v0.5.0`
 
 Loads the template of the component into the DOM.
 
 This method must be called in the *self.create* method of the Component.
 
-```javascript
-self.tmpl(url, [params], [mode]);
-```
 
 Example:
 
@@ -613,12 +620,12 @@ The parameters will be replaced in the template where ##parameter_name## is foun
 ```htmpl
 <p>The name is ##name##</p>
 ```
-When *self.APPEND* is passed as the third parameter, the template container will not be replaced with the template, otherwise the container will be replaced by the template	
+*mode*: When *self.APPEND* or *self.PREPEND* are passed as the third parameter, the template container will not be replaced with the template, otherwise the container will be replaced by the template. The default mode is *self.REPLACE*.
 
-#### self.get
+#### self.get([data-id])
 *Since*: `v0.5.0`
 
-Gets the JQuery object whose ID matches with the param.
+Gets the JQuery object whose *data-id* matches with the param. If no *data-id* is passed, the JQuery root DOM node will be returned.
 
 ```htmpl
 <p data-id="paragraph">The name is John</p>
@@ -627,7 +634,7 @@ Gets the JQuery object whose ID matches with the param.
 self.get("paragraph").text("Anna");
 ```
 
-#### self.inflate
+#### self.inflate(data)
 *Since*: `v0.5.0`
 
 Replaces in the template the object passed as parameter.
@@ -641,14 +648,10 @@ self.inflate({date: new Date()});
 <span data-model="date">Not set yet</span>
 ```
 
-#### self.ui
+#### self.ui(container_id, path[, settings, tmpl_mode])
 *Since*: `v0.5.0`
 
 Create a new UI Component and replaces or adds it to the container.
-
-```js
-self(container, path, [settings], [templateMode]);
-```
 
 Example:
 
@@ -671,7 +674,7 @@ self.ui("ui_container", iris.path.ui.my_ui.js, {name: "John"}, self.APPEND);
 
 For help about the *templateMode* parameter see *self.tmpl* method.
 
-#### self.destroyUI
+#### self.destroyUI(ui_component)
 *Since*: `v0.5.0`
 
 Destroy the UI component.
@@ -681,7 +684,7 @@ var my_ui = self.ui("ui_container", iris.path.ui.my_ui.js);
 self.destroyUI(my_ui);
 ```
 
-#### self.destroyUIs
+#### self.destroyUIs(container_id)
 *Since*: `v0.5.0`
 
 Destroy all the UI in a container.
@@ -695,7 +698,7 @@ self.destroyUIs("ui_container");
 ###<a name="ui"></a> iris.UI Class
 Inherit methods from Component, Settable & Event classes
 
-#### self.tmplMode
+#### self.tmplMode(mode)
 *Since*: `v0.5.0`
 
 Sets the template mode. This method must be called before the *tmpl.method*.
@@ -709,7 +712,7 @@ The possible values ​​are:
 
 ###<a name="screen"></a> iris.Screen Class
 Inherit methods from Component, Settable & Event classes
-#### self.screens
+#### self.screens(container_id, screens)
 *Since*: `v0.5.0`
 
 Registers Screens and allows to navigate to them.
@@ -727,7 +730,7 @@ self.screens("screens", [
 ###<a name="resource"></a> iris.Resource Class
 Inherit methods from Settable class
 
-#### self.get
+#### self.get(path, success, error)
 *Since*: `v0.5.0`
 
 Perform an asynchronous HTTP ([Ajax](http://api.jquery.com/jQuery.ajax/)) request of type `GET`.
@@ -741,7 +744,7 @@ Returns a jQuery [jqXHR](http://api.jquery.com/Types/#jqXHR) object.
 });
 ```
 
-#### self.post
+#### self.post(path, params, success, error)
 *Since*: `v0.5.0`
 
 Perform an asynchronous HTTP ([Ajax](http://api.jquery.com/jQuery.ajax/)) request of type `POST`.
@@ -755,7 +758,7 @@ Returns a jQuery [jqXHR](http://api.jquery.com/Types/#jqXHR) object.
 });
 ```
 
-#### self.put
+#### self.put(path, params, success, error)
 *Since*: `v0.5.0`
 
 Perform an asynchronous HTTP ([Ajax](http://api.jquery.com/jQuery.ajax/)) request of type `PUT`.
@@ -769,7 +772,7 @@ Returns a jQuery [jqXHR](http://api.jquery.com/Types/#jqXHR) object.
 });
 ```
 
-#### self.del
+#### self.del(path, success, error)
 *Since*: `v0.5.0`
 
 Perform an asynchronous HTTP ([Ajax](http://api.jquery.com/jQuery.ajax/)) request of type `DEL`.
