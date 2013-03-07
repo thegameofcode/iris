@@ -1241,10 +1241,20 @@ window.iris = iris;
                         }
 
                         nodeName = el.prop("nodeName").toLowerCase();
-                        if ( nodeName === "input" || nodeName === "textarea" ) {
-                            el.val(value);
-                        } else {
-                            el.text(value);
+                        switch (nodeName) {
+                            case "input":
+                                if ( el.prop("type").toLowerCase() === "checkbox" ) {
+                                    el.attr("checked", value);
+                                } else {
+                                    el.val(value);
+                                }
+                            break;
+                            case "textarea":
+                                el.val(value);
+                            break;
+                            default:
+                                el.html(value);
+                            break;
                         }
                     }
                 }
