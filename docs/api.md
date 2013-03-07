@@ -242,6 +242,15 @@ iris.currency(5600.899, { symbol : "" }); // "5.600,90"
 
 ```
 
+### iris.browser()
+*Since*: `v0.5.1`
+
+Returns an object with the browser information using user-agent.
+
+```javascript
+iris.log( iris.browser() );
+```
+
 ##<a name="event"></a> Event
 
 ### iris.notify(eventId[, params])
