@@ -3,10 +3,10 @@
   "version": "0.5.1-SNAPSHOT",
 
   "dependencies": {
-     "async": "0.1.x"
-    ,"cookies": "0.3.x"
-    ,"q"	: "0.8.x"
-    ,"node-minify" : "0.7.2"
+    "node-minify" : "0.7.2",
+    "node.extend" : "1.0.0",
+    "fileset" : "0.1.5",
+    "css-b64-images" : "0.2.2"
   },
   
   "engines": {

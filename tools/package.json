@@ -1,0 +1,14 @@
+{
+ "name": "iris_packager",
+ "version": "0.0.1",
+ "scripts": {
+  "start": "node iris_packager"
+ },
+ "dependencies": {
+  "node-minify": "*",
+  "node.extend":"*",
+  "fileset":"*",
+  "async":"*",
+  "css-b64-images":"*"
+ }
+}	

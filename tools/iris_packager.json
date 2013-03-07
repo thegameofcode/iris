@@ -1,0 +1,7 @@
+{
+ "initJs": "js/init.js",
+ "excludePaths": ["/**/*.js"],
+ "extension": {
+  "css": true
+ }
+}
