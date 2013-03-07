@@ -133,7 +133,7 @@
                     script = document.createElement("script");
                     script.type = "text/javascript";
                     script.src = path;
-                    if ($.browser.msie  && parseInt($.browser.version, 10) < 9) {
+                    if (iris.browser().msie  && parseInt(iris.browser().version, 10) < 9) {
                         script.onreadystatechange = onReadyStateChange;
                     } else {
                         script.onload = _checkLoadFinish;

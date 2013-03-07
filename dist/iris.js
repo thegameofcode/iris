@@ -1,4 +1,4 @@
-/*! Iris - v0.5.1-SNAPSHOT - 2013-02-21
+/*! Iris - v0.5.1-SNAPSHOT - 2013-03-07
 * http://iris-js.github.com/iris
 * Copyright (c) 2013 Iris; Licensed New-BSD */
 
@@ -528,6 +528,47 @@ window.iris = iris;
         return value;
     };
 
+    // The jQuery.browser() method has been deprecated since jQuery 1.3 and is removed in 1.9. If needed, it is available as part of the jQuery Migrate plugin
+    // https://github.com/jquery/jquery-migrate/blob/master/src/core.js
+
+    var browser;
+
+    function setBrowser (ua) {
+        ua = ua.toLowerCase();
+
+        var match = /(chrome)[ \/]([\w.]+)/.exec( ua ) ||
+            /(webkit)[ \/]([\w.]+)/.exec( ua ) ||
+            /(opera)(?:.*version|)[ \/]([\w.]+)/.exec( ua ) ||
+            /(msie) ([\w.]+)/.exec( ua ) ||
+            ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec( ua ) ||
+            [];
+
+        return {
+            name: match[ 1 ] || "",
+            version: match[ 2 ] || "0"
+        };
+    }
+
+    iris.browser = function () {
+        if ( !browser ) {
+            var matched = setBrowser( navigator.userAgent );
+            browser = {};
+
+            if ( matched.name ) {
+                browser[ matched.name ] = true;
+                browser.version = matched.version;
+            }
+
+            // Chrome is Webkit, but Webkit is also Safari.
+            if ( browser.chrome ) {
+                browser.webkit = true;
+            } else if ( browser.webkit ) {
+                browser.safari = true;
+            }
+        }
+        return browser;
+    };
+
 })(jQuery);
 (function($) {
 
@@ -664,7 +705,7 @@ window.iris = iris;
                     script = document.createElement("script");
                     script.type = "text/javascript";
                     script.src = path;
-                    if ($.browser.msie  && parseInt($.browser.version, 10) < 9) {
+                    if (iris.browser().msie  && parseInt(iris.browser().version, 10) < 9) {
                         script.onreadystatechange = onReadyStateChange;
                     } else {
                         script.onload = _checkLoadFinish;
