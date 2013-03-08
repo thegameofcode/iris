@@ -3,22 +3,22 @@
   "title": "Iris",
   "description": "This JavaScript library provides different client-side optimization techniques for front construction.",
   "version": "0.5.0",
-  "homepage": "http://iris-js.github.com/iris",
+  "homepage": "http://thegameofcode.github.com/iris",
   "author": {
     "name": "Iris",
-    "url": "https://github.com/iris-js"
+    "url": "https://github.com/thegameofcode"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/iris-js/iris.git"
+    "url": "git://github.com/thegameofcode/iris.git"
   },
   "bugs": {
-    "url": "https://github.com/iris-js/iris/issues"
+    "url": "https://github.com/thegameofcode/iris/issues"
   },
   "licenses": [
     {
       "type": "New-BSD",
-      "url": "https://github.com/iris-js/iris.git/blob/master/LICENSE-New-BSD"
+      "url": "https://github.com/thegameofcode/iris.git/blob/master/LICENSE-New-BSD"
     }
   ],
   "dependencies": {
