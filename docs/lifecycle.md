@@ -1,4 +1,4 @@
-[Iris homepage](https://github.com/iris-js/iris) | [Documentation table of contents](toc.md)
+[Iris homepage](https://github.com/thegameofcode/iris) | [Documentation table of contents](toc.md)
 
 # Iris Life Cycle
 
@@ -12,4 +12,4 @@ There are four methods almost all screens will implement:
 
 * <code>destroy()</code> is where you will perform operations after screen dying.
 
-![Iris Life Cycle](http://iris-js.github.com/iris/images/iris-lifecycle-diagram.png)
+![Iris Life Cycle](http://thegameofcode.github.com/iris/images/iris-lifecycle-diagram.png)

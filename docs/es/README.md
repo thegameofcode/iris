@@ -55,7 +55,7 @@
 
 #<a name="what_is_it"></a>¿Qué es Iris?
 
-[Iris](http://iris-js.github.com/iris/) es un *framework* escrito en Javascript para construir el *front-end* de una aplicación Web que, aplicando distintas técnicas, permite que las aplicaciones sean eficientes, rápidas, estructuradas y modulares.
+[Iris](http://thegameofcode.github.com/iris/) es un *framework* escrito en Javascript para construir el *front-end* de una aplicación Web que, aplicando distintas técnicas, permite que las aplicaciones sean eficientes, rápidas, estructuradas y modulares.
 
 Iris es completamente independiente de la tecnología que se utilice en el servidor; así, podemos utilizar Iris en aplicaciones basadas en Node.js, Python, Java, PHP, .NET, Ruby, etc.
 
@@ -63,7 +63,7 @@ Iris es completamente independiente de la tecnología que se utilice en el servi
 
 Las principales características de Iris son:
 
-* Código libre ([licencia New BSD License](https://raw.github.com/iris-js/iris/master/README.md)).
+* Código libre ([licencia New BSD License](https://raw.github.com/thegameofcode/iris/master/README.md)).
 * Ejecución 100% en cliente.
 * Ligero y rápido (<16 KB).
 * Independiente de servidor (Apache, IIS, Jetty, etc).
@@ -144,7 +144,7 @@ El **presenter** es un fragmento de código en Javascript almacenado en un fiche
 
 Con Iris la lógica de la aplicación la podemos situar en el *presenter* o en el *resource* o repartirla entre ambos.
 
-![Definición de comportamiento](https://raw.github.com/iris-js/iris/master/docs/images/component_equation.png)
+![Definición de comportamiento](https://raw.github.com/thegameofcode/iris/master/docs/images/component_equation.png)
 
 Cuando Iris carga un componente, visualiza el código de su fichero HTML asociado y ejecuta su fichero de Javascript según se haya definido en su ciclo de vida (<a href="#life_cycle">ver más adelante</a>).
 
@@ -180,7 +180,7 @@ Por último, el evento **sleep** es el complementario de *awake*, y se efectuar�
 
 Podemos ver esto gráficamente:
 
-![Ciclo de vida](https://raw.github.com/iris-js/iris/master/docs/images/iris_life_cycle.png)
+![Ciclo de vida](https://raw.github.com/thegameofcode/iris/master/docs/images/iris_life_cycle.png)
 
 Los Screens tienen un método adicional llamado **canSleep**. Este método será invocado por Iris antes de llamar al método *Sleep*. Si el método *canSleep* devuelve *false*, Iris no navegará al Screen deseado e interrumpirá la navegación evitando que se llame al evento *sleep*. Este evento es útil si, por ejemplo, no hemos completado un formulario y queremos advertir al usuario que debe hacerlo antes de navegar a otro Screen.
 
@@ -202,7 +202,7 @@ Aquí no se pretende crear una aplicación funcional, sino que se comprenda como
 Para hacer más sencilla la explicación, todo el código de esta sección se situará un el directorio raíz de la aplicación. No es conveniente hacer esto en una aplicación real. En la sección *<a href="#paso-a-paso">Construyendo paso a paso una aplicación desde cero</a>* se propone una estructura de directorios más adecuada para trabajar con Iris.
 
 ##<a name="installing"></a>Instalando Iris
-El primer paso será decidir si queremos trabajar con la versión de [desarrollo](https://raw.github.com/iris-js/iris/master/dist/iris.js) o de [producción](https://raw.github.com/iris-js/iris/master/dist/iris.min.js) minificada.
+El primer paso será decidir si queremos trabajar con la versión de [desarrollo](https://raw.github.com/thegameofcode/iris/master/dist/iris.js) o de [producción](https://raw.github.com/thegameofcode/iris/master/dist/iris.min.js) minificada.
 
 ```html
 <!-- index.html -->
@@ -221,7 +221,7 @@ El objeto *iris.path* debe situarse en el *script* de inicio de la aplicación y
 
 Antes de instanciar el Screen de bienvenida, Iris procesará el objeto *iris.path* y cargará en memoria todos los ficheros asociados en él. Si los ficheros ya se hubieran precargado, porque se está utilizando una herramienta de *minificación*, Iris no volvería a cargar los ficheros. Puede consultar el apartado de <a href="#minificación">minificación</a> para una explicación más detallada.
 
-Si se utiliza la [herramienta de minificación](https://raw.github.com/iris-js/iris/master/tools/iris_packager.js) que incorpora Iris, es importante que la variable *iris.path* se defina fuera de cualquier función, incluso *$(document).ready()* y *window.onload*.
+Si se utiliza la [herramienta de minificación](https://raw.github.com/thegameofcode/iris/master/tools/iris_packager.js) que incorpora Iris, es importante que la variable *iris.path* se defina fuera de cualquier función, incluso *$(document).ready()* y *window.onload*.
 
 ##<a name="calling_welcome"></a>Llamando al Screen de bienvenida
 Desde Javascript, llamamos al método **welcome** de Iris para cargar el fichero de comportamiento del Screen de bienvenida.
@@ -3098,7 +3098,7 @@ iris.enableLog(server1, server2,...) //If no arguments are passed, returns the l
 //Or You can pass the servers that you want to use the Iris logging system.
 ```
 
-<a name="minification"></a>Iris ayuda a la **minificación** de la aplicación. Para reducir el número de ficheros que hay que descargar desde el servidor en una aplicación Iris, podemos *minificar* todos los ficheros *.js* y *html*" en uno único utilizando cualquier con la herramienta que queramos (por ejemplo [Grunt](https://github.com/gruntjs/grunt)) o con la que se suministra con Iris ([iris_packager.js](https://raw.github.com/iris-js/iris/master/tools/iris_packager.js)).
+<a name="minification"></a>Iris ayuda a la **minificación** de la aplicación. Para reducir el número de ficheros que hay que descargar desde el servidor en una aplicación Iris, podemos *minificar* todos los ficheros *.js* y *html*" en uno único utilizando cualquier con la herramienta que queramos (por ejemplo [Grunt](https://github.com/gruntjs/grunt)) o con la que se suministra con Iris ([iris_packager.js](https://raw.github.com/thegameofcode/iris/master/tools/iris_packager.js)).
 
 El segundo parámetro que pasamos a las funciones *iris.screen*, *iris.ui* e *iris.resource* es el que permite a Iris evitar la descarga del fichero del componente y que utilice el archivo *minificado*. Iris buscará todas las rutas que contenga la variable *iris.path* y se descargará aquellos que no se encuentren en el fichero *minificado*.
 
@@ -3173,7 +3173,7 @@ iris.welcome("./welcome.js");
 
 ##<a name="iris_packager"></a>Utilizando *iris_packager.js*
 
-Iris incluye una herramienta de *minificación* llamada [*iris_packager.js*](https://raw.github.com/iris-js/iris/master/tools/iris_packager.js). Esta aplicación requiere tener instalado [node.js](http://nodejs.org/) y las dependencias del fichero *package.json*. Para instalar las dependencias, nos situamos en el directorio que contiene este fichero y ejecutamos:
+Iris incluye una herramienta de *minificación* llamada [*iris_packager.js*](https://raw.github.com/thegameofcode/iris/master/tools/iris_packager.js). Esta aplicación requiere tener instalado [node.js](http://nodejs.org/) y las dependencias del fichero *package.json*. Para instalar las dependencias, nos situamos en el directorio que contiene este fichero y ejecutamos:
 
 <pre>
 npm install
@@ -3455,29 +3455,29 @@ Tras realizar la minificación, debemos asegurar que el directorio donde hemos a
 
 Para probar su correcto funcionamiento y detectar errores, se han realizado pruebas de unidad de todos los métodos de Iris. Las pruebas de unidad se han realizado con la librería [QUnit](http://qunitjs.com/).
 
-Las pruebas de unidad son una fuente adicional para conocer el funcionamiento de Iris. Puede consultar las pruebas realizadas en el directorio [test](https://github.com/iris-js/iris/tree/master/test).
+Las pruebas de unidad son una fuente adicional para conocer el funcionamiento de Iris. Puede consultar las pruebas realizadas en el directorio [test](https://github.com/thegameofcode/iris/tree/master/test).
 
 #<a name="step_by_step"></a>Construyendo paso a paso una aplicación desde cero
 
 En esta sección vamos utilizar Iris para construir una sencilla aplicación que nos permita comprender como integrar todo lo visto anteriormente.
 
-Puede descargar la aplicación en el siguiente [enlace](https://github.com/iris-js/iris/blob/master/docs/iris-shopping.tar.gz?raw=true). Para probar la aplicación debe descomprimirla y desplegarla en un servidor Web (Apache, Node.js, etc). Si tiene instalado *Grunt* puede, simplemente, situarse en el directorio raíz de la aplicación y ejecutar el comando *grunt*.
+Puede descargar la aplicación en el siguiente [enlace](https://github.com/thegameofcode/iris/blob/master/docs/iris-shopping.tar.gz?raw=true). Para probar la aplicación debe descomprimirla y desplegarla en un servidor Web (Apache, Node.js, etc). Si tiene instalado *Grunt* puede, simplemente, situarse en el directorio raíz de la aplicación y ejecutar el comando *grunt*.
 
-Puede probar el funcionamiento de la aplicación en el siguiente [enlace](http://iris-js.github.com/iris/examples/shopping-list/www/index.htm).
+Puede probar el funcionamiento de la aplicación en el siguiente [enlace](http://thegameofcode.github.com/iris/examples/shopping-list/www/index.htm).
 
 La aplicación va a permitir realizar la lista de la compra de una serie de productos agrupados en categorías. En las siguientes imágenes presentamos las principales pantallas de la aplicación:
 
 <a name="home_img"></a>*#/home:*
-![home](https://raw.github.com/iris-js/iris/master/docs/images/shopping_list/home.png)
+![home](https://raw.github.com/thegameofcode/iris/master/docs/images/shopping_list/home.png)
 
 <a name="categories_img"></a>*#categories:*
-![categories](https://raw.github.com/iris-js/iris/master/docs/images/shopping_list/categories.png)
+![categories](https://raw.github.com/thegameofcode/iris/master/docs/images/shopping_list/categories.png)
 
 <a name="products_img"></a>*#products:*
-![products](https://raw.github.com/iris-js/iris/master/docs/images/shopping_list/products.png)
+![products](https://raw.github.com/thegameofcode/iris/master/docs/images/shopping_list/products.png)
 
 <a name="shopping_img"></a>*#shopping:*
-![shopping](https://raw.github.com/iris-js/iris/master/docs/images/shopping_list/shopping_list.png)
+![shopping](https://raw.github.com/thegameofcode/iris/master/docs/images/shopping_list/shopping_list.png)
 
 Además de Iris, se ha utilizado [Twitter Bootstrap](http://twitter.github.com/bootstrap/) para *maquetar* la aplicación y [JQuery DataTables](http://www.datatables.net/) para presentar los productos de la lista de la compra. En esta sección no se va a explicar el uso de estas librerías aunque su conocimiento no es esencial para comprender el funcionamiento de la aplicación.
 
@@ -3489,11 +3489,11 @@ Vamos a proponer una estructura determinada aunque cualquier otra que cumpla el 
 
 En la siguiente imagen vemos la estructura de directorios y los archivos que contienen:
 
-![www_directories](https://raw.github.com/iris-js/iris/master/docs/images/shopping_list/shopping_directories.png)
+![www_directories](https://raw.github.com/thegameofcode/iris/master/docs/images/shopping_list/shopping_directories.png)
 
 Más detalladamente, el contenido del directorio *shopping* será el siguiente:
 
-![shopping_directories](https://raw.github.com/iris-js/iris/master/docs/images/shopping_list/www_directories.png)
+![shopping_directories](https://raw.github.com/thegameofcode/iris/master/docs/images/shopping_list/www_directories.png)
 
 Observe que, para hacer más sencillo el ejemplo, se ha creado un directorio *json* que permite cargar los productos y las categorías desde el servidor Web sin depender de ninguna tecnología de servidor. En una aplicación real, normalmente los productos estarían almacenados en una base de datos y se recuperarían llamando a un servicio.
 
@@ -3810,7 +3810,7 @@ En *home.html*:
 <div>
     <h1>@@HOME.TITLE@@</h1>
 
-    <p>@@HOME.DESC@@ <a href="https://github.com/iris-js">iris.</a></p>
+    <p>@@HOME.DESC@@ <a href="https://github.com/thegameofcode">iris.</a></p>
 </div>
 ```
 
@@ -4966,19 +4966,19 @@ En *iris.json* podemos definir las variables que queramos que use *Grunt*:
   "homepage": "http://localhost:8080",
   "author": {
     "name": "Iris",
-    "url": "https://github.com/iris-js"
+    "url": "https://github.com/thegameofcode"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/iris-js/iris.git"
+    "url": "git://github.com/thegameofcode/iris.git"
   },
   "bugs": {
-    "url": "https://github.com/iris-js/iris/issues"
+    "url": "https://github.com/thegameofcode/iris/issues"
   },
   "licenses": [
     {
       "type": "New-BSD",
-      "url": "https://github.com/iris-js/iris.git/blob/master/LICENSE-New-BSD"
+      "url": "https://github.com/thegameofcode/iris.git/blob/master/LICENSE-New-BSD"
     }
   ],
   "dependencies": {

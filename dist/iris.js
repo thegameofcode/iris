@@ -1,5 +1,5 @@
-/*! Iris - v0.5.0 - 2013-02-07
-* http://iris-js.github.com/iris
+/*! Iris - v0.5.0 - 2013-03-08
+* http://thegameofcode.github.com/iris
 * Copyright (c) 2013 Iris; Licensed New-BSD */
 
 

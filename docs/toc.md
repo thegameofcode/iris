@@ -1,4 +1,4 @@
-[Iris homepage](https://github.com/iris-js/iris)
+[Iris homepage](https://github.com/thegameofcode/iris)
 
 # Documentation table of contents
 

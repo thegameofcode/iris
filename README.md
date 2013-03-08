@@ -19,8 +19,8 @@ _Remmeber that you can [make suggestions][issues] or [report bugs][issues]!_
 ## Getting Started
 Download the [production version][min] or the [development version][max].
 
-[min]: https://raw.github.com/iris-js/iris/master/dist/iris.min.js
-[max]: https://raw.github.com/iris-js/iris/master/dist/iris.js
+[min]: https://raw.github.com/thegameofcode/iris/master/dist/iris.min.js
+[max]: https://raw.github.com/thegameofcode/iris/master/dist/iris.js
 
 In your web page:
 
@@ -61,6 +61,6 @@ You simply can run the tests doing `grunt test`, then open `http://localhost:808
 ## License
 Copyright (c) 2013 Iris
 
-Licensed under the New-BSD license: <https://github.com/iris-js/iris/blob/master/LICENSE-New-BSD>
+Licensed under the New-BSD license: <https://github.com/thegameofcode/iris/blob/master/LICENSE-New-BSD>
 
-[issues]: /iris-js/iris/issues
+[issues]: /thegameofcode/iris/issues
