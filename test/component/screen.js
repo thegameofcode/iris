@@ -10,6 +10,7 @@ iris.screen(function (self) {
 		iris.on("create_ui", createUi);
 		self.on("destroy_ui", destroyUi);
 		self.on("destroy_ui_replace", destroyUiReplace);
+		self.on("destroy_ui_check", destroyUiCheck);
 
 		// check screen properties
 		window.strictEqual(self.id, "#/screen", "Compare screen properties: id");
@@ -41,6 +42,10 @@ iris.screen(function (self) {
 		window.raises(function () {
 			self.destroyUIs("container");
 		}, "A replaced container cannot be deleted");
+	}
+
+	function destroyUiCheck () {
+		window.strictEqual(self.uis.length, 0);
 	}
 
 },iris.path.screen);

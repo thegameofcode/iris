@@ -716,14 +716,19 @@ self.ui("ui_container", iris.path.ui.my_ui.js, {name: "John"}, self.APPEND);
 
 For help about the *templateMode* parameter see *self.tmpl* method.
 
-#### self.destroyUI(ui_component)
+#### self.destroyUI([ui_component])
 *Since*: `v0.5.0`
 
-Destroy the UI component.
+Destroy the UI component. If `ui_component` is not specified, destroy the current UI (auto-destroy).
 
 ```javascript
 var my_ui = self.ui("ui_container", iris.path.ui.my_ui.js);
 self.destroyUI(my_ui);
+```
+
+```javascript
+// Auto-destroy
+self.destroyUI();
 ```
 
 #### self.destroyUIs(container_id)

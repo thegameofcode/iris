@@ -345,7 +345,7 @@
         _includes[path] = ui;
     }
 
-    function _instanceUI(p_$container, p_uiId, p_jsUrl, p_uiSettings, p_templateMode) {
+    function _instanceUI(p_$container, p_uiId, p_jsUrl, p_uiSettings, p_templateMode, parentComponent) {
 
         var uiInstance = new UI();
         uiInstance.id = p_uiId;
@@ -354,6 +354,7 @@
         uiInstance.events = {};
         uiInstance.con = p_$container;
         uiInstance.fileJs = p_jsUrl;
+        uiInstance.parentComponent = parentComponent;
         
         _includes[p_jsUrl](uiInstance);
         if(p_templateMode !== undefined) {
@@ -748,7 +749,7 @@
         var $container = this.get(p_id);
         
         if($container !== undefined && $container.size() === 1) {
-            var uiInstance = _instanceUI($container, $container.data("id"), p_jsUrl, p_uiSettings, p_templateMode);
+            var uiInstance = _instanceUI($container, $container.data("id"), p_jsUrl, p_uiSettings, p_templateMode, this);
             if (uiInstance._tmplMode === undefined || uiInstance._tmplMode === uiInstance.REPLACE) {
                 this.el[p_id] = undefined;
             }
@@ -762,12 +763,16 @@
 
 
     Component.prototype.destroyUI = function(p_ui) {
-        for(var f = 0, F = this.uis.length; f < F; f++) {
-            if(this.uis[f] === p_ui) {
-                this.uis.splice(f, 1);
-                p_ui._destroy();
-                p_ui.get().remove();
-                break;
+        if ( p_ui === undefined ) {
+            this.parentComponent.destroyUI(this);
+        } else {
+            for(var f = 0, F = this.uis.length; f < F; f++) {
+                if(this.uis[f] === p_ui) {
+                    this.uis.splice(f, 1);
+                    p_ui._destroy();
+                    p_ui.get().remove();
+                    break;
+                }
             }
         }
     };

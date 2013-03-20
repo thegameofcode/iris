@@ -24,6 +24,8 @@ iris.ui(function (self) {
 			self.on("nested_ui", self.onNestedUI);
 		}
 
+		self.on("self_destroy_ui", destroyUi);
+		
 	};
 
 	function onUISettings () {
@@ -39,5 +41,9 @@ iris.ui(function (self) {
 		window.strictEqual(ui.setting("template-param"), "overridden_val", "UI Nested Settings: check default value");
 		window.strictEqual(ui.setting("setting-param"), "nested_value", "UI Nested Settings: check default value");
 	};
+
+	function destroyUi () {
+		self.destroyUI();
+	}
 
 },iris.path.ui);
