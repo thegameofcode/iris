@@ -1,4 +1,4 @@
-/*! Iris - v0.5.1-SNAPSHOT - 2013-03-07
+/*! Iris - v0.5.1-SNAPSHOT - 2013-03-20
 * http://iris-js.github.com/iris
 * Copyright (c) 2013 Iris; Licensed New-BSD */
 
@@ -848,8 +848,8 @@ window.iris = iris;
 
                     var screenInstance = _screen[screenPath];
                     var screenParams = _navGetParams(curr[i]);
-                    screenInstance._awake(screenParams);
                     screenInstance.show();
+                    screenInstance._awake(screenParams);
                 }
 
             }

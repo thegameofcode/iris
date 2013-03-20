@@ -276,8 +276,8 @@
 
                     var screenInstance = _screen[screenPath];
                     var screenParams = _navGetParams(curr[i]);
-                    screenInstance._awake(screenParams);
                     screenInstance.show();
+                    screenInstance._awake(screenParams);
                 }
 
             }
