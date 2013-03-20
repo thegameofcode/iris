@@ -928,6 +928,7 @@
     iris.ui = _registerUI;
     iris.tmpl = _registerTmpl;
     iris.resource = _registerRes;
+    iris.include = _load;
 
     //
     // Classes

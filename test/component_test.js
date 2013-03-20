@@ -240,4 +240,15 @@
     
     });
 
+    asyncTest("Test include", function() {
+        window.expect(1);
+
+        iris.include(["test/component/resource.js"], function () {
+  
+          iris.resource("test/component/resource.js").test();
+
+        });
+    
+    });
+
 }(jQuery));

@@ -1,4 +1,4 @@
-[Iris homepage](https://github.com/iris-js/iris) | [Documentation table of contents](toc.md)
+[Iris homepage](https://github.com/thegameofcode/iris) | [Documentation table of contents](toc.md)
 
 # The iris API
 
@@ -364,7 +364,11 @@ iris.on(iris.RESOURCE_ERROR, function (request, textStatus, errorThrown) {
 Translates a text using the locale.
 
 ```javascript
-iris.translate(text, [locale]);
+// Add the translations
+iris.translations("es_ES", {GREETING : "Saludos"})
+
+iris.translate("GREETING", "es_ES");
+iris.translate("GREETING"); // Using default locale ( iris.locale() )
 ```
 If no locale is passed, Iris will use the default locale.
 
@@ -448,6 +452,35 @@ iris.locale("dayNames");
 ```
 
 ##<a name="components"></a> Components
+
+### iris.include(paths, callback)
+*Since*: `v0.5.1`
+
+Load the components using the `paths` array parameter. When all files are loaded, executes the `callback` function.
+You can load and use iris resources before call to the `iris.welcome` function, eg:
+
+```javascript
+iris.path = {
+  user_resource : "resource/user.js",
+  welcome : "screen/welcome.js"
+};
+
+iris.include([iris.path.user_resource], function () {
+  
+  iris.resource(iris.path.user_resource).checkUserInSession().done(loginDone).fail(loginFail);
+
+});
+
+function loginDone () {
+  iris.welcome(iris.path.welcome);
+}
+
+function loginFail () {
+  alert("forbidden");
+}
+
+```
+
 ### iris.welcome(path)
 *Since*: `v0.5.0`
 

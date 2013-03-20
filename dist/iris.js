@@ -1,5 +1,5 @@
 /*! Iris - v0.5.1-SNAPSHOT - 2013-03-20
-* http://iris-js.github.com/iris
+* http://thegameofcode.github.com/iris
 * Copyright (c) 2013 Iris; Licensed New-BSD */
 
 
@@ -1500,6 +1500,7 @@ window.iris = iris;
     iris.ui = _registerUI;
     iris.tmpl = _registerTmpl;
     iris.resource = _registerRes;
+    iris.include = _load;
 
     //
     // Classes
