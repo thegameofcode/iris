@@ -5,8 +5,15 @@ _Creation date: 2012-01-12_
 [version] date -> authors
   * upd|fix|new|dep|rmv - description
 
-[0.5.1]
- * [fix] Fixed initial navigation bug issue #94
+[0.5.1] 2013-03-xx
+https://github.com/thegameofcode/iris/issues?milestone=7&page=1&state=closed
+
+ * [fix] Fixed initial navigation bug (issue #94)
+ * [new] iris.include (issue #109 #92)
+ * [new] iris.browser (issue #105)
+ * [upd] self.destroyUI (issue #107)
+ * [upd] Add number format to inflate (issue #101)
+ * [upd] Show before awake (issue #108)
 
 [0.5.0] 2013-02-07
  * [upd] New code style using: http://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml
