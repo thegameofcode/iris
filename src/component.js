@@ -665,6 +665,9 @@
                                 case "currency":
                                     value = iris.currency(value);
                                     break;
+                                case "number":
+                                    value = iris.number(value);
+                                    break;
                             }
                         }
 
