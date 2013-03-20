@@ -355,7 +355,11 @@ iris.on(iris.RESOURCE_ERROR, function (request, textStatus, errorThrown) {
 Translates a text using the locale.
 
 ```javascript
-iris.translate(text, [locale]);
+// Add the translations
+iris.translations("es_ES", {GREETING : "Saludos"})
+
+iris.translate("GREETING", "es_ES");
+iris.translate("GREETING"); // Using default locale ( iris.locale() )
 ```
 If no locale is passed, Iris will use the default locale.
 
