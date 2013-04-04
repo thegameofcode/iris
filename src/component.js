@@ -630,6 +630,15 @@
             models[modelId].push(el);
         });
 
+        // find data-id components
+        this.el = {};
+        var elements = this.el;
+        $("[data-id]", tmpl).each(function(){
+            var el = $(this);
+            var dataId = el.data("id");
+            elements[dataId] = el;
+        });
+
     };
 
     Component.prototype.inflate = function(data) {
@@ -783,7 +792,7 @@
         for(var f = 0, F = this.uis.length; f < F; f++) {
             ui = this.uis[f];
 
-            if ( ui.con.selector.indexOf(contSelector) !== -1 ) {
+            if ( ui.con.id.indexOf(contSelector) !== -1 ) {
 
                 if ( ui._tmplMode === this.REPLACE ) {
                     throw "self.destroyUIs cannot delete " + contSelector + " because was replaced by an UI, use self.destroyUI";

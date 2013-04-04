@@ -11,6 +11,7 @@ iris.screen(function (self) {
 		self.on("destroy_ui", destroyUi);
 		self.on("destroy_ui_replace", destroyUiReplace);
 		self.on("destroy_ui_check", destroyUiCheck);
+		self.on("ui_repeated_dataid", ui_repeated_dataid);
 
 		// check screen properties
 		window.strictEqual(self.id, "#/screen", "Compare screen properties: id");
@@ -46,6 +47,13 @@ iris.screen(function (self) {
 
 	function destroyUiCheck () {
 		window.strictEqual(self.uis.length, 0);
+	}
+
+	function ui_repeated_dataid (argument) {
+		self.ui("container", iris.path.ui_repeated_dataid);
+		self.get("sameId");
+
+		window.ok(true);
 	}
 
 },iris.path.screen);

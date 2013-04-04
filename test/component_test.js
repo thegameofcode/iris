@@ -41,6 +41,8 @@
                 ui_replace_tmpl : "test/component/ui_replace.html",
                 ui : "test/component/ui.js",
                 ui_tmpl : "test/component/ui.html",
+                ui_repeated_dataid : "test/component/ui_repeated_dataid.js",
+                ui_repeated_dataid_tmpl : "test/component/ui_repeated_dataid.html",
                 screen : "test/component/screen.js",
                 screen_tmpl : "test/component/screen.html",
                 models : "test/component/models.js",
@@ -194,6 +196,20 @@
 
         iris.on(iris.AFTER_NAVIGATION, function () {
             iris.notify("destroy_ui_replace"); // +1
+            start();
+        });
+    });
+
+    asyncTest("Create UI with same data-id", function() {
+    
+        expect(8);
+
+        iris.welcome("test/component/welcome.js"); // + 4
+
+        iris.navigate("#/screen"); // +3
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.notify("ui_repeated_dataid"); // +1
             start();
         });
     });
