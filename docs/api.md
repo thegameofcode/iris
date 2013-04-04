@@ -1,19 +1,67 @@
-[Iris homepage](https://github.com/thegameofcode/iris) | [Documentation table of contents](toc.md)
-
 # The iris API
 
 Iris exposes all of its methods and properties on the `iris` object:
 
-* <a href="#core"> Core
-* <a href="#util"> Util
-* <a href="#event"> Event
-* <a href="#lang"> Language & Regional
-* <a href="#components"> Components
-  * <a href="#settable"> Settable Class
-  * <a href="#component"> Component Class
-  * <a href="#ui"> UI Class
-  * <a href="#screen"> Screen Class
-  * <a href="#resource"> Resource Class
+- [<a name="core"></a> Core](#<a-name=core></a>-core)
+	- [iris.baseUri([path])](#irisbaseuripath)
+	- [iris.cache([enabled])](#iriscacheenabled)
+	- [iris.cacheVersion([value])](#iriscacheversionvalue)
+	- [iris.noCache(environment[, ...])](#irisnocacheenvironment-)
+	- [iris.enableLog(enabled)](#irisenablelogenabled)
+	- [iris.log(value1[, value2, value3, value4])](#irislogvalue1-value2-value3-value4)
+- [<a name="util"></a> Util](#<a-name=util></a>-util)
+	- [iris.ajax(settings)](#irisajaxsettings)
+	- [iris.val(obj, label)](#irisvalobj-label)
+	- [iris.date(date, format)](#irisdatedate-format)
+	- [iris.number(number, config)](#irisnumbernumber-config)
+	- [iris.currency(amount, config)](#iriscurrencyamount-config)
+	- [iris.browser()](#irisbrowser)
+- [<a name="event"></a> Event](#<a-name=event></a>-event)
+	- [iris.notify(eventId[, params])](#irisnotifyeventid-params)
+	- [iris.on(eventId, callback)](#irisoneventid-callback)
+	- [iris.off(eventId[, callback])](#irisoffeventid-callback)
+	- [iris.destroyEvents(eventId, callbacks)](#irisdestroyeventseventid-callbacks)
+	- [iris.Event class](#irisevent-class)
+		- [self.on(eventId, callback)](#selfoneventid-callback)
+		- [self.off(eventId[, callback])](#selfoffeventid-callback)
+		- [self.notify(eventId[, params])](#selfnotifyeventid-params)
+	- [Iris Events](#iris-events)
+		- [iris.BEFORE_NAVIGATION](#irisbefore_navigation)
+		- [iris.AFTER_NAVIGATION](#irisafter_navigation)
+		- [iris.RESOURCE_ERROR](#irisresource_error)
+- [<a name="lang"></a> Language & Regional](#<a-name=lang></a>-language-&-regional)
+	- [iris.translate(text[, locale])](#iristranslatetext-locale)
+	- [iris.translations(locale, [terms]|[file, [callbacks]])](#iristranslationslocale-terms|file-callbacks)
+	- [iris.locale([locale][, regional])](#irislocalelocale-regional)
+	- [iris.regional([label])](#irisregionallabel)
+- [<a name="components"></a> Components](#<a-name=components></a>-components)
+	- [iris.include(paths, callback)](#irisincludepaths-callback)
+	- [iris.welcome(path)](#iriswelcomepath)
+	- [iris.navigate(path)](#irisnavigatepath)
+	- [iris.screen(function(self){...}, path)](#irisscreenfunctionself{}-path)
+	- [iris.destroyScreen(path)](#irisdestroyscreenpath)
+	- [iris.ui(function(self){...}, path)](#irisuifunctionself{}-path)
+	- [iris.tmpl(path, html)](#iristmplpath-html)
+	- [iris.resource(function(self){...}, path)](#irisresourcefunctionself{}-path)
+	- [<a name="settable"></a> iris.Settable Class](#<a-name=settable></a>-irissettable-class)
+		- [self.setting(label[, value])](#selfsettinglabel-value)
+		- [self.settings(params)](#selfsettingsparams)
+	- [<a name="component"></a> iris.Component Class](#<a-name=component></a>-iriscomponent-class)
+		- [self.tmpl(path[, params, tmpl_mode])](#selftmplpath-params-tmpl_mode)
+		- [self.get([data-id])](#selfgetdata-id)
+		- [self.inflate(data)](#selfinflatedata)
+		- [self.ui(container_id, path[, settings, tmpl_mode])](#selfuicontainer_id-path-settings-tmpl_mode)
+		- [self.destroyUI([ui_component])](#selfdestroyuiui_component)
+		- [self.destroyUIs(container_id)](#selfdestroyuiscontainer_id)
+	- [<a name="ui"></a> iris.UI Class](#<a-name=ui></a>-irisui-class)
+		- [self.tmplMode(mode)](#selftmplmodemode)
+	- [<a name="screen"></a> iris.Screen Class](#<a-name=screen></a>-irisscreen-class)
+		- [self.screens(container_id, screens)](#selfscreenscontainer_id-screens)
+	- [<a name="resource"></a> iris.Resource Class](#<a-name=resource></a>-irisresource-class)
+		- [self.get(path, success, error)](#selfgetpath-success-error)
+		- [self.post(path, params, success, error)](#selfpostpath-params-success-error)
+		- [self.put(path, params, success, error)](#selfputpath-params-success-error)
+		- [self.del(path, success, error)](#selfdelpath-success-error)
 
 
 ##<a name="core"></a> Core
