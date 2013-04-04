@@ -1,6 +1,6 @@
 {
   "name": "iris",
-  "version": "0.5.1-SNAPSHOT",
+  "version": "0.5.1",
 
   "dependencies": {
     "node-minify" : "0.7.2",
