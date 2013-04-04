@@ -1,4 +1,4 @@
-/*! Iris - v0.5.1-SNAPSHOT - 2013-03-20
+/*! Iris - v0.5.1-SNAPSHOT - 2013-04-04
 * http://thegameofcode.github.com/iris
 * Copyright (c) 2013 Iris; Licensed New-BSD */
 
@@ -1202,6 +1202,15 @@ window.iris = iris;
             models[modelId].push(el);
         });
 
+        // find data-id components
+        this.el = {};
+        var elements = this.el;
+        $("[data-id]", tmpl).each(function(){
+            var el = $(this);
+            var dataId = el.data("id");
+            elements[dataId] = el;
+        });
+
     };
 
     Component.prototype.inflate = function(data) {
@@ -1355,7 +1364,7 @@ window.iris = iris;
         for(var f = 0, F = this.uis.length; f < F; f++) {
             ui = this.uis[f];
 
-            if ( ui.con.selector.indexOf(contSelector) !== -1 ) {
+            if ( ui.con.id.indexOf(contSelector) !== -1 ) {
 
                 if ( ui._tmplMode === this.REPLACE ) {
                     throw "self.destroyUIs cannot delete " + contSelector + " because was replaced by an UI, use self.destroyUI";
