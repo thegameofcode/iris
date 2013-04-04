@@ -12,7 +12,7 @@
  * <a href="#iris_path">Objeto *iris.path*</a><br>
  * <a href="#calling_welcome">Llamando al Screen de bienvenida</a><br>
  * <a href="#register">Registrando y mostrando un Screen</a><br>
- * <a href="#showing_screen_js">Mostrando un Screen desde Javascript</a><br>
+ * <a href="#showing_screen_js">Mostrando un Screen desde JavaScript</a><br>
  * <a href="#showing_some_screens">Mostrando varios screens</a><br>
  * <a href="#showing_some_inner_screens">Screens que registran otros screens</a><br>
  * <a href="#screens_bad_practices">Malas prácticas en el registro de Screens</a><br>
@@ -36,6 +36,8 @@
  * <a href="#events_globals">Eventos globales</a><br>
  * <a href="#locals">Utilizando locales y regionales</a><br>
  * <a href="#ajax">Llamadas Ajax y servicios REST</a><br>
+ * <a href="#include">Incluyendo recursos</a><br>
+ * <a href="#browser">Obteniendo información del navegador</a><br>
  * <a href="#production">Paso a producción</a><br>
  * <a href="#iris_packager">Utilizando *iris_packager.js*</a><br>
  * <a href="#unit_test">Pruebas de unidad en Iris</a><br>
@@ -54,7 +56,7 @@
 
 #<a name="what_is_it"></a>¿Qué es Iris?
 
-[Iris](https://github.com/iris-js/iris) es un *framework* escrito en Javascript para construir el *front-end* de una aplicación Web que, aplicando distintas técnicas, permite que las aplicaciones sean eficientes, rápidas, estructuradas y modulares.
+[Iris](https://github.com/iris-js/iris) es un *framework* escrito en JavaScript para construir el *front-end* de una aplicación Web que, aplicando distintas técnicas, permite que las aplicaciones sean eficientes, rápidas, estructuradas y modulares.
 
 Iris es completamente independiente de la tecnología que se utilice en el servidor; así, podemos utilizar Iris en aplicaciones basadas en Node.js, Python, Java, PHP, .NET, Ruby, etc.
 
@@ -86,7 +88,7 @@ El conjunto de tecnologías conocido como AJAX está cambiando radicalmente la f
 
 Desde el punto de vista del desarrollo, el cambio fundamental supone que parte de la lógica de la aplicación, que antes se ejecutaba en el servidor, ahora se realiza en el cliente.
 
-El lenguaje [*Javascript*](http://en.wikipedia.org/wiki/Javascript) se está consolidando como la principal alternativa para responder a este desafío. En este sentido, *Javascript* está viendo una *segunda juventud*  gracias a que ahora es capaz de ejecutarse 100 veces más rápido, dejando atrás tiempos en los que se utilizaba únicamente para tareas tales como responder a la pulsación de un botón o cambiar el color de fondo de un párrafo. Continuamente están apareciendo soluciones en *Javascript* que resuelven problemas como:
+El lenguaje [*JavaScript*](http://en.wikipedia.org/wiki/Javascript) se está consolidando como la principal alternativa para responder a este desafío. En este sentido, *JavaScript* está viendo una *segunda juventud*  gracias a que ahora es capaz de ejecutarse 100 veces más rápido, dejando atrás tiempos en los que se utilizaba únicamente para tareas tales como responder a la pulsación de un botón o cambiar el color de fondo de un párrafo. Continuamente están apareciendo soluciones en *JavaScript* que resuelven problemas como:
 * Interaccionar con el [DOM](http://en.wikipedia.org/wiki/Document_object_model).
 * *Maquetar* el *front-end*.
 * Facilitar el [Diseño Web Adaptativo](http://en.wikipedia.org/wiki/Responsive_web_design). 
@@ -100,21 +102,21 @@ El lenguaje [*Javascript*](http://en.wikipedia.org/wiki/Javascript) se está con
 * Etcétera.
 
 Sin embargo, el mayor peso relativo que está adquiriendo la programación en el *lado del cliente* plantea nuevas dificultades:
-* Por un lado, buena parte del código en [HTML](http://en.wikipedia.org/wiki/Html) ahora se genera dinámicamente en el cliente con *Javascript*. Esto supone una gran ventaja ya que mejora la experiencia de usuario y disminuye la necesidad de interaccionar con el servidor, pero también genera problemas nuevos:
+* Por un lado, buena parte del código en [HTML](http://en.wikipedia.org/wiki/Html) ahora se genera dinámicamente en el cliente con *JavaScript*. Esto supone una gran ventaja ya que mejora la experiencia de usuario y disminuye la necesidad de interaccionar con el servidor, pero también genera problemas nuevos:
  
- * Los buscadores ya no pueden realizar correctamente su trabajo debido a que la aplicación no necesita modificar la [URL](http://en.wikipedia.org/wiki/Url) y que, por motivos de optimización, los buscadores no analizan el código generado desde *Javascript* (ver [SEO](http://en.wikipedia.org/wiki/Search_Engine_Optimization)).
+ * Los buscadores ya no pueden realizar correctamente su trabajo debido a que la aplicación no necesita modificar la [URL](http://en.wikipedia.org/wiki/Url) y que, por motivos de optimización, los buscadores no analizan el código generado desde *JavaScript* (ver [SEO](http://en.wikipedia.org/wiki/Search_Engine_Optimization)).
  * Por el mismo motivo, ahora es más difícil enlazar a secciones concretas de la aplicación.
  * Surgen problemas con el almacenamiento temporal en *caché*. Es frecuente que el navegador almacene la información y no vaya a *buscar* los datos al servidor.
  * Aparecen anomalías en el comportamiento de los botones de delante/atrás. 
  * Problemas con el análisis estadístico de las páginas visitadas.
- * Es fácil que se produzcan *filtraciones* de memoria debido a que los objetos creados dinámicamente con Javascript dejen de apuntar a la referencia correcta o, por el contrario, que permanezcan indefinidamente en la memoria.
+ * Es fácil que se produzcan *filtraciones* de memoria debido a que los objetos creados dinámicamente con JavaScript dejen de apuntar a la referencia correcta o, por el contrario, que permanezcan indefinidamente en la memoria.
 
-* Por otro lado, el desplazamiento de parte de la lógica al cliente, tiene como consecuencia que las aplicaciones en *Javascript* alcanzan fácilmente varios millares de líneas de código. Esto dificulta el mantenimiento máxime si, como decíamos antes, el código en HTML se genera dinámicamente en el cliente.
+* Por otro lado, el desplazamiento de parte de la lógica al cliente, tiene como consecuencia que las aplicaciones en *JavaScript* alcanzan fácilmente varios millares de líneas de código. Esto dificulta el mantenimiento máxime si, como decíamos antes, el código en HTML se genera dinámicamente en el cliente.
 
 Iris está especialmente diseñado para dar respuesta a ambos problemas:
 
 * Con Iris, la navegación se realiza en una sola página. El flujo de navegación se define mediante Hash-URLs como en populares aplicaciones como [GMail](https://mail.google.com).
-* Iris permite estructurar el código en HTML y en Javascript en pequeños fragmentos relacionados entre sí. Esto supone importantes ventajas como:
+* Iris permite estructurar el código en HTML y en JavaScript en pequeños fragmentos relacionados entre sí. Esto supone importantes ventajas como:
  * Refuerza la modularidad de la aplicación, la ocultación, la cohesión y el bajo acoplamiento.
  * Define una clara separación de la vista y su comportamiento.
  * Mejora el trabajo en equipo permitiendo asignar tareas a distintos roles: programador, maquetador, diseñador, etc.
@@ -135,11 +137,11 @@ Cada **componente** permite definir los elementos que conforman la interfaz de u
 
 La **vista** consiste en un fragmento de código en HTML, típicamente un *DIV*, almacenado en un fichero, normalmente con extensión *.html*.
 
-El **controlador** es un fragmento de código en Javascript almacenado en un fichero, típicamente con extensión *.js*. Mediante este fichero controlamos e interaccionamos con la vista. Cuando un componente se activa (<a href="#awake">ver más adelante</a>), puede recibir parámetros que permiten modificar su comportamiento.
+El **controlador** es un fragmento de código en JavaScript almacenado en un fichero, típicamente con extensión *.js*. Mediante este fichero controlamos e interaccionamos con la vista. Cuando un componente se activa (<a href="#awake">ver más adelante</a>), puede recibir parámetros que permiten modificar su comportamiento.
 
 ![Definición de comportamiento](https://raw.github.com/iris-js/iris/iris-grunt/docs/images/component_equation.png)
 
-Cuando Iris carga un componente, visualiza el código de su fichero HTML asociado y ejecuta su fichero de Javascript según se haya definido en su ciclo de vida (<a href="#life_cycle">ver más adelante</a>).
+Cuando Iris carga un componente, visualiza el código de su fichero HTML asociado y ejecuta su fichero de JavaScript según se haya definido en su ciclo de vida (<a href="#life_cycle">ver más adelante</a>).
 
 El código HTML del componente se inserta en el DOM de la página. La inserción se hace sustituyendo o añadiendo (según se prefiera) un elemento que se defina en el DOM (ver más adelante).
 
@@ -147,11 +149,11 @@ El código HTML del componente se inserta en el DOM de la página. La inserción
 
 Iris utiliza dos tipos de componentes principales: Screens y UIs.
 
-Recuérdese que ambos son componentes y, por lo tanto, se definen mediante dos ficheros: Uno en HTML para establecer la vista o presentación y otro en Javascript para el comportamiento. 
+Recuérdese que ambos son componentes y, por lo tanto, se definen mediante dos ficheros: Uno en HTML para establecer la vista o presentación y otro en JavaScript para el comportamiento. 
 
 Un **UI** es un elemento sencillo. Puede ser un simple botón o un elemento en una lista. Un UI se puede componer de otros UIs y, así, tener un grado de complejidad mayor.
 
-Un <a name="screen"></a>**Screen** es un elemento de navegación. Cada Screen está asociado a un Hash-URL. Si en la barra de direcciones del navegador, escribimos el Hash-URL al que está asociado un Screen, Iris cargará su fichero HTML y ejecutará el fichero en Javascript según su ciclo de vida.
+Un <a name="screen"></a>**Screen** es un elemento de navegación. Cada Screen está asociado a un Hash-URL. Si en la barra de direcciones del navegador, escribimos el Hash-URL al que está asociado un Screen, Iris cargará su fichero HTML y ejecutará el fichero en JavaScript según su ciclo de vida.
 
 En un Screen podemos registrar otros Screens y visualizarlos al modificar el Hash-URL de la barra de direcciones del navegador.
 
@@ -161,9 +163,9 @@ En resumen: Los UIs deben pertenecer a otros UIs o a un Screen y no tienen Hash-
 
 ##<a name="life_cycle"></a>Ciclo de vida de un componente
 
-Iris establece cuatro transiciones en el ciclo de vida de un componente: *create*, *awake*, *sleep* y *destroy*. En el fichero Javascript asociado al componente, podemos definir métodos *callbacks* que serán llamados por Iris cuando el evento correspondiente se produzca.
+Iris establece cuatro transiciones en el ciclo de vida de un componente: *create*, *awake*, *sleep* y *destroy*. En el fichero JavaScript asociado al componente, podemos definir métodos *callbacks* que serán llamados por Iris cuando el evento correspondiente se produzca.
 
-Cuando se cree un componente, Iris ejecutará el código asociado a su método **create**. Normalmente aquí cargaremos el código HTML asociado al componente y registraremos los Screens (si el componente es de tipo Screen). Este método sólo se llamará una vez en la vida de un componente. La creación de un Screen se realizará navegando al Hash-URL correspondiente o invocando, desde *Javascript*, el método *navigate* de Iris. Si un Screen ya se hubiera creado, el método *navigate* o escribir su Hash-URL en el navegador hará que Iris *navegue* hacia él provocando el evento *awake* (ver más adelante). La creación de un UI se realizará invocando el método *ui* del componente en el que lo queramos crear. A diferencia de lo que ocurre con los Screens, llamar al método *ui* **siempre** llamará al método "create" del componente ya que siempre se creará un nuevo UI.
+Cuando se cree un componente, Iris ejecutará el código asociado a su método **create**. Normalmente aquí cargaremos el código HTML asociado al componente y registraremos los Screens (si el componente es de tipo Screen). Este método sólo se llamará una vez en la vida de un componente. La creación de un Screen se realizará navegando al Hash-URL correspondiente o invocando, desde *JavaScript*, el método *navigate* de Iris. Si un Screen ya se hubiera creado, el método *navigate* o escribir su Hash-URL en el navegador hará que Iris *navegue* hacia él provocando el evento *awake* (ver más adelante). La creación de un UI se realizará invocando el método *ui* del componente en el que lo queramos crear. A diferencia de lo que ocurre con los Screens, llamar al método *ui* **siempre** llamará al método "create" del componente ya que siempre se creará un nuevo UI.
 
 El evento complementario será **destroy**. Esté método, al igual que *create*, se ejecutará una única vez en la vida de un componente. La destrucción de un componente se efectuará llamando al método *destoryUI*, *destroyUIs* o *destroyScreen* dependiendo del componente de que se trate. En el caso de componentes de tipo UI, también se llamará cuando un UI sea sustituido por otro. La destrucción de un componente supondrá la destrucción de todos los componentes que contenga.
 
@@ -217,7 +219,7 @@ Antes de instanciar el Screen de bienvenida, Iris procesará el objeto *iris.pat
 Si se utiliza la [herramienta de minificación](https://raw.github.com/iris-js/iris/iris-grunt/tools/iris_packager.js) que incorpora Iris, es importante que la varible *iris.path* se defina fuera de cualquier función, incluso *$(document).ready()* y *window.onload*.
 
 ##<a name="calling_welcome"></a>Llamando al Screen de bienvenida
-Desde Javascript, llamamos al método **welcome** de Iris para cargar el fichero de comportamiento del Screen de bienvenida.
+Desde JavaScript, llamamos al método **welcome** de Iris para cargar el fichero de comportamiento del Screen de bienvenida.
 
 ```js
 //Mandatory: It maps application URLs to iris.path object
@@ -277,7 +279,7 @@ Cuando se ejecute el método *iris.welcome*, Iris creará un objeto de tipo Scre
 
 Observe que el método *create* ejecuta una llamada al método **tmpl** que permite cargar en el DOM el contenido del archivo *welcome.html* pasado como parámetro.
 
-Observe, además, que el método *iris.screen* recibe la función antes mencionada y, como segundo parámetro, el atributo del objeto *iris.path* que contiene la *URL* del fichero *Javascript* asociado. 
+Observe, además, que el método *iris.screen* recibe la función antes mencionada y, como segundo parámetro, el atributo del objeto *iris.path* que contiene la *URL* del fichero *JavaScript* asociado. 
 
 > El método *self.tmpl()* debe ser llamado una única vez y **OBLIGATORIAMENTE** en el método *self.create()* antes de utilizar ningún otro método del componente (*self.get()*, *self.destroyUI()*, etc);
 
@@ -398,7 +400,7 @@ En nuestro ejemplo, para *navegar* al Screen debemos pulsar sobre el enlace que 
 
 Como el Screen *Home* pertenece al Screen *Welcome*, su ruta de acceso será: */#/home*. Recuerde que el símolo *#* identifica al Screen Welcome.
 
-Cuando pulsemos sobre el enlace, Iris buscará un elemento del DOM cuyo atributo *data-id* corresponda con el contenedor pasado al método *screens* y ejecutará el fichero de *javascript* asociado al Hash-URL; concretamente, llamará al método *create*, con lo cual, el contenido HTML del Screen se añadirá al contenedor.
+Cuando pulsemos sobre el enlace, Iris buscará un elemento del DOM cuyo atributo *data-id* corresponda con el contenedor pasado al método *screens* y ejecutará el fichero de *JavaScript* asociado al Hash-URL; concretamente, llamará al método *create*, con lo cual, el contenido HTML del Screen se añadirá al contenedor.
 
 Tras llamar al método *create*, Iris llamará al método *awake* del Screen.
 
@@ -425,9 +427,9 @@ Al pulsar sobre el enlace, el DOM de la página generada por Iris será el sigui
 ```
 Es importante reiterar que el código HTML del Screen se añade dentro del contenedor especificado. 
 
-##<a name="showing_screen_js"></a>Mostrando un Screen desde Javascript
+##<a name="showing_screen_js"></a>Mostrando un Screen desde JavaScript
 
-Podemos conseguir lo mismo que en el apartado anterior desde el código en Javascript asociado al Screen Welcome.
+Podemos conseguir lo mismo que en el apartado anterior desde el código en JavaScript asociado al Screen Welcome.
 
 Para hacer esto, modifiquemos el código del Screen Welcome:
 
@@ -903,9 +905,9 @@ self.create = function () {
 };
 ```
 
-Los UIs son componentes no *navegables* y, por lo tanto, su activación tiene que hacerse desde Javascript de forma análoga a como se puede hacer también con los Screens. La principal diferencia con ellos es que no se registran y se cargan simplemente llamando al método *ui* del componente (en este caso del Screen Home).
+Los UIs son componentes no *navegables* y, por lo tanto, su activación tiene que hacerse desde JavaScript de forma análoga a como se puede hacer también con los Screens. La principal diferencia con ellos es que no se registran y se cargan simplemente llamando al método *ui* del componente (en este caso del Screen Home).
 
-Este método puede recibir cuatro parámetros: el *data-id* del contenedor donde se va a cargar; el fichero Javascript asociado al UI; opcionalmente un objeto de Javascript que se pasará al UI como se explica más adelante; y por último, también de forma opcional, el *template mode* (ver explicación posterior).
+Este método puede recibir cuatro parámetros: el *data-id* del contenedor donde se va a cargar; el fichero JavaScript asociado al UI; opcionalmente un objeto de JavaScript que se pasará al UI como se explica más adelante; y por último, también de forma opcional, el *template mode* (ver explicación posterior).
 
 Es interesante estudiar el DOM que genera Iris tras pulsar el botón y cargar el UI:
 
@@ -1452,6 +1454,8 @@ my_ui UI Asleep
 my_ui UI Destroyed
 </pre>
 
+El método *self.destroy* permite a un UI autodestruirse. Para ello, se debe llamar a *self.destroy()* sin argumentos desde el propio *UI* que queramos destruir.
+
 ##<a name="canSleep"></a>Evento *canSleep*
 
 Antes de llamar al evento *sleep* de un screen, Iris comprueba si existe un método con el nombre *canSleep*. Si este método devuelve *false*, Iris cancelará la propagación de eventos e impedirá cambiar el hash-URL.
@@ -1844,7 +1848,7 @@ var param_value = self.setting("param_name");
 self.setting("param_name" ,"param_value");
 ```
 
-El valor de *param_value* puede ser cualquier tipo válido en *Javascript*, incluso un objeto o una función.
+El valor de *param_value* puede ser cualquier tipo válido en *JavaScript*, incluso un objeto o una función.
 
 Veámoslo con el siguiente ejemplo:
 
@@ -1917,10 +1921,10 @@ Observe como el UI recibe un parámetro que indica el número de UI de que se tr
 
 Los componentes, UIs y Screens, disponen de un método alternativo al anteriormente explicado para pasar parámetros. Consiste en utilizar el método *settings*.
 
-El método *settings* permite almacenar cualquier objeto de Javascript en el componente. La sintaxis de este método es:
+El método *settings* permite almacenar cualquier objeto de JavaScript en el componente. La sintaxis de este método es:
 
 ```js
-self.settings({...}); //any kind of Javascript object
+self.settings({...}); //any kind of JavaScript object
 ```
 
 El ejemplo anterior, utilizando este método se habría hecho de esta manera:
@@ -1928,7 +1932,7 @@ El ejemplo anterior, utilizando este método se habría hecho de esta manera:
 ```js
 self.settings({
     "year": 2013
-}); //any kind of Javascript object
+}); //any kind of JavaScript object
 ```
 
 Tanto con el método *setting* como con *settings* se pueden pasar parámetros con varios niveles. Por ejemplo:
@@ -2102,7 +2106,7 @@ Los componentes pueden recibir parámetros de varias formas. Concretamente, los 
 2. En el método *self.ui* del componente padre.
 3. Desde la vista con el atributo *data-* en el contenedor del padre del UI.
 
-Todos estas alternativas comparten el mismo objeto *settings* de *Javascript* con lo que si pasamos un mismo nombre de parámetro de varias formas diferentes, el valor del parámetro resultará sobrescrito.
+Todos estas alternativas comparten el mismo objeto *settings* de *JavaScript* con lo que si pasamos un mismo nombre de parámetro de varias formas diferentes, el valor del parámetro resultará sobrescrito.
 
 El orden de prioridad es el que se ha reflejado en la lista anterior, aunque el valor final resultante dependerá de en qué momento del ciclo de vida fijemos el parámetro.
 
@@ -2258,8 +2262,10 @@ Observe que el contenido del elemento del *DOM* que tenga un atributo *data-mode
 Por ejemplo:
 
 ```html
-<img src="##logo##.png/>
+<img src="##logo##.png"/>
 ```
+
+Los valores válidos para el atributo *data-model* son: *date*, *number* y *currency*.
 
 ##<a name="events"></a>Trabajando con eventos
 
@@ -2372,7 +2378,7 @@ iris.off("MY_UI_CREATED_event");
 
 > Para evitar filtraciones de memoria, en general, si la suscripción a un evento se realiza en el método *awake* de un componente, la eliminación debe realizarse en el método *sleep* de ese mismo componente; y si la suscripción se realiza en el *create*, la eliminación se hará en el *destroy*.
 
-Cuando se notifica que se ha producido un evento, se pueden pasar parámetros a la función que recibe la notificación. Los parámetros pueden ser de cualquier tipo. Si se necesitan pasar varios parámetros de deben *encapsular* en un objeto de Javascript.
+Cuando se notifica que se ha producido un evento, se pueden pasar parámetros a la función que recibe la notificación. Los parámetros pueden ser de cualquier tipo. Si se necesitan pasar varios parámetros de deben *encapsular* en un objeto de JavaScript.
 
 Vamos a transformar el ejemplo anterior para que haya una única función que maneje los eventos de creación y destrucción del UI. La función recibe un parámetro para discriminar si se trata de un evento o de otro. Aprovechamos el ejemplo para transformar los eventos en variables en lugar usar literales de cadena ya que es una forma más conveniente de trabajar.
 
@@ -2493,7 +2499,7 @@ iris.locale();
 
 Para definir las traducciones tenemos dos alternativas.
 
-1 Podemos definir las traducciones en el código de Javascript. Por ejemplo:
+1 Podemos definir las traducciones en el código de JavaScript. Por ejemplo:
 
 ```js
 iris.translations("en_US", {
@@ -2512,7 +2518,7 @@ Observe que Iris soporta definiciones de vocablos multinivel.
 ```js
 iris.translations("fr_FR", "./lang_FR.json", {"success" : onFRSuccess, "error" : onFRError });
 ```
-Observe que a la función *iris.translations* se le debe pasar la ruta al fichero y, opcionalmente, un objeto de Javascript que contiene las funciones que se ejecutarán en caso de éxito y en caso de error durante la carga.
+Observe que a la función *iris.translations* se le debe pasar la ruta al fichero y, opcionalmente, un objeto de JavaScript que contiene las funciones que se ejecutarán en caso de éxito y en caso de error durante la carga.
 
 El fichero *./lang_FR.json* podría ser el siguiente:
 
@@ -2570,7 +2576,7 @@ En *welcome.html*:
     <p>This is the initial screen.</p>
     Morning Greeting from HTML: @@GREETINGS.MORNING@@
     </br>
-    Morning Greeting from Javascript: <span data-id="greeting"/>
+    Morning Greeting from JavaScript: <span data-id="greeting"/>
 </div>
 ```
 Y en *welcome.js*:
@@ -2607,11 +2613,11 @@ iris.screen(
     iris.path.welcome.js
 );
 ```
-Iris puede aplicar formatos a fechas, números y monedas adaptándolos a la variación **regional** que se haya seleccionado. Esto se puede hacer desde el código Javascript o bien desde el código HTML de un componente. En este último caso, los datos a formatear se pasarán en el método *tmpl*.
+Iris puede aplicar formatos a fechas, números y monedas adaptándolos a la variación **regional** que se haya seleccionado. Esto se puede hacer desde el código JavaScript o bien desde el código HTML de un componente. En este último caso, los datos a formatear se pasarán en el método *tmpl*.
 
 Veamos un ejemplo de cada uno de ellos.
 
-Para el formateado desde Javascript utilizaremos los siguientes ficheros:
+Para el formateado desde JavaScript utilizaremos los siguientes ficheros:
 
 En *welcome.html*:
 
@@ -2664,7 +2670,7 @@ iris.screen(
    
             self.tmpl(iris.path.welcome.html);
    
-            var s ="Regionals Examples From Javascript";
+            var s ="Regionals Examples From JavaScript";
    
             var date = new Date();
             s += "</br>Default date format: " + iris.date(date);
@@ -2687,7 +2693,7 @@ La función *iris.regional* permite conocer el valor regional que está utilizan
 iris.regional("dayNames");
 ```
 
-Las funciones *iris.date*, *iris.currency* e *iris.number* admiten opcionalmente como segundo parámetro un objeto de *Javascript* que será utilizado al aplicar el formato. Si este parámetro no se pasara, se utilizará el formato definido en *iris.locale*.
+Las funciones *iris.date*, *iris.currency* e *iris.number* admiten opcionalmente como segundo parámetro un objeto de *JavaScript* que será utilizado al aplicar el formato. Si este parámetro no se pasara, se utilizará el formato definido en *iris.locale*.
 
 Para el formateado desde HTML utilizaremos los siguientes ficheros:
 
@@ -2937,6 +2943,30 @@ function onResourceError (request, textStatus, errorThrown) {
 	....
 }
 ```
+##<a name="include"></a>Incluyendo recursos
+
+El método *iris.include* permite cargar recursos *JavaScript*. El método recibe un array con las *urls* de los archivos a cargar y una función de *callback* que se ejecutará cuando todos los recursos se hayan cargado. Esté método puede ser útil, por ejemplo, para precargar datos o componentes de *iris* que no se hayan cargado al principio con el método *iris.welcome*.
+
+En el siguiente ejemplo cargamos un UI cuando el usuario se ha conectado como administrador:
+
+```js
+...
+if (isAdmin) {
+ iris.path = {
+  admin_users {
+   js : "admin/users.js",
+   html : "admin/users.html"
+  }
+ };
+ iris.include([iris.path.admin_users.js, iris.path.admin_users.html], function () {
+  self.ui("container", iris.path.admin_users.js);
+ });
+}
+...	
+``` 
+##<a name="browser"></a>Obteniendo información del navegador
+
+El método *iris.browser()* devuelve un objeto de *JavaScript* con la información del *user-agent* que esté ejecutando la aplicación.
 
 ##<a name="production"></a>Paso a producción
 
@@ -3451,7 +3481,7 @@ En *home.html*:
 
 ##<a name="step_by_step_model"></a>ShoppingList Model
 
-Para mantener los productos en la lista de la compra y para recuperarlos desde el servidor, vamos a crear un pequeño *modelo* en *Javascript* en el fichero *shopping_list.js*:
+Para mantener los productos en la lista de la compra y para recuperarlos desde el servidor, vamos a crear un pequeño *modelo* en *JavaScript* en el fichero *shopping_list.js*:
 
 ```js
 var model = {}; 
@@ -4580,7 +4610,7 @@ Esta llamada permite que Iris reinicie su estado y su uso está indicando única
 
 ##<a name="step_by_step_grunt"></a>Automatizando procesos con *Grunt*
 
-*[Grunt](http://gruntjs.com/)* es una librería de *Javascript* que permite automatizar todo tipo de tareas como: validar el código, ejecutar pruebas de unidad, compactar y *minificar* la aplicación, arrancar un servidor [Node.js](http://nodejs.org/) y desplegar la aplicación en él, etc.
+*[Grunt](http://gruntjs.com/)* es una librería de *JavaScript* que permite automatizar todo tipo de tareas como: validar el código, ejecutar pruebas de unidad, compactar y *minificar* la aplicación, arrancar un servidor [Node.js](http://nodejs.org/) y desplegar la aplicación en él, etc.
 
 Para utilizar *Grunt* previamente hay que instalar [Node.js](http://nodejs.org/) y después instalar *Grunt* con el siguiente comando ejecutado desde el terminal:
 
@@ -4827,7 +4857,7 @@ iris.screen(
     }, iris.path.screen.categories.js);
 ```
 
-Ahora habría que modificar los ficheros *html* asociados. Se han hecho algunos cambios en su estructura y en los estilos para utilizar el efecto *[accordion](http://twitter.github.com/bootstrap/javascript.html#collapse)* que proporciona *BootStrap*. Este efecto nos permite que sólo se vean los productos de una categoría a la vez, colapsando con una animación los productos de la categoría anterior.
+Ahora habría que modificar los ficheros *html* asociados. Se han hecho algunos cambios en su estructura y en los estilos para utilizar el efecto *[accordion](http://twitter.github.com/bootstrap/JavaScript.html#collapse)* que proporciona *BootStrap*. Este efecto nos permite que sólo se vean los productos de una categoría a la vez, colapsando con una animación los productos de la categoría anterior.
 
 En *categories.html*:
 
@@ -4979,11 +5009,11 @@ Puede descargar la aplicación modificada en el siguiente [enlace](https://githu
 
 ##<a name="step_by_step_exercise2"></a>Ejercicio: Integrando Knockout
 
-[Knockout](http://knockoutjs.com/) es una librería de Javascript que implementa el patrón Model-View-View-Model.
+[Knockout](http://knockoutjs.com/) es una librería de JavaScript que implementa el patrón Model-View-View-Model.
 
 La ventaja que aportan *frameworks* como Knockout es que permiten un vínculo (*binging*) bidireccional entre la vista y el modelo de datos del cliente; automatizando el proceso mostrar y actualizar datos, ya que cuando cambia el modelo, la vista se refresca para mostrar la nueva información y, viceversa, cuando se introduce información en un formulario de la vista, es el modelo el que recibe los cambios.
 
-Esto se traduce en una gran reducción del código en *Javascript* que es necesario para mostrar los datos del modelo.
+Esto se traduce en una gran reducción del código en *JavaScript* que es necesario para mostrar los datos del modelo.
 
 Puede descargar la aplicación integrada con Knockout en el siguiente [enlace](https://github.com/surtich/iris/blob/iris-grunt/docs/iris-shopping-knockout.tar.gz?raw=true).
 
