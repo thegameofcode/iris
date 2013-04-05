@@ -5,15 +5,21 @@ _Creation date: 2012-01-12_
 [version] date -> authors
   * upd|fix|new|dep|rmv - description
 
-[0.5.1] 2013-03-xx
+[0.5.1] 2013-04-04
 https://github.com/thegameofcode/iris/issues?milestone=7&page=1&state=closed
 
  * [fix] Fixed initial navigation bug (issue #94)
- * [new] iris.include (issue #109 #92)
- * [new] iris.browser (issue #105)
- * [upd] self.destroyUI (issue #107)
+ * [fix] Problem with same data-id of childs (issue #91)
+ * [fix] Problem when inflating model in a DIV tag (issue #93)
+ * [upd] self.destroyUI (AutoDestroy) (issue #107)
  * [upd] Add number format to inflate (issue #101)
  * [upd] Show before awake (issue #108)
+ * [upd] Updated spanish docs (issue #117)
+ * [upd] Iris API: difficult to use (issue #115)
+ * [upd] Size of hidden DOM elements cannot be obtained in self.awake (issue #108)
+ * [new] iris.include (issue #109 #92)
+ * [new] iris.browser (issue #105)
+
 
 [0.5.0] 2013-02-07
  * [upd] New code style using: http://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml
