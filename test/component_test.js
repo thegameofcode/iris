@@ -186,6 +186,26 @@
         });
     });
 
+    asyncTest("Destroy Multiple UIs", function() {
+    
+        expect(18);
+
+        iris.welcome("test/component/welcome.js"); // + 4
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            iris.navigate("#/screen"); // +3
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+
+                iris.notify("destroy_multiple_uis"); // +2
+
+                start();
+            });
+        });
+    });
+
     asyncTest("Destroy UIs of container replaced by an UI", function() {
     
         expect(10);

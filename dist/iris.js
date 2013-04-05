@@ -1,4 +1,4 @@
-/*! Iris - v0.5.1-SNAPSHOT - 2013-04-04
+/*! Iris - v0.5.1-SNAPSHOT - 2013-04-05
 * http://thegameofcode.github.com/iris
 * Copyright (c) 2013 Iris; Licensed New-BSD */
 
@@ -1358,16 +1358,16 @@ window.iris = iris;
         }
     };
 
-    Component.prototype.destroyUIs = function(p_idOrJq) {
-        var contSelector = typeof p_idOrJq === "string" ? "[data-id=" + p_idOrJq + "]" : p_idOrJq.selector;
-        var ui;
-        for(var f = 0, F = this.uis.length; f < F; f++) {
+    Component.prototype.destroyUIs = function(id) {
+
+        var f, F, ui;
+        for(f = 0, F = this.uis.length; f < F; f++) {
             ui = this.uis[f];
 
-            if ( ui.con.id.indexOf(contSelector) !== -1 ) {
+            if ( ui.id.indexOf(id) !== -1 ) {
 
                 if ( ui._tmplMode === this.REPLACE ) {
-                    throw "self.destroyUIs cannot delete " + contSelector + " because was replaced by an UI, use self.destroyUI";
+                    throw "self.destroyUIs cannot delete " + id + " because was replaced by an UI, use self.destroyUI";
                 } else {
                     this.uis.splice(f--, 1);
                     F--;

@@ -12,6 +12,7 @@ iris.screen(function (self) {
 		self.on("destroy_ui_replace", destroyUiReplace);
 		self.on("destroy_ui_check", destroyUiCheck);
 		self.on("ui_repeated_dataid", ui_repeated_dataid);
+		self.on("destroy_multiple_uis", destroy_multiple_uis);
 
 		// check screen properties
 		window.strictEqual(self.id, "#/screen", "Compare screen properties: id");
@@ -49,11 +50,22 @@ iris.screen(function (self) {
 		window.strictEqual(self.uis.length, 0);
 	}
 
-	function ui_repeated_dataid (argument) {
+	function ui_repeated_dataid () {
 		self.ui("container", iris.path.ui_repeated_dataid);
 		self.get("sameId");
 
 		window.ok(true);
+	}
+
+	function destroy_multiple_uis () {
+
+		self.ui("container", iris.path.ui);
+		self.ui("container", iris.path.ui);
+		self.ui("container", iris.path.ui);
+		window.strictEqual(self.uis.length, 3, "There are three new UIs");
+
+		self.destroyUIs("container");
+		window.strictEqual(self.uis.length, 0, "There are zero UIs");
 	}
 
 },iris.path.screen);
