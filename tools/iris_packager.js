@@ -26,7 +26,7 @@ var config = {
  mode: "",
  deleteInputs: false,
  base64images: false
-}
+};
 
 function ItemStats() {
  this.numFiles = 0;
@@ -38,7 +38,7 @@ function ItemStats() {
 }
 
 var globalStats = {
- js:  new ItemStats(), 
+ js:  new ItemStats(),
  html:new ItemStats(),
  css: new ItemStats(),
  total: new ItemStats()
@@ -58,6 +58,8 @@ function init () {
    param = getParam("input=", val);
    if ( param !== null ) {
     config.inputPaths = param.split(",");
+   } else {
+    config.inputPaths = ["*"];
    }
 
    
@@ -115,9 +117,9 @@ function init () {
   }
   );
 
- if ( !config.inputPaths ) {
+ //if ( !config.inputPaths ) {
  //throw "you must specify the parameter input=path_to_directory/,path_to_file...";
- }
+ //}
  
  if ( !config.outputPath && !config.outputFile ) {
   throw "you must specify the parameter output=path/";
@@ -129,14 +131,14 @@ function init () {
 
  if (!config.outputFile) {
   if (fs.existsSync(config.outputPath) && fs.statSync(config.outputPath).isDirectory()) {
-   config.outputFile = validatePath(config.outputPath) + config.initJs.match(/[^/]+\.js$/);
+   config.outputFile = validatePath(config.outputPath) + config.initJs.match(/[^\/]+\.js$/);
   } else {
    config.outputFile = config.outputPath;
   }
  }
  
  config.js.push(config.initJs);
- console.log("***************************************************************************************"); 
+ console.log("***************************************************************************************");
  console.log("config = " + util.inspect(config));
  console.log("***************************************************************************************");
  
@@ -153,7 +155,7 @@ function init () {
    }
    excludes = config.excludePaths.join(" ");
   }
-  
+
   fileset(includes,  excludes, function(err, files) {
    if (err) return console.error(err);
    for (var i = 0; i < files.length; i++) {
@@ -172,7 +174,7 @@ function init () {
   }).on('end', function() {
    
    generateOutput();
-  }); 
+  });
  }
 }
 
@@ -207,15 +209,20 @@ function scanPath (path) {
 }
 
 function scanFile(file) {
+
+ if ( file === config.initJs ) {
+  return;
+ }
  
  var ext = path.extname(file).replace(".","");
  
  if (ext === "html" || ext === "js" || ext === "css") {
+
   for (var i = 0; i < config[ext].length; i++) {
-   if (config[ext][i] === file) {
-    console.log("duplicate " + ext + " '" + file + "'...");
-    return;
-   }
+    if (config[ext][i] === file) {
+      console.log("duplicate " + ext + " '" + file + "'...");
+      return;
+    }
   }
   console.log("found " + ext + " '" + file + "'...");
   config[ext].push(file);
@@ -245,15 +252,15 @@ function generateOutput () {
   },
   function(callback) {
    deleteFiles(callback);
-  }
-  ,function(callback) {
+  },
+  function(callback) {
    printResults(callback);
   }
   ]);
 }
 
 function minifyJs(callback) {
- if (!config.extension.js || config.js.length == 0 || config.mode === "test") {
+ if (!config.extension.js || config.js.length === 0 || config.mode === "test") {
   callback(null, "minifyJs");
   return;
  }
@@ -276,11 +283,11 @@ function minifyJs(callback) {
 }
 
 function minifyCSS(callback) {
- if (!config.extension.css || config.css.length == 0 || config.mode === "test") {
+ if (!config.extension.css || config.css.length === 0 || config.mode === "test") {
   callback(null, "minifyCSS");
   return;
  }
- console.log("Minimizing CSS...");
+ console.log("Minimizing CSS config.css[" + config.css + "]...");
  var filesProcessed = 0;
  for ( var f=0, F=config.css.length;f<F; f++ ) {
   var inCSS = config.css[f];
@@ -301,13 +308,13 @@ function minifyCSS(callback) {
       }
      }
     }
-   });  
+   });
   })(inCSS);
  }
 }
 
 function b64(callback) {
- if (!config.extension.css || config.css.length == 0 || config.mode === "test" || !config.base64images) {
+ if (!config.extension.css || config.css.length === 0 || config.mode === "test" || !config.base64images) {
   callback(null, "b64");
   return;
  }
@@ -333,8 +340,8 @@ function b64(callback) {
  }
 }
 
-function concatTemplates(callback){ 
- if (!config.extension.html || config.html.length == 0 || config.mode === "test") {
+function concatTemplates(callback){
+ if (!config.extension.html || config.html.length === 0 || config.mode === "test") {
   callback(null, "concatTemplates");
   return;
  }
@@ -343,11 +350,11 @@ function concatTemplates(callback){
  for ( var f=0, F=config.html.length;f<F; f++ ) {
   var data = fs.readFileSync(config.html[f], "utf8").replace(/[\r\n\t]/g,"");
   content.push(
-   "iris.tmpl('"
-   + config.html[f].replace(config.pathBase, "")
-   +"','"
-   + data.replace(/\'/g, "\\\'")
-   + "');\n"
+   "iris.tmpl('" +
+    config.html[f].replace(config.pathBase, "") +
+   "','" +
+    data.replace(/\'/g, "\\\'") +
+    "');\n"
    );
  }
 
@@ -362,7 +369,7 @@ function concatTemplates(callback){
     callback(null, "concatTemplates");
    }
   }
-  );	
+  );
 }
  
 function deleteFiles(callback) {
@@ -383,7 +390,7 @@ function deleteFiles(callback) {
  callback(null, "deleteFiles");
   
   
-} 
+}
 
 function calculateInputStats(item) {
  for (var i = 0; i < config[item].length; i++) {
