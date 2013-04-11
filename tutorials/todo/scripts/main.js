@@ -8,7 +8,9 @@
   'index',
   'init',
   'welcome_template',
-  'welcome_presenter'
+  'welcome_presenter',
+  'todo_template',
+  'todo_presenter'
   ]).forEach(function(step) {
 
   var movie = CodeMirror.movie(step + '-movie'),

@@ -245,8 +245,80 @@ tooltip: {text: 'With \"self.notify\" whe can notify an Iris event passing some 
 moveTo: {pos: "16:0"} ::: Rendering components 
 type: {text: "\n  render();"}
 moveTo: {pos: "26:0"}
-type: {delay: 1, text: "\n function render () {\n  if ( numTodos === 0 ) {\n   setAllBtn.hide();\n   self.get('footer').hide();\n  } else {\n   setAllBtn.show();\n   self.get('footer').show();\n   if ( todoLeft === 0 && completeAllShowed ) {\n    completeAllShowed = false;\n    setAllBtn.attr('checked','checked');\n   } else if ( todoLeft <= numTodos && !completeAllShowed ) {\n    completeAllShowed = true;\n    setAllBtn.removeAttr('checked');\n   }\n  }\n  var completed = numTodos - todoLeft;\n  if ( completed > 0 ) {\n   clearCompletedBtn.text('Clear completed (' + completed + ')');\n   clearCompletedBtn.show();\n  } else {\n   clearCompletedBtn.hide();\n  }\n }\n"}
-tooltip: {wait: 4000, text: 'The render function just hides o shows the DOM elements according to the app state', pos: '25:4'}
+type: {delay: 1, text: "\n function render () {\n  ...\n }\n\n"}
+tooltip: {wait: 4000, text: 'The render function just hides o shows the DOM elements according to the app state', pos: '27:8'}
+</textarea>
+   </div>
+   
+   <div id="todo_template" class="step" data-x="16500" data-y="0">
+    <h2>Adding a <kbd>Todo Item UI</kbd></h2>
+    <h3>At the next few steps we are going to explain how to add a Todo Item.</br>
+    Let's start with the <kbd>Todo Item UI template</kbd></h3>
+    <hr>
+    <div class="row">
+     <div class="columns small-12">
+      <button class="button radius success" id='todo_template-button'>Play</button>
+     </div>
+    </div>
+<textarea disabled data-cm-theme="solarized" name="todo_template-movie" id="todo_template-movie" cols="100" rows="30" data-cm-mode="text/html">
+|
+@@@
+type: {text: "<li>\n</li>"} ::: Li Element
+tooltip: {wait: 4000, text: 'The Todo Items will be added in a list defined in the Welcome Screen, as you surely remember', pos: "0:4"}
+run: { command: "goLineUp", beforeDelay: 0 }
+type: {text: "\n <input data-id='check' type='checkbox'>"} ::: Checkbox Element
+tooltip: {text: 'A checkbox to allow us to check or uncheck the task', pos: "1:4"}
+type: {text: "\n <label data-model='text'></label>"} ::: Label Element
+tooltip: {text: 'A label to show the text of the task', pos: "2:4"}
+type: {text: "\n <button data-id='destroy'></button>"} ::: Button Element
+tooltip: {text: 'A button to destroy the task', pos: "3:4"}
+type: {text: "\n <input data-id='text' data-model='text' value=''>"} ::: Textbox Element
+tooltip: {text: 'A textbox to edit the task', pos: "4:4"}
+tooltip: {text: 'The \"data-model\" attribute allows you to pass parameters from the presenter (more later)', pos: "4:27"}
+</textarea>
+   </div>
+   
+   <div id="todo_presenter" class="step" data-x="19500" data-y="0">
+    <h2>The <kbd>Todo Item UI presenter</kbd> (todo_item.js)</h2>
+    <hr>
+    <div class="row">
+     <div class="columns small-12">
+      <button class="button radius success" id='todo_presenter-button'>Play</button>
+     </div>
+    </div>
+<textarea disabled data-cm-theme="solarized" name="todo_presenter-movie" id="todo_presenter-movie" cols="100" rows="30" data-cm-mode="text/javascript">
+iris.ui(function (self) {
+
+|
+ 
+ self.create = function() {
+   
+  
+  self.tmpl(iris.path.todo_item_tmpl);
+
+  self.get("check").on("click", toggle);
+  self.get("destroy").on("click", destroyTodo);
+
+  self.on("set-all-todos", onSetAllTodos);
+  self.on("clear-completed", onClearCompleted);
+  self.on("filter-todos", onFilter);
+
+  self.get().on("dblclick", edit);
+  self.get("text").on("change", onTextBlur);
+
+  self.get().hide().fadeIn("slow");
+
+ };
+
+ ...
+
+},iris.path.todo_item);
+@@@
+tooltip: {wait: 4000, text: 'We started in a similar way as the Welcome Screen', pos: "0:4"} ::: Intro
+type: {text: "\n self.settings({\n  completed : false\n }"} ::: self.settings
+tooltip: {wait: 4000, text: '\"self.settings\" allows store a pass javascript objects to the component', pos: "1:5"}
+type: {text: "\n self.tmplMode(self.APPEND);"} ::: self.tmplMode
+tooltip: {wait: 4000, text: '\"self.tmplMode\" ', pos: "9:5"}
 </textarea>
    </div>
    
