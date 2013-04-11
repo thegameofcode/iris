@@ -1,0 +1,59 @@
+p, ul, li, dl, dt, dd, blockquote {
+  font-size: 1.2em;
+}
+
+/*
+ * Code Mirror Movies
+ */
+
+.CodeMirror-tooltip {
+  font-size: 20px;
+}
+
+.CodeMirror {
+  height: 500px;
+}
+
+
+/*
+ * Impress global
+ */
+
+.impress-supported .fallback-message {
+  display: none;
+}
+
+.step {
+  width: 1000px;
+}
+
+#todo {
+ padding: 0;
+}
+
+#todo .try {
+ font-size: 64px;
+ position: absolute;
+ top: -0.5em;
+ left: 1.5em;
+
+ -webkit-transform: translateZ(20px);
+ -moz-transform:    translateZ(20px);
+ -ms-transform:     translateZ(20px);
+ -o-transform:      translateZ(20px);
+ transform:         translateZ(20px);
+}
+
+#todo h1 {
+ font-size: 190px;
+
+ -webkit-transform: translateZ(50px);
+ -moz-transform:    translateZ(50px);
+ -ms-transform:     translateZ(50px);
+ -o-transform:      translateZ(50px);
+ transform:         translateZ(50px);
+}
+
+#todo .footnote {
+ font-size: 32px;
+}

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+ <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title></title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width">
+
+  <link rel="stylesheet" href="styles/normalize.css">
+  <link rel="stylesheet" href="styles/foundation.css">
+  <link rel="stylesheet" href="styles/codemirror.css">
+  <link rel="stylesheet" href="styles/solarized.css">
+  <link rel="stylesheet" href="styles/cm-movie.css">
+  <link rel="stylesheet" href="styles/main.css">
+
+  <script src="scripts/vendor/custom.modernizr.js"></script>
+  <script src="scripts/vendor/codemirror.js"></script>
+  <script src="scripts/vendor/javascript.js"></script>
+  <script src="scripts/vendor/xml.js"></script>
+  <script src="scripts/vendor/cm-movie-full.js"></script>
+ </head>
+ <body class="impress-not-supported">
+  <!--[if lt IE 7]>
+      <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+  <![endif]-->
+  <div class="fallback-message">
+   <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+   <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser, and <strong>activate Javascript</strong></p>
+  </div>
+
+  <div id="impress">
+
+   <div class="step" id="intro" data-x="0" data-y="0">
+    <div class="row">
+     <div class="columns small-4 small-centered">
+      <img src="images/iris.png" style="vertical-align: middle;"/>
+      <span style="font-size: 3em; vertical-align: middle;">Iris</span>
+     </div>
+     <div class="columns small-12">
+      <h2 class="subheader">Client-side optimization techniques for easily building fast and scalable web applications</h2>
+     </div>
+     <div class="columns small-4 small-offset-8">
+      <ul class="vcard">
+       <li class="fn">thegameofcode</li>
+       <li>April, 2013</li>
+       <li class="email"><a href="https://github.com/thegameofcode/iris">Iris</a></li>
+      </ul>
+     </div>
+    </div>
+   </div>
+
+   <div class="step" id="intro2" data-x="1500" data-y="0">
+    <h2>Features</h2>
+    <ul>
+     <li>Strong object oriented coding and file system organization</li>
+     <li>Presenter-View-Resource pattern</li>
+     <li>Easy and fast templating engine</li>
+     <li>One page navigation using <a href='http://en.wikipedia.org/wiki/Fragment_identifier'>Hash-URL</a></li>
+     <li>100% Client multilanguage support</li>
+     <li>Crossbrowser: Chrome, Firefox e Internet Explorer</li>
+     <li>Light and fast: 16 KB</li>
+     <li>Open source: New BSD License</li>
+    </ul>
+   </div>
+
+   <div class="step" id="todo" data-x="3000" data-y="0">
+    <span class="try">This is an example of a</span>
+    <h1>Todo App</h1>
+    <span class="footnote">using Iris</span>
+   </div>
+
+   <div class="step" id="todo2" data-x="4500" data-y="0">
+    <span style="font-size: 2em;">With a <strong>Todo App</strong> you can add <strong>tasks</strong> and check them when completed.</span>
+    <img src="images/todo_app.png" alt="Todo App" width="1000" height="768">
+   </div>
+
+   <div id="index" class="step" data-x="6000" data-y="0">
+    <h2>Let's start with the <kbd>index.html</kbd> page</h2>
+    <hr>
+    <div class="row">
+     <div class="columns small-12">
+      <button class="button radius success" id='index-button'>Play</button>
+     </div>
+    </div>
+<textarea data-cm-theme="solarized" name="index-movie" id="index-movie" cols="100" rows="30" data-cm-mode="text/html">
+&lt;!DOCTYPE HTML&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset='utf-8'&gt;
+
+&lt;title&gt;Todo list&lt;/title&gt;
+
+&lt;script src='|jquery.min.js'&gt;&lt;/script&gt;
+
+&lt;script src='iris.js'&gt;&lt;/script&gt;
+
+
+
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+@@@
+tooltip: {text: 'JQuery Dependency', wait: 2000} ::: Add JQuery Dependency
+run: {command: 'goLineDown', times: 2, beforeDelay: 0}
+run: {command: 'goLineStart', beforeDelay: 0}
+run: {command: 'goWordRight', times: 3, beforeDelay: 0}
+tooltip: {text: 'Iris Library', wait: 2000} ::: Add Iris Library Dependency
+run: {command: 'goLineDown', times: 2, beforeDelay: 0}
+type: {text: "<script src='init.js'></script>"} ::: Add Init Script
+run: {command: 'goWordLeft', times: 2, beforeDelay: 0}
+tooltip: {text: 'Init Script'}
+run: {command: 'goDocEnd', times: 1, beforeDelay: 0}
+run: {command: 'goLineUp', times: 2, beforeDelay: 0}
+run: {command: 'goLineStart', beforeDelay: 0}
+tooltip: {text: 'Empty Body'} ::: Leave the body without content
+</textarea>
+   </div>
+   
+   <div id="init" class="step" data-x="7500" data-y="0">
+    <h2>The <kbd>init.js</kbd> script</h2>
+    <hr>
+    <div class="row">
+     <div class="columns small-12">
+      <button class="button radius success" id='init-button'>Play</button>
+     </div>
+    </div>
+<textarea data-cm-theme="solarized" name="init-movie" id="init-movie" cols="100" rows="30" data-cm-mode="text/javascript">
+|
+@@@
+type: {text: "iris.path = {\n};"} ::: Define de iris.path object
+tooltip: {text: 'iris.path defines all Iris components', pos: "0:4"}
+run: { command: "goLineUp", beforeDelay: 0 }
+run: { command: "goLineEnd", beforeDelay: 0 }
+type: {text: "\n welcome : 'app/screen/welcome.js',\n"} ::: Define the Welcome Screen
+type: {text: " welcome_tmpl : 'app/screen/welcome.html'"}
+tooltip: {text: 'Each Screen has two elements: the presenter and the template', pos: "1:4"}
+type: {text: ",\n todo_item : 'app/ui/todo_item.js',\n"} ::: Define the Todo UI
+type: {text: " todo_item_tmpl : 'app/ui/todo_item.html'"}
+tooltip: {text: 'The same as every UI component', pos: "3:4"}
+run: { command: "goDocEnd", beforeDelay: 0 }
+run: { command: "goLineEnd", beforeDelay: 0 }
+type: {text: "\n\n$(document).ready(function() {"} ::: Entry point
+type: {text: "\n iris.welcome(iris.path.welcome);"}
+type: {text: "\n});"}
+tooltip: {text: 'Calling the iris.welcome() method', pos: "8:4"}
+</textarea>
+   </div>
+
+<div id="welcome_template" class="step" data-x="10500" data-y="0">
+    <h2>The template of <kbd>Welcome Screen</kbd> (welcome.html)</h2>
+    <hr>
+    <div class="row">
+     <div class="columns small-12">
+      <button class="button radius success" id='welcome_template-button'>Play</button>
+     </div>
+    </div>
+<textarea disabled data-cm-theme="solarized" name="welcome_template-movie" id="welcome_template-movie" cols="100" rows="30" data-cm-mode="text/html">
+|
+@@@
+type: {text: "<div>\n\n</div>"} ::: Empty Div
+tooltip: {text: 'Start with an empty \"div\"', pos: "1:5"}
+run: { command: "goLineUp", beforeDelay: 0 }
+run: { command: "goLineStart", beforeDelay: 0 }
+type: {text: " <input data-id='new-todo' placeholder='What needs to be done?'>"} ::: TextBox to add tasks
+tooltip: {text: 'The \"data-id\" attribute is used to handle the component in the presenter', pos: "1:12"}
+type: {text: "\n <label>\n  Mark all as complete"} ::: To check all taks
+type: {text: "\n  <input data-id='toggle-all' type='checkbox'>"}
+type: {text: "\n </label>"}
+tooltip: {text: 'Checkbox to check/uncheck all tasks', pos: "4:20"}
+type: {text: "\n <ul id='todo-list' data-id='todo-list'></ul>"} ::: To contains the tasks
+tooltip: {text: 'The list will contain the Todo_item UIs', pos: "5:10"}
+type: {text: "\n <ul data-id='filters'>"} ::: To filter tasks
+type: {text: "\n  <li><a href='#?filter=all'>All</a></li>", delay: 20}
+type: {text: "\n  <li><a href='#?filter=active'>Active</a></li>", delay: 20}
+type: {text: "\n  <li><a href='#?filter=completed'>Completed</a></li>", delay: 20}
+type: {text: "\n </ul>"}
+tooltip: {text: 'When click, It will navigate to Welcome Screen with a \"filter\" parameter', pos: "8:10", wait: 4000}
+type: {text: "\n <button data-id='clear-completed'/>"} ::: To clear tasks completed
+tooltip: {text: 'To clear tasks completed', pos: "12:10"}
+</textarea>
+   </div>   
+
+<div id="welcome_presenter" class="step" data-x="13500" data-y="0">
+    <h2>The presenter of <kbd>Welcome Screen</kbd> (welcome.js)</h2>
+    <hr>
+    <div class="row">
+     <div class="columns small-12">
+      <button class="button radius success" id='welcome_presenter-button'>Play</button>
+     </div>
+    </div>
+<textarea data-cm-theme="solarized" name="welcome_presenter-movie" id="welcome_presenter-movie" cols="100" rows="30" data-cm-mode="text/javascript">
+|
+@@@
+type: {text: "//In welcome.js"} ::: Calling iris.screen()
+type: {text: "\niris.screen( ... , ... );"}
+tooltip: {text: 'iris.screen receives two parameters', pos: "1:4"}
+select: {from: "1:12", to: "1:17"}
+type: {text: " function(self) {\n}"}
+tooltip: {text: 'The first is the lifecycle function (more later)', pos: "1:15", wait: 4000}
+select: {from: "2:3", to: "2:7"}
+type: {text: "iris.path.welcome"}
+tooltip: {text: 'The second is the corresponding value in the iris.path variable', pos: "2:7", wait: 4000}
+prompt: {title: "Who is the \"self\" variable?", typeDelay: 2000, hideDelay: 4000, text: "Is the Screen cretated by Iris."}
+prompt: {title: "Why is necessary the second parameter? Because ...", typeDelay: 2000, hideDelay: 4000, text: "Minification and debugging."}
+moveTo: {pos: "1:29"}
+type: {delay: 10, text: "\n\n var newTodo, setAllBtn, clearCompletedBtn, todoLeft = 0, numTodos = 0, completeAllShowed = false, filters;\n"}
+type: {text: "\n self.create = function() {\n };\n"} ::: Defining the lifecycle methods
+type: {text: "\n self.awake = function() {\n };\n"}
+tooltip: {text: '\"self.create()\" and \"self.awake()\" are two methods of the component lifecycle', pos: "5:13", wait: 4000}
+tooltip: {text: '\"self.create()\" is called only once when the component is created', pos: "5:7", wait: 4000}
+tooltip: {text: '\"self.awake()\" is called each time the component is activated', pos: "8:7", wait: 4000}
+moveTo: {pos: "8:23"}
+type: {text: "params"}
+tooltip: {text: '\"self.awake()\" can receive queryString parameters', pos: "8:23"}
+moveTo: {pos: "6:0"}
+type: {text: "\n\n"}
+run: { command: "goLineUp", times:2, beforeDelay: 0 }
+type: {text: "\n  self.tmpl(iris.path.welcome_tmpl);\n"} ::: Calling iris.template()
+tooltip: {text: '\"self.tmpl()\" loads the template in the DOM. In this case, in the \"body\" element', pos: "7:7"}
+type: {text: "\n  newTodo = self.get('new-todo').on('keyup', newTodoOnKeyUp);"} ::: Calling self.get()
+tooltip: {text: '\"self.get()\" retrieves the JQuery object from the template whose \"data-id\" matches with the parameter', pos: "9:17"}
+type: {delay:10, text: "\n  setAllBtn = self.get('toggle-all').on('click', setAll);"} ::: Assigning JQuery events handlers
+type: {delay:10, text: "\n  clearCompletedBtn = self.get('clear-completed').on('click', clearCompleted);"}
+type: {delay:10, text: "\n  filters = self.get('filters').on('click', onFiltersClick);"}
+tooltip: {text: 'Now we assing the JQuery event handlers', pos: "9:8"}
+type: {text: "\n\n  self.on('destroy-todo', onDestroyTodo);"} ::: Assigning Iris events handlers
+type: {text: "\n  self.on('toggle-todo', onToggleTodo);"}
+tooltip: {text: 'With \"self.on()\" the component can listening for an Iris event', pos: "14:6"}
+moveTo: {pos: "20:0"} ::: Notifying filter tasks 
+type: {text: "\n"}
+run: { command: "goLineUp", beforeDelay: 0 }
+type: {text: "  if ( params !== undefined && params.hasOwnProperty('filter') ) {\n  }"}
+tooltip: {text: 'Here, we check if there is a \"filter\" parameter in the QueryString', pos: "20:10"}
+moveTo: {pos: "21:0"}
+type: {text: "\n"}
+run: { command: "goLineUp", beforeDelay: 0 }
+type: {text: "   self.notify('filter-todos', params.filter);"}
+tooltip: {text: 'With \"self.notify\" whe can notify an Iris event passing some parameters to the handler', pos: "20:10"}
+moveTo: {pos: "16:0"} ::: Rendering components 
+type: {text: "\n  render();"}
+moveTo: {pos: "26:0"}
+type: {delay: 1, text: "\n function render () {\n  if ( numTodos === 0 ) {\n   setAllBtn.hide();\n   self.get('footer').hide();\n  } else {\n   setAllBtn.show();\n   self.get('footer').show();\n   if ( todoLeft === 0 && completeAllShowed ) {\n    completeAllShowed = false;\n    setAllBtn.attr('checked','checked');\n   } else if ( todoLeft <= numTodos && !completeAllShowed ) {\n    completeAllShowed = true;\n    setAllBtn.removeAttr('checked');\n   }\n  }\n  var completed = numTodos - todoLeft;\n  if ( completed > 0 ) {\n   clearCompletedBtn.text('Clear completed (' + completed + ')');\n   clearCompletedBtn.show();\n  } else {\n   clearCompletedBtn.hide();\n  }\n }\n"}
+tooltip: {wait: 4000, text: 'The render function just hides o shows the DOM elements according to the app state', pos: '25:4'}
+</textarea>
+   </div>
+   
+  </div> <!-- #impress -->
+
+  <script src="scripts/vendor/impress.js"></script>
+  <script src="scripts/main.js"></script>
+ </body>
+</html>
