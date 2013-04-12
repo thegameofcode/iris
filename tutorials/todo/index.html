@@ -206,8 +206,8 @@ tooltip: {text: 'The first is the lifecycle function (more later)', pos: "1:15",
 select: {from: "2:3", to: "2:7"}
 type: {text: "iris.path.welcome"}
 tooltip: {text: 'The second is the corresponding value in the iris.path variable', pos: "2:7", wait: 4000}
-prompt: {title: "Who is the \"self\" variable?", typeDelay: 2000, hideDelay: 4000, text: "Is the Screen cretated by Iris."}
-prompt: {title: "Why is necessary the second parameter? Because ...", typeDelay: 2000, hideDelay: 4000, text: "Minification and debugging."}
+prompt: {title: "Who is the \"self\" variable?", typeDelay: 2000, hideDelay: 4000, text: "It's the Screen cretated by Iris."}
+prompt: {title: "What is the second parameter for?", typeDelay: 2000, hideDelay: 4000, text: "For Minification and debugging."}
 moveTo: {pos: "1:29"}
 type: {delay: 10, text: "\n\n var newTodo, setAllBtn, clearCompletedBtn, todoLeft = 0, numTodos = 0, completeAllShowed = false, filters;\n"}
 type: {text: "\n self.create = function() {\n };\n"} ::: Defining the lifecycle methods
@@ -316,9 +316,47 @@ iris.ui(function (self) {
 @@@
 tooltip: {wait: 4000, text: 'We started in a similar way as the Welcome Screen', pos: "0:4"} ::: Intro
 type: {text: "\n self.settings({\n  completed : false\n }"} ::: self.settings
-tooltip: {wait: 4000, text: '\"self.settings\" allows store a pass javascript objects to the component', pos: "1:5"}
-type: {text: "\n self.tmplMode(self.APPEND);"} ::: self.tmplMode
-tooltip: {wait: 4000, text: '\"self.tmplMode\" ', pos: "9:5"}
+tooltip: {wait: 4000, text: '\"self.settings\" allows us to store a JavaScript object in the component', pos: "3:5"}
+moveTo: {pos: "9:0"}
+type: {text: "  self.tmplMode(self.APPEND);"} ::: self.tmplMode
+tooltip: {wait: 4000, text: 'With \"self.tmplMode(self.APPEND)\" we are telling Iris that several UIs can be stored in the container (ul)', pos: "9:7"}
+</textarea>
+   </div>
+   
+   <div id="welcome_add" class="step" data-x="22500" data-y="0">
+    <h2>The <kbd>createTodo()</kbd> method</h2>
+    <hr>
+    <div class="row">
+     <div class="columns small-12">
+      <button class="button radius success" id='welcome_add-button'>Play</button>
+     </div>
+    </div>
+<textarea disabled data-cm-theme="solarized" name="welcome_add-movie" id="welcome_add-movie" cols="100" rows="30" data-cm-mode="text/javascript">
+//In welcome.js
+iris.screen(function(self) {
+ self.create = function() {  
+  ...
+  newTodo = self.get("new-todo").on("keyup", newTodoOnKeyUp);
+  ...
+ }
+ ...
+}, iris.path.welcome);
+@@@
+tooltip: {wait: 4000, text: 'Remember...', pos: "0:4"} ::: Intro
+moveTo: {pos: "7:0"}
+type: {text: "\n"}
+run: { command: "goLineUp", beforeDelay: 0 }
+type: {text: " function newTodoOnKeyUp (e) {\n  if ( e.keyCode === 13 ) {\n   var ui = self.ui('todo-list', iris.path.todo_item);\n   ui.inflate({ text: newTodo.val() });\n  }\n }\n"}
+tooltip: {wait: 2000, text: 'The \"self.ui()\" method creates a new UI', pos: "9:17"} ::: self.ui
+tooltip: {wait: 3000, text: 'It takes two mandatory parameters and two optional', pos: "9:17"}
+tooltip: {wait: 3000, text: 'The first mandatory parameter is the UI container', pos: "9:25"}
+tooltip: {wait: 3000, text: 'The other mandatory parameter is the UI presenter file', pos: "9:42"}
+tooltip: {wait: 6000, text: 'The optional parameters are the settings object pass to the UI and the template mode, of which we already talked about before', pos: "9:17"}
+tooltip: {wait: 4000, text: 'The \"self.ui()\" method returns the UI created by iris', pos: "9:7"} ::: ui.inflate
+tooltip: {wait: 4000, text: 'The \"ui.inflate()\" method allows to pass a JavaScript object to the template', pos: "10:6"}
+tooltip: {wait: 8000, text: 'Iris will look for those DOM elements of the component whose attribute \"data-model\" matches any attribute of the object passed to the method ...', pos: "10:6"}
+tooltip: {wait: 6000, text: '... And It will replace their contents with the new value', pos: "10:6"}
+tooltip: {wait: 8000, text: 'In this case, the content of the DOM elements with \"data-model\" attribute equal to \"text\" will be the task name introduced by the user', pos: "10:6"}
 </textarea>
    </div>
    

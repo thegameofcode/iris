@@ -10,7 +10,8 @@
   'welcome_template',
   'welcome_presenter',
   'todo_template',
-  'todo_presenter'
+  'todo_presenter',
+  'welcome_add'
   ]).forEach(function(step) {
 
   var movie = CodeMirror.movie(step + '-movie'),
