@@ -360,6 +360,36 @@ tooltip: {wait: 8000, text: 'In this case, the content of the DOM elements with 
 </textarea>
    </div>
    
+   <div id="todo_check" class="step" data-x="25500" data-y="0">
+    <h2><kbd>Checking</kbd> a Todo Item</h2>
+    <h3>At this step we are going to explain how to <kbd>check/uncheck</kbd> a Todo Item.</br></h3>
+    <hr>
+    <div class="row">
+     <div class="columns small-12">
+      <button class="button radius success" id='todo_check-button'>Play</button>
+     </div>
+    </div>
+<textarea disabled data-cm-theme="solarized" name="todo_check-movie" id="todo_check-movie" cols="100" rows="30" data-cm-mode="text/javascript">
+//In todo_item.js
+iris.ui(function (self) {
+  ...
+  self.create = function() {
+  ...
+  self.get("check").on("click", toggle);
+  ...
+ };
+
+},iris.path.todo_item);
+@@@
+tooltip: {wait: 4000, text: 'Remember...', pos: "0:4"} ::: Intro
+moveTo: {pos: "8:0"}
+type: {text: " function toggle () {\n  self.setting('completed', !self.setting('completed'));\n  self.get().toggleClass('completed');\n  self.get('check').attr('checked', self.setting('completed'));\n  self.notify('toggle-todo', self.setting('completed'));\n }"} ::: self.setting()
+tooltip: {wait: 4000, text: 'Almost all of this we have already explained', pos: "8:10"}
+tooltip: {wait: 4000, text: 'The \"self.setting()\" method is similar to \"self.settings()\" and allows us to store a value in the component ...', pos: "9:12"}
+tooltip: {wait: 4000, text: '... or retrieve it', pos: "9:35"}
+</textarea>
+   </div>
+   
   </div> <!-- #impress -->
 
   <script src="scripts/vendor/impress.js"></script>
