@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+ <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title></title>
+  <meta name="description" content="">
+  <meta name="author" content="Jaier Pérez">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="styles/reveal.min.css">
+		<link rel="stylesheet" href="styles/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="styles/zenburn.css">
+  
+  <link rel="stylesheet" href="styles/normalize.css">
+  <link rel="stylesheet" href="styles/foundation.css">
+  <link rel="stylesheet" href="styles/codemirror.css">
+  <link rel="stylesheet" href="styles/solarized.css">
+  <link rel="stylesheet" href="styles/cm-movie.css">
+  <link rel="stylesheet" href="styles/main.css">
+
+  <script src="scripts/vendor/custom.modernizr.js"></script>
+  <script src="scripts/vendor/codemirror.js"></script>
+  <script src="scripts/vendor/javascript.js"></script>
+  <script src="scripts/vendor/xml.js"></script>
+  <script src="scripts/vendor/cm-movie-full.js"></script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+ </head>
+ <body>
+
+  <div class="reveal">
+
+   <div class="slides">
+    <section>
+    <div class="row">
+     <div class="columns small-12">
+      <button class="button radius success" id='todo_check-button'>Play</button>
+     </div>
+    </div>
+<textarea disabled data-cm-theme="solarized" name="todo_check-movie" id="todo_check-movie" cols="100" rows="30" data-cm-mode="text/javascript">
+//In todo_item.js
+iris.ui(function (self) {
+  ...
+  self.create = function() {
+  ...
+  self.get("check").on("click", toggle);
+  ...
+ };
+
+},iris.path.todo_item);
+@@@
+tooltip: {wait: 4000, text: 'Remember...', pos: "0:4"} ::: Intro
+moveTo: {pos: "8:0"}
+type: {text: " function toggle () {\n  self.setting('completed', !self.setting('completed'));\n  self.get().toggleClass('completed');\n  self.get('check').attr('checked', self.setting('completed'));\n  self.notify('toggle-todo', self.setting('completed'));\n }"} ::: self.setting()
+tooltip: {wait: 4000, text: 'Almost all of this we have already explained', pos: "8:10"}
+tooltip: {wait: 4000, text: 'The \"self.setting()\" method is similar to \"self.settings()\" and allows us to store a value in the component ...', pos: "9:12"}
+tooltip: {wait: 4000, text: '... or retrieve it', pos: "9:35"}
+</textarea>
+				</section>
+   </div>
+
+  </div> <!-- #reveal -->
+
+  <script src="scripts/head.min.js"></script>
+		<script src="scripts/reveal.min.js"></script>
+  <script src="scripts/main.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'scripts/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'scripts/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'scripts/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'scripts/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'scripts/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'scripts/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+					// { src: 'scripts/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+ </body>
+</html>
