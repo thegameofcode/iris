@@ -12,8 +12,13 @@
   'todo_template',
   'todo_presenter',
   'welcome_add',
-  'todo_check'
-  ]).forEach(function(step) {
+  'todo_check',
+  'todo_destroy',
+  'todo_edit',
+  'todo_filter',
+  'clearComleted',
+  'checkAll'
+ ]).forEach(function(step) {
 
   var movie = CodeMirror.movie(step + '-movie'),
   playBtn = document.getElementById(step + '-button'),
@@ -33,6 +38,16 @@
    movie.on('stop', function() {
     playBtn.innerHTML = 'Play';
    });
+   
+   if (step === 'todo_filter') {
+    movie.on('action', function(index) {
+     if (index === 3) {
+      movie._editor.setOption("mode","text/javascript");
+     }
+    }); 
+   }
+   
+   
   }
 
 
@@ -42,7 +57,7 @@
     eval(movie._editor.getValue());
    });
   }
-   /*
+  /*
   var textArea = document.getElementById(step + '-movie');
   
      
@@ -78,7 +93,7 @@
     }
    }
   }, false);
-*/
+   */
  });
 
 })();
