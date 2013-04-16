@@ -5,7 +5,19 @@
 
  // Setup behavior for code movies
  _([
-  'todo_check'
+  'index',
+  'init',
+  'welcome_template',
+  'welcome_presenter',
+  'todo_template',
+  'todo_presenter',
+  'welcome_add',
+  'todo_check',
+  'todo_destroy',
+  'todo_edit',
+  'todo_filter',
+  'clearComleted',
+  'checkAll'
   ]).forEach(function(step) {
 
   var movie = CodeMirror.movie(step + '-movie'),

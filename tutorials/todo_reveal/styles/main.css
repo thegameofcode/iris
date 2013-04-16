@@ -15,18 +15,6 @@ p, ul, li, dl, dt, dd, blockquote {
 }
 
 
-/*
- * Impress global
- */
-
-.impress-supported .fallback-message {
-  display: none;
-}
-
-.step {
-  width: 1000px;
-}
-
 #todo {
  padding: 0;
 }
@@ -45,7 +33,7 @@ p, ul, li, dl, dt, dd, blockquote {
 }
 
 #todo h1 {
- font-size: 190px;
+ font-size: 125px;
 
  -webkit-transform: translateZ(50px);
  -moz-transform:    translateZ(50px);
