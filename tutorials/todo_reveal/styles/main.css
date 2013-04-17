@@ -5,11 +5,11 @@ p, ul, li, dl, dt, dd, blockquote {
 /*
  * Code Mirror Movies
  */
-
+/*
 .CodeMirror-tooltip {
   font-size: 20px;
 }
-
+*/
 .CodeMirror {
   height: 500px;
 }

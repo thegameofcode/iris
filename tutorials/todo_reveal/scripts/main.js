@@ -37,8 +37,17 @@
    });
    movie.on('stop', function() {
     playBtn.innerHTML = 'Play';
+    //document.querySelector("div.state-background").scrollIntoView(false);
    });
   }
+  
+  if (step === 'todo_filter') {
+    movie.on('action', function(index) {
+     if (index === 3) {
+      movie._editor.setOption("mode", "text/javascript");
+     }
+    }); 
+   }
 
 
   // Execute code from a Code Mirror editor

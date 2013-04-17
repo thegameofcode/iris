@@ -10,7 +10,6 @@
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width">
 
-  <link rel="stylesheet" href="styles/normalize.css">
   <link rel="stylesheet" href="styles/foundation.css">
   <link rel="stylesheet" href="styles/codemirror.css">
   <link rel="stylesheet" href="styles/solarized.css">
@@ -86,7 +85,7 @@
       <button class="button radius success" id='index-button'>Play</button>
      </div>
     </div>
-    <textarea data-cm-theme="solarized" name="index-movie" id="index-movie" cols="100" rows="30" data-cm-mode="text/html">
+<textarea data-cm-theme="solarized" name="index-movie" id="index-movie" cols="100" rows="30" data-cm-mode="text/html">
 &lt;!DOCTYPE HTML&gt;
 &lt;html&gt;
 &lt;head&gt;
@@ -119,7 +118,7 @@ run: {command: 'goDocEnd', times: 1, beforeDelay: 0}
 run: {command: 'goLineUp', times: 2, beforeDelay: 0}
 run: {command: 'goLineStart', beforeDelay: 0}
 tooltip: {text: 'Empty Body'} ::: Leave the body without content
-    </textarea>
+</textarea>
    </div>
 
    <div id="init" class="step" data-x="7500" data-y="0">
@@ -130,7 +129,7 @@ tooltip: {text: 'Empty Body'} ::: Leave the body without content
       <button class="button radius success" id='init-button'>Play</button>
      </div>
     </div>
-    <textarea data-cm-theme="solarized" name="init-movie" id="init-movie" cols="100" rows="30" data-cm-mode="text/javascript">
+<textarea data-cm-theme="solarized" name="init-movie" id="init-movie" cols="100" rows="30" data-cm-mode="text/javascript">
 |
 @@@
 type: {text: "iris.path = {\n};"} ::: Define de iris.path object
@@ -149,7 +148,7 @@ type: {text: "\n\n$(document).ready(function() {"} ::: Entry point
 type: {text: "\n iris.welcome(iris.path.welcome);"}
 type: {text: "\n});"}
 tooltip: {text: 'Calling the iris.welcome() method', pos: "8:4"}
-    </textarea>
+</textarea>
    </div>
 
    <div id="welcome_template" class="step" data-x="10500" data-y="0">
@@ -160,7 +159,7 @@ tooltip: {text: 'Calling the iris.welcome() method', pos: "8:4"}
       <button class="button radius success" id='welcome_template-button'>Play</button>
      </div>
     </div>
-    <textarea disabled data-cm-theme="solarized" name="welcome_template-movie" id="welcome_template-movie" cols="100" rows="30" data-cm-mode="text/html">
+<textarea disabled data-cm-theme="solarized" name="welcome_template-movie" id="welcome_template-movie" cols="100" rows="30" data-cm-mode="text/html">
 |
 @@@
 type: {text: "<div>\n\n</div>"} ::: Empty Div
@@ -183,7 +182,7 @@ type: {text: "\n </ul>"}
 tooltip: {text: 'When click, It will navigate to Welcome Screen with a \"filter\" parameter', pos: "8:10", wait: 4000}
 type: {text: "\n <button data-id='clear-completed'/>"} ::: To clear tasks completed
 tooltip: {text: 'To clear tasks completed', pos: "12:10"}
-    </textarea>
+</textarea>
    </div>   
 
    <div id="welcome_presenter" class="step" data-x="13500" data-y="0">
@@ -194,7 +193,7 @@ tooltip: {text: 'To clear tasks completed', pos: "12:10"}
       <button class="button radius success" id='welcome_presenter-button'>Play</button>
      </div>
     </div>
-    <textarea data-cm-theme="solarized" name="welcome_presenter-movie" id="welcome_presenter-movie" cols="100" rows="30" data-cm-mode="text/javascript">
+<textarea data-cm-theme="solarized" name="welcome_presenter-movie" id="welcome_presenter-movie" cols="100" rows="30" data-cm-mode="text/javascript">
 |
 @@@
 type: {text: "//In welcome.js"} ::: Calling iris.screen()
@@ -247,7 +246,7 @@ type: {text: "\n  render();"}
 moveTo: {pos: "26:0"}
 type: {delay: 1, text: "\n function render () {\n  ...\n }\n\n"}
 tooltip: {wait: 4000, text: 'The render function just hides o shows the DOM elements according to the app state', pos: '27:8'}
-    </textarea>
+</textarea>
    </div>
 
    <div id="todo_template" class="step" data-x="16500" data-y="0">
@@ -260,7 +259,7 @@ tooltip: {wait: 4000, text: 'The render function just hides o shows the DOM elem
       <button class="button radius success" id='todo_template-button'>Play</button>
      </div>
     </div>
-    <textarea disabled data-cm-theme="solarized" name="todo_template-movie" id="todo_template-movie" cols="100" rows="30" data-cm-mode="text/html">
+<textarea disabled data-cm-theme="solarized" name="todo_template-movie" id="todo_template-movie" cols="100" rows="30" data-cm-mode="text/html">
 |
 @@@
 type: {text: "<li>\n</li>"} ::: Li Element
@@ -275,7 +274,7 @@ tooltip: {text: 'A button to destroy the task', pos: "3:4"}
 type: {text: "\n <input data-id='text' data-model='text' value=''>"} ::: Textbox Element
 tooltip: {text: 'A textbox to edit the task', pos: "4:4"}
 tooltip: {text: 'The \"data-model\" attribute allows you to pass parameters from the presenter (more later)', pos: "4:27"}
-    </textarea>
+</textarea>
    </div>
 
    <div id="todo_presenter" class="step" data-x="19500" data-y="0">
@@ -286,7 +285,7 @@ tooltip: {text: 'The \"data-model\" attribute allows you to pass parameters from
       <button class="button radius success" id='todo_presenter-button'>Play</button>
      </div>
     </div>
-    <textarea disabled data-cm-theme="solarized" name="todo_presenter-movie" id="todo_presenter-movie" cols="100" rows="30" data-cm-mode="text/javascript">
+<textarea disabled data-cm-theme="solarized" name="todo_presenter-movie" id="todo_presenter-movie" cols="100" rows="30" data-cm-mode="text/javascript">
 iris.ui(function (self) {
 
 |
@@ -320,7 +319,7 @@ tooltip: {wait: 4000, text: '\"self.settings\" allows us to store a JavaScript o
 moveTo: {pos: "9:0"}
 type: {text: "  self.tmplMode(self.APPEND);"} ::: self.tmplMode
 tooltip: {wait: 4000, text: 'With \"self.tmplMode(self.APPEND)\" we are telling Iris that several UIs can be stored in the container (ul)', pos: "9:7"}
-    </textarea>
+</textarea>
    </div>
 
    <div id="welcome_add" class="step" data-x="22500" data-y="0">
@@ -331,7 +330,7 @@ tooltip: {wait: 4000, text: 'With \"self.tmplMode(self.APPEND)\" we are telling 
       <button class="button radius success" id='welcome_add-button'>Play</button>
      </div>
     </div>
-    <textarea disabled data-cm-theme="solarized" name="welcome_add-movie" id="welcome_add-movie" cols="100" rows="30" data-cm-mode="text/javascript">
+<textarea disabled data-cm-theme="solarized" name="welcome_add-movie" id="welcome_add-movie" cols="100" rows="30" data-cm-mode="text/javascript">
 //In welcome.js
 iris.screen(function(self) {
  self.create = function() {  
@@ -357,7 +356,7 @@ tooltip: {wait: 4000, text: 'The \"ui.inflate()\" method allows to pass a JavaSc
 tooltip: {wait: 8000, text: 'Iris will look for those DOM elements of the component whose attribute \"data-model\" matches any attribute of the object passed to the method ...', pos: "10:6"}
 tooltip: {wait: 6000, text: '... And It will replace their contents with the new value', pos: "10:6"}
 tooltip: {wait: 8000, text: 'In this case, the content of the DOM elements with \"data-model\" attribute equal to \"text\" will be the task name introduced by the user', pos: "10:6"}
-    </textarea>
+</textarea>
    </div>
 
    <div id="todo_check" class="step" data-x="25500" data-y="0">
@@ -369,7 +368,7 @@ tooltip: {wait: 8000, text: 'In this case, the content of the DOM elements with 
       <button class="button radius success" id='todo_check-button'>Play</button>
      </div>
     </div>
-    <textarea disabled data-cm-theme="solarized" name="todo_check-movie" id="todo_check-movie" cols="100" rows="30" data-cm-mode="text/javascript">
+<textarea disabled data-cm-theme="solarized" name="todo_check-movie" id="todo_check-movie" cols="100" rows="30" data-cm-mode="text/javascript">
 //In todo_item.js
 iris.ui(function (self) {
   ...
@@ -387,7 +386,7 @@ type: {text: " function toggle () {\n  self.setting('completed', !self.setting('
 tooltip: {wait: 4000, text: 'Almost all of this we have already explained', pos: "8:10"}
 tooltip: {wait: 4000, text: 'The \"self.setting()\" method is similar to \"self.settings()\" and allows us to store a value in the component ...', pos: "9:12"}
 tooltip: {wait: 4000, text: '... or retrieve it', pos: "9:35"}
-    </textarea>
+</textarea>
    </div>
 
 
@@ -400,7 +399,7 @@ tooltip: {wait: 4000, text: '... or retrieve it', pos: "9:35"}
       <button class="button radius success" id='checkAll-button'>Play</button>
      </div>
     </div>
-    <textarea disabled data-cm-theme="solarized" name="checkAll-movie" id="checkAll-movie" cols="100" rows="30" data-cm-mode="text/javascript">
+<textarea disabled data-cm-theme="solarized" name="checkAll-movie" id="checkAll-movie" cols="100" rows="30" data-cm-mode="text/javascript">
 //In welcome.js
 iris.screen(function(self) {
  self.create = function() {  
@@ -439,19 +438,19 @@ type: {text: "\n   toggle();"}
 type: {text: "\n  }"}
 type: {text: "\n }"}
 tooltip: {wait: 4000, text: 'If the todo does not have the correct state, we call to the \"toggle()\" function previously explained', pos: "9:15"}
-    </textarea>
+</textarea>
    </div>
 
    <div id="todo_destroy" class="step" data-x="31500" data-y="0">
-    <h2><kbd>Deleting</kbd> a Todo Item</h2>
-    <h3>At this step we are going to explain how to <kbd>delete</kbd> a Todo Item.</br></h3>
+    <h2><kbd>Deleting</kbd> Todo Items</h2>
+    <h3>At this step we are going to explain how to <kbd>delete</kbd> Todo Items.</br></h3>
     <hr>
     <div class="row">
      <div class="columns small-12">
       <button class="button radius success" id='todo_destroy-button'>Play</button>
      </div>
     </div>
-    <textarea disabled data-cm-theme="solarized" name="todo_destroy-movie" id="todo_destroy-movie" cols="100" rows="30" data-cm-mode="text/javascript">
+<textarea disabled data-cm-theme="solarized" name="todo_destroy-movie" id="todo_destroy-movie" cols="100" rows="30" data-cm-mode="text/javascript">
 //In todo_item.js
 iris.ui(function (self) {
   ...
@@ -510,7 +509,7 @@ type: {text: "\n  self.destroyUI();"}
 type: {text: "\n  ..."}
 type: {text: "\n }"}
 tooltip: {wait: 4000, text: 'The \"destroyUI()\" method with no arguments destroys the UI itself', pos: "11:9"}
-    </textarea>
+</textarea>
    </div>
 
    <div id="todo_clearComleted" class="step" data-x="33500" data-y="0">
@@ -522,7 +521,7 @@ tooltip: {wait: 4000, text: 'The \"destroyUI()\" method with no arguments destro
       <button class="button radius success" id='clearComleted-button'>Play</button>
      </div>
     </div>
-    <textarea disabled data-cm-theme="solarized" name="clearComleted-movie" id="clearComleted-movie" cols="100" rows="30" data-cm-mode="text/javascript">
+<textarea disabled data-cm-theme="solarized" name="clearComleted-movie" id="clearComleted-movie" cols="100" rows="30" data-cm-mode="text/javascript">
 //In welcome.js
 iris.screen(function(self) {
  self.create = function() {  
@@ -560,7 +559,7 @@ type: {text: "\n   destroyTodo();"}
 type: {text: "\n  }"}
 type: {text: "\n }"}
 tooltip: {wait: 4000, text: 'If the todo is completed, we call to the \destroyTodo()\" function previously explained', pos: "9:9"}
-    </textarea>
+</textarea>
    </div>   
 
    <div id="todo_edit" class="step" data-x="37500" data-y="0">
@@ -572,7 +571,7 @@ tooltip: {wait: 4000, text: 'If the todo is completed, we call to the \destroyTo
       <button class="button radius success" id='todo_edit-button'>Play</button>
      </div>
     </div>
-    <textarea disabled data-cm-theme="solarized" name="todo_edit-movie" id="todo_edit-movie" cols="100" rows="30" data-cm-mode="text/javascript">
+<textarea disabled data-cm-theme="solarized" name="todo_edit-movie" id="todo_edit-movie" cols="100" rows="30" data-cm-mode="text/javascript">
 //In todo_item.js
 iris.ui(function (self) {
   ...
@@ -590,11 +589,11 @@ type: {text: " function edit () {\n  self.get().addClass('editing');\n  self.get
 tooltip: {wait: 4000, text: 'Nothing new here ...', pos: "8:10"}
 type: {text: "\n function onTextBlur () {\n  self.get().removeClass('editing');\n  self.inflate({text:self.get('text').val()});\n }"} ::: self.inflate
 tooltip: {wait: 4000, text: 'With the \"self.inflate\" method we update the template as we explained previously', pos: "14:10"}
-    </textarea>
+</textarea>
    </div>
 
    <div id="todo_filter" class="step" data-x="40500" data-y="0">
-    <h2><kbd>Filtering</kbd> a todos</h2>
+    <h2><kbd>Filtering</kbd> todos</h2>
     <h3>At this step we are going to explain how to <kbd>filter</kbd> the todos.</br></h3>
     <hr>
     <div class="row">
@@ -602,7 +601,7 @@ tooltip: {wait: 4000, text: 'With the \"self.inflate\" method we update the temp
       <button class="button radius success" id='todo_filter-button'>Play</button>
      </div>
     </div>
-    <textarea disabled data-cm-theme="solarized" name="todo_filter-movie" id="todo_filter-movie" cols="100" rows="30" data-cm-mode="text/html">
+<textarea disabled data-cm-theme="solarized" name="todo_filter-movie" id="todo_filter-movie" cols="100" rows="30" data-cm-mode="text/html">
 <!--In welcome.html-->
 <div>
  ... 

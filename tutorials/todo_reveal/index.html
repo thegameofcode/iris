@@ -53,7 +53,7 @@
      </div>
      <div class="columns small-4 small-offset-8">
       <ul class="vcard">
-       <li class="fn">thegameofcode</li>
+       <li class="fn"><a href="http://www.thegameofcode.com/">thegameofcode</a></li>
        <li>April, 2013</li>
        <li class="email"><a href="https://github.com/thegameofcode/iris">Iris</a></li>
       </ul>
@@ -73,15 +73,15 @@
      </ul>
     </section>
     <section>
-     <span style="font-size: 2em;">With a <strong><a href="http://thegameofcode.github.io/iris/examples/todo-list/index.html">Todo App</a></strong> you can add <strong>tasks</strong> and check them when completed.</span>
-     <img src="images/todo_app.png" alt="Todo App" width="1000" height="768">
-    </section>
-    <section>
      <div id="todo">
       <span class="try">This is an example of a</span>
       <h1>Todo App</h1>
       <span class="footnote">using Iris</span>
      </div>
+    </section>
+    <section>
+     <div style="font-size: 2em;">With a <strong><a href="http://thegameofcode.github.io/iris/examples/todo-list/index.html">Todo App</a></strong> you can add <strong>tasks</strong> and check them when completed.</div>
+     <img src="images/todo_app.png" alt="Todo App" width="800" height="587">
     </section>
     <section>
      <section>
@@ -96,7 +96,7 @@
         <button class="button radius success" id='index-button'>Play</button>
        </div>
       </div>
-      <textarea data-cm-theme="solarized" name="index-movie" id="index-movie" cols="100" rows="30" data-cm-mode="text/html">
+<textarea data-cm-theme="solarized" name="index-movie" id="index-movie" cols="100" rows="30" data-cm-mode="text/html">
 &lt;!DOCTYPE HTML&gt;
 &lt;html&gt;
 &lt;head&gt;
@@ -129,7 +129,7 @@ run: {command: 'goDocEnd', times: 1, beforeDelay: 0}
 run: {command: 'goLineUp', times: 2, beforeDelay: 0}
 run: {command: 'goLineStart', beforeDelay: 0}
 tooltip: {text: 'Empty Body'} ::: Leave the body without content
-      </textarea>
+</textarea>
      </section>
      <section>
       <h2>The <kbd>init.js</kbd> script</h2>
@@ -139,7 +139,7 @@ tooltip: {text: 'Empty Body'} ::: Leave the body without content
         <button class="button radius success" id='init-button'>Play</button>
        </div>
       </div>
-      <textarea data-cm-theme="solarized" name="init-movie" id="init-movie" cols="100" rows="30" data-cm-mode="text/javascript">
+<textarea data-cm-theme="solarized" name="init-movie" id="init-movie" cols="100" rows="30" data-cm-mode="text/javascript">
 |
 @@@
 type: {text: "iris.path = {\n};"} ::: Define de iris.path object
@@ -158,7 +158,7 @@ type: {text: "\n\n$(document).ready(function() {"} ::: Entry point
 type: {text: "\n iris.welcome(iris.path.welcome);"}
 type: {text: "\n});"}
 tooltip: {text: 'Calling the iris.welcome() method', pos: "8:4"}
-      </textarea>
+</textarea>
      </section>
     </section>
     <section>
@@ -173,7 +173,7 @@ tooltip: {text: 'Calling the iris.welcome() method', pos: "8:4"}
         <button class="button radius success" id='welcome_template-button'>Play</button>
        </div>
       </div>
-      <textarea disabled data-cm-theme="solarized" name="welcome_template-movie" id="welcome_template-movie" cols="100" rows="30" data-cm-mode="text/html">
+<textarea disabled data-cm-theme="solarized" name="welcome_template-movie" id="welcome_template-movie" cols="100" rows="30" data-cm-mode="text/html">
 |
 @@@
 type: {text: "<div>\n\n</div>"} ::: Empty Div
@@ -196,7 +196,7 @@ type: {text: "\n </ul>"}
 tooltip: {text: 'When click, It will navigate to Welcome Screen with a \"filter\" parameter', pos: "8:10", wait: 4000}
 type: {text: "\n <button data-id='clear-completed'/>"} ::: To clear tasks completed
 tooltip: {text: 'To clear tasks completed', pos: "12:10"}
-      </textarea>
+</textarea>
      </section>
      <section>
       <h2>The presenter of <kbd>Welcome Screen</kbd> (welcome.js)</h2>
@@ -206,7 +206,7 @@ tooltip: {text: 'To clear tasks completed', pos: "12:10"}
         <button class="button radius success" id='welcome_presenter-button'>Play</button>
        </div>
       </div>
-      <textarea data-cm-theme="solarized" name="welcome_presenter-movie" id="welcome_presenter-movie" cols="100" rows="30" data-cm-mode="text/javascript">
+<textarea data-cm-theme="solarized" name="welcome_presenter-movie" id="welcome_presenter-movie" cols="100" rows="30" data-cm-mode="text/javascript">
 |
 @@@
 type: {text: "//In welcome.js"} ::: Calling iris.screen()
@@ -259,23 +259,23 @@ type: {text: "\n  render();"}
 moveTo: {pos: "26:0"}
 type: {delay: 1, text: "\n function render () {\n  ...\n }\n\n"}
 tooltip: {wait: 4000, text: 'The render function just hides o shows the DOM elements according to the app state', pos: '27:8'}
-      </textarea>
+</textarea>
      </section>
     </section>
     <section>
      <section>
-      <h2>Adding a <kbd>Todo Item UI</kbd></h2>
+      <h2><kbd>Adding</kbd> a Todo Item UI</h2>
       <h3>At the next few steps we are going to explain how to add a Todo Item.</br>
      </section>
      <section>
-      <h3>Let's start with the <kbd>Todo Item UI template</kbd></h3>
+      <h2>Let's start with the <kbd>Todo Item UI template</kbd></h2>
       <hr>
       <div class="row">
        <div class="columns small-12">
         <button class="button radius success" id='todo_template-button'>Play</button>
        </div>
       </div>
-      <textarea disabled data-cm-theme="solarized" name="todo_template-movie" id="todo_template-movie" cols="100" rows="30" data-cm-mode="text/html">
+<textarea disabled data-cm-theme="solarized" name="todo_template-movie" id="todo_template-movie" cols="100" rows="30" data-cm-mode="text/html">
 |
 @@@
 type: {text: "<li>\n</li>"} ::: Li Element
@@ -290,7 +290,7 @@ tooltip: {text: 'A button to destroy the task', pos: "3:4"}
 type: {text: "\n <input data-id='text' data-model='text' value=''>"} ::: Textbox Element
 tooltip: {text: 'A textbox to edit the task', pos: "4:4"}
 tooltip: {text: 'The \"data-model\" attribute allows you to pass parameters from the presenter (more later)', pos: "4:27"}
-      </textarea>
+</textarea>
      </section>
      <section>
       <h2>The <kbd>Todo Item UI presenter</kbd> (todo_item.js)</h2>
@@ -300,7 +300,7 @@ tooltip: {text: 'The \"data-model\" attribute allows you to pass parameters from
         <button class="button radius success" id='todo_presenter-button'>Play</button>
        </div>
       </div>
-      <textarea disabled data-cm-theme="solarized" name="todo_presenter-movie" id="todo_presenter-movie" cols="100" rows="30" data-cm-mode="text/javascript">
+<textarea disabled data-cm-theme="solarized" name="todo_presenter-movie" id="todo_presenter-movie" cols="100" rows="30" data-cm-mode="text/javascript">
 iris.ui(function (self) {
 
 |
@@ -334,7 +334,7 @@ tooltip: {wait: 4000, text: '\"self.settings\" allows us to store a JavaScript o
 moveTo: {pos: "9:0"}
 type: {text: "  self.tmplMode(self.APPEND);"} ::: self.tmplMode
 tooltip: {wait: 4000, text: 'With \"self.tmplMode(self.APPEND)\" we are telling Iris that several UIs can be stored in the container (ul)', pos: "9:7"}
-      </textarea>
+</textarea>
      </section>
      <section>
       <h2><kbd>Creating</kbd> a Todo Item</h2>
@@ -344,7 +344,7 @@ tooltip: {wait: 4000, text: 'With \"self.tmplMode(self.APPEND)\" we are telling 
         <button class="button radius success" id='welcome_add-button'>Play</button>
        </div>
       </div>
-      <textarea disabled data-cm-theme="solarized" name="welcome_add-movie" id="welcome_add-movie" cols="100" rows="30" data-cm-mode="text/javascript">
+<textarea disabled data-cm-theme="solarized" name="welcome_add-movie" id="welcome_add-movie" cols="100" rows="30" data-cm-mode="text/javascript">
 //In welcome.js
 iris.screen(function(self) {
  self.create = function() {  
@@ -370,10 +370,298 @@ tooltip: {wait: 4000, text: 'The \"ui.inflate()\" method allows to pass a JavaSc
 tooltip: {wait: 8000, text: 'Iris will look for those DOM elements of the component whose attribute \"data-model\" matches any attribute of the object passed to the method ...', pos: "10:6"}
 tooltip: {wait: 6000, text: '... And It will replace their contents with the new value', pos: "10:6"}
 tooltip: {wait: 8000, text: 'In this case, the content of the DOM elements with \"data-model\" attribute equal to \"text\" will be the task name introduced by the user', pos: "10:6"}
-      </textarea>
+</textarea>
      </section>
     </section>
+    <section>
+     <section>
+      <h2><kbd>Checking</kbd> a Todo Item</h2>
+      <h3>At these few steps we are going to explain how to <kbd>check/uncheck</kbd> a Todo Item.</br></h3>
+     </section>
+     <section>
+      <h2>Checking/Unchecking a <kbd>single</kbd> Todo Item</h2>
+      <hr>
+      <div class="row">
+       <div class="columns small-12">
+        <button class="button radius success" id='todo_check-button'>Play</button>
+       </div>
+      </div>
+<textarea disabled data-cm-theme="solarized" name="todo_check-movie" id="todo_check-movie" cols="100" rows="30" data-cm-mode="text/javascript">
+//In todo_item.js
+iris.ui(function (self) {
+  ...
+  self.create = function() {
+  ...
+  self.get("check").on("click", toggle);
+  ...
+ };
 
+},iris.path.todo_item);
+@@@
+tooltip: {wait: 4000, text: 'Remember...', pos: "0:4"} ::: Intro
+moveTo: {pos: "8:0"}
+type: {text: " function toggle () {\n  self.setting('completed', !self.setting('completed'));\n  self.get().toggleClass('completed');\n  self.get('check').attr('checked', self.setting('completed'));\n  self.notify('toggle-todo', self.setting('completed'));\n }"} ::: self.setting()
+tooltip: {wait: 4000, text: 'Almost all of this we have already explained', pos: "8:10"}
+tooltip: {wait: 4000, text: 'The \"self.setting()\" method is similar to \"self.settings()\" and allows us to store a value in the component ...', pos: "9:12"}
+tooltip: {wait: 4000, text: '... or retrieve it', pos: "9:35"}
+</textarea>
+     </section>
+     <section>
+      <h2>Checking/unchecking <kbd>all</kbd>  Todo Items</h2>
+      <hr>
+      <div class="row">
+       <div class="columns small-12">
+        <button class="button radius success" id='checkAll-button'>Play</button>
+       </div>
+      </div>
+<textarea disabled data-cm-theme="solarized" name="checkAll-movie" id="checkAll-movie" cols="100" rows="30" data-cm-mode="text/javascript">
+//In welcome.js
+iris.screen(function(self) {
+ self.create = function() {  
+  ...
+  setAllBtn = self.get('toggle-all').on('click', setAll);
+  ...
+ }
+ ...
+}, iris.path.welcome);
+@@@
+tooltip: {wait: 4000, text: 'Remember...', pos: "0:4"} ::: Intro
+moveTo: {pos: "7:0"}
+type: {text: "\n"}
+run: { command: "goLineUp", beforeDelay: 0 }
+type: {text: " function setAll () {\n  self.notify('set-all-todos', completeAllShowed);\n }"}
+tooltip: {wait: 4000, text: 'We just notify the event', pos: "8:10"}
+tooltip: {wait: 4000, text: 'The \"completeAllShowed\" variable controls whether to check or uncheck the todos', pos: "8:40"}
+run: {command: "selectAll", beforeDelay: 0}
+type: {text: "//In todo_item.js"} ::: todo_item.js
+type: {text: "\niris.ui(function(self) {", delay: 10}
+type: {text: "\n ...", delay: 10}
+type: {text: "\n self.create = function() {", delay: 10}
+type: {text: "\n  ...", delay: 10}
+type: {text: "\n  self.on('set-all-todos', onSetAllTodos);", delay: 10}
+type: {text: "\n  ...", delay: 10}
+type: {text: "\n }", delay: 10}
+type: {text: "\n ...", delay: 10}
+type: {text: "\n}, iris.path.todo_item);", delay: 10}
+tooltip: {wait: 4000, text: 'We assign the event handler function', pos: "5:35"}
+moveTo: {pos: "8:0"}
+type: {text: "\n", delay: 10}
+run: {command: "goLineUp", beforeDelay: 0}
+type: {text: "\n function onSetAllTodos (isCheck) {"}
+type: {text: "\n  if ( self.setting('completed') !== isCheck ) {"}
+type: {text: "\n   toggle();"}
+type: {text: "\n  }"}
+type: {text: "\n }"}
+tooltip: {wait: 4000, text: 'If the todo does not have the correct state, we call to the \"toggle()\" function previously explained', pos: "9:15"}
+</textarea>
+     </section>
+    </section>
+    <section>
+     <section>
+      <h2><kbd>Deleting</kbd> Todo Items</h2>
+      <h3>At this step we are going to explain how to <kbd>delete</kbd> Todo Items.</br></h3>
+     </section>
+     <section>
+      <h2>Deleting a <kbd>single</kbd> Todo Item</h2>
+      <hr>
+      <div class="row">
+       <div class="columns small-12">
+        <button class="button radius success" id='todo_destroy-button'>Play</button>
+       </div>
+      </div>
+<textarea disabled data-cm-theme="solarized" name="todo_destroy-movie" id="todo_destroy-movie" cols="100" rows="30" data-cm-mode="text/javascript">
+//In todo_item.js
+iris.ui(function (self) {
+  ...
+  self.create = function() {
+  ...
+  self.get('destroy').on('click', destroyTodo);
+  ...
+ };
+
+}, iris.path.todo_item);
+@@@
+tooltip: {wait: 4000, text: 'Remember...', pos: "0:4"} ::: Intro
+moveTo: {pos: "8:0"}
+type: {text: " function destroyTodo () {\n  self.notify('destroy-todo', self);\n }"} ::: self.notify()
+tooltip: {wait: 4000, text: 'We just notify the event ...', pos: "8:10"}
+tooltip: {wait: 4000, text: '... passing the UI component itself', pos: "9:32"}
+run: {command: "selectAll", beforeDelay: 0}
+type: {text: "//In welcome.js"} ::: self.destroyUI()
+type: {text: "\niris.screen(function(self) {", delay: 10}
+type: {text: "\n ...", delay: 10}
+type: {text: "\n self.create = function() {", delay: 10}
+type: {text: "\n  ...", delay: 10}
+type: {text: "\n  self.on('destroy-todo', onDestroyTodo);", delay: 10}
+type: {text: "\n  ...", delay: 10}
+type: {text: "\n }", delay: 10}
+type: {text: "\n ...", delay: 10}
+type: {text: "\n}, iris.path.welcome);", delay: 10}
+tooltip: {wait: 4000, text: 'Remember...', pos: "0:4"}
+moveTo: {pos: "8:0"}
+type: {text: "\n", delay: 10}
+run: {command: "goLineUp", beforeDelay: 0}
+type: {text: "\n function onDestroyTodo (todo) {"}
+type: {text: "\n  ..."}
+type: {text: "\n  self.destroyUI(todo);"}
+type: {text: "\n  ..."}
+type: {text: "\n }"}
+tooltip: {wait: 4000, text: 'The \"destroyUI()\" method destroys the UI passed as a parameter', pos: "11:9"}
+run: {command: "selectAll", beforeDelay: 0}
+type: {text: "//In todo_item.js"} ::: Alternative way
+tooltip: {wait: 4000, text: 'An alternative way and much simpler to do the same is just ...', pos: "0:4"}
+type: {text: "\niris.ui(function(self) {", delay: 10}
+type: {text: "\n ...", delay: 10}
+type: {text: "\n self.create = function() {", delay: 10}
+type: {text: "\n  ...", delay: 10}
+type: {text: "\n  self.get('destroy').on('click', destroyTodo);", delay: 10}
+type: {text: "\n  ...", delay: 10}
+type: {text: "\n }", delay: 10}
+type: {text: "\n ...", delay: 10}
+type: {text: "\n}, iris.path.todo_item);", delay: 10}
+moveTo: {pos: "8:0"}
+type: {text: "\n", delay: 10}
+run: {command: "goLineUp", beforeDelay: 0}
+type: {text: "\n function destroyTodo() {"}
+type: {text: "\n  ..."}
+type: {text: "\n  self.destroyUI();"}
+type: {text: "\n  ..."}
+type: {text: "\n }"}
+tooltip: {wait: 4000, text: 'The \"destroyUI()\" method with no arguments destroys the UI itself', pos: "11:9"}
+</textarea>
+     </section>
+     <section>
+      <h2>Deleting <kbd>all completed</kbd> Todo Items</h2>
+      <hr>
+      <div class="row">
+       <div class="columns small-12">
+        <button class="button radius success" id='clearComleted-button'>Play</button>
+       </div>
+      </div>
+<textarea disabled data-cm-theme="solarized" name="clearComleted-movie" id="clearComleted-movie" cols="100" rows="30" data-cm-mode="text/javascript">
+//In welcome.js
+iris.screen(function(self) {
+ self.create = function() {  
+  ...
+  self.get('clear-completed').on('click', clearCompleted);
+  ...
+ }
+ ...
+}, iris.path.welcome);
+@@@
+tooltip: {wait: 4000, text: 'Remember...', pos: "0:4"} ::: Intro
+moveTo: {pos: "7:0"}
+type: {text: "\n"}
+run: { command: "goLineUp", beforeDelay: 0 }
+type: {text: " function clearCompleted () {\n  self.notify('clear-completed');\n }"}
+tooltip: {wait: 4000, text: 'We just notify the event', pos: "8:10"}
+run: {command: "selectAll", beforeDelay: 0}
+type: {text: "//In todo_item.js"} ::: todo_item.js
+type: {text: "\niris.ui(function(self) {", delay: 10}
+type: {text: "\n ...", delay: 10}
+type: {text: "\n self.create = function() {", delay: 10}
+type: {text: "\n  ...", delay: 10}
+type: {text: "\n  self.on('clear-completed', onClearCompleted);", delay: 10}
+type: {text: "\n  ...", delay: 10}
+type: {text: "\n }", delay: 10}
+type: {text: "\n ...", delay: 10}
+type: {text: "\n}, iris.path.todo_item);", delay: 10}
+tooltip: {wait: 4000, text: 'We assign the event handler function', pos: "5:35"}
+moveTo: {pos: "8:0"}
+type: {text: "\n", delay: 10}
+run: {command: "goLineUp", beforeDelay: 0}
+type: {text: "\n function onClearCompleted () {"}
+type: {text: "\n  if ( self.setting('completed') ) {"}
+type: {text: "\n   destroyTodo();"}
+type: {text: "\n  }"}
+type: {text: "\n }"}
+tooltip: {wait: 4000, text: 'If the todo is completed, we call to the \destroyTodo()\" function previously explained', pos: "9:9"}
+</textarea>
+     </section>
+    </section>
+    <section>
+     <h2><kbd>Editing</kbd> a Todo Item</h2>
+     <hr>
+     <div class="row">
+      <div class="columns small-12">
+       <button class="button radius success" id='todo_edit-button'>Play</button>
+      </div>
+     </div>
+<textarea disabled data-cm-theme="solarized" name="todo_edit-movie" id="todo_edit-movie" cols="100" rows="30" data-cm-mode="text/javascript">
+//In todo_item.js
+iris.ui(function (self) {
+  ...
+  self.create = function() {
+  ...
+  self.get().on('dblclick', edit);
+  ...
+ };
+
+}, iris.path.todo_item);
+@@@
+tooltip: {wait: 4000, text: 'Remember...', pos: "0:4"} ::: Intro
+moveTo: {pos: "8:0"}
+type: {text: " function edit () {\n  self.get().addClass('editing');\n  self.get('text').select();\n }"}
+tooltip: {wait: 4000, text: 'Nothing new here ...', pos: "8:10"}
+type: {text: "\n function onTextBlur () {\n  self.get().removeClass('editing');\n  self.inflate({text:self.get('text').val()});\n }"} ::: self.inflate
+tooltip: {wait: 4000, text: 'With the \"self.inflate\" method we update the template as we explained previously', pos: "14:10"}
+</textarea>
+    </section>
+    <section>
+     <h2><kbd>Filtering</kbd> todos</h2>
+     <hr>
+     <div class="row">
+      <div class="columns small-12">
+       <button class="button radius success" id='todo_filter-button'>Play</button>
+      </div>
+     </div>
+<textarea disabled data-cm-theme="solarized" name="todo_filter-movie" id="todo_filter-movie" cols="100" rows="30" data-cm-mode="text/html">
+<!--In welcome.html-->
+<div>
+ ... 
+ <ul data-id='filters'>
+  <li><a href='#?filter=all'>All</a></li>
+  <li><a href='#?filter=active'>Active</a></li>
+  <li><a href='#?filter=completed'>Completed</a></li>
+ </ul>
+ ...
+</div>
+@@@
+tooltip: {wait: 4000, text: 'Remember...', pos: "0:4"} ::: Intro
+tooltip: {wait: 4000, text: 'When we click on a link, Iris will call the \"awake\" method of the Welcome Screen', pos: "4:20"}
+run: {command: "selectAll", beforeDelay: 0}
+type: {text: "//In welcome.js"} ::: self.awake()
+type: {text: "\niris.screen(function(self) {", delay: 10}
+type: {text: "\n ...", delay: 10}
+type: {text: "\n self.awake = function(params) {", delay: 10}
+type: {text: "\n  if ( params !== undefined && params.hasOwnProperty('filter') ) {", delay: 10}
+type: {text: "\n   self.notify('filter-todos', params.filter);", delay: 10}
+type: {text: "\n  }", delay: 10}
+type: {text: "\n }", delay: 10}
+type: {text: "\n ...", delay: 10}
+type: {text: "\n}, iris.path.welcome);", delay: 10}
+tooltip: {wait: 4000, text: 'We just notify the event passing the filter value', pos: "5:10"}
+tooltip: {wait: 4000, text: 'The filter value is retrieved from the QueryString passed to the \"awake\" method', pos: "5:37"}
+run: {command: "selectAll", beforeDelay: 0}
+type: {text: "//In todo_item.js"} ::: todo_item.js
+type: {text: "\niris.ui(function(self) {", delay: 10}
+type: {text: "\n ...", delay: 10}
+type: {text: "\n self.create = function() {", delay: 10}
+type: {text: "\n  ...", delay: 10}
+type: {text: "\n  self.on('filter-todos', onFilter);", delay: 10}
+type: {text: "\n  ...", delay: 10}
+type: {text: "\n }", delay: 10}
+type: {text: "\n ...", delay: 10}
+type: {text: "\n}, iris.path.todo_item);", delay: 10}
+moveTo: {pos: "8:0"}
+type: {text: "\n", delay: 10}
+run: {command: "goLineUp", beforeDelay: 0}
+type: {text: "\n function onFilter (filter) {"}
+type: {text: "\n  ..."}
+type: {text: "\n }"}
+tooltip: {wait: 4000, text: 'The \"onFilter()\" hides or shows the todo acording to the filter value and the completed state', pos: "9:9"}
+</textarea>
+    </section>
    </div>
 
   </div> <!-- #reveal -->
@@ -388,7 +676,7 @@ tooltip: {wait: 8000, text: 'In this case, the content of the DOM elements with 
    // https://github.com/hakimel/reveal.js#configuration
    Reveal.initialize({
     controls: true,
-    progress: true,
+    progress: false,
     history: true,
     center: true,
 
