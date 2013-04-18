@@ -6,10 +6,22 @@
  <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title></title>
+  <title>Todo App tutorial using Iris</title>
   <meta name="description" content="">
-  <meta name="viewport" content="width=device-width">
+  <meta name="author" content="Javier Pérez">
 
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="styles/reveal.css">
+		<link rel="stylesheet" href="styles/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="styles/zenburn.css">
+
+  <link rel="stylesheet" href="styles/normalize.css">
   <link rel="stylesheet" href="styles/foundation.css">
   <link rel="stylesheet" href="styles/codemirror.css">
   <link rel="stylesheet" href="styles/solarized.css">
@@ -21,70 +33,70 @@
   <script src="scripts/vendor/javascript.js"></script>
   <script src="scripts/vendor/xml.js"></script>
   <script src="scripts/vendor/cm-movie-full.js"></script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
  </head>
- <body class="impress-not-supported">
-  <!--[if lt IE 7]>
-      <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
-  <![endif]-->
-  <div class="fallback-message">
-   <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
-   <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser, and <strong>activate Javascript</strong></p>
-  </div>
+ <body>
 
-  <div id="impress">
+  <div class="reveal">
 
-   <div class="step" id="intro" data-x="0" data-y="0">
-    <div class="row">
+   <div class="slides">
+    <section>
      <div class="columns small-4 small-centered">
       <img src="images/iris.png" style="vertical-align: middle;"/>
-      <span style="font-size: 3em; vertical-align: middle;">Iris</span>
      </div>
+     <br>
      <div class="columns small-12">
       <h2 class="subheader">Client-side optimization techniques for easily building fast and scalable web applications</h2>
      </div>
      <div class="columns small-4 small-offset-8">
       <ul class="vcard">
-       <li class="fn">thegameofcode</li>
+       <li class="fn"><a target="_blank" href="http://www.thegameofcode.com/">thegameofcode</a></li>
        <li>April, 2013</li>
-       <li class="email"><a href="https://github.com/thegameofcode/iris">Iris</a></li>
+       <li class="email"><a target="_blank" href="https://github.com/thegameofcode/iris">Iris</a></li>
       </ul>
      </div>
-    </div>
-   </div>
-
-   <div class="step" id="intro2" data-x="1500" data-y="0">
-    <h2>Features</h2>
-    <ul>
-     <li>Strong object oriented coding and file system organization</li>
-     <li>Presenter-View-Resource pattern</li>
-     <li>Easy and fast templating engine</li>
-     <li>One page navigation using <a href='http://en.wikipedia.org/wiki/Fragment_identifier'>Hash-URL</a></li>
-     <li>100% Client multilanguage support</li>
-     <li>Crossbrowser: Chrome, Firefox e Internet Explorer</li>
-     <li>Light and fast: 16 KB</li>
-     <li>Open source: New BSD License</li>
-    </ul>
-   </div>
-
-   <div class="step" id="todo" data-x="3000" data-y="0">
-    <span class="try">This is an example of a</span>
-    <h1>Todo App</h1>
-    <span class="footnote">using Iris</span>
-   </div>
-
-   <div class="step" id="todo2" data-x="4500" data-y="0">
-    <span style="font-size: 2em;">With a <strong>Todo App</strong> you can add <strong>tasks</strong> and check them when completed.</span>
-    <img src="images/todo_app.png" alt="Todo App" width="1000" height="768">
-   </div>
-
-   <div id="index" class="step" data-x="6000" data-y="0">
-    <h2>Let's start with the <kbd>index.html</kbd> page</h2>
-    <hr>
-    <div class="row">
-     <div class="columns small-12">
-      <button class="button radius success" id='index-button'>Play</button>
+    </section>
+    <section>
+     <h1>Features</h1>
+     <ul style ="font-size: 30px;line-height: 1.5">
+      <li>Strong object oriented coding and file system organization</li>
+      <li>Presenter-View-Resource pattern</li>
+      <li>Easy and fast templating engine</li>
+      <li>One page navigation using Hash-URL</li>
+      <li>100% Client multilanguage support</li>
+      <li>Crossbrowser: Chrome, Firefox e Internet Explorer</li>
+      <li>Light and fast: 16 KB</li>
+      <li>Open source: New BSD License</li>
+     </ul>
+    </section>
+    <section>
+     <div id="todo">
+      <span class="try">This is an example of a</span>
+      <h1>Todo App</h1>
+      <span class="footnote">using Iris</span>
      </div>
-    </div>
+    </section>
+    <section>
+     <div style="font-size: 2em;">With a <strong><a target="_blank" href="http://thegameofcode.github.io/iris/examples/todo-list/index.html">Todo App</a></strong> you can add <strong>tasks</strong> and check them when completed.</div>
+     <br>
+     <img src="images/todo_app.png" alt="Todo App" width="800" height="587">
+    </section>
+    <section>
+     <section>
+      <h2><kbd>Preparing</kbd> the enviroment</h2>
+      <h3>The first step is to create an <kbd>index.html</kbd> page and an <kbd>init.js</kbd> script</h3>
+     </section>
+     <section>
+      <h2>Let's start with the <kbd>index.html</kbd> page</h2>
+      <hr>
+      <div class="row">
+       <div class="columns small-12">
+        <button class="button radius success" id='index-button'>Play</button>
+       </div>
+      </div>
 <textarea data-cm-theme="solarized" name="index-movie" id="index-movie" cols="100" rows="30" data-cm-mode="text/html">
 &lt;!DOCTYPE HTML&gt;
 &lt;html&gt;
@@ -119,16 +131,15 @@ run: {command: 'goLineUp', times: 2, beforeDelay: 0}
 run: {command: 'goLineStart', beforeDelay: 0}
 tooltip: {text: 'Empty Body'} ::: Leave the body without content
 </textarea>
-   </div>
-
-   <div id="init" class="step" data-x="7500" data-y="0">
-    <h2>The <kbd>init.js</kbd> script</h2>
-    <hr>
-    <div class="row">
-     <div class="columns small-12">
-      <button class="button radius success" id='init-button'>Play</button>
-     </div>
-    </div>
+     </section>
+     <section>
+      <h2>The <kbd>init.js</kbd> script</h2>
+      <hr>
+      <div class="row">
+       <div class="columns small-12">
+        <button class="button radius success" id='init-button'>Play</button>
+       </div>
+      </div>
 <textarea data-cm-theme="solarized" name="init-movie" id="init-movie" cols="100" rows="30" data-cm-mode="text/javascript">
 |
 @@@
@@ -149,16 +160,20 @@ type: {text: "\n iris.welcome(iris.path.welcome);"}
 type: {text: "\n});"}
 tooltip: {text: 'Calling the iris.welcome() method', pos: "8:4"}
 </textarea>
-   </div>
-
-   <div id="welcome_template" class="step" data-x="10500" data-y="0">
-    <h2>The template of <kbd>Welcome Screen</kbd> (welcome.html)</h2>
-    <hr>
-    <div class="row">
-     <div class="columns small-12">
-      <button class="button radius success" id='welcome_template-button'>Play</button>
-     </div>
-    </div>
+     </section>
+    </section>
+    <section>
+     <section>
+      <h2>The <kbd>Welcome</kbd> Screen</h2>
+     </section>
+     <section>
+      <h2>The template of <kbd>Welcome Screen</kbd> (welcome.html)</h2>
+      <hr>
+      <div class="row">
+       <div class="columns small-12">
+        <button class="button radius success" id='welcome_template-button'>Play</button>
+       </div>
+      </div>
 <textarea disabled data-cm-theme="solarized" name="welcome_template-movie" id="welcome_template-movie" cols="100" rows="30" data-cm-mode="text/html">
 |
 @@@
@@ -183,16 +198,15 @@ tooltip: {text: 'When click, It will navigate to Welcome Screen with a \"filter\
 type: {text: "\n <button data-id='clear-completed'/>"} ::: To clear tasks completed
 tooltip: {text: 'To clear tasks completed', pos: "12:10"}
 </textarea>
-   </div>   
-
-   <div id="welcome_presenter" class="step" data-x="13500" data-y="0">
-    <h2>The presenter of <kbd>Welcome Screen</kbd> (welcome.js)</h2>
-    <hr>
-    <div class="row">
-     <div class="columns small-12">
-      <button class="button radius success" id='welcome_presenter-button'>Play</button>
-     </div>
-    </div>
+     </section>
+     <section>
+      <h2>The presenter of <kbd>Welcome Screen</kbd> (welcome.js)</h2>
+      <hr>
+      <div class="row">
+       <div class="columns small-12">
+        <button class="button radius success" id='welcome_presenter-button'>Play</button>
+       </div>
+      </div>
 <textarea data-cm-theme="solarized" name="welcome_presenter-movie" id="welcome_presenter-movie" cols="100" rows="30" data-cm-mode="text/javascript">
 |
 @@@
@@ -247,18 +261,21 @@ moveTo: {pos: "26:0"}
 type: {delay: 1, text: "\n function render () {\n  ...\n }\n\n"}
 tooltip: {wait: 4000, text: 'The render function just hides o shows the DOM elements according to the app state', pos: '27:8'}
 </textarea>
-   </div>
-
-   <div id="todo_template" class="step" data-x="16500" data-y="0">
-    <h2>Adding a <kbd>Todo Item UI</kbd></h2>
-    <h3>At the next few steps we are going to explain how to add a Todo Item.</br>
-     Let's start with the <kbd>Todo Item UI template</kbd></h3>
-    <hr>
-    <div class="row">
-     <div class="columns small-12">
-      <button class="button radius success" id='todo_template-button'>Play</button>
-     </div>
-    </div>
+     </section>
+    </section>
+    <section>
+     <section>
+      <h2><kbd>Adding</kbd> a Todo Item UI</h2>
+      <h3>At the next few steps we are going to explain how to add a Todo Item.</br>
+     </section>
+     <section>
+      <h2>Let's start with the <kbd>Todo Item UI template</kbd></h2>
+      <hr>
+      <div class="row">
+       <div class="columns small-12">
+        <button class="button radius success" id='todo_template-button'>Play</button>
+       </div>
+      </div>
 <textarea disabled data-cm-theme="solarized" name="todo_template-movie" id="todo_template-movie" cols="100" rows="30" data-cm-mode="text/html">
 |
 @@@
@@ -275,16 +292,15 @@ type: {text: "\n <input data-id='text' data-model='text' value=''>"} ::: Textbox
 tooltip: {text: 'A textbox to edit the task', pos: "4:4"}
 tooltip: {text: 'The \"data-model\" attribute allows you to pass parameters from the presenter (more later)', pos: "4:27"}
 </textarea>
-   </div>
-
-   <div id="todo_presenter" class="step" data-x="19500" data-y="0">
-    <h2>The <kbd>Todo Item UI presenter</kbd> (todo_item.js)</h2>
-    <hr>
-    <div class="row">
-     <div class="columns small-12">
-      <button class="button radius success" id='todo_presenter-button'>Play</button>
-     </div>
-    </div>
+     </section>
+     <section>
+      <h2>The <kbd>Todo Item UI presenter</kbd> (todo_item.js)</h2>
+      <hr>
+      <div class="row">
+       <div class="columns small-12">
+        <button class="button radius success" id='todo_presenter-button'>Play</button>
+       </div>
+      </div>
 <textarea disabled data-cm-theme="solarized" name="todo_presenter-movie" id="todo_presenter-movie" cols="100" rows="30" data-cm-mode="text/javascript">
 iris.ui(function (self) {
 
@@ -320,16 +336,15 @@ moveTo: {pos: "9:0"}
 type: {text: "  self.tmplMode(self.APPEND);"} ::: self.tmplMode
 tooltip: {wait: 4000, text: 'With \"self.tmplMode(self.APPEND)\" we are telling Iris that several UIs can be stored in the container (ul)', pos: "9:7"}
 </textarea>
-   </div>
-
-   <div id="welcome_add" class="step" data-x="22500" data-y="0">
-    <h2>The <kbd>createTodo()</kbd> method</h2>
-    <hr>
-    <div class="row">
-     <div class="columns small-12">
-      <button class="button radius success" id='welcome_add-button'>Play</button>
-     </div>
-    </div>
+     </section>
+     <section>
+      <h2><kbd>Creating</kbd> a Todo Item</h2>
+      <hr>
+      <div class="row">
+       <div class="columns small-12">
+        <button class="button radius success" id='welcome_add-button'>Play</button>
+       </div>
+      </div>
 <textarea disabled data-cm-theme="solarized" name="welcome_add-movie" id="welcome_add-movie" cols="100" rows="30" data-cm-mode="text/javascript">
 //In welcome.js
 iris.screen(function(self) {
@@ -357,17 +372,21 @@ tooltip: {wait: 8000, text: 'Iris will look for those DOM elements of the compon
 tooltip: {wait: 6000, text: '... And It will replace their contents with the new value', pos: "10:6"}
 tooltip: {wait: 8000, text: 'In this case, the content of the DOM elements with \"data-model\" attribute equal to \"text\" will be the task name introduced by the user', pos: "10:6"}
 </textarea>
-   </div>
-
-   <div id="todo_check" class="step" data-x="25500" data-y="0">
-    <h2><kbd>Checking</kbd> a Todo Item</h2>
-    <h3>At this step we are going to explain how to <kbd>check/uncheck</kbd> a Todo Item.</br></h3>
-    <hr>
-    <div class="row">
-     <div class="columns small-12">
-      <button class="button radius success" id='todo_check-button'>Play</button>
-     </div>
-    </div>
+     </section>
+    </section>
+    <section>
+     <section>
+      <h2><kbd>Checking</kbd> Todo Items</h2>
+      <h3>At these few steps we are going to explain how to <kbd>check/uncheck</kbd> Todo Items.</br></h3>
+     </section>
+     <section>
+      <h2>Checking/Unchecking a <kbd>single</kbd> Todo Item</h2>
+      <hr>
+      <div class="row">
+       <div class="columns small-12">
+        <button class="button radius success" id='todo_check-button'>Play</button>
+       </div>
+      </div>
 <textarea disabled data-cm-theme="solarized" name="todo_check-movie" id="todo_check-movie" cols="100" rows="30" data-cm-mode="text/javascript">
 //In todo_item.js
 iris.ui(function (self) {
@@ -387,18 +406,15 @@ tooltip: {wait: 4000, text: 'Almost all of this we have already explained', pos:
 tooltip: {wait: 4000, text: 'The \"self.setting()\" method is similar to \"self.settings()\" and allows us to store a value in the component ...', pos: "9:12"}
 tooltip: {wait: 4000, text: '... or retrieve it', pos: "9:35"}
 </textarea>
-   </div>
-
-
-   <div id="todo_checkAll" class="step" data-x="28500" data-y="0">
-    <h2><kbd>Checking/unchecking all </kbd>  Todo Items</h2>
-    <h3>At this step we are going to explain how to <kbd>check/uncheck all</kbd> Todo Items.</br></h3>
-    <hr>
-    <div class="row">
-     <div class="columns small-12">
-      <button class="button radius success" id='checkAll-button'>Play</button>
-     </div>
-    </div>
+     </section>
+     <section>
+      <h2>Checking/Unchecking <kbd>all</kbd>  Todo Items</h2>
+      <hr>
+      <div class="row">
+       <div class="columns small-12">
+        <button class="button radius success" id='checkAll-button'>Play</button>
+       </div>
+      </div>
 <textarea disabled data-cm-theme="solarized" name="checkAll-movie" id="checkAll-movie" cols="100" rows="30" data-cm-mode="text/javascript">
 //In welcome.js
 iris.screen(function(self) {
@@ -439,17 +455,21 @@ type: {text: "\n  }"}
 type: {text: "\n }"}
 tooltip: {wait: 4000, text: 'If the todo does not have the correct state, we call to the \"toggle()\" function previously explained', pos: "9:15"}
 </textarea>
-   </div>
-
-   <div id="todo_destroy" class="step" data-x="31500" data-y="0">
-    <h2><kbd>Deleting</kbd> Todo Items</h2>
-    <h3>At this step we are going to explain how to <kbd>delete</kbd> Todo Items.</br></h3>
-    <hr>
-    <div class="row">
-     <div class="columns small-12">
-      <button class="button radius success" id='todo_destroy-button'>Play</button>
-     </div>
-    </div>
+     </section>
+    </section>
+    <section>
+     <section>
+      <h2><kbd>Deleting</kbd> Todo Items</h2>
+      <h3>At this step we are going to explain how to <kbd>delete</kbd> Todo Items.</br></h3>
+     </section>
+     <section>
+      <h2>Deleting a <kbd>single</kbd> Todo Item</h2>
+      <hr>
+      <div class="row">
+       <div class="columns small-12">
+        <button class="button radius success" id='todo_destroy-button'>Play</button>
+       </div>
+      </div>
 <textarea disabled data-cm-theme="solarized" name="todo_destroy-movie" id="todo_destroy-movie" cols="100" rows="30" data-cm-mode="text/javascript">
 //In todo_item.js
 iris.ui(function (self) {
@@ -510,17 +530,15 @@ type: {text: "\n  ..."}
 type: {text: "\n }"}
 tooltip: {wait: 4000, text: 'The \"destroyUI()\" method with no arguments destroys the UI itself', pos: "11:9"}
 </textarea>
-   </div>
-
-   <div id="todo_clearComleted" class="step" data-x="33500" data-y="0">
-    <h2><kbd>Deleting all completed</kbd>  Todo Items</h2>
-    <h3>At this step we are going to explain how to <kbd>delete all completed</kbd> Todo Items.</br></h3>
-    <hr>
-    <div class="row">
-     <div class="columns small-12">
-      <button class="button radius success" id='clearComleted-button'>Play</button>
-     </div>
-    </div>
+     </section>
+     <section>
+      <h2>Deleting <kbd>all completed</kbd> Todo Items</h2>
+      <hr>
+      <div class="row">
+       <div class="columns small-12">
+        <button class="button radius success" id='clearComleted-button'>Play</button>
+       </div>
+      </div>
 <textarea disabled data-cm-theme="solarized" name="clearComleted-movie" id="clearComleted-movie" cols="100" rows="30" data-cm-mode="text/javascript">
 //In welcome.js
 iris.screen(function(self) {
@@ -560,17 +578,16 @@ type: {text: "\n  }"}
 type: {text: "\n }"}
 tooltip: {wait: 4000, text: 'If the todo is completed, we call to the \destroyTodo()\" function previously explained', pos: "9:9"}
 </textarea>
-   </div>   
-
-   <div id="todo_edit" class="step" data-x="37500" data-y="0">
-    <h2><kbd>Editing</kbd> a Todo Item</h2>
-    <h3>At this step we are going to explain how to <kbd>edit</kbd> a Todo Item.</br></h3>
-    <hr>
-    <div class="row">
-     <div class="columns small-12">
-      <button class="button radius success" id='todo_edit-button'>Play</button>
+     </section>
+    </section>
+    <section>
+     <h2><kbd>Editing</kbd> a Todo Item</h2>
+     <hr>
+     <div class="row">
+      <div class="columns small-12">
+       <button class="button radius success" id='todo_edit-button'>Play</button>
+      </div>
      </div>
-    </div>
 <textarea disabled data-cm-theme="solarized" name="todo_edit-movie" id="todo_edit-movie" cols="100" rows="30" data-cm-mode="text/javascript">
 //In todo_item.js
 iris.ui(function (self) {
@@ -590,17 +607,15 @@ tooltip: {wait: 4000, text: 'Nothing new here ...', pos: "8:10"}
 type: {text: "\n function onTextBlur () {\n  self.get().removeClass('editing');\n  self.inflate({text:self.get('text').val()});\n }"} ::: self.inflate
 tooltip: {wait: 4000, text: 'With the \"self.inflate\" method we update the template as we explained previously', pos: "14:10"}
 </textarea>
-   </div>
-
-   <div id="todo_filter" class="step" data-x="40500" data-y="0">
-    <h2><kbd>Filtering</kbd> todos</h2>
-    <h3>At this step we are going to explain how to <kbd>filter</kbd> the todos.</br></h3>
-    <hr>
-    <div class="row">
-     <div class="columns small-12">
-      <button class="button radius success" id='todo_filter-button'>Play</button>
+    </section>
+    <section>
+     <h2><kbd>Filtering</kbd> todos</h2>
+     <hr>
+     <div class="row">
+      <div class="columns small-12">
+       <button class="button radius success" id='todo_filter-button'>Play</button>
+      </div>
      </div>
-    </div>
 <textarea disabled data-cm-theme="solarized" name="todo_filter-movie" id="todo_filter-movie" cols="100" rows="30" data-cm-mode="text/html">
 <!--In welcome.html-->
 <div>
@@ -647,11 +662,40 @@ type: {text: "\n  ..."}
 type: {text: "\n }"}
 tooltip: {wait: 4000, text: 'The \"onFilter()\" hides or shows the todo acording to the filter value and the completed state', pos: "9:9"}
 </textarea>
+    </section>
    </div>
 
-  </div> <!-- #impress -->
+  </div> <!-- #reveal -->
 
-  <script src="scripts/vendor/impress.js"></script>
+  <script src="scripts/head.min.js"></script>
+  <script src="scripts/reveal.min.js"></script>
   <script src="scripts/main.js"></script>
+
+  <script>
+
+   // Full list of configuration options available here:
+   // https://github.com/hakimel/reveal.js#configuration
+   Reveal.initialize({
+    controls: true,
+    progress: false,
+    history: true,
+    center: true,
+
+    theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+    transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+    // Optional libraries used to extend on reveal.js
+    dependencies: [
+     { src: 'scripts/classList.js', condition: function() { return !document.body.classList; } },
+     { src: 'scripts/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+     { src: 'scripts/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+     { src: 'scripts/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+     { src: 'scripts/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+     { src: 'scripts/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+     // { src: 'scripts/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+    ]
+   });
+
+  </script>
  </body>
 </html>
