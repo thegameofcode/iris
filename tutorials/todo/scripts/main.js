@@ -1,14 +1,23 @@
 (function() {
 
  // Launch Impress (slides)
- impress().init();
+ //impress().init();
 
  // Setup behavior for code movies
  _([
   'index',
   'init',
   'welcome_template',
-  'welcome_presenter'
+  'welcome_presenter',
+  'todo_template',
+  'todo_presenter',
+  'welcome_add',
+  'todo_check',
+  'todo_destroy',
+  'todo_edit',
+  'todo_filter',
+  'clearComleted',
+  'checkAll'
   ]).forEach(function(step) {
 
   var movie = CodeMirror.movie(step + '-movie'),
@@ -28,8 +37,17 @@
    });
    movie.on('stop', function() {
     playBtn.innerHTML = 'Play';
+    //document.querySelector("div.state-background").scrollIntoView(false);
    });
   }
+  
+  if (step === 'todo_filter') {
+    movie.on('action', function(index) {
+     if (index === 3) {
+      movie._editor.setOption("mode", "text/javascript");
+     }
+    }); 
+   }
 
 
   // Execute code from a Code Mirror editor

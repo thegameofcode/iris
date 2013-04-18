@@ -30,8 +30,10 @@ iris.screen(function(self) {
 	}
 
 	function createTodo () {
-		var todo = { text: newTodo.val() };
-		self.ui("todo-list", iris.path.todo_item).inflate(todo);
+  
+		var ui = self.ui('todo-list', iris.path.todo_item);
+  
+  ui.inflate({ text: newTodo.val() });
 		
 		newTodo.val("");
 		self.get("todo-count").text(++todoLeft);
