@@ -107,10 +107,15 @@ iris.cache(true);
 ### iris.cacheVersion([value])
 *Since*: `v0.5.0`
 
-Set or get a value that will be added as a parameter in all Iris' ajax calls.
-You can use it to force Iris components to be cached with a version string.
+Set or get a value that will be added as query parameter in all Iris' ajax calls.
+You can use it to force Iris' components to be cached with a version string.
+By default cache version is disabled.
 
 ```javascript
+// Getter
+iris.cacheVersion();
+
+// Setter
 iris.cacheVersion("v1.0");
 ```
 
@@ -242,7 +247,7 @@ iris.locale(
 
 iris.number(5600.899); // "5.600,90"
 
-iris.number(5600.899, { precision: 0 }); // "5,601"
+iris.number(5600.899, { precision: 0 }); // "5.601"
 
 iris.number(5600.899, {
     decimal: ".",
@@ -277,7 +282,8 @@ iris.locale(
             formatNeg: "- n s",
             decimal: ",",
             thousand: ".",
-            precision: 2
+            precision: 2,
+            symbol : "$"
         }
     }
 );
@@ -294,9 +300,25 @@ iris.currency(5600.899, { symbol : "" }); // "5.600,90"
 *Since*: `v0.5.1`
 
 Returns an object with the browser information using user-agent.
+It contains flags for each of the four most prevalent browser classes (Internet Explorer, Mozilla, Webkit, and Opera) as well as version information.
+Because it uses `navigator.userAgent` to determine the platform, it is vulnerable to spoofing by the user or misrepresentation by the browser itself. It is always best to avoid browser-specific code entirely where possible. 
 
+Available flags are:
+ * chrome
+ * webkit
+ * safari
+ * opera
+ * msie
+ * mozilla
+
+*Example*: Returns true if the current useragent is some version of Microsoft's Internet Explorer:
 ```javascript
-iris.log( iris.browser() );
+iris.browser().msie;
+```
+
+*Example*: Show the browser info object:
+```javascript
+console.log( iris.browser() );
 ```
 
 ##<a name="event"></a> Event
@@ -491,12 +513,12 @@ var locale = iris.locale();
 ### iris.regional([label])
 *Since*: `v0.5.0`
 
-Gets a regional value acording to the setting locale.
+Gets a regional value according to the setting locale.
 
 If *label* is not passed, returns all the regional definition.
 
 ```javascript
-iris.locale("dayNames");
+iris.regional("dayNames");
 ```
 
 ##<a name="components"></a> Components
