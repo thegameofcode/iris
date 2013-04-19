@@ -22,13 +22,24 @@ iris.screen(function (self) {
 
         self.tmpl("test/component/models.html");
 
-        var data = { person: { name:"test name", num: 1014.678, money: -67890.678, region: { country: "country test" }, lastLogin: 1358506927400, updated: "Fri Jan 18 2013 13:09:47 GMT+0100 (CET)" } };
-        //var data = { person: { name:"test name", money: -67890.678, region: { country: "country test" } }, lastLogin: "Fri Jan 18 2013 13:09:47 GMT+0100 (CET)" };
+        var data = { 
+            person: {
+                name:"test name",
+                money: -67890.678,
+                num: 1014.68,
+                acceptTerms : true,
+                region: {
+                    country: "country test"
+                },
+                lastLogin: 1358506927400,
+                updated: "Fri Jan 18 2013 13:09:47 GMT+0100 (CET)"
+            }
+        };
 
         self.inflate(data);
 
         // Check printed values
-        window.expect(10);
+        window.expect(11);
 
         window.strictEqual(self.get("test_div").text(), data.person.name, "Data models on divs");
         window.strictEqual(self.get("test_span").text(), data.person.name, "Data models on spans");
@@ -55,6 +66,8 @@ iris.screen(function (self) {
         window.strictEqual(self.get("test_format_date_params").text(), date, "Data models with date formats with params");
 
         window.strictEqual(self.get("test_format_number").text(), "1,014.68", "Data models with format number");
+
+        window.strictEqual(self.get("test_check_accept").attr("checked"), "checked", "Data models with checkbox");
 
         window.start();
 

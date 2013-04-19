@@ -5,7 +5,12 @@ _Creation date: 2012-01-12_
 [version] date -> authors
   * upd|fix|new|dep|rmv - description
 
-[0.5.1] 2013-04-04
+
+[0.5.2] 2013-xx-xx
+ * [new] New checkbox test case in models.js
+
+
+[0.5.1] 2013-04-05
 https://github.com/thegameofcode/iris/issues?milestone=7&page=1&state=closed
 
  * [fix] Fixed initial navigation bug (issue #94)
