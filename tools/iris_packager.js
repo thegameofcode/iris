@@ -1,30 +1,32 @@
-var fs = require('fs');
-var compressor = require('node-minify');
-var extend = require('node.extend');
-var fileset = require('fileset');
-var util = require('util');
-var path = require('path');
-var async = require('async');
-var b64img = require('css-b64-images');
+var fs = require('fs'),
+compressor = require('node-minify'),
+extend = require('node.extend'),
+fileset = require('fileset'),
+util = require('util'),
+path = require('path'),
+async = require('async'),
+b64img = require('css-b64-images');
 
 var config = {
  html: [],
  js: [],
  css: [],
+ outputPath: "",
  outputFile: "",
  initJs: "",
- pathBase: "",
+ appPath: ".",
+ irisBaseUri: "",
  inputPaths: [],
  excludePaths: [],
  extension: {
   html: true,
   js: true,
-  css: false
+  css: true
  },
  outputPath: "",
- cssSuffix:"-min",
+ cssSuffix:"",
  mode: "",
- deleteInputs: false,
+ deleteInputs: true,
  base64images: false
 }
 
@@ -59,6 +61,10 @@ function init () {
    if ( param !== null ) {
     config.inputPaths = param.split(",");
    }
+  
+   if (config.inputPaths.length === 0) {
+    config.inputPaths.push(path.normalize("."));
+   }
 
    
    param = getParam("exclude=", val);
@@ -83,14 +89,19 @@ function init () {
     config.outputFile = "";
    }
 
+   param = getParam("appPath=", val);
+   if ( param !== null ) {
+    config.appPath = param;
+   }
+   
    param = getParam("init=", val);
    if ( param !== null ) {
-    config.initJs = param;
+    config.initJs = createPath(config.appPath, param);
    }
-
-   param = getParam("base=", val);
+   
+   param = getParam("irisBaseUri=", val);
    if ( param !== null ) {
-    config.pathBase = param;
+    config.irisBaseUri = param;
    }
    
    param = getParam("cssSuffix=", val);
@@ -120,7 +131,7 @@ function init () {
  }
  
  if ( !config.outputPath && !config.outputFile ) {
-  throw "you must specify the parameter output=path/";
+  config.outputFile = config.initJs;
  }
 
  if ( !config.initJs ) {
@@ -135,7 +146,13 @@ function init () {
   }
  }
  
- config.js.push(config.initJs);
+ var aux = config.initJs;
+ if (config.initJs === config.outputFile) {
+  aux = createPath(path.dirname(config.outputFile), "aux.js");
+  fs.createReadStream(config.initJs).pipe(fs.createWriteStream(aux));
+ }
+ 
+ config.js.push(path.normalize(aux));
  console.log("***************************************************************************************"); 
  console.log("config = " + util.inspect(config));
  console.log("***************************************************************************************");
@@ -144,14 +161,14 @@ function init () {
  var excludes = "";
  if (config.inputPaths.length > 0) {
   for (var i = 0; i < config.inputPaths.length; i++) {
-   config.inputPaths[i] = config.pathBase + config.inputPaths[i];
+   config.inputPaths[i] = createPath(config.appPath, config.irisBaseUri, config.inputPaths[i]);
   }
   includes = config.inputPaths.join(" ");
   if (config.excludePaths.length > 0) {
    for (i = 0; i < config.excludePaths.length; i++) {
-    config.excludePaths[i] = config.pathBase + config.excludePaths[i];
+    config.excludePaths[i] = createPath(config.appPath, config.irisBaseUri, config.excludePaths[i]);
    }
-   excludes = config.excludePaths.join(" ");
+   excludes = config.excludePaths.join(" ");   
   }
   
   fileset(includes,  excludes, function(err, files) {
@@ -174,6 +191,18 @@ function init () {
    generateOutput();
   }); 
  }
+}
+function createPath () {
+ var finalPath = "";
+ for (var i = 0; i < arguments.length; i++) {
+  if (finalPath !== "" && arguments[i] !== "" && finalPath.charAt(finalPath.length - 1) !== "/" && arguments[i].charAt(0) !== "/") {
+   finalPath += "/";
+  }
+  finalPath += arguments[i];
+ }
+ //finalPath = finalPath.replace(/\/{2,}/g, "/");
+ finalPath = path.normalize(finalPath);
+ return finalPath;
 }
 
 function validatePath (path) {
@@ -209,16 +238,20 @@ function scanPath (path) {
 function scanFile(file) {
  
  var ext = path.extname(file).replace(".","");
+ var duplicate = false;
  
  if (ext === "html" || ext === "js" || ext === "css") {
   for (var i = 0; i < config[ext].length; i++) {
-   if (config[ext][i] === file) {
+   if (path.resolve(config[ext][i]) === path.resolve(file)) {
     console.log("duplicate " + ext + " '" + file + "'...");
-    return;
+    duplicate = true;
    }
   }
-  console.log("found " + ext + " '" + file + "'...");
-  config[ext].push(file);
+  
+  if (!duplicate) {
+   console.log("found " + ext + " '" + file + "'...");
+   config[ext].push(path.normalize(file));
+  }
  }
 }
 
@@ -249,7 +282,12 @@ function generateOutput () {
   ,function(callback) {
    printResults(callback);
   }
-  ]);
+  ],
+  function(err, results) {
+   if (err) {
+    console.log("Error: " + err);
+   }
+  });
 }
 
 function minifyJs(callback) {
@@ -259,7 +297,6 @@ function minifyJs(callback) {
  }
  console.log("Minimizing JS...");
  
- // Compress using Google Closure
  new compressor.minify({
   type: 'gcc',
   fileIn: config.js,
@@ -319,15 +356,15 @@ function b64(callback) {
    var outCSS = path.dirname(fileIn) + "/" + path.basename(fileIn, ".css") + config.cssSuffix + ".css";
    b64img.fromFile(outCSS, __dirname,   function(err, css){
     if ( err ) {
-      callback(err, "b64");
-     } else {
-      fs.writeFileSync(outCSS, css);
-      filesProcessed++;
-      globalStats.css.outputSize += fs.statSync(outCSS).size;
-      if (filesProcessed == config.css.length) {
-       callback(null, "b64");
-      }
+     callback(err, "b64");
+    } else {
+     fs.writeFileSync(outCSS, css);
+     filesProcessed++;
+     globalStats.css.outputSize += fs.statSync(outCSS).size;
+     if (filesProcessed == config.css.length) {
+      callback(null, "b64");
      }
+    }
    });  
   })(inCSS);
  }
@@ -344,7 +381,7 @@ function concatTemplates(callback){
   var data = fs.readFileSync(config.html[f], "utf8").replace(/[\r\n\t]/g,"");
   content.push(
    "iris.tmpl('"
-   + config.html[f].replace(config.pathBase, "")
+   + config.html[f].replace(createPath(config.appPath, config.irisBaseUri) , "")
    +"','"
    + data.replace(/\'/g, "\\\'")
    + "');\n"
@@ -374,9 +411,11 @@ function deleteFiles(callback) {
  for (var ext in config.extension) {
   if (ext) {
    for (var i = 0 ; i < config[ext].length; i++) {
-    var file = config[ext][i];
-    console.log("Removing " + file + "...");
-    fs.unlinkSync(file);
+    if (ext !== "css" || config.cssSuffix !== "") {
+     var file = config[ext][i];
+     console.log("Removing " + file + "...");
+     fs.unlinkSync(file);
+    }
    }
   }
  }
