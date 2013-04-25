@@ -198,6 +198,7 @@ function init () {
   });
  }
 }
+
 function createPath () {
  var finalPath = "";
  for (var i = 0; i < arguments.length; i++) {
