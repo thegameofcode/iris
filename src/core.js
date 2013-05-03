@@ -27,9 +27,9 @@
         iris.on("iris-reset", _init);
     }
 
-    function urlContains (args) {
-        for(var i = 0 ; i< args.length; i++) {
-            if ( document.location.href.indexOf(args[i]) > -1 ) {
+    function urlContains () {
+        for(var i = 0 ; i< arguments.length; i++) {
+            if ( document.location.href.indexOf(arguments[i]) > -1 ) {
                 return true;
             }
         }
