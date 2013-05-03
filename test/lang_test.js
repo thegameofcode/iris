@@ -101,7 +101,7 @@
   }
 
   function onError () {
-    ok(false, "Error callback unexpected");
+    window.ok(false, "Error callback unexpected");
     start();
   }
 

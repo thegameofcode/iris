@@ -78,11 +78,11 @@
   
   
   function onEvent () {
-    ok(true, "On event callback");
+    window.ok(true, "On event callback");
   }
   
   function onEvent2 () {
-    ok(true, "On event2 callback");
+    window.ok(true, "On event2 callback");
   }
 
 }(jQuery));
