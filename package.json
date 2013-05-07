@@ -1,12 +1,17 @@
 {
   "name": "iris",
-  "version": "0.5.2-SNAPSHOT",
-  "devDependencies": {
-    "grunt": "~0.4.1",
-    "grunt-contrib-uglify": "*",
-    "grunt-contrib-watch": "~0.3.1",
-    "grunt-contrib-jshint": "~0.4.3",
-    "grunt-contrib-concat": "~0.2.0",
-    "grunt-contrib-qunit": "*"
+  "version": "0.5.1",
+
+  "dependencies": {
+    "node-minify" : "0.7.2",
+    "node.extend" : "1.0.0",
+    "fileset" : "0.1.5",
+    "css-b64-images" : "0.2.2"
+  },
+  
+  "engines": {
+    "node": "0.8.x",
+    "npm": "1.1.x"
   }
 }
+

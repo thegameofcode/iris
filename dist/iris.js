@@ -1,3 +1,7 @@
+/*! Iris - v0.5.1 - 2013-04-05
+* http://thegameofcode.github.com/iris
+* Copyright (c) 2013 Iris; Licensed New-BSD */
+
 
 var iris = {};
 
@@ -134,8 +138,8 @@ window.iris = iris;
         _appBaseUri,
         _cache,
         _cacheVersion,
-        _logEnabled,
-        _logger;
+        _hasConsole,
+        _logEnabled;
 
     //
     // Private
@@ -148,9 +152,7 @@ window.iris = iris;
             throw "jQuery " + $().jquery + " currently loaded, jQuery " + _JQ_MIN_VER + "+ required";
         }
 
-        if ( window.console && window.console.log && Function.prototype.bind ) {
-            _logger = Function.prototype.bind.call(window.console.log, window.console);
-        }
+        _hasConsole = ( window.console && window.console.log );
 
         var isLocalEnv = urlContains("localhost", "127.0.0.1");
         _logEnabled = isLocalEnv;
@@ -200,14 +202,14 @@ window.iris = iris;
     };
 
     iris.log = function () {
-        if ( _logger && _logEnabled ) {
-            _logger.apply(this, arguments);
+        if ( _hasConsole && _logEnabled ) {
+            window.console.log("[iris]", arguments[0], arguments[1], arguments[2], arguments[3]); // TODO
         }
     };
 
     iris.enableLog = function () {
         if ( arguments.length > 0 ) {
-            _logEnabled = urlContains.apply(this, arguments);
+            _logEnabled = urlContains(arguments);
         } else {
             return _logEnabled;
         }
@@ -215,7 +217,7 @@ window.iris = iris;
 
     iris.noCache = function () {
         if ( arguments.length > 0 ) {
-            _cache = !urlContains.apply(this, arguments);
+            _cache = !urlContains(arguments);
         } else {
             return !_cache;
         }

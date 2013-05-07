@@ -4,8 +4,9 @@
         _appBaseUri,
         _cache,
         _cacheVersion,
+        _hasConsole,
         _logEnabled,
-        _logger;
+        _logger = Function.prototype.bind.call(console.log, console);
 
     //
     // Private
@@ -18,9 +19,7 @@
             throw "jQuery " + $().jquery + " currently loaded, jQuery " + _JQ_MIN_VER + "+ required";
         }
 
-        if ( window.console && window.console.log && Function.prototype.bind ) {
-            _logger = Function.prototype.bind.call(window.console.log, window.console);
-        }
+        _hasConsole = ( window.console && window.console.log );
 
         var isLocalEnv = urlContains("localhost", "127.0.0.1");
         _logEnabled = isLocalEnv;
@@ -70,7 +69,7 @@
     };
 
     iris.log = function () {
-        if ( _logger && _logEnabled ) {
+        if ( _hasConsole && _logEnabled ) {
             _logger.apply(this, arguments);
         }
     };
