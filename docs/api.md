@@ -139,15 +139,15 @@ iris.enableLog(false);
 iris.log("test"); // "test" is not printed
 ```
 
-### iris.log(value1[, value2, value3, value4])
-*Since*: `v0.5.0`
+### iris.log(args, ...)
+*Since*: `v0.5.2`
 
-Prints the parameters values to the console for debugging purposes.
+Safe logger that prints the parameters values to the console for debugging purposes,
+only if logging is enabled and the browser support it.
 
 ```javascript
 iris.log("obj = ", obj);
 ```
-
 
 ##<a name="util"></a> Util
 ### iris.ajax(settings)

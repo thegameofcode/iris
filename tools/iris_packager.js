@@ -1,32 +1,34 @@
-var fs = require('fs');
-var compressor = require('node-minify');
-var extend = require('node.extend');
-var fileset = require('fileset');
-var util = require('util');
-var path = require('path');
-var async = require('async');
-var b64img = require('css-b64-images');
+var fs = require('fs'),
+compressor = require('node-minify'),
+extend = require('node.extend'),
+fileset = require('fileset'),
+util = require('util'),
+path = require('path'),
+async = require('async'),
+b64img = require('css-b64-images');
 
 var config = {
  html: [],
  js: [],
  css: [],
+ outputPath: "",
  outputFile: "",
  initJs: "",
- pathBase: "",
+ appPath: ".",
+ irisBaseUri: "/",
  inputPaths: [],
  excludePaths: [],
  extension: {
   html: true,
   js: true,
-  css: false
+  css: true
  },
  outputPath: "",
- cssSuffix:"-min",
+ cssSuffix:"",
  mode: "",
- deleteInputs: false,
+ deleteInputs: true,
  base64images: false
-}
+};
 
 function ItemStats() {
  this.numFiles = 0;
@@ -38,7 +40,7 @@ function ItemStats() {
 }
 
 var globalStats = {
- js:  new ItemStats(), 
+ js:  new ItemStats(),
  html:new ItemStats(),
  css: new ItemStats(),
  total: new ItemStats()
@@ -51,76 +53,91 @@ function init () {
   config = extend(true, config, JSON.parse(file_config));
  }
 
+ var params = {};
+
  process.argv.forEach(
   function (val, index, array) {
-   var param;
+   var pos = val.indexOf("=");
+   if (pos != -1) {
+    var name = val.substring(0, pos);
+    var value = val.substring(pos + 1);
+    params[name] = value;
+   }
+  });
 
-   param = getParam("input=", val);
-   if ( param !== null ) {
-    config.inputPaths = param.split(",");
-   }
-
+ 
+ if ( params["input"] !== undefined ) {
+  config.inputPaths = params["input"].split(",");
+ }
+  
+ if (config.inputPaths.length === 0) {
+  config.inputPaths.push(path.normalize("."));
+ }
+  
+ if ( params["exclude"] !== undefined ) {
+  config.excludePaths = params["exclude"].split(",");
+ }
    
-   param = getParam("exclude=", val);
-   if ( param !== null ) {
-    config.excludePaths = param.split(",");
-   }
-   
-   param = getParam("ext=", val);
-   if ( param !== null ) {
-    config.extension = (function toObject(arr) {
-     var rv = {};
-     for (var i = 0; i < arr.length; ++i)
-      rv[arr[i]] = true;
-     return rv;
-    })(param.split(","));
-   }
-   
-   
-   param = getParam("output=", val);
-   if ( param !== null ) {
-    config.outputPath = param;
-    config.outputFile = "";
-   }
-
-   param = getParam("init=", val);
-   if ( param !== null ) {
-    config.initJs = param;
-   }
-
-   param = getParam("base=", val);
-   if ( param !== null ) {
-    config.pathBase = param;
-   }
-   
-   param = getParam("cssSuffix=", val);
-   if ( param !== null ) {
-    config.cssSuffix = param;
-   }
-   
-   param = getParam("mode=", val);
-   if ( param !== null ) {
-    config.mode = param;
-   }
-   
-   param = getParam("delete=", val);
-   if ( param !== null ) {
-    config.deleteInputs = param;
-   }
-
-   param = getParam("b64=", val);
-   if ( param !== null ) {
-    config.base64images = param;
-   }
-  }
-  );
-
- if ( !config.inputPaths ) {
- //throw "you must specify the parameter input=path_to_directory/,path_to_file...";
+ if ( params["ext"] !== undefined ) {
+  config.extension = (function toObject(arr) {
+   var rv = {};
+   for (var i = 0; i < arr.length; ++i)
+    rv[arr[i]] = true;
+   return rv;
+  })(params["ext"].split(","));
  }
  
+ if ( params["minCss"] !== undefined ) {
+  config.extension.css = params["minCss"].toLowerCase() === "true";
+ }
+   
+ if ( params["minHtml"] !== undefined ) {
+  config.extension.css = params["minHtml"].toLowerCase() === "true";
+ }
+   
+ if ( params["minJs"] !== undefined ) {
+  config.extension.css = params["minJs"].toLowerCase() === "true";
+ }
+   
+ if ( params["output"] !== undefined ) {
+  config.outputPath = params["output"];
+  config.outputFile = "";
+ }
+
+ if ( params["appPath"] !== undefined ) {
+  config.appPath = params["appPath"];    
+ }
+   
+ if ( params["init"] !== undefined ) {
+  config.initJs = createPath(config.appPath, params["init"]);    
+ }
+   
+ if ( params["irisBaseUri"] !== undefined ) {
+  config.irisBaseUri = params["irisBaseUri"];
+ }
+   
+ if ( params["cssSuffix"] !== undefined ) {
+  config.cssSuffix = params["cssSuffix"];
+ }
+   
+ if ( params["mode"] !== undefined ) {
+  config.mode = params["mode"];
+ }
+   
+ if ( params["delete"] !== undefined ) {
+  config.deleteInputs = params["delete"].toLowerCase() === "true";
+ }
+
+ if ( params["b64"] !== undefined ) {
+  config.base64images = params["b64"].toLowerCase() === "true";
+ }
+  
+ if ( !config.inputPaths ) {
+ //throw "you must specify the parameter input=path_to_directory/,path_to_file...";
+ //}
+ 
  if ( !config.outputPath && !config.outputFile ) {
-  throw "you must specify the parameter output=path/";
+  config.outputFile = config.initJs;
  }
 
  if ( !config.initJs ) {
@@ -129,13 +146,19 @@ function init () {
 
  if (!config.outputFile) {
   if (fs.existsSync(config.outputPath) && fs.statSync(config.outputPath).isDirectory()) {
-   config.outputFile = validatePath(config.outputPath) + config.initJs.match(/[^/]+\.js$/);
+   config.outputFile = validatePath(config.outputPath) + config.initJs.match(/[^\/]+\.js$/);
   } else {
    config.outputFile = config.outputPath;
   }
  }
  
- config.js.push(config.initJs);
+ var aux = config.initJs;
+ if (config.mode !== "test" && config.initJs === config.outputFile) {
+  aux = createPath(path.dirname(config.outputFile), "aux.js");
+  fs.createReadStream(config.initJs).pipe(fs.createWriteStream(aux));
+ }
+ 
+ config.js.push(path.normalize(aux));
  console.log("***************************************************************************************"); 
  console.log("config = " + util.inspect(config));
  console.log("***************************************************************************************");
@@ -144,16 +167,16 @@ function init () {
  var excludes = "";
  if (config.inputPaths.length > 0) {
   for (var i = 0; i < config.inputPaths.length; i++) {
-   config.inputPaths[i] = config.pathBase + config.inputPaths[i];
+   config.inputPaths[i] = createPath(config.appPath, config.inputPaths[i]);
   }
   includes = config.inputPaths.join(" ");
   if (config.excludePaths.length > 0) {
    for (i = 0; i < config.excludePaths.length; i++) {
-    config.excludePaths[i] = config.pathBase + config.excludePaths[i];
+    config.excludePaths[i] = createPath(config.appPath, config.excludePaths[i]);
    }
-   excludes = config.excludePaths.join(" ");
+   excludes = config.excludePaths.join(" ");   
   }
-  
+
   fileset(includes,  excludes, function(err, files) {
    if (err) return console.error(err);
    for (var i = 0; i < files.length; i++) {
@@ -172,8 +195,21 @@ function init () {
   }).on('end', function() {
    
    generateOutput();
-  }); 
+  });
  }
+}
+
+function createPath () {
+ var finalPath = "";
+ for (var i = 0; i < arguments.length; i++) {
+  if (finalPath !== "" && arguments[i] !== "" && finalPath.charAt(finalPath.length - 1) !== "/" && arguments[i].charAt(0) !== "/") {
+   finalPath += "/";
+  }
+  finalPath += arguments[i];
+ }
+ //finalPath = finalPath.replace(/\/{2,}/g, "/");
+ finalPath = path.normalize(finalPath);
+ return finalPath;
 }
 
 function validatePath (path) {
@@ -181,14 +217,6 @@ function validatePath (path) {
   path = path + "/";
  }
  return path;
-}
-
-function getParam (label, value) {
- var idx = value.indexOf(label);
- if ( idx > -1 ) {
-  return value.substring( idx + label.length );
- }
- return null;
 }
 
 function scanPath (path) {
@@ -207,18 +235,27 @@ function scanPath (path) {
 }
 
 function scanFile(file) {
+
+ if ( file === config.initJs ) {
+  return;
+ }
  
  var ext = path.extname(file).replace(".","");
+ var duplicate = false;
  
  if (ext === "html" || ext === "js" || ext === "css") {
+
   for (var i = 0; i < config[ext].length; i++) {
-   if (config[ext][i] === file) {
+   if (path.resolve(config[ext][i]) === path.resolve(file)) {
     console.log("duplicate " + ext + " '" + file + "'...");
-    return;
+    duplicate = true;
    }
   }
-  console.log("found " + ext + " '" + file + "'...");
-  config[ext].push(file);
+  
+  if (!duplicate) {
+   console.log("found " + ext + " '" + file + "'...");
+   config[ext].push(path.normalize(file));
+  }
  }
 }
 
@@ -245,21 +282,25 @@ function generateOutput () {
   },
   function(callback) {
    deleteFiles(callback);
-  }
-  ,function(callback) {
+  },
+  function(callback) {
    printResults(callback);
   }
-  ]);
+  ],
+  function(err, results) {
+   if (err) {
+    console.log("Error: " + err);
+   }
+  });
 }
 
 function minifyJs(callback) {
- if (!config.extension.js || config.js.length == 0 || config.mode === "test") {
+ if (!config.extension.js || config.js.length === 0 || config.mode === "test") {
   callback(null, "minifyJs");
   return;
  }
  console.log("Minimizing JS...");
  
- // Compress using Google Closure
  new compressor.minify({
   type: 'gcc',
   fileIn: config.js,
@@ -276,11 +317,11 @@ function minifyJs(callback) {
 }
 
 function minifyCSS(callback) {
- if (!config.extension.css || config.css.length == 0 || config.mode === "test") {
+ if (!config.extension.css || config.css.length === 0 || config.mode === "test") {
   callback(null, "minifyCSS");
   return;
  }
- console.log("Minimizing CSS...");
+ console.log("Minimizing CSS config.css[" + config.css + "]...");
  var filesProcessed = 0;
  for ( var f=0, F=config.css.length;f<F; f++ ) {
   var inCSS = config.css[f];
@@ -301,13 +342,13 @@ function minifyCSS(callback) {
       }
      }
     }
-   });  
+   });
   })(inCSS);
  }
 }
 
 function b64(callback) {
- if (!config.extension.css || config.css.length == 0 || config.mode === "test" || !config.base64images) {
+ if (config.css.length == 0 || config.mode === "test" || !config.base64images) {
   callback(null, "b64");
   return;
  }
@@ -319,22 +360,22 @@ function b64(callback) {
    var outCSS = path.dirname(fileIn) + "/" + path.basename(fileIn, ".css") + config.cssSuffix + ".css";
    b64img.fromFile(outCSS, __dirname,   function(err, css){
     if ( err ) {
-      callback(err, "b64");
-     } else {
-      fs.writeFileSync(outCSS, css);
-      filesProcessed++;
-      globalStats.css.outputSize += fs.statSync(outCSS).size;
-      if (filesProcessed == config.css.length) {
-       callback(null, "b64");
-      }
+     callback(err, "b64");
+    } else {
+     fs.writeFileSync(outCSS, css);
+     filesProcessed++;
+     globalStats.css.outputSize += fs.statSync(outCSS).size;
+     if (filesProcessed == config.css.length) {
+      callback(null, "b64");
      }
+    }
    });  
   })(inCSS);
  }
 }
 
-function concatTemplates(callback){ 
- if (!config.extension.html || config.html.length == 0 || config.mode === "test") {
+function concatTemplates(callback){
+ if (!config.extension.html || config.html.length === 0 || config.mode === "test") {
   callback(null, "concatTemplates");
   return;
  }
@@ -344,7 +385,7 @@ function concatTemplates(callback){
   var data = fs.readFileSync(config.html[f], "utf8").replace(/[\r\n\t]/g,"");
   content.push(
    "iris.tmpl('"
-   + config.html[f].replace(config.pathBase, "")
+   + config.html[f].replace(createPath(config.appPath, config.irisBaseUri) , "")
    +"','"
    + data.replace(/\'/g, "\\\'")
    + "');\n"
@@ -362,7 +403,7 @@ function concatTemplates(callback){
     callback(null, "concatTemplates");
    }
   }
-  );	
+  );
 }
  
 function deleteFiles(callback) {
@@ -374,16 +415,18 @@ function deleteFiles(callback) {
  for (var ext in config.extension) {
   if (ext) {
    for (var i = 0 ; i < config[ext].length; i++) {
-    var file = config[ext][i];
-    console.log("Removing " + file + "...");
-    fs.unlinkSync(file);
+    if (ext !== "css" || config.cssSuffix !== "") {
+     var file = config[ext][i];
+     console.log("Removing " + file + "...");
+     fs.unlinkSync(file);
+    }
    }
   }
  }
  callback(null, "deleteFiles");
   
   
-} 
+}
 
 function calculateInputStats(item) {
  for (var i = 0; i < config[item].length; i++) {

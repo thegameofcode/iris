@@ -3,7 +3,7 @@ module.exports = function(grunt) {
 
   // Project configuration.
   grunt.initConfig({
-    pkg: '<json:iris.json>',
+    pkg: grunt.file.readJSON('iris.json'),
     meta: {
       banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
         '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
@@ -17,23 +17,26 @@ module.exports = function(grunt) {
         dest: 'dist/<%= pkg.name %>.js'
       }
     },
-    min: {
+    uglify: {
       dist: {
-        src: ['<banner:meta.banner>', '<config:concat.dist.dest>'],
-        dest: 'dist/<%= pkg.name %>.min.js'
+        'dist/<%= pkg.name %>.min.js': ['<banner:meta.banner>', '<config:concat.dist.dest>']
       }
     },
     qunit: {
-      all: ['http://localhost:8080/test/iris.html']
-    },
-    lint: {
-      files: [/*'grunt.js',*/ 'src/**/*.js', 'test/**/*.js']
+      all: {
+        options: {
+          urls: [
+            'http://localhost:8080/test/iris.html'
+          ]
+        }
+      }
     },
     watch: {
       files: '<config:lint.files>',
       tasks: 'lint qunit'
     },
     jshint: {
+      uses_defaults: [/*'grunt.js',*/ 'src/**/*.js', 'test/**/*.js'],
       options: {
         curly: true,
         eqeqeq: true,
@@ -45,12 +48,12 @@ module.exports = function(grunt) {
         undef: true,
         boss: true,
         eqnull: true,
-        browser: true
-      },
-      globals: {
-        jQuery: true,
-        iris: true,
-        $: true
+        browser: true,
+        globals: {
+          jQuery: true,
+          iris: true,
+          $: true
+        }
       }
     }
   });
@@ -60,9 +63,14 @@ module.exports = function(grunt) {
   });
 
   // Default task.
-  grunt.registerTask('default', 'lint server qunit concat min');
+  grunt.registerTask('default', ['jshint', 'server', 'qunit', 'concat', 'uglify']);
 
+  grunt.registerTask('test', ['jshint', 'server', 'watch']);
+
+  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-qunit');
+  grunt.loadNpmTasks('grunt-contrib-concat');
   
-  grunt.registerTask('test', 'lint server watch');
-
 };

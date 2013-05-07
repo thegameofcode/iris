@@ -1,7 +1,3 @@
-/*! Iris - v0.5.1 - 2013-04-19
-* http://thegameofcode.github.com/iris
-* Copyright (c) 2013 Iris; Licensed New-BSD */
-
 
 var iris = {};
 
@@ -138,8 +134,8 @@ window.iris = iris;
         _appBaseUri,
         _cache,
         _cacheVersion,
-        _hasConsole,
-        _logEnabled;
+        _logEnabled,
+        _logger;
 
     //
     // Private
@@ -152,7 +148,9 @@ window.iris = iris;
             throw "jQuery " + $().jquery + " currently loaded, jQuery " + _JQ_MIN_VER + "+ required";
         }
 
-        _hasConsole = ( window.console && window.console.log );
+        if ( window.console && window.console.log && Function.prototype.bind ) {
+            _logger = Function.prototype.bind.call(window.console.log, window.console);
+        }
 
         var isLocalEnv = urlContains("localhost", "127.0.0.1");
         _logEnabled = isLocalEnv;
@@ -161,9 +159,9 @@ window.iris = iris;
         iris.on("iris-reset", _init);
     }
 
-    function urlContains (args) {
-        for(var i = 0 ; i< args.length; i++) {
-            if ( document.location.href.indexOf(args[i]) > -1 ) {
+    function urlContains () {
+        for(var i = 0 ; i< arguments.length; i++) {
+            if ( document.location.href.indexOf(arguments[i]) > -1 ) {
                 return true;
             }
         }
@@ -202,14 +200,14 @@ window.iris = iris;
     };
 
     iris.log = function () {
-        if ( _hasConsole && _logEnabled ) {
-            window.console.log("[iris]", arguments[0], arguments[1], arguments[2], arguments[3]); // TODO
+        if ( _logger && _logEnabled ) {
+            _logger.apply(this, arguments);
         }
     };
 
     iris.enableLog = function () {
         if ( arguments.length > 0 ) {
-            _logEnabled = urlContains(arguments);
+            _logEnabled = urlContains.apply(this, arguments);
         } else {
             return _logEnabled;
         }
@@ -217,7 +215,7 @@ window.iris = iris;
 
     iris.noCache = function () {
         if ( arguments.length > 0 ) {
-            _cache = !urlContains(arguments);
+            _cache = !urlContains.apply(this, arguments);
         } else {
             return !_cache;
         }
