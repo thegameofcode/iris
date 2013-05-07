@@ -7,7 +7,12 @@ _Creation date: 2012-01-12_
 
 
 [0.5.2] 2013-xx-xx
- * [new] New checkbox test case in models.js
+ * [new] Checkbox test case in models.js
+ * [upd] Updated to last version of GruntJS v0.4.1
+ * [fix] Fixed iris.enableLog & iris.noCache
+ * [new] iris.log allows multiple parameters
+ * [upd] API doc
+ * [upd] Updated tests using last jQuery version v2.0.0
 
 
 [0.5.1] 2013-04-05
