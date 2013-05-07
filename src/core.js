@@ -5,8 +5,7 @@
         _cache,
         _cacheVersion,
         _hasConsole,
-        _logEnabled,
-        _logger = Function.prototype.bind.call(console.log, console);
+        _logEnabled;
 
     //
     // Private
@@ -70,13 +69,13 @@
 
     iris.log = function () {
         if ( _hasConsole && _logEnabled ) {
-            _logger.apply(this, arguments);
+            window.console.log("[iris]", arguments[0], arguments[1], arguments[2], arguments[3]); // TODO
         }
     };
 
     iris.enableLog = function () {
         if ( arguments.length > 0 ) {
-            _logEnabled = urlContains.apply(this, arguments);
+            _logEnabled = urlContains(arguments);
         } else {
             return _logEnabled;
         }
@@ -84,7 +83,7 @@
 
     iris.noCache = function () {
         if ( arguments.length > 0 ) {
-            _cache = !urlContains.apply(this, arguments);
+            _cache = !urlContains(arguments);
         } else {
             return !_cache;
         }
