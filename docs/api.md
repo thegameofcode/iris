@@ -532,29 +532,36 @@ function loginFail () {
 ### iris.welcome(path)
 *Since*: `v0.5.0`
 
-Establishes and navigates to the Welcome screen component.
+The welcome screen is the root of all screens.
+You must define always the welcome screen in your initial script.
+This function establishes the welcome screen and navigates to it.
 
 ```javascript
-iris.welcome("screen/welcome.js");
-```
-
-Or
-
-```javascript
+// All Iris applications start in the welcome screen
+// Remember to define iris.path before
 iris.welcome(iris.path.welcome.js);
 ```
 
 ### iris.navigate(path)
 *Since*: `v0.5.0`
 
-Navigates to a Screen Component.
+Navigates to a screen.
+To send parameters to the screens use this format: `/screen?param1=value1&param2=value2`.
+You can get the value of this parameters in the `self.awake(params)` function.
+Use `self.screens()` to define screen childs.
 
 ```javascript
-iris.navigate("screen/help");
-```
+// The screen is child of the welcome screen
+iris.navigate("#/screen1");
 
-```javascript
-iris.navigate(iris.path.help.js);
+// Navigates to screen child of the previous screen
+iris.navigate("#/screen1/child_of_screen1");
+
+// Send parameters to the welcome screen
+iris.navigate("#?param=value/screen1/child_of_screen1");
+
+// Send parameters to other screen
+iris.navigate("#/screen1?param=value&other=paramater/child_of_screen1");
 ```
 
 ### iris.screen(function(self){...}, path)
