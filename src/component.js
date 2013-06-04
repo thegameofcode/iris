@@ -322,7 +322,7 @@
 
     function _parseLangTags(p_html) {
         var html = p_html;
-        var matches = html.match(/@@[A-Za-z_\.]+@@/g);
+        var matches = html.match(/@@[0-9A-Za-z_\.]+@@/g);
         if(matches) {
             var f, F = matches.length;
             for(f = 0; f < F; f++) {
