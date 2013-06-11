@@ -13,6 +13,7 @@ _Creation date: 2012-01-12_
  * [new] iris.log allows multiple parameters
  * [upd] API doc
  * [upd] Updated tests using last jQuery version v2.0.0
+ * [upd] Add number to translation label format, close #129
 
 
 [0.5.1] 2013-04-05
