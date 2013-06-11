@@ -113,7 +113,8 @@
             if ( !_includes.hasOwnProperty(paths[i]) ) {
                 _dependencyCount++;
 
-                path = String(iris.baseUri() + paths[i]);
+                // If the path doesn't start with http or https, it's concatenated to the iris base uri
+                path = /^https?:\/\//.test(paths[i]) ? paths[i] : String(iris.baseUri() + paths[i]);
 
                 if ( !iris.cache() ) {
                     path += "?_=" + new Date().getTime();

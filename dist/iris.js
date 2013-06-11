@@ -683,7 +683,8 @@ window.iris = iris;
             if ( !_includes.hasOwnProperty(paths[i]) ) {
                 _dependencyCount++;
 
-                path = String(iris.baseUri() + paths[i]);
+                // If the path doesn't start with http or https, it's concatenated to the iris base uri
+                path = /^https?:\/\//.test(paths[i]) ? paths[i] : String(iris.baseUri() + paths[i]);
 
                 if ( !iris.cache() ) {
                     path += "?_=" + new Date().getTime();
@@ -892,7 +893,7 @@ window.iris = iris;
 
     function _parseLangTags(p_html) {
         var html = p_html;
-        var matches = html.match(/@@[A-Za-z_\.]+@@/g);
+        var matches = html.match(/@@[0-9A-Za-z_\.]+@@/g);
         if(matches) {
             var f, F = matches.length;
             for(f = 0; f < F; f++) {
