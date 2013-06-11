@@ -17,22 +17,13 @@ window.iris = iris;
         iris.on("iris-reset", _init);
     }
 
-    function _indexOf (item, array) {
-        for ( var i = 0; i < array.length; i++ ) {
-            if ( array[i] === item ) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
     iris.on = function (p_eventName, f_func) {
         if ( !_events.hasOwnProperty(p_eventName) ) {
             _events[p_eventName] = [];
         }
 
         var callbacks = _events[p_eventName];
-        var index = _indexOf(f_func, callbacks);
+        var index = $.inArray(f_func, callbacks);
         if ( index === -1 ) {
             callbacks.push(f_func);
         }
@@ -42,7 +33,7 @@ window.iris = iris;
     iris.off = function (p_eventName, f_func){
         if ( _events.hasOwnProperty(p_eventName) ){
             if (f_func !== undefined) {
-                var index = _indexOf(f_func, _events[p_eventName]);
+                var index = $.inArray(f_func, _events[p_eventName]);
                 if ( index !== -1 ) {
                     _events[p_eventName].splice(index, 1);
                 }
@@ -71,7 +62,7 @@ window.iris = iris;
         // This occur if an event that destroy uis is notified
         var callbacks = _events[p_eventName].concat([]);
         for ( var i=0; i < p_callbacks.length; i++ ) {
-            var index = _indexOf(p_callbacks[i], callbacks);
+            var index = $.inArray(p_callbacks[i], callbacks);
             if ( index !== -1 ) {
                 callbacks.splice(index, 1);
             }
@@ -94,7 +85,7 @@ window.iris = iris;
         }
 
         var callbacks = this.events[p_eventName];
-        var index = _indexOf(f_func, callbacks);
+        var index = $.inArray(f_func, callbacks);
         if ( index === -1 ) {
             callbacks.push(f_func);
             iris.on(p_eventName, f_func);
@@ -105,7 +96,7 @@ window.iris = iris;
     eventPrototype.off = function (p_eventName, f_func){
         var callbacks = this.events[p_eventName];
         if ( callbacks ) {
-            var index = _indexOf(f_func, callbacks);
+            var index = $.inArray(f_func, callbacks);
 
             if ( index !== -1 ) {
                 callbacks.splice(index, 1);
@@ -921,6 +912,7 @@ window.iris = iris;
         var uiInstance = new UI();
         uiInstance.id = p_uiId;
         uiInstance.uis = [];
+        uiInstance.uisMap = {};
         uiInstance.el = {};
         uiInstance.events = {};
         uiInstance.con = p_$container;
@@ -979,6 +971,7 @@ window.iris = iris;
         screenObj.id = p_screenPath;
         screenObj.el = {};
         screenObj.uis = [];
+        screenObj.uisMap = {};
         screenObj.events = {};
         screenObj.con = _screenContainer[p_screenPath];
         screenObj.fileJs = jsUrl;
@@ -1111,6 +1104,7 @@ window.iris = iris;
         this.fileTmpl = null;
         this.template = null;
         this.uis = null; // child UIs
+        this.uisMap = null; // UIs sorted by id
         this.con = null; // JQ container
         this.sleeping = null;
         this.el = null; // cached elements
@@ -1326,6 +1320,18 @@ window.iris = iris;
     };
 
     Component.prototype._ui = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
+        if ( p_jsUrl === undefined ) {
+            
+            // Get UI
+            return this.uisMap[p_id];
+
+        } else {
+            // Create UI
+            return this._createUi(p_id, p_jsUrl, p_uiSettings, p_templateMode);
+        }
+    };
+
+    Component.prototype._createUi = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
         var $container = this.get(p_id);
         
         if($container !== undefined && $container.size() === 1) {
@@ -1333,7 +1339,17 @@ window.iris = iris;
             if (uiInstance._tmplMode === undefined || uiInstance._tmplMode === uiInstance.REPLACE) {
                 this.el[p_id] = undefined;
             }
-            this.uis[this.uis.length] = uiInstance;
+            this.uis.push(uiInstance);
+
+            // Add uiInstance to the UIs map
+            if ( uiInstance._tmplMode === uiInstance.REPLACE ) {
+                this.uisMap[p_id] = uiInstance;
+            } else {
+                if ( !this.uisMap.hasOwnProperty(p_id) ) {
+                    this.uisMap[p_id] = [];
+                }
+                this.uisMap[p_id].push(uiInstance);
+            }
             
             return uiInstance;
         } else {
@@ -1344,37 +1360,43 @@ window.iris = iris;
 
     Component.prototype.destroyUI = function(p_ui) {
         if ( p_ui === undefined ) {
+            // Self destroy
             this.parentComponent.destroyUI(this);
         } else {
-            for(var f = 0, F = this.uis.length; f < F; f++) {
-                if(this.uis[f] === p_ui) {
-                    this.uis.splice(f, 1);
-                    p_ui._destroy();
-                    p_ui.get().remove();
-                    break;
-                }
+
+            // Destroy our child UI
+            p_ui._destroy();
+            p_ui.get().remove();
+            this.uis.splice($.inArray(this.uis, p_ui), 1);
+
+            // Remove p_ui from the UIs map
+            if ( p_ui._tmplMode === p_ui.REPLACE ) {
+                this.uisMap[p_ui.id] = null;
+                delete this.uisMap[p_ui.id];
+            } else {
+                var uis = this.uisMap[p_ui.id];
+                uis.splice($.inArray(uis, p_ui), 1);
             }
         }
     };
 
     Component.prototype.destroyUIs = function(id) {
+        var uis = this.uisMap[id];
+        if ( $.isArray(uis) ) {
+            var f, F;
+            for ( f=0, F=uis.length; f < F; f++ ) {
+                this.uis.splice($.inArray(this.uis, uis[f]), 1);
 
-        var f, F, ui;
-        for(f = 0, F = this.uis.length; f < F; f++) {
-            ui = this.uis[f];
-
-            if ( ui.id.indexOf(id) !== -1 ) {
-
-                if ( ui._tmplMode === this.REPLACE ) {
-                    throw "self.destroyUIs cannot delete " + id + " because was replaced by an UI, use self.destroyUI";
-                } else {
-                    this.uis.splice(f--, 1);
-                    F--;
-
-                    ui._destroy();
-                    ui.get().remove();
-                }
+                uis[f]._destroy();
+                uis[f].get().remove();
             }
+
+            this.uisMap[id] = null;
+            delete this.uisMap[id];
+
+        } else if ( uis && uis._tmplMode === this.REPLACE ) {
+            // uis is a single UI
+            throw "self.destroyUIs cannot delete id[" + id + "] because was replaced by an UI, use self.destroyUI";
         }
     };
 

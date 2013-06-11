@@ -7,7 +7,10 @@ iris.screen(function (self) {
 
 		self.tmpl("test/component/screen.html");
   
-		iris.on("create_ui", createUi);
+		self.on("create_ui", createUi);
+		self.on("create_ui_tmpl_replace", createUiTmplReplace);
+		self.on("get_ui", getUi);
+		self.on("get_ui_tmpl_replace", getUiTmplReplace);
 		self.on("destroy_ui", destroyUi);
 		self.on("destroy_ui_replace", destroyUiReplace);
 		self.on("destroy_ui_check", destroyUiCheck);
@@ -30,6 +33,23 @@ iris.screen(function (self) {
 		ui = self.ui("container", iris.path.ui, {"setting-param":"setting_value"});
 
 		window.strictEqual(self.uis.length, 1);
+	}
+
+	function createUiTmplReplace () {
+
+		ui = self.ui("container", iris.path.ui_replace);
+
+		window.strictEqual(self.uis.length, 1, "Checking uis length after creation");
+	}
+
+	function getUi () {
+		window.strictEqual(self.ui("container").length, 1, "the ui was not created previously");
+		window.strictEqual(self.ui("container")[0], ui, "self.ui returns the correct IU");
+	}
+
+	function getUiTmplReplace () {
+		window.ok(ui, "The ui was instantiated before");
+		window.strictEqual(self.ui("container"), ui, "self.ui returns the correct UI");
 	}
 
 	function destroyUi () {

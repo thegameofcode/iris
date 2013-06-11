@@ -83,9 +83,9 @@
 
     });
 
-    asyncTest("Create UI", function() {
+    asyncTest("Create UI With Template Mode Append", function() {
 
-        expect(11);
+        expect(13);
 
         iris.welcome("test/component/welcome.js"); // + 4
 
@@ -97,6 +97,30 @@
 
             iris.on(iris.AFTER_NAVIGATION, function () {
                 iris.notify("create_ui"); // + 4
+                iris.notify("get_ui"); // + 2
+
+                start();
+            });
+        });
+    
+    });
+
+    asyncTest("Create UI With Template Mode Replace", function() {
+
+        expect(12);
+
+        iris.welcome("test/component/welcome.js"); // + 4
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            // this will make a real async call
+            iris.navigate("#/screen"); // +3
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.notify("create_ui_tmpl_replace"); // + 3
+                iris.notify("get_ui_tmpl_replace"); // + 2
+
                 start();
             });
         });
