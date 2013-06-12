@@ -16,6 +16,7 @@ _Creation date: 2012-01-12_
  * [upd] Add number to translation label format, close #129
  * [upd] iris.include doesn't allows to load external JS files, close #126
  * [upd] Improve self.ui To Return UI instances, close #132
+ * [upd] Improve Components inflate function, close #130
 
 [0.5.1] 2013-04-05
 https://github.com/thegameofcode/iris/issues?milestone=7&page=1&state=closed
