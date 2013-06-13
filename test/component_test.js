@@ -170,7 +170,7 @@
 
     asyncTest("Destroy UI", function() {
     
-        expect(12);
+        expect(25);
 
         iris.welcome("test/component/welcome.js"); // + 4
 
@@ -182,7 +182,7 @@
             iris.on(iris.AFTER_NAVIGATION, function () {
                 iris.notify("create_ui"); // + 4
 
-                iris.notify("destroy_ui"); // +1
+                iris.notify("destroy_ui"); // +2
                 start();
             });
         });
@@ -230,9 +230,29 @@
         });
     });
 
+    asyncTest("Destroy Multiple UIs 2", function() {
+    
+        expect(19);
+
+        iris.welcome("test/component/welcome.js"); // + 4
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            iris.navigate("#/screen"); // +3
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+
+                iris.notify("destroy_multiple_uis2"); // +3
+
+                start();
+            });
+        });
+    });
+
     asyncTest("Destroy UIs of container replaced by an UI", function() {
     
-        expect(10);
+        expect(11);
 
         iris.welcome("test/component/welcome.js"); // + 4
 

@@ -802,11 +802,13 @@
             // Self destroy
             this.parentComponent.destroyUI(this);
         } else {
+            var idx;
 
-            // Destroy our child UI
-            p_ui._destroy();
-            p_ui.get().remove();
-            this.uis.splice($.inArray(this.uis, p_ui), 1);
+            // Remove p_ui from the UIs array
+            idx = $.inArray(p_ui, this.uis);
+            if ( idx !== -1 ) {
+                this.uis.splice(idx, 1);
+            }
 
             // Remove p_ui from the UIs map
             if ( p_ui._tmplMode === p_ui.REPLACE ) {
@@ -814,8 +816,16 @@
                 delete this.uisMap[p_ui.id];
             } else {
                 var uis = this.uisMap[p_ui.id];
-                uis.splice($.inArray(uis, p_ui), 1);
+
+                idx = $.inArray(p_ui, uis);
+                if ( idx !== -1 ) {
+                    uis.splice(idx, 1);
+                }
             }
+
+            // Destroy p_ui
+            p_ui._destroy();
+            p_ui.get().remove();
         }
     };
 
@@ -823,19 +833,13 @@
         var uis = this.uisMap[id];
         if ( $.isArray(uis) ) {
             var f, F;
-            for ( f=0, F=uis.length; f < F; f++ ) {
-                this.uis.splice($.inArray(this.uis, uis[f]), 1);
-
-                uis[f]._destroy();
-                uis[f].get().remove();
+            for ( f=uis.length-1; f >= 0; f-- ) {
+                this.destroyUI(uis[f]);
             }
-
-            this.uisMap[id] = null;
-            delete this.uisMap[id];
 
         } else if ( uis && uis._tmplMode === this.REPLACE ) {
             // uis is a single UI
-            throw "self.destroyUIs cannot delete id[" + id + "] because was replaced by an UI, use self.destroyUI";
+            this.destroyUI(uis);
         }
     };
 
