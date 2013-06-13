@@ -32,17 +32,14 @@ iris.screen(function (self) {
                     country: "country test"
                 },
                 lastLogin: 1358506927400,
-                updated: "Fri Jan 18 2013 13:09:47 GMT+0100 (CET)",
-                isVisible: true,
-                isNotVisible: false,
-                className: "custom_class"
+                updated: "Fri Jan 18 2013 13:09:47 GMT+0100 (CET)"
             }
         };
 
         self.inflate(data);
 
         // Check printed values
-        window.expect(17);
+        window.expect(11);
 
         window.strictEqual(self.get("test_div").text(), data.person.name, "Data models on divs");
         window.strictEqual(self.get("test_span").text(), data.person.name, "Data models on spans");
@@ -73,25 +70,6 @@ iris.screen(function (self) {
         window.strictEqual(self.get("test_check_accept").attr("checked"), "checked", "Data models with checkbox");
 
         window.start();
-
-        //
-        // Visibility
-        //
-        window.strictEqual(self.get("visible_container").is(":visible"), true, "The visible_container is visible");
-        window.strictEqual(self.get("invisible_container").is(":visible"), false, "The invisible_container is invisible");
-
-        //
-        // Set up a single custom attribute
-        //
-        window.strictEqual(self.get("custom_attr").attr("title"), data.person.name, "The value of a custom attr is setted");
-
-        //
-        // Set up multiple custom attributes
-        //
-        window.strictEqual(self.get("custom_attrs").attr("title"), data.person.name, "(Multiple attrs) The value of a title attr is setted");
-        window.strictEqual(self.get("custom_attrs").data("login"), data.person.lastLogin, "(Multiple attrs) The value of a data-login attr is setted");
-        window.strictEqual(self.get("custom_attrs").attr("class"), data.person.className, "(Multiple attrs) The value of a class attr is setted");
-
 
     };
 

@@ -1187,18 +1187,12 @@ window.iris = iris;
         var models = this.model;
         $("[data-model]", tmpl).each(function(){
             var el = $(this);
+            var modelId = el.data("model");
 
-            var modelExpressions = el.data("model"), f, F, modelId;
-            var modelExpressionsParts = modelExpressions.split(";");
-
-            for (f = 0, F = modelExpressionsParts.length; f < F; f++ ) {
-                modelId = modelExpressionsParts[f];
-
-                if ( !models.hasOwnProperty(modelId) ) {
-                    models[modelId] = [];
-                }
-                models[modelId].push(el);
+            if ( !models.hasOwnProperty(modelId) ) {
+                models[modelId] = [];
             }
+            models[modelId].push(el);
         });
 
         // find data-id components
@@ -1217,124 +1211,60 @@ window.iris = iris;
             throw "[self.inflate] first set a html node with any data-model attribute";
         } else {
 
-            // modelExpressions can be:
-            //  1. "expresion1"
-            //  2. "expresion1;expresion2"
-            var modelExpressions, modelExpressionsParts, f, F;
-            for ( modelExpressions in this.model ) {
-                modelExpressionsParts = modelExpressions.split(";");
+            var modelId, value, elements, nodeName, i, format, el, formatParams, formatMatches;
+            var formatRegExp = /(date|currency)(?:\(([^\)]+)\))/;
 
-                for (f = 0, F = modelExpressionsParts.length; f < F; f++ ) {
-                    this._inflateExpression( modelExpressionsParts[f], data );
-                }
-            }
-        }
-    };
+            for ( modelId in this.model ) {
+                value = iris.val(data, modelId);
 
-    Component.prototype._inflateExpression = function(modelExpression, data) {
+                if ( value !== undefined ) {
+                    elements = this.model[modelId];
+                    formatParams = undefined;
 
-        // modelExpression can be:
-        //  1. "model.attr" only data model value (action setValue)
-        //  2. "visible:model.attr" change visibility depending model value (action visible)
-        //  3. "attr:dom_attr:model.attr" set the value of a custom attribute (action attr)
+                    for ( i = 0; i < elements.length; i++ ) {
+                        el = elements[i];
+                        format = el.data("format");
 
-        var action, model, modelId, value, elements, i, attrTarget;
+                        if ( format && formatRegExp.test(format) ) {
+                          formatMatches = format.match(formatRegExp);
 
-        var modelExpressionParts = modelExpression.split(":");
-        action = (modelExpressionParts.length === 1) ? "setValue" : modelExpressionParts[0];
-        modelId = null;
+                          format = formatMatches[1];
+                          formatParams = formatMatches[2]; // TODO manage multiple parameter using: formatParams.splice(2);
+                        }
 
-        switch (action) {
-            case "setValue":
-                modelId = modelExpressionParts[0];
-            break;
-            case "visible":
-                modelId = modelExpressionParts[1];
-            break;
-            case "attr":
-                attrTarget = modelExpressionParts[1];
-                modelId = modelExpressionParts[2];
-            break;
-        }
+                        if ( format ) {
+                            switch ( format ) {
+                                case "date":
+                                    value = iris.date(value, formatParams);
+                                    break;
+                                case "currency":
+                                    value = iris.currency(value);
+                                    break;
+                                case "number":
+                                    value = iris.number(value);
+                                    break;
+                            }
+                        }
 
-        if ( modelId === null ) {
-            throw "[self.inflate] Invalid data-model expression[" + modelExpression + "] in " + this.jsUrl;
-        }
-
-        value = iris.val(data, modelId);
-
-        if ( value !== undefined ) {
-            elements = this.model[modelExpression];
-
-            for ( i = 0; i < elements.length; i++ ) {
-                switch (action) {
-                    case "setValue":
-                        this._inflateSetValue(elements[i], value);
-                    break;
-                    case "visible":
-                        this._inflateSetVisible(elements[i], value);
-                    break;
-                    case "attr":
-                        this._inflateSetValue(elements[i], value, attrTarget);
-                    break;
-                }
-            }
-        }
-    };
-
-    Component.prototype._inflateSetVisible = function(el, value) {
-        if ( value ) {
-            el.show();
-        } else {
-            el.hide();
-        }
-    };
-
-    Component.prototype._inflateSetValue = function(el, value, attr) {
-        var formatRegExp = /(date|currency)(?:\(([^\)]+)\))/;
-        var format = el.data("format");
-        var formatParams;
-
-        if ( format && formatRegExp.test(format) ) {
-          var formatMatches = format.match(formatRegExp);
-
-          format = formatMatches[1];
-          formatParams = formatMatches[2]; // TODO manage multiple parameter using: formatParams.splice(2);
-        }
-
-        if ( format ) {
-            switch ( format ) {
-                case "date":
-                    value = iris.date(value, formatParams);
-                    break;
-                case "currency":
-                    value = iris.currency(value);
-                    break;
-                case "number":
-                    value = iris.number(value);
-                    break;
-            }
-        }
-
-        if ( attr === undefined ) {
-            var nodeName = el.prop("nodeName").toLowerCase();
-            switch (nodeName) {
-                case "input":
-                    if ( el.prop("type").toLowerCase() === "checkbox" ) {
-                        el.attr("checked", value);
-                    } else {
-                        el.val(value);
+                        nodeName = el.prop("nodeName").toLowerCase();
+                        switch (nodeName) {
+                            case "input":
+                                if ( el.prop("type").toLowerCase() === "checkbox" ) {
+                                    el.attr("checked", value);
+                                } else {
+                                    el.val(value);
+                                }
+                            break;
+                            case "textarea":
+                                el.val(value);
+                            break;
+                            default:
+                                el.html(value);
+                            break;
+                        }
                     }
-                break;
-                case "textarea":
-                    el.val(value);
-                break;
-                default:
-                    el.html(value);
-                break;
-            }
-        } else {
-            el.attr(attr, value);
+                }
+            } 
         }
     };
 
