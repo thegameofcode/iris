@@ -14,12 +14,14 @@ module.exports = function(grunt) {
     concat: {
       dist: {
         src: ['<banner:meta.banner>', 'src/event.js', 'src/core.js', 'src/lang.js', 'src/regional.js', 'src/util.js', 'src/component.js', 'src/resource.js'],
-        dest: 'dist/<%= pkg.name %>.js'
+        dest: 'dist/iris.js'
       }
     },
     uglify: {
       dist: {
-        'dist/<%= pkg.name %>.min.js': ['<banner:meta.banner>', '<config:concat.dist.dest>']
+        files: {
+          'dist/iris.min.js': ['<banner:meta.banner>', 'dist/iris.js']
+        }
       }
     },
     qunit: {
@@ -36,7 +38,7 @@ module.exports = function(grunt) {
       tasks: 'lint qunit'
     },
     jshint: {
-      uses_defaults: [/*'grunt.js',*/ 'src/**/*.js', 'test/**/*.js'],
+      uses_defaults: ['grunt.js', 'src/**/*.js', 'test/**/*.js'],
       options: {
         curly: true,
         eqeqeq: true,
