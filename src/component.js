@@ -621,89 +621,93 @@
                 throw "Unknown template mode '" + p_mode + "'";
         }
 
-        // create model-components map
-        this.model = {};
-        var models = this.model;
-        $("[data-model]", tmpl).each(function(){
-            var el = $(this);
-            var modelId = el.data("model");
-
-            if ( !models.hasOwnProperty(modelId) ) {
-                models[modelId] = [];
-            }
-            models[modelId].push(el);
-        });
-
-        // find data-id components
+        // Find components with data-id and data-attr attributes
         this.el = {};
-        var elements = this.el;
-        $("[data-id]", tmpl).each(function(){
-            var el = $(this);
-            var dataId = el.data("id");
-            elements[dataId] = el;
-        });
+        var elements = this.el; // Keep reference
 
+        this.inflateTargets = {};
+        var inflateTargets = this.inflateTargets; // Keep reference
+
+        // Variables needed to manage attr formatting
+        var format, formatParams, formatMatches, target, formatRegExp = /(date|currency|number)(?:\(([^\)]+)\))/;
+
+        $("*", tmpl).each(function(index, element) {
+            var $el = $(element);
+            var data = $el.data();
+            for ( var key in data ) {
+                if ( key === "id" ) {
+                    elements[data.id] = $el;
+                } else {
+
+                    if ( key.indexOf("setAttr") === 0 ) {
+                        target = key.substr(7).toLowerCase();
+                    } else if ( key === "setHtml" ) {
+                        target = "_html_";
+                    } else if ( key  === "setText" ) {
+                        target = "_text_";
+                    } else {
+                        continue;
+                    }
+
+                    if ( !inflateTargets.hasOwnProperty(data[key]) ) {
+                        inflateTargets[ data[key] ] = [];
+                    }
+
+                    format = $el.data("format");
+                    if ( format && formatRegExp.test(format) ) {
+                      formatMatches = format.match(formatRegExp);
+
+                      format = formatMatches[1];
+                      formatParams = formatMatches[2]; // TODO manage multiple parameter using: formatParams[2].splice(",");
+                    }
+
+                    inflateTargets[ data[key] ].push( { target: target, el: $el, format: format, formatParams: formatParams } );
+                }
+            }
+        });
     };
 
     Component.prototype.inflate = function(data) {
-        if ( this.model === undefined ) {
-            throw "[self.inflate] first set a html node with any data-model attribute";
-        } else {
 
-            var modelId, value, elements, nodeName, i, format, el, formatParams, formatMatches;
-            var formatRegExp = /(date|currency)(?:\(([^\)]+)\))/;
+        var dataKey, f, F, targets, inflate, format, unformattedValue, value;
 
-            for ( modelId in this.model ) {
-                value = iris.val(data, modelId);
+        for ( dataKey in this.inflateTargets ) {
 
-                if ( value !== undefined ) {
-                    elements = this.model[modelId];
-                    formatParams = undefined;
+            unformattedValue = iris.val(data, dataKey);
 
-                    for ( i = 0; i < elements.length; i++ ) {
-                        el = elements[i];
-                        format = el.data("format");
+            if ( unformattedValue ) {
 
-                        if ( format && formatRegExp.test(format) ) {
-                          formatMatches = format.match(formatRegExp);
+                targets = this.inflateTargets[dataKey];
 
-                          format = formatMatches[1];
-                          formatParams = formatMatches[2]; // TODO manage multiple parameter using: formatParams.splice(2);
-                        }
+                for ( f = 0, F = targets.length; f < F; f++ ) {
+                    inflate = targets[f];
 
-                        if ( format ) {
-                            switch ( format ) {
-                                case "date":
-                                    value = iris.date(value, formatParams);
-                                    break;
-                                case "currency":
-                                    value = iris.currency(value);
-                                    break;
-                                case "number":
-                                    value = iris.number(value);
-                                    break;
-                            }
-                        }
-
-                        nodeName = el.prop("nodeName").toLowerCase();
-                        switch (nodeName) {
-                            case "input":
-                                if ( el.prop("type").toLowerCase() === "checkbox" ) {
-                                    el.attr("checked", value);
-                                } else {
-                                    el.val(value);
-                                }
+                    switch ( inflate.format ) {
+                        case "date":
+                            value = iris.date(unformattedValue, inflate.formatParams);
                             break;
-                            case "textarea":
-                                el.val(value);
+                        case "currency":
+                            value = iris.currency(unformattedValue);
                             break;
-                            default:
-                                el.html(value);
+                        case "number":
+                            value = iris.number(unformattedValue);
                             break;
-                        }
+                        default:
+                            value = unformattedValue;
+                    }
+
+                    switch ( inflate.target ) {
+                        case "_text_":
+                            inflate.el.text(value);
+                            break;
+                        case "_html_":
+                            inflate.el.html(value);
+                            break;
+                        default:
+                            inflate.el.attr(inflate.target, value);
                     }
                 }
-            } 
+            }
         }
     };
 

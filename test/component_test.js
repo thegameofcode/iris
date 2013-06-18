@@ -46,7 +46,9 @@
                 screen : "test/component/screen.js",
                 screen_tmpl : "test/component/screen.html",
                 models : "test/component/models.js",
-                models_tmpl : "test/component/models.html"
+                models_tmpl : "test/component/models.html",
+                dataset : "test/component/dataset.js",
+                dataset_tmpl : "test/component/dataset.html"
             };
         },
         teardown: function () {
@@ -337,8 +339,8 @@
         });
     });
 
-    asyncTest("Test models", function() {
-        iris.welcome("test/component/models.js");
+    asyncTest("Test data-set-*", function() {
+        iris.welcome("test/component/dataset.js");
     
     });
 
