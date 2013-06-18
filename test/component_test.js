@@ -45,8 +45,6 @@
                 ui_repeated_dataid_tmpl : "test/component/ui_repeated_dataid.html",
                 screen : "test/component/screen.js",
                 screen_tmpl : "test/component/screen.html",
-                models : "test/component/models.js",
-                models_tmpl : "test/component/models.html",
                 dataset : "test/component/dataset.js",
                 dataset_tmpl : "test/component/dataset.html"
             };

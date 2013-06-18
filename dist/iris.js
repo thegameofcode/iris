@@ -1206,6 +1206,8 @@ window.iris = iris;
                         target = "_html_";
                     } else if ( key  === "setText" ) {
                         target = "_text_";
+                    } else if ( key  === "setVal" ) {
+                        target = "_val_";
                     } else {
                         continue;
                     }
@@ -1263,6 +1265,9 @@ window.iris = iris;
                             break;
                         case "_html_":
                             inflate.el.html(value);
+                            break;
+                        case "_val_":
+                            inflate.el.val(value);
                             break;
                         default:
                             inflate.el.attr(inflate.target, value);
