@@ -683,7 +683,7 @@ window.iris = iris;
                     path += "?_=" + iris.cacheVersion();
                 }
                 
-                if ( /.html$/.test(paths[i]) ) {
+                if ( /\.html$/.test(paths[i]) ) {
                     iris.ajax({
                         url: path,
                         dataType: "html",
@@ -1190,43 +1190,85 @@ window.iris = iris;
         var inflateTargets = this.inflateTargets; // Keep reference
 
         // Variables needed to manage attr formatting
-        var format, formatParams, formatMatches, target, formatRegExp = /(date|currency|number)(?:\(([^\)]+)\))/;
+        var FORMAT_REG_EXP = /(date|currency|number)(?:\(([^\)]+)\))/;
 
         $("*", tmpl).each(function(index, element) {
+            
             var $el = $(element);
             var data = $el.data();
+
+            var inflateFormats = {}, inflatesByKeys = {};
+            var target, targetParams, format, formatParams, formatMatches;
+
             for ( var key in data ) {
+                // data-id
                 if ( key === "id" ) {
                     elements[data.id] = $el;
-                } else {
+                    continue;
+                }
 
-                    if ( key.indexOf("setAttr") === 0 ) {
-                        target = key.substr(7).toLowerCase();
-                    } else if ( key === "setHtml" ) {
-                        target = "_html_";
-                    } else if ( key  === "setText" ) {
+                // data-*-format
+                if ( /Format$/.test(key) ) {
+                    format = data[key];
+                    formatParams = undefined;
+
+                    if ( format && FORMAT_REG_EXP.test(format) ) {
+                        formatMatches = format.match(FORMAT_REG_EXP);
+
+                        format = formatMatches[1];
+                        formatParams = formatMatches[2]; // TODO manage multiple parameter using: formatParams[2].splice(",");
+                    }
+
+                    inflateFormats[ key.replace(/Format$/, "") ] = { key: format, params: formatParams };
+                    continue;
+                }
+
+                switch (key) {
+                    case "jqText":
                         target = "_text_";
-                    } else if ( key  === "setVal" ) {
+                        break;
+                    case "jqHtml":
+                        target = "_html_";
+                        break;
+                    case "jqVal":
                         target = "_val_";
-                    } else {
-                        continue;
-                    }
+                        break;
+                    case "jqToggle":
+                        target = "_toggle_";
+                        break;
+                    case "jqHtml":
+                        target = "_html_";
+                        break;
+                    default:
+                        if ( key.indexOf("jqAttr") === 0 ) {
+                            target = "_attr_";
+                            targetParams = key.substr(6).toLowerCase();
+                        } else if ( key.indexOf("jqCss") === 0 ) {
+                            target = "_css_";
+                            targetParams = key.substr(5).toLowerCase();
+                        } else {
+                            continue;
+                        }
+                }
 
-                    if ( !inflateTargets.hasOwnProperty(data[key]) ) {
-                        inflateTargets[ data[key] ] = [];
-                    }
+                if ( !inflateTargets.hasOwnProperty(data[key]) ) {
+                    inflateTargets[ data[key] ] = [];
+                }
 
-                    format = $el.data("format");
-                    if ( format && formatRegExp.test(format) ) {
-                      formatMatches = format.match(formatRegExp);
+                var inflate = { target: target, targetParams: targetParams, el: $el };
 
-                      format = formatMatches[1];
-                      formatParams = formatMatches[2]; // TODO manage multiple parameter using: formatParams[2].splice(",");
-                    }
+                inflateTargets[ data[key] ].push( inflate );
+                inflatesByKeys[key] = inflate;
+            }
 
-                    inflateTargets[ data[key] ].push( { target: target, el: $el, format: format, formatParams: formatParams } );
+            // After of iterate the element data attributes, set the formatting to each target
+            for ( key in inflateFormats ) {
+                if ( inflatesByKeys.hasOwnProperty(key) ) {
+                    inflatesByKeys[key].format = inflateFormats[key].key;
+                    inflatesByKeys[key].formatParams = inflateFormats[key].params;
                 }
             }
+
         });
     };
 
@@ -1269,8 +1311,14 @@ window.iris = iris;
                         case "_val_":
                             inflate.el.val(value);
                             break;
-                        default:
-                            inflate.el.attr(inflate.target, value);
+                        case "_toggle_":
+                            inflate.el.toggle(value);
+                            break;
+                        case "_attr_":
+                            inflate.el.attr(inflate.targetParams, value);
+                            break;
+                        case "_css_":
+                            inflate.el.css(inflate.targetParams, value);
                     }
                 }
             }

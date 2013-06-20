@@ -629,13 +629,15 @@
         var inflateTargets = this.inflateTargets; // Keep reference
 
         // Variables needed to manage attr formatting
-        var format, formatParams, formatMatches, target, formatRegExp = /(date|currency|number)(?:\(([^\)]+)\))/;
+        var FORMAT_REG_EXP = /(date|currency|number)(?:\(([^\)]+)\))/;
 
         $("*", tmpl).each(function(index, element) {
+            
             var $el = $(element);
             var data = $el.data();
-            var inflateFormats = {};
-            var inflatesByKeys = {};
+
+            var inflateFormats = {}, inflatesByKeys = {};
+            var target, targetParams, format, formatParams, formatMatches;
 
             for ( var key in data ) {
                 // data-id
@@ -649,8 +651,8 @@
                     format = data[key];
                     formatParams = undefined;
 
-                    if ( format && formatRegExp.test(format) ) {
-                        formatMatches = format.match(formatRegExp);
+                    if ( format && FORMAT_REG_EXP.test(format) ) {
+                        formatMatches = format.match(FORMAT_REG_EXP);
 
                         format = formatMatches[1];
                         formatParams = formatMatches[2]; // TODO manage multiple parameter using: formatParams[2].splice(",");
@@ -679,10 +681,10 @@
                     default:
                         if ( key.indexOf("jqAttr") === 0 ) {
                             target = "_attr_";
-                            targetParam = key.substr(6).toLowerCase();
+                            targetParams = key.substr(6).toLowerCase();
                         } else if ( key.indexOf("jqCss") === 0 ) {
                             target = "_css_";
-                            targetParam = key.substr(5).toLowerCase();
+                            targetParams = key.substr(5).toLowerCase();
                         } else {
                             continue;
                         }
@@ -692,12 +694,12 @@
                     inflateTargets[ data[key] ] = [];
                 }
 
-                var inflate = { target: target, targetParam : targetParam, el: $el };
+                var inflate = { target: target, targetParams: targetParams, el: $el };
 
                 inflateTargets[ data[key] ].push( inflate );
                 inflatesByKeys[key] = inflate;
             }
-            
+
             // After of iterate the element data attributes, set the formatting to each target
             for ( key in inflateFormats ) {
                 if ( inflatesByKeys.hasOwnProperty(key) ) {
@@ -752,10 +754,10 @@
                             inflate.el.toggle(value);
                             break;
                         case "_attr_":
-                            inflate.el.attr(inflate.targetParam, value);
+                            inflate.el.attr(inflate.targetParams, value);
                             break;
                         case "_css_":
-                            inflate.el.css(inflate.targetParam, value);
+                            inflate.el.css(inflate.targetParams, value);
                     }
                 }
             }
