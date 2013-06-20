@@ -122,7 +122,7 @@
                     path += "?_=" + iris.cacheVersion();
                 }
                 
-                if ( /.html$/.test(paths[i]) ) {
+                if ( /\.html$/.test(paths[i]) ) {
                     iris.ajax({
                         url: path,
                         dataType: "html",
