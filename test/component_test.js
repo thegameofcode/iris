@@ -45,8 +45,8 @@
                 ui_repeated_dataid_tmpl : "test/component/ui_repeated_dataid.html",
                 screen : "test/component/screen.js",
                 screen_tmpl : "test/component/screen.html",
-                dataset : "test/component/dataset.js",
-                dataset_tmpl : "test/component/dataset.html"
+                datajq : "test/component/datajq.js",
+                datajq_tmpl : "test/component/datajq.html"
             };
         },
         teardown: function () {
@@ -337,9 +337,8 @@
         });
     });
 
-    asyncTest("Test data-set-*", function() {
-        iris.welcome("test/component/dataset.js");
-    
+    asyncTest("Test data-jq-*", function() {
+        iris.welcome(iris.path.datajq);
     });
 
     asyncTest("Test include", function() {

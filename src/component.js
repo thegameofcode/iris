@@ -634,38 +634,78 @@
         $("*", tmpl).each(function(index, element) {
             var $el = $(element);
             var data = $el.data();
+            var inflateFormats = {};
+            var inflatesByKeys = {};
+
             for ( var key in data ) {
+                // data-id
                 if ( key === "id" ) {
                     elements[data.id] = $el;
-                } else {
+                    continue;
+                }
 
-                    if ( key.indexOf("setAttr") === 0 ) {
-                        target = key.substr(7).toLowerCase();
-                    } else if ( key === "setHtml" ) {
-                        target = "_html_";
-                    } else if ( key  === "setText" ) {
-                        target = "_text_";
-                    } else if ( key  === "setVal" ) {
-                        target = "_val_";
-                    } else {
-                        continue;
-                    }
+                // data-*-format
+                if ( /Format$/.test(key) ) {
+                    format = data[key];
+                    formatParams = undefined;
 
-                    if ( !inflateTargets.hasOwnProperty(data[key]) ) {
-                        inflateTargets[ data[key] ] = [];
-                    }
-
-                    format = $el.data("format");
                     if ( format && formatRegExp.test(format) ) {
-                      formatMatches = format.match(formatRegExp);
+                        formatMatches = format.match(formatRegExp);
 
-                      format = formatMatches[1];
-                      formatParams = formatMatches[2]; // TODO manage multiple parameter using: formatParams[2].splice(",");
+                        format = formatMatches[1];
+                        formatParams = formatMatches[2]; // TODO manage multiple parameter using: formatParams[2].splice(",");
                     }
 
-                    inflateTargets[ data[key] ].push( { target: target, el: $el, format: format, formatParams: formatParams } );
+                    inflateFormats[ key.replace(/Format$/, "") ] = { key: format, params: formatParams };
+                    continue;
+                }
+
+                switch (key) {
+                    case "jqText":
+                        target = "_text_";
+                        break;
+                    case "jqHtml":
+                        target = "_html_";
+                        break;
+                    case "jqVal":
+                        target = "_val_";
+                        break;
+                    case "jqToggle":
+                        target = "_toggle_";
+                        break;
+                    case "jqHtml":
+                        target = "_html_";
+                        break;
+                    default:
+                        if ( key.indexOf("jqAttr") === 0 ) {
+                            target = "_attr_";
+                            targetParam = key.substr(6).toLowerCase();
+                        } else if ( key.indexOf("jqCss") === 0 ) {
+                            target = "_css_";
+                            targetParam = key.substr(5).toLowerCase();
+                        } else {
+                            continue;
+                        }
+                }
+
+                if ( !inflateTargets.hasOwnProperty(data[key]) ) {
+                    inflateTargets[ data[key] ] = [];
+                }
+
+                var inflate = { target: target, targetParam : targetParam, el: $el };
+
+                inflateTargets[ data[key] ].push( inflate );
+                inflatesByKeys[key] = inflate;
+            }
+            
+            // After of iterate the element data attributes, set the formatting to each target
+            for ( key in inflateFormats ) {
+                if ( inflatesByKeys.hasOwnProperty(key) ) {
+                    inflatesByKeys[key].format = inflateFormats[key].key;
+                    inflatesByKeys[key].formatParams = inflateFormats[key].params;
                 }
             }
+
         });
     };
 
@@ -708,8 +748,14 @@
                         case "_val_":
                             inflate.el.val(value);
                             break;
-                        default:
-                            inflate.el.attr(inflate.target, value);
+                        case "_toggle_":
+                            inflate.el.toggle(value);
+                            break;
+                        case "_attr_":
+                            inflate.el.attr(inflate.targetParam, value);
+                            break;
+                        case "_css_":
+                            inflate.el.css(inflate.targetParam, value);
                     }
                 }
             }
