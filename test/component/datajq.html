@@ -1,0 +1,26 @@
+<div>
+
+	<div data-id="test_div" data-jq-attr-title="person.name"></div>
+
+	<div data-id="test_multiple_attrs" data-jq-html="person.region.country" data-jq-attr-title="person.name" data-jq-attr-style="person.style"></div>
+
+	<input data-id="test_input_hidden" data-jq-attr-value="person.name" type="hidden" />
+
+	<input data-id="test_check_accept" data-jq-attr-checked="person.acceptTerms" type="checkbox" />
+
+	<button data-id="test_button" data-jq-text="person.region.country"></button>
+
+	<textarea data-id="test_textarea" data-jq-text="person.name"></textarea>
+
+	<input data-id="test_radio" type="radio" data-jq-prop-checked="person.isAdmin" checked="checked" />
+
+	<!-- Formatting -->
+	<span data-id="test_format_currency" data-jq-attr-title="person.money" data-jq-attr-title-format="currency"></span>
+
+	<span data-id="test_format_date" data-jq-text="person.lastLogin" data-jq-text-format="date"></span>
+
+	<span data-id="test_format_date_params" data-jq-text="person.updated" data-jq-text-format="date(y-m-d)"></span>
+	
+	<span data-id="test_format_number" data-jq-text="person.num" data-jq-text-format="number"></span>
+
+</div>

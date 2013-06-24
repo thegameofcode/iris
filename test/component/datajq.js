@@ -1,0 +1,81 @@
+iris.screen(function (self) {
+
+    // First of all, formatting configurations
+    iris.locale(
+        "en_US", {
+            dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+            dateFormat: "m/d/Y h:i:s",
+            currency: {
+                formatPos: "n",
+                formatNeg: "(n)",
+                decimal: ".",
+                thousand: ",",
+                precision: 2
+            }
+        }
+    );
+    iris.locale("en_US");
+
+    self.create = function() {
+        self.tmpl(iris.path.datajq_tmpl);
+
+        var data = {
+            person: {
+                name:"test name",
+                money: -67890.678,
+                num: 1014.68,
+                acceptTerms : true,
+                isAdmin : false,
+                region: {
+                    country: "country test"
+                },
+                lastLogin: 1358506927400,
+                updated: "Fri Jan 18 2013 13:09:47 GMT+0100 (CET)",
+                style: "color:green;"
+            }
+        };
+
+
+        // Check printed values
+        window.expect(13);
+
+        self.inflate(data);
+
+        window.strictEqual(self.get("test_div").attr("title"), data.person.name, "Data attr in div title attribute");
+
+        window.strictEqual(self.get("test_multiple_attrs").html(), data.person.region.country, "Set up a multiple attributes, val");
+        window.strictEqual(self.get("test_multiple_attrs").attr("title"), data.person.name, "Set up a multiple attributes, title");
+        window.strictEqual(self.get("test_multiple_attrs").attr("style"), data.person.style, "Set up a multiple attributes, style");
+
+        window.strictEqual(self.get("test_textarea").text(), data.person.name, "Data set text on textareas");
+
+        window.strictEqual(self.get("test_check_accept").attr("checked"), "checked", "Data set checked");
+
+        window.strictEqual(self.get("test_input_hidden").val(), data.person.name, "Data jq on hidden inputs");
+
+        window.strictEqual(self.get("test_button").text(), data.person.region.country, "Data jq on button");
+
+        window.strictEqual(self.get("test_radio").prop("checked"), data.person.isAdmin, "Data jq on radio");
+
+
+        // Currency
+        var money = iris.currency( data.person.money );
+        window.strictEqual(self.get("test_format_currency").attr("title"), money, "With currency format");
+
+        // Dates
+        var date = iris.date( data.person.lastLogin );
+        window.strictEqual(self.get("test_format_date").text(), date, "With date format");
+
+        date = iris.date( data.person.updated, "y-m-d" );
+        window.strictEqual(self.get("test_format_date_params").text(), date, "With date format & param");
+
+        var num = iris.number(data.person.num);
+        window.strictEqual(self.get("test_format_number").text(), num, "With number format");
+
+
+        window.start();
+
+    };
+
+},iris.path.datajq);
