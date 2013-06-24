@@ -20,6 +20,7 @@ https://github.com/thegameofcode/iris/issues?milestone=8&page=1&state=closed
  * [upd] Add number to translation label format, close #129
  * [upd] iris.include doesn't allows to load external JS files, close #126
  * [upd] Improve self.ui To Return UI instances, close #132
+ * [upd] iris.include: Added UTF-8 charset to load javascript files
 
 
 [0.5.1] 2013-04-05

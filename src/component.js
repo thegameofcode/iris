@@ -134,6 +134,7 @@
                     script = document.createElement("script");
                     script.type = "text/javascript";
                     script.src = path;
+                    script.charset = "UTF-8";
                     if (iris.browser().msie  && parseInt(iris.browser().version, 10) < 9) {
                         script.onreadystatechange = onReadyStateChange;
                     } else {
@@ -679,14 +680,22 @@
                         target = "_html_";
                         break;
                     default:
-                        if ( key.indexOf("jqAttr") === 0 ) {
-                            target = "_attr_";
-                            targetParams = key.substr(6).toLowerCase();
-                        } else if ( key.indexOf("jqCss") === 0 ) {
-                            target = "_css_";
-                            targetParams = key.substr(5).toLowerCase();
-                        } else {
-                            continue;
+
+                        switch (0) {
+                            case key.indexOf("jqAttr"):
+                                target = "_attr_";
+                                targetParams = key.substr(6).toLowerCase();
+                            break;
+                            case key.indexOf("jqProp"):
+                                target = "_prop_";
+                                targetParams = key.substr(6).toLowerCase();
+                            break;
+                            case key.indexOf("jqCss"):
+                                target = "_css_";
+                                targetParams = key.substr(5).toLowerCase();
+                            break;
+                            default:
+                                continue;
                         }
                 }
 
@@ -716,10 +725,9 @@
         var dataKey, f, F, targets, inflate, format, unformattedValue, value;
 
         for ( dataKey in this.inflateTargets ) {
-
             unformattedValue = iris.val(data, dataKey);
 
-            if ( unformattedValue ) {
+            if ( unformattedValue !== undefined ) {
 
                 targets = this.inflateTargets[dataKey];
 
@@ -752,6 +760,9 @@
                             break;
                         case "_toggle_":
                             inflate.el.toggle(value);
+                            break;
+                        case "_prop_":
+                            inflate.el.prop(inflate.targetParams, value);
                             break;
                         case "_attr_":
                             inflate.el.attr(inflate.targetParams, value);
