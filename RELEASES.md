@@ -21,6 +21,7 @@ https://github.com/thegameofcode/iris/issues?milestone=8&page=1&state=closed
  * [upd] iris.include doesn't allows to load external JS files, close #126
  * [upd] Improve self.ui To Return UI instances, close #132
  * [upd] iris.include: Added UTF-8 charset to load javascript files
+ * [upd] Info to iris.ajax error callback, close #118
 
 
 [0.5.1] 2013-04-05
