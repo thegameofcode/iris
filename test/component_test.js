@@ -19,7 +19,9 @@
       notDeepEqual(actual, expected, [message])
       strictEqual(actual, expected, [message])
       notStrictEqual(actual, expected, [message])
-      raises(block, [expected], [message])
+      
+      throws(block, [expected], [message])
+      http://api.qunitjs.com/throws/
   */
 
     iris.cache(false);
@@ -54,6 +56,96 @@
         }
     });
 
+    asyncTest("Register An Invalid Screen", function() {
+
+        expect(5);
+
+        var mockedScreen = function() {};
+
+        raises(function () {
+            iris.screen(mockedScreen, undefined);
+        }, "Invalid path on screen registration");
+
+        raises(function () {
+            iris.screen(mockedScreen, null);
+        }, "Invalid path on screen registration");
+
+        raises(function () {
+            iris.screen(mockedScreen, "");
+        }, "Invalid path on screen registration");
+
+        raises(function () {
+            iris.screen(mockedScreen, false);
+        }, "Invalid path on screen registration");
+
+        raises(function () {
+            iris.screen(mockedScreen, 7);
+        }, "Invalid path on screen registration");
+
+        start();
+
+    });
+
+    asyncTest("Register An Invalid UI", function() {
+
+        expect(5);
+
+        var mockedUI = function() {};
+
+        raises(function () {
+            iris.ui(mockedUI, undefined);
+        }, "Invalid path on ui registration");
+
+        raises(function () {
+            iris.ui(mockedUI, null);
+        }, "Invalid path on ui registration");
+
+        raises(function () {
+            iris.ui(mockedUI, "");
+        }, "Invalid path on ui registration");
+
+        raises(function () {
+            iris.ui(mockedUI, false);
+        }, "Invalid path on ui registration");
+
+        raises(function () {
+            iris.ui(mockedUI, 7);
+        }, "Invalid path on ui registration");
+
+        start();
+
+    });
+
+    asyncTest("Register An Invalid Resource", function() {
+
+        expect(5);
+
+        var mockedRes = function() {};
+
+        raises(function () {
+            iris.resource(mockedRes, undefined);
+        }, "Invalid path on resource registration");
+
+        raises(function () {
+            iris.resource(mockedRes, null);
+        }, "Invalid path on resource registration");
+
+        raises(function () {
+            iris.resource(mockedRes, "");
+        }, "Invalid path on resource registration");
+
+        raises(function () {
+            iris.resource(mockedRes, false);
+        }, "Invalid path on resource registration");
+
+        raises(function () {
+            iris.resource(mockedRes, 7);
+        }, "Invalid path on resource registration");
+
+        start();
+
+    });
+
     asyncTest("Welcome Screen", function() {
 
         expect(4);
@@ -65,7 +157,7 @@
         });
     });
 
-    asyncTest("Navigate To A Invalid Screen", function() {
+    asyncTest("Navigate To An Invalid Screen", function() {
     
         expect(5);
     
@@ -75,7 +167,7 @@
             iris.off(iris.AFTER_NAVIGATION);
 
             iris.on(iris.AFTER_NAVIGATION, function () {
-                throw "A navigation event has been raised";
+                throw "A navigation event has been raises";
             });
 
             iris.on(iris.SCREEN_NOT_FOUND, function (path) {

@@ -88,6 +88,15 @@
         }
     }
 
+    // Ensure include is defined
+    function _setInclude (include, path, type) {
+        if ( $.type(path) !== "string" || path === "" ) {
+            iris.log("[error] path[" + path + "]", include);
+            throw "Invalid path on " + type +" registration";
+        }
+        _includes[path] = include;
+    }
+
     function _pathsLoaded () {
         
         // check hashchange event support
@@ -349,7 +358,7 @@
     }
 
     function _registerUI(ui, path) {
-        _includes[path] = ui;
+        _setInclude(ui, path, "ui");
     }
 
     function _instanceUI(p_$container, p_uiId, p_jsUrl, p_uiSettings, p_templateMode, parentComponent) {
@@ -403,8 +412,8 @@
     // SCREEN
     //
 
-    function _registerScreen(f_screen, path) {
-        _includes[path] = f_screen;
+    function _registerScreen(screen, path) {
+        _setInclude(screen, path, "screen");
     }
 
     function _instanceScreen (p_screenPath) {
@@ -1039,7 +1048,7 @@
             serv.settings({ type: "json", path: "" });
             resourceOrPath(serv);
 
-            _includes[path] = serv;
+            _setInclude(serv, path, "resource");
         }
 
     }
