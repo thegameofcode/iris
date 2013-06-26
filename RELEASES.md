@@ -13,6 +13,7 @@ https://github.com/thegameofcode/iris/issues?milestone=8&page=1&state=closed
  * [dep] Deprecated data-model
  * [new] Checkbox test case in models.js
  * [new] iris.log allows multiple parameters
+ * [new] Notify event (iris.SCREEN_NOT_FOUND) and print message instead of raise exception, close #131
  * [fix] Fixed iris.enableLog & iris.noCache
  * [upd] Updated to last version of GruntJS v0.4.1
  * [upd] API doc

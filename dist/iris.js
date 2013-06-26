@@ -114,6 +114,7 @@ window.iris = iris;
     iris.BEFORE_NAVIGATION = "iris_before_navigation";
     iris.AFTER_NAVIGATION = "iris_after_navigation";
     iris.RESOURCE_ERROR = "iris_resource_error";
+    iris.SCREEN_NOT_FOUND = "iris_screen_not_found";
     
     _init();
 
@@ -695,6 +696,7 @@ window.iris = iris;
                     script = document.createElement("script");
                     script.type = "text/javascript";
                     script.src = path;
+                    script.charset = "UTF-8";
                     if (iris.browser().msie  && parseInt(iris.browser().version, 10) < 9) {
                         script.onreadystatechange = onReadyStateChange;
                     } else {
@@ -827,7 +829,12 @@ window.iris = iris;
                 screenPath = _getScreenPath(curr, i);
 
                 if ( !_screenContainer.hasOwnProperty(screenPath) ) {
-                    throw "'" + screenPath + "' must be registered using self.screens()";
+                    
+                    // Notify event and print message instead of raise exception, since v0.5.2
+                    iris.notify(iris.SCREEN_NOT_FOUND, screenPath);
+                    iris.log("[warning] '" + screenPath + "' must be registered using self.screens()");
+                    return;
+
                 } else {
 
                     if ( !_screen.hasOwnProperty(screenPath) ) {
@@ -1240,14 +1247,22 @@ window.iris = iris;
                         target = "_html_";
                         break;
                     default:
-                        if ( key.indexOf("jqAttr") === 0 ) {
-                            target = "_attr_";
-                            targetParams = key.substr(6).toLowerCase();
-                        } else if ( key.indexOf("jqCss") === 0 ) {
-                            target = "_css_";
-                            targetParams = key.substr(5).toLowerCase();
-                        } else {
-                            continue;
+
+                        switch (0) {
+                            case key.indexOf("jqAttr"):
+                                target = "_attr_";
+                                targetParams = key.substr(6).toLowerCase();
+                            break;
+                            case key.indexOf("jqProp"):
+                                target = "_prop_";
+                                targetParams = key.substr(6).toLowerCase();
+                            break;
+                            case key.indexOf("jqCss"):
+                                target = "_css_";
+                                targetParams = key.substr(5).toLowerCase();
+                            break;
+                            default:
+                                continue;
                         }
                 }
 
@@ -1277,10 +1292,9 @@ window.iris = iris;
         var dataKey, f, F, targets, inflate, format, unformattedValue, value;
 
         for ( dataKey in this.inflateTargets ) {
-
             unformattedValue = iris.val(data, dataKey);
 
-            if ( unformattedValue ) {
+            if ( unformattedValue !== undefined ) {
 
                 targets = this.inflateTargets[dataKey];
 
@@ -1313,6 +1327,9 @@ window.iris = iris;
                             break;
                         case "_toggle_":
                             inflate.el.toggle(value);
+                            break;
+                        case "_prop_":
+                            inflate.el.prop(inflate.targetParams, value);
                             break;
                         case "_attr_":
                             inflate.el.attr(inflate.targetParams, value);
@@ -1632,7 +1649,7 @@ window.iris = iris;
                 iris.notify(iris.RESOURCE_ERROR, {request: p_request, status: p_textStatus, error: p_errorThrown});
 
                 if ( f_error !== undefined ) {
-                    f_error();
+                    f_error( p_request, p_textStatus, p_errorThrown );
                 }
             }
         });

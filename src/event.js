@@ -114,6 +114,7 @@ window.iris = iris;
     iris.BEFORE_NAVIGATION = "iris_before_navigation";
     iris.AFTER_NAVIGATION = "iris_after_navigation";
     iris.RESOURCE_ERROR = "iris_resource_error";
+    iris.SCREEN_NOT_FOUND = "iris_screen_not_found";
     
     _init();
 

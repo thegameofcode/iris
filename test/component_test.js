@@ -65,6 +65,29 @@
         });
     });
 
+    asyncTest("Navigate To A Invalid Screen", function() {
+    
+        expect(5);
+    
+        iris.welcome("test/component/welcome.js"); // + 4
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                throw "A navigation event has been raised";
+            });
+
+            iris.on(iris.SCREEN_NOT_FOUND, function (path) {
+                strictEqual(path, "#/invalid_screen_not_exists", "The path is not the same");
+                start();
+            });
+
+            iris.navigate("#/invalid_screen_not_exists"); // 0
+        });
+
+    });
+
     asyncTest("Navigate To Screen", function() {
     
         expect(7);

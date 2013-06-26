@@ -267,7 +267,12 @@
                 screenPath = _getScreenPath(curr, i);
 
                 if ( !_screenContainer.hasOwnProperty(screenPath) ) {
-                    throw "'" + screenPath + "' must be registered using self.screens()";
+                    
+                    // Notify event and print message instead of raise exception, since v0.5.2
+                    iris.notify(iris.SCREEN_NOT_FOUND, screenPath);
+                    iris.log("[warning] '" + screenPath + "' must be registered using self.screens()");
+                    return;
+
                 } else {
 
                     if ( !_screen.hasOwnProperty(screenPath) ) {
