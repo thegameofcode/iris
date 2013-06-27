@@ -412,6 +412,25 @@
         });
     });
 
+    asyncTest("Template Params", function() {
+
+        expect(7);
+
+        iris.welcome("test/component/welcome.js"); // + 4
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            iris.navigate("#?param1=value1&param2=value2&param3=value3"); // +3
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+
+                iris.notify("awake_params"); // +1
+                start();
+            });
+        });
+    });
+
     asyncTest("Template Lang Values", function() {
 
         expect(8);

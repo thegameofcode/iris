@@ -854,6 +854,7 @@ window.iris = iris;
 
                     var screenInstance = _screen[screenPath];
                     var screenParams = _navGetParams(curr[i]);
+                    screenInstance.params = screenParams;
                     screenInstance.show();
                     screenInstance._awake(screenParams);
                 }
@@ -991,6 +992,7 @@ window.iris = iris;
         screenObj.events = {};
         screenObj.con = _screenContainer[p_screenPath];
         screenObj.fileJs = jsUrl;
+        screenObj.params = {};
         if ( screenObj.cfg === null ) {
             screenObj.cfg = {};
         }
@@ -1534,12 +1536,16 @@ window.iris = iris;
     //
     var Screen = function() {
         this.screenConId = null;
+        this.params = null;
     };
 
     Screen.prototype = new Component();
 
-    Screen.prototype.ui = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
+    Screen.prototype.param = function(p_key) {
+        return this.params[p_key];
+    };
 
+    Screen.prototype.ui = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
         if ( p_id === this.screenConId ) {
             throw "'" + p_id + "' has already been registered as a screen container";
         }

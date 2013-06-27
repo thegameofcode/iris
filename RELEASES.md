@@ -9,21 +9,24 @@ _Creation date: 2012-01-12_
 [0.5.2] 2013-xx-xx
 https://github.com/thegameofcode/iris/issues?milestone=8&page=1&state=closed
 
- * [dep] Deprecated template parameters and ##notation##
- * [dep] Deprecated data-model
- * [new] Checkbox test case in models.js
+ * [fix] Fix iris.enableLog & iris.noCache
+ * [dep] Deprecate template parameters and ##notation##
+ * [dep] Deprecate data-model
+ * [new] New data-jq-* attributes to print data on templates easily, close #130
+ * [new] Create Screen.param() to improve components getting parameters, close #133
  * [new] iris.log allows multiple parameters
  * [new] Notify event (iris.SCREEN_NOT_FOUND) and print message instead of raise exception, close #131
  * [new] Raises exception when registering component with invalid path, close #127
- * [fix] Fixed iris.enableLog & iris.noCache
- * [upd] Updated to last version of GruntJS v0.4.1
- * [upd] API doc
- * [upd] Updated tests using jQuery version v2.0.0
+ * [upd] Improve self.ui To Return UI instances, close #132
+ * [new] Improve tests with new test cases
  * [upd] Add number to translation label format, close #129
  * [upd] iris.include doesn't allows to load external JS files, close #126
- * [upd] Improve self.ui To Return UI instances, close #132
  * [upd] iris.include: Added UTF-8 charset to load javascript files
  * [upd] Info to iris.ajax error callback, close #118
+ * [upd] API doc
+ * [upd] Updated jQuery to v2.0.0 (for testing)
+ * [upd] Update GruntJS to v0.4.1
+ * [upd] Updated QUnit to v1.12.0
 
 
 [0.5.1] 2013-04-05
