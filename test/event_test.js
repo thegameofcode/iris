@@ -38,15 +38,62 @@
       }
   });
 
-  test("Event Test", function () {
+  test("Notify An Undefined Event", function () {
+      expect(1);
+
+      raises(function () {
+          iris.notify(undefined);
+
+      },
+      "[notify] event name parameter is not defined",
+      "Thrown an exception when notify an undefined event");
+  });
+
+  test("Notify An Event Without Callbacks Test", function () {
+      expect(1);
+
+      iris.notify("test-event");
+
+      window.ok(true, "No errors when notify a undefined event without callbacks");
+  });
+
+  test("On & Off Test", function () {
       expect(1);
 
       iris.on("test-event", onEvent);
-      iris.notify("test-event");
+      iris.notify("test-event"); // +1
 
       iris.off("test-event", onEvent);
-      iris.notify("test-event");
+      iris.notify("test-event"); // 0
 
+  });
+
+  test("Manage Multiple Event Types Test", function () {
+      expect(8);
+
+      iris.on("event-type-1", onEvent);
+      iris.notify("event-type-1"); // +1
+
+      iris.on("event-type-2", onEvent);
+      iris.notify("event-type-2"); // +1
+
+      iris.on("event-type-1", onEvent2);
+      iris.notify("event-type-1"); // +2
+
+      iris.on("event-type-2", onEvent2);
+      iris.notify("event-type-2"); // +2
+
+      iris.off("event-type-1", onEvent);
+      iris.notify("event-type-1"); // +1
+
+      iris.off("event-type-2", onEvent);
+      iris.notify("event-type-2"); // +1
+
+      iris.off("event-type-1", onEvent2);
+      iris.notify("event-type-1"); // 0
+
+      iris.off("event-type-2", onEvent2);
+      iris.notify("event-type-2"); // 0
   });
 
   test("Duplicated Event Test", function () {
@@ -78,11 +125,11 @@
   
   
   function onEvent () {
-    ok(true, "On event callback");
+    window.ok(true, "On event callback");
   }
   
   function onEvent2 () {
-    ok(true, "On event2 callback");
+    window.ok(true, "On event2 callback");
   }
 
 }(jQuery));

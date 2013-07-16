@@ -19,7 +19,7 @@
                 iris.notify(iris.RESOURCE_ERROR, {request: p_request, status: p_textStatus, error: p_errorThrown});
 
                 if ( f_error !== undefined ) {
-                    f_error();
+                    f_error( p_request, p_textStatus, p_errorThrown );
                 }
             }
         });

@@ -1,130 +1,102 @@
 iris.resource(function (self) {
 
-	var models = [],
+	var todos = [],
 		remaining = 0,
-		localStorageEnabled = false,
-		currentFilter = "all",
-		manager,
-		uis;
+		localStorageEnabled = false;
 
-	self.init = function (screen) {
-		manager = screen;
+	self.init = function () {
 		uis = [];
 
 		if ( Storage !== undefined ) {
+			console.log("reading todos from storage... ");
 			localStorageEnabled = true;
-			if ( localStorage.models !== undefined && localStorage.models !== "" ) {
-				var storage = localStorage.models.split(";");
+			if ( localStorage.todos !== undefined && localStorage.todos !== "" ) {
+				var storage = localStorage.todos.split(";");
 				for ( var i = 0; i < storage.length; i++ ) {
 					var todo = JSON.parse(storage[i]);
 					if ( !todo.completed ) ++remaining;
-					models.push( todo );
-					createUI(todo);
+					todos.push( todo );
+					iris.notify("create-todo", todo);
 				}
 			}
 		}
-		manager.render();
-	}
-
-	function createUI (todo) {
-		var ui = manager.ui("todo-list", iris.path.todo.js);
-		ui.render(todo);
-		applyFilter(ui);
-		uis.push(ui);
+		iris.notify("render-list");
 	}
 
 	function save () {
 		if ( localStorageEnabled ) {
 			var json = "";
-			for ( var i = 0; i < models.length; i++ ) {
-				json += ";" + JSON.stringify(models[i]);
+			for ( var i = 0; i < todos.length; i++ ) {
+				json += ";" + JSON.stringify(todos[i]);
 			}
-			localStorage.models = json.substr(1);
+			localStorage.todos = json.substr(1);
 		}
 	}
-
-	function applyFilter (todoUI) {
-		if ( currentFilter === "all" 
-			|| (todoUI.data.completed && currentFilter === "completed") 
-			|| (!todoUI.data.completed && currentFilter === "active")
-		) {
-			todoUI.show();
-		} else {
-			todoUI.hide();
-		}
-	}
-
-	self.filter = function (filter) {
-		currentFilter = filter;
-		for (var i = 0; i < uis.length; i++ ) {
-			applyFilter(uis[i]);
-		}
-	};
 
 	self.add = function (text) {
 		remaining++;
-		var todo = {text: text, completed: false};
-		models.push(todo);
-		createUI(todo);
-		manager.render();
+
+		var todo = {id: new Date().getTime(), text: text, completed: false};
+		todos.push(todo);
+
+		iris.notify("create-todo", todo);
+		iris.notify("render-list");
+
 		save();
 	};
 
-	self.remove = function (todoUI) {
-		var todo = todoUI.data;
+	self.remove = function (todo) {
+
 		if ( !todo.completed ) --remaining;
-		var idx = models.indexOf(todo);
-		models.splice(idx, 1);
-		uis.splice(idx, 1);
-		manager.destroyUI(todoUI);
-		manager.render();
+		todos.splice(todos.indexOf(todo), 1);
+
+		iris.notify("render-list");
 		save();
 	};
 
-	self.toggle = function (todoUI) {
-		var todo = todoUI.data;
+	self.toggle = function (todo) {
 		todo.completed = !todo.completed;
 
 		if ( todo.completed ) --remaining;
 		else ++remaining;
 
-		todoUI.render();
-		manager.render();
+		iris.notify("render-list");
+		iris.notify("render-todo", todo.id);
 		save();
 	};
 
 	self.removeCompleted = function () {
-		for ( var i = models.length-1; i >= 0 ; i-- ) {
-			if (models[i].completed) {
-				models.splice(i, 1);
-				var todoUI = uis.splice(i, 1)[0];
-				manager.destroyUI(todoUI);
+
+		for ( var i = todos.length-1; i >= 0 ; i-- ) {
+			var todo = todos[i];
+			if (todo.completed) {
+				iris.notify("destroy-todo", todo.id);
+				todos.splice(i, 1);
 			}
 		}
-		manager.render();
+
+		iris.notify("render-list");
 		save();
 	};
 
 	self.setAll = function (completed) {
-		for (var i = 0; i < models.length; i++ ) {
-			if ( models[i].completed !== completed ) {
-				models[i].completed = completed;
-				uis[i].render();
+		for (var i = 0; i < todos.length; i++ ) {
+			var todo = todos[i];
+			if ( todo.completed !== completed ) {
+				todo.completed = completed;
+				iris.notify("render-todo", todo.id);
 			}
 		}
-		remaining = ( completed ) ? 0 : models.length;
-		manager.render();
+		remaining = ( completed ) ? 0 : todos.length;
 		save();
 	};
 
-	self.edit = function (todoUI, text) {
-		todoUI.data.text = text;
-		todoUI.render();
+	self.edit = function () {
 		save();
 	};
 
 	self.count = function () {
-		return models.length;
+		return todos.length;
 	};
 
 	self.remainingCount = function () {
@@ -132,7 +104,7 @@ iris.resource(function (self) {
 	};
 
 	self.completedCount = function () {
-		return models.length - remaining;
+		return todos.length - remaining;
 	};
 
 }, iris.path.resource);

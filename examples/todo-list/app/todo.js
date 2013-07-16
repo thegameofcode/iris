@@ -8,11 +8,13 @@ iris.ui(function (self) {
 		self.tmpl(iris.path.todo.html);
 
 		self.get("check").on("click", function () {
-			todos.toggle(self);
+			todos.toggle(self.data);
+			self.render();
 		});
 
 		self.get("destroy").on("click", function () {
-			todos.remove(self);
+			todos.remove(self.data);
+			self.destroyUI();
 		});
 
 		self.get().on("dblclick", function () {
@@ -22,7 +24,11 @@ iris.ui(function (self) {
 
 		self.get("text").on("blur change", function (e) {
 			self.get().removeClass("editing");
-			if ( this.value.trim() !== "" ) todos.edit(self, this.value);
+			if ( this.value.trim() !== "" ) {
+				todos.edit();
+				self.data.text = this.value;
+				self.render();
+			}
 			else this.value = self.data.text;
 		});
 		

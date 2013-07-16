@@ -43,27 +43,27 @@
 
     iris.translations("es_ES", {
       TEST: {
-        LABEL: "VALUE"
+        LABEL_1: "VALUE"
       }
     });
     
     iris.translations("en_US", {
       TEST: {
-        LABEL: "VALUE2"
+        LABEL_1: "VALUE2"
       }
     });
 
     iris.locale("es_ES");
 
-    var translated = iris.translate("TEST.LABEL");
+    var translated = iris.translate("TEST.LABEL_1");
     strictEqual(translated, "VALUE", "Should get a lang value");
     
-    translated = iris.translate("TEST.LABEL", "en_US");
+    translated = iris.translate("TEST.LABEL_1", "en_US");
     strictEqual(translated, "VALUE2", "Should get a lang value in non default locale");
 
     iris.locale("locale_not_loaded");
-    translated = iris.translate("TEST.LABEL");
-    strictEqual(translated, "??TEST.LABEL??", "Should get a non created value");
+    translated = iris.translate("TEST.LABEL_1");
+    strictEqual(translated, "??TEST.LABEL_1??", "Should get a non created value");
 
   });
   
@@ -101,7 +101,7 @@
   }
 
   function onError () {
-    ok(false, "Error callback unexpected");
+    window.ok(false, "Error callback unexpected");
     start();
   }
 

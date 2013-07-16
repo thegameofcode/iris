@@ -35,7 +35,7 @@
             strictEqual("book title", json.title);
             start();
         }, function (p_request, p_textStatus, p_errorThrown) {
-            ok(false, "Error callback unexpected: " + p_errorThrown);
+            window.ok(false, "Error callback unexpected: " + p_errorThrown);
             start();
         });
       });
@@ -47,10 +47,10 @@
 
       iris.on(iris.AFTER_NAVIGATION,function () {
         iris.resource(iris.path.resource).load("no_valid", function (json) {
-            ok(false, "Success callback unexpected: " + json);
+            window.ok(false, "Success callback unexpected: " + json);
             start();
         }, function (p_request, p_textStatus, p_errorThrown) {
-            ok(true);
+            window.ok(true);
             start();
         });
       });
@@ -76,7 +76,7 @@
             deepEqual(json, expectedResponse, "the json response is not valid");
             start();
         }, function (p_request, p_textStatus, p_errorThrown) {
-            ok(false, "Error callback unexpected: " + p_errorThrown);
+            window.ok(false, "Error callback unexpected: " + p_errorThrown);
             start();
         });
       });
@@ -100,7 +100,7 @@
             deepEqual(json, expectedResponse, "the json response is not valid");
             start();
         }, function (p_request, p_textStatus, p_errorThrown) {
-            ok(false, "Error callback unexpected: " + p_errorThrown);
+            window.ok(false, "Error callback unexpected: " + p_errorThrown);
             start();
         });
       });
@@ -123,7 +123,7 @@
             deepEqual(json, expectedResponse, "the json response is not valid");
             start();
         }, function (p_request, p_textStatus, p_errorThrown) {
-            ok(false, "Error callback unexpected: " + p_errorThrown);
+            window.ok(false, "Error callback unexpected: " + p_errorThrown);
             start();
         });
       });

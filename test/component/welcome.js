@@ -10,8 +10,8 @@ iris.screen(function (self) {
 
 		self.screens("screens",  [["screen", iris.path.screen]]);
 
-		self.on("template_params", templateParams);
 		self.on("template_langs", templateLangs);
+		self.on("awake_params", awakeParams);
 
 		// check screen properties
 		window.strictEqual(self.id, "#", "Compare welcom screen properties: self.id");
@@ -25,8 +25,10 @@ iris.screen(function (self) {
 		window.strictEqual(self.get("lang_values").text(), iris.translate("TEST","test-lang-into-tmpl"));
 	}
 
-	function templateParams () {
-		window.strictEqual(self.get("param").text(), PARAM_VAL);
+	function awakeParams () {
+		window.strictEqual(self.param("param1"), "value1");
+		window.strictEqual(self.param("param2"), "value2");
+		window.strictEqual(self.param("param3"), "value3");
 	}
 
 },iris.path.welcome);

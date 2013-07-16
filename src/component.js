@@ -88,6 +88,15 @@
         }
     }
 
+    // Ensure include is defined
+    function _setInclude (include, path, type) {
+        if ( $.type(path) !== "string" || path === "" ) {
+            iris.log("[error] path[" + path + "]", include);
+            throw "Invalid path on " + type +" registration";
+        }
+        _includes[path] = include;
+    }
+
     function _pathsLoaded () {
         
         // check hashchange event support
@@ -113,7 +122,8 @@
             if ( !_includes.hasOwnProperty(paths[i]) ) {
                 _dependencyCount++;
 
-                path = String(iris.baseUri() + paths[i]);
+                // If the path doesn't start with http or https, it's concatenated to the iris base uri
+                path = /^https?:\/\//.test(paths[i]) ? paths[i] : String(iris.baseUri() + paths[i]);
 
                 if ( !iris.cache() ) {
                     path += "?_=" + new Date().getTime();
@@ -121,7 +131,7 @@
                     path += "?_=" + iris.cacheVersion();
                 }
                 
-                if ( /.html$/.test(paths[i]) ) {
+                if ( /\.html$/.test(paths[i]) ) {
                     iris.ajax({
                         url: path,
                         dataType: "html",
@@ -133,6 +143,7 @@
                     script = document.createElement("script");
                     script.type = "text/javascript";
                     script.src = path;
+                    script.charset = "UTF-8";
                     if (iris.browser().msie  && parseInt(iris.browser().version, 10) < 9) {
                         script.onreadystatechange = onReadyStateChange;
                     } else {
@@ -265,7 +276,12 @@
                 screenPath = _getScreenPath(curr, i);
 
                 if ( !_screenContainer.hasOwnProperty(screenPath) ) {
-                    throw "'" + screenPath + "' must be registered using self.screens()";
+                    
+                    // Notify event and print message instead of raise exception, since v0.5.2
+                    iris.notify(iris.SCREEN_NOT_FOUND, screenPath);
+                    iris.log("[warning] '" + screenPath + "' must be registered using self.screens()");
+                    return;
+
                 } else {
 
                     if ( !_screen.hasOwnProperty(screenPath) ) {
@@ -276,6 +292,7 @@
 
                     var screenInstance = _screen[screenPath];
                     var screenParams = _navGetParams(curr[i]);
+                    screenInstance.params = screenParams;
                     screenInstance.show();
                     screenInstance._awake(screenParams);
                 }
@@ -322,7 +339,7 @@
 
     function _parseLangTags(p_html) {
         var html = p_html;
-        var matches = html.match(/@@[A-Za-z_\.]+@@/g);
+        var matches = html.match(/@@[0-9A-Za-z_\.]+@@/g);
         if(matches) {
             var f, F = matches.length;
             for(f = 0; f < F; f++) {
@@ -342,7 +359,7 @@
     }
 
     function _registerUI(ui, path) {
-        _includes[path] = ui;
+        _setInclude(ui, path, "ui");
     }
 
     function _instanceUI(p_$container, p_uiId, p_jsUrl, p_uiSettings, p_templateMode, parentComponent) {
@@ -350,6 +367,7 @@
         var uiInstance = new UI();
         uiInstance.id = p_uiId;
         uiInstance.uis = [];
+        uiInstance.uisMap = {};
         uiInstance.el = {};
         uiInstance.events = {};
         uiInstance.con = p_$container;
@@ -395,8 +413,8 @@
     // SCREEN
     //
 
-    function _registerScreen(f_screen, path) {
-        _includes[path] = f_screen;
+    function _registerScreen(screen, path) {
+        _setInclude(screen, path, "screen");
     }
 
     function _instanceScreen (p_screenPath) {
@@ -408,9 +426,11 @@
         screenObj.id = p_screenPath;
         screenObj.el = {};
         screenObj.uis = [];
+        screenObj.uisMap = {};
         screenObj.events = {};
         screenObj.con = _screenContainer[p_screenPath];
         screenObj.fileJs = jsUrl;
+        screenObj.params = {};
         if ( screenObj.cfg === null ) {
             screenObj.cfg = {};
         }
@@ -469,39 +489,6 @@
 
     }
 
-    function _tmplParse(p_html, p_data, p_htmlUrl) {
-        var result = p_html,
-        formatLabel, value, regExp = /##([0-9A-Za-z_\.]+)(?:\|(date|currency)(?:\(([^\)]+)\))*)?##/g,
-        matches = regExp.exec(p_html);
-
-        while(matches) {
-            value = iris.val(p_data, matches[1]);
-
-            if(value !== undefined) {
-                formatLabel = matches[2];
-                if(formatLabel) {
-                    switch(formatLabel) {
-                        case "date":
-                            value = iris.date(value, matches[3]);
-                            break;
-                        case "currency":
-                            value = iris.currency(value);
-                            break;
-                        default:
-                            iris.log("Unknow template format label '" + formatLabel + "' in '" + p_htmlUrl + "'");
-                    }
-                }
-            } else {
-                iris.log("Template param '" + matches[1] + "' in '" + p_htmlUrl + "' not found", p_data);
-            }
-
-            result = result.replace(matches[0], value);
-            matches = regExp.exec(p_html);
-        }
-
-        return result;
-    }
-
 
     var Settable = function() {
         this.cfg = null;
@@ -540,6 +527,7 @@
         this.fileTmpl = null;
         this.template = null;
         this.uis = null; // child UIs
+        this.uisMap = null; // UIs sorted by id
         this.con = null; // JQ container
         this.sleeping = null;
         this.el = null; // cached elements
@@ -586,7 +574,7 @@
         this.events = null;
     };
 
-    Component.prototype._tmpl = function(p_htmlUrl, p_params, p_mode) {
+    Component.prototype._tmpl = function(p_htmlUrl, p_mode) {
         
         if (this.template !== null) {
             throw "self.tmpl() has already been called in '" + this.fileJs + "'";
@@ -595,8 +583,7 @@
         this.fileTmpl = p_htmlUrl;
 
         var tmplTranslated = _parseLangTags(_includes[p_htmlUrl]);
-        var tmplHtml = p_params ? _tmplParse(tmplTranslated, p_params, p_htmlUrl) : tmplTranslated;
-        var tmpl = $(tmplHtml);
+        var tmpl = $(tmplTranslated);
 
         this.template = tmpl;
         if(tmpl.size() > 1) {
@@ -617,89 +604,146 @@
                 throw "Unknown template mode '" + p_mode + "'";
         }
 
-        // create model-components map
-        this.model = {};
-        var models = this.model;
-        $("[data-model]", tmpl).each(function(){
-            var el = $(this);
-            var modelId = el.data("model");
-
-            if ( !models.hasOwnProperty(modelId) ) {
-                models[modelId] = [];
-            }
-            models[modelId].push(el);
-        });
-
-        // find data-id components
+        // Find components with data-id and data-attr attributes
         this.el = {};
-        var elements = this.el;
-        $("[data-id]", tmpl).each(function(){
-            var el = $(this);
-            var dataId = el.data("id");
-            elements[dataId] = el;
-        });
+        var elements = this.el; // Keep reference
 
+        this.inflateTargets = {};
+        var inflateTargets = this.inflateTargets; // Keep reference
+
+        // Variables needed to manage attr formatting
+        var FORMAT_REG_EXP = /(date|currency|number)(?:\(([^\)]+)\))/;
+
+        $("*", tmpl).each(function(index, element) {
+            
+            var $el = $(element);
+            var data = $el.data();
+
+            var inflateFormats = {}, inflatesByKeys = {};
+            var target, targetParams, format, formatParams, formatMatches;
+
+            for ( var key in data ) {
+                // data-id
+                if ( key === "id" ) {
+                    elements[data.id] = $el;
+                    continue;
+                }
+
+                // data-*-format
+                if ( /Format$/.test(key) ) {
+                    format = data[key];
+                    formatParams = undefined;
+
+                    if ( format && FORMAT_REG_EXP.test(format) ) {
+                        formatMatches = format.match(FORMAT_REG_EXP);
+
+                        format = formatMatches[1];
+                        formatParams = formatMatches[2]; // TODO manage multiple parameter using: formatParams[2].splice(",");
+                    }
+
+                    inflateFormats[ key.replace(/Format$/, "") ] = { key: format, params: formatParams };
+                    continue;
+                }
+
+                switch (key) {
+                    case "jqText":
+                        target = "_text_";
+                        break;
+                    case "jqHtml":
+                        target = "_html_";
+                        break;
+                    case "jqVal":
+                        target = "_val_";
+                        break;
+                    case "jqToggle":
+                        target = "_toggle_";
+                        break;
+                    default:
+
+                        switch (0) {
+                            case key.indexOf("jqAttr"):
+                                target = "_attr_";
+                                targetParams = key.substr(6).toLowerCase();
+                            break;
+                            case key.indexOf("jqProp"):
+                                target = "_prop_";
+                                targetParams = key.substr(6).toLowerCase();
+                            break;
+                            default:
+                                continue;
+                        }
+                }
+
+                if ( !inflateTargets.hasOwnProperty(data[key]) ) {
+                    inflateTargets[ data[key] ] = [];
+                }
+
+                var inflate = { target: target, targetParams: targetParams, el: $el };
+
+                inflateTargets[ data[key] ].push( inflate );
+                inflatesByKeys[key] = inflate;
+            }
+
+            // After of iterate the element data attributes, set the formatting to each target
+            for ( key in inflateFormats ) {
+                if ( inflatesByKeys.hasOwnProperty(key) ) {
+                    inflatesByKeys[key].format = inflateFormats[key].key;
+                    inflatesByKeys[key].formatParams = inflateFormats[key].params;
+                }
+            }
+
+        });
     };
 
     Component.prototype.inflate = function(data) {
-        if ( this.model === undefined ) {
-            throw "[self.inflate] first set a html node with any data-model attribute";
-        } else {
 
-            var modelId, value, elements, nodeName, i, format, el, formatParams, formatMatches;
-            var formatRegExp = /(date|currency)(?:\(([^\)]+)\))/;
+        var dataKey, f, F, targets, inflate, format, unformattedValue, value;
 
-            for ( modelId in this.model ) {
-                value = iris.val(data, modelId);
+        for ( dataKey in this.inflateTargets ) {
+            unformattedValue = iris.val(data, dataKey);
 
-                if ( value !== undefined ) {
-                    elements = this.model[modelId];
-                    formatParams = undefined;
+            if ( unformattedValue !== undefined ) {
 
-                    for ( i = 0; i < elements.length; i++ ) {
-                        el = elements[i];
-                        format = el.data("format");
+                targets = this.inflateTargets[dataKey];
 
-                        if ( format && formatRegExp.test(format) ) {
-                          formatMatches = format.match(formatRegExp);
+                for ( f = 0, F = targets.length; f < F; f++ ) {
+                    inflate = targets[f];
 
-                          format = formatMatches[1];
-                          formatParams = formatMatches[2]; // TODO manage multiple parameter using: formatParams.splice(2);
-                        }
-
-                        if ( format ) {
-                            switch ( format ) {
-                                case "date":
-                                    value = iris.date(value, formatParams);
-                                    break;
-                                case "currency":
-                                    value = iris.currency(value);
-                                    break;
-                                case "number":
-                                    value = iris.number(value);
-                                    break;
-                            }
-                        }
-
-                        nodeName = el.prop("nodeName").toLowerCase();
-                        switch (nodeName) {
-                            case "input":
-                                if ( el.prop("type").toLowerCase() === "checkbox" ) {
-                                    el.attr("checked", value);
-                                } else {
-                                    el.val(value);
-                                }
+                    switch ( inflate.format ) {
+                        case "date":
+                            value = iris.date(unformattedValue, inflate.formatParams);
                             break;
-                            case "textarea":
-                                el.val(value);
+                        case "currency":
+                            value = iris.currency(unformattedValue);
                             break;
-                            default:
-                                el.html(value);
+                        case "number":
+                            value = iris.number(unformattedValue);
                             break;
-                        }
+                        default:
+                            value = unformattedValue;
+                    }
+
+                    switch ( inflate.target ) {
+                        case "_text_":
+                            inflate.el.text(value);
+                            break;
+                        case "_html_":
+                            inflate.el.html(value);
+                            break;
+                        case "_val_":
+                            inflate.el.val(value);
+                            break;
+                        case "_toggle_":
+                            inflate.el.toggle(value);
+                            break;
+                        case "_prop_":
+                            inflate.el.prop(inflate.targetParams, value);
+                            break;
+                        case "_attr_":
+                            inflate.el.attr(inflate.targetParams, value);
                     }
                 }
-            } 
+            }
         }
     };
 
@@ -755,6 +799,18 @@
     };
 
     Component.prototype._ui = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
+        if ( p_jsUrl === undefined ) {
+            
+            // Get UI
+            return this.uisMap[p_id];
+
+        } else {
+            // Create UI
+            return this._createUi(p_id, p_jsUrl, p_uiSettings, p_templateMode);
+        }
+    };
+
+    Component.prototype._createUi = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
         var $container = this.get(p_id);
         
         if($container !== undefined && $container.size() === 1) {
@@ -762,7 +818,17 @@
             if (uiInstance._tmplMode === undefined || uiInstance._tmplMode === uiInstance.REPLACE) {
                 this.el[p_id] = undefined;
             }
-            this.uis[this.uis.length] = uiInstance;
+            this.uis.push(uiInstance);
+
+            // Add uiInstance to the UIs map
+            if ( uiInstance._tmplMode === uiInstance.REPLACE ) {
+                this.uisMap[p_id] = uiInstance;
+            } else {
+                if ( !this.uisMap.hasOwnProperty(p_id) ) {
+                    this.uisMap[p_id] = [];
+                }
+                this.uisMap[p_id].push(uiInstance);
+            }
             
             return uiInstance;
         } else {
@@ -773,37 +839,47 @@
 
     Component.prototype.destroyUI = function(p_ui) {
         if ( p_ui === undefined ) {
+            // Self destroy
             this.parentComponent.destroyUI(this);
         } else {
-            for(var f = 0, F = this.uis.length; f < F; f++) {
-                if(this.uis[f] === p_ui) {
-                    this.uis.splice(f, 1);
-                    p_ui._destroy();
-                    p_ui.get().remove();
-                    break;
+            var idx;
+
+            // Remove p_ui from the UIs array
+            idx = $.inArray(p_ui, this.uis);
+            if ( idx !== -1 ) {
+                this.uis.splice(idx, 1);
+            }
+
+            // Remove p_ui from the UIs map
+            if ( p_ui._tmplMode === p_ui.REPLACE ) {
+                this.uisMap[p_ui.id] = null;
+                delete this.uisMap[p_ui.id];
+            } else {
+                var uis = this.uisMap[p_ui.id];
+
+                idx = $.inArray(p_ui, uis);
+                if ( idx !== -1 ) {
+                    uis.splice(idx, 1);
                 }
             }
+
+            // Destroy p_ui
+            p_ui._destroy();
+            p_ui.get().remove();
         }
     };
 
     Component.prototype.destroyUIs = function(id) {
-
-        var f, F, ui;
-        for(f = 0, F = this.uis.length; f < F; f++) {
-            ui = this.uis[f];
-
-            if ( ui.id.indexOf(id) !== -1 ) {
-
-                if ( ui._tmplMode === this.REPLACE ) {
-                    throw "self.destroyUIs cannot delete " + id + " because was replaced by an UI, use self.destroyUI";
-                } else {
-                    this.uis.splice(f--, 1);
-                    F--;
-
-                    ui._destroy();
-                    ui.get().remove();
-                }
+        var uis = this.uisMap[id];
+        if ( $.isArray(uis) ) {
+            var f, F;
+            for ( f=uis.length-1; f >= 0; f-- ) {
+                this.destroyUI(uis[f]);
             }
+
+        } else if ( uis && uis._tmplMode === this.REPLACE ) {
+            // uis is a single UI
+            this.destroyUI(uis);
         }
     };
 
@@ -840,8 +916,8 @@
         this._tmplMode = p_mode;
     };
 
-    UI.prototype.tmpl = function(p_htmlUrl, p_params) {
-        this._tmpl(p_htmlUrl, p_params, this._tmplMode);
+    UI.prototype.tmpl = function(p_htmlUrl) {
+        this._tmpl(p_htmlUrl, this._tmplMode);
     };
 
     UI.prototype.ui = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
@@ -854,12 +930,16 @@
     //
     var Screen = function() {
         this.screenConId = null;
+        this.params = null;
     };
 
     Screen.prototype = new Component();
 
-    Screen.prototype.ui = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
+    Screen.prototype.param = function(p_key) {
+        return this.params[p_key];
+    };
 
+    Screen.prototype.ui = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
         if ( p_id === this.screenConId ) {
             throw "'" + p_id + "' has already been registered as a screen container";
         }
@@ -867,8 +947,8 @@
         return this._ui(p_id, p_jsUrl, p_uiSettings, p_templateMode);
     };
 
-    Screen.prototype.tmpl = function(p_htmlUrl, p_params) {
-        this._tmpl(p_htmlUrl, p_params, this.APPEND);
+    Screen.prototype.tmpl = function(p_htmlUrl) {
+        this._tmpl(p_htmlUrl, this.APPEND);
     };
 
     Screen.prototype.screens = function(p_containerId, p_screens) {
@@ -930,7 +1010,7 @@
             serv.settings({ type: "json", path: "" });
             resourceOrPath(serv);
 
-            _includes[path] = serv;
+            _setInclude(serv, path, "resource");
         }
 
     }
