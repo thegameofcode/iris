@@ -6,7 +6,7 @@ _Creation date: 2012-01-12_
   * upd|fix|new|dep|rmv - description
 
 
-[0.5.2] 2013-xx-xx
+[0.5.2] 2013-07-16
 https://github.com/thegameofcode/iris/issues?milestone=8&page=1&state=closed
 
  * [fix] Fix iris.enableLog & iris.noCache
