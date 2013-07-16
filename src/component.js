@@ -489,39 +489,6 @@
 
     }
 
-    function _tmplParse(p_html, p_data, p_htmlUrl) {
-        var result = p_html,
-        formatLabel, value, regExp = /##([0-9A-Za-z_\.]+)(?:\|(date|currency)(?:\(([^\)]+)\))*)?##/g,
-        matches = regExp.exec(p_html);
-
-        while(matches) {
-            value = iris.val(p_data, matches[1]);
-
-            if(value !== undefined) {
-                formatLabel = matches[2];
-                if(formatLabel) {
-                    switch(formatLabel) {
-                        case "date":
-                            value = iris.date(value, matches[3]);
-                            break;
-                        case "currency":
-                            value = iris.currency(value);
-                            break;
-                        default:
-                            iris.log("Unknow template format label '" + formatLabel + "' in '" + p_htmlUrl + "'");
-                    }
-                }
-            } else {
-                iris.log("Template param '" + matches[1] + "' in '" + p_htmlUrl + "' not found", p_data);
-            }
-
-            result = result.replace(matches[0], value);
-            matches = regExp.exec(p_html);
-        }
-
-        return result;
-    }
-
 
     var Settable = function() {
         this.cfg = null;
@@ -607,7 +574,7 @@
         this.events = null;
     };
 
-    Component.prototype._tmpl = function(p_htmlUrl, p_params, p_mode) {
+    Component.prototype._tmpl = function(p_htmlUrl, p_mode) {
         
         if (this.template !== null) {
             throw "self.tmpl() has already been called in '" + this.fileJs + "'";
@@ -616,8 +583,7 @@
         this.fileTmpl = p_htmlUrl;
 
         var tmplTranslated = _parseLangTags(_includes[p_htmlUrl]);
-        var tmplHtml = p_params ? _tmplParse(tmplTranslated, p_params, p_htmlUrl) : tmplTranslated;
-        var tmpl = $(tmplHtml);
+        var tmpl = $(tmplTranslated);
 
         this.template = tmpl;
         if(tmpl.size() > 1) {
@@ -692,9 +658,6 @@
                     case "jqToggle":
                         target = "_toggle_";
                         break;
-                    case "jqHtml":
-                        target = "_html_";
-                        break;
                     default:
 
                         switch (0) {
@@ -705,10 +668,6 @@
                             case key.indexOf("jqProp"):
                                 target = "_prop_";
                                 targetParams = key.substr(6).toLowerCase();
-                            break;
-                            case key.indexOf("jqCss"):
-                                target = "_css_";
-                                targetParams = key.substr(5).toLowerCase();
                             break;
                             default:
                                 continue;
@@ -782,9 +741,6 @@
                             break;
                         case "_attr_":
                             inflate.el.attr(inflate.targetParams, value);
-                            break;
-                        case "_css_":
-                            inflate.el.css(inflate.targetParams, value);
                     }
                 }
             }
@@ -960,8 +916,8 @@
         this._tmplMode = p_mode;
     };
 
-    UI.prototype.tmpl = function(p_htmlUrl, p_params) {
-        this._tmpl(p_htmlUrl, p_params, this._tmplMode);
+    UI.prototype.tmpl = function(p_htmlUrl) {
+        this._tmpl(p_htmlUrl, this._tmplMode);
     };
 
     UI.prototype.ui = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
@@ -991,8 +947,8 @@
         return this._ui(p_id, p_jsUrl, p_uiSettings, p_templateMode);
     };
 
-    Screen.prototype.tmpl = function(p_htmlUrl, p_params) {
-        this._tmpl(p_htmlUrl, p_params, this.APPEND);
+    Screen.prototype.tmpl = function(p_htmlUrl) {
+        this._tmpl(p_htmlUrl, this.APPEND);
     };
 
     Screen.prototype.screens = function(p_containerId, p_screens) {

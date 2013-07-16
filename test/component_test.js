@@ -393,26 +393,7 @@
         });
     });
 
-    asyncTest("Template Params", function() {
-
-        expect(8);
-
-        iris.welcome("test/component/welcome.js"); // + 4
-
-        iris.on(iris.AFTER_NAVIGATION, function () {
-            iris.off(iris.AFTER_NAVIGATION);
-
-            iris.navigate("#/screen"); // +3
-
-            iris.on(iris.AFTER_NAVIGATION, function () {
-
-                iris.notify("template_params"); // +1
-                start();
-            });
-        });
-    });
-
-    asyncTest("Template Params", function() {
+    asyncTest("Awake Params", function() {
 
         expect(7);
 

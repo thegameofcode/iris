@@ -10,7 +10,6 @@ iris.screen(function (self) {
 
 		self.screens("screens",  [["screen", iris.path.screen]]);
 
-		self.on("template_params", templateParams);
 		self.on("template_langs", templateLangs);
 		self.on("awake_params", awakeParams);
 
@@ -24,10 +23,6 @@ iris.screen(function (self) {
 
 	function templateLangs () {
 		window.strictEqual(self.get("lang_values").text(), iris.translate("TEST","test-lang-into-tmpl"));
-	}
-
-	function templateParams () {
-		window.strictEqual(self.get("param").text(), PARAM_VAL);
 	}
 
 	function awakeParams () {
