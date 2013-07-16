@@ -8,7 +8,7 @@ Iris exposes all of its methods and properties on the `iris` object:
 	- [iris.cacheVersion([value])](#iriscacheversionvalue)
 	- [iris.noCache(environment[, ...])](#irisnocacheenvironment-)
 	- [iris.enableLog(enabled)](#irisenablelogenabled)
-	- [iris.log(value1[, value2, value3, value4])](#irislogvalue1-value2-value3-value4)
+	- [iris.log(args)](#irislogargs-)
 - [<a name="util"></a> Util](#<a-name=util></a>-util)
 	- [iris.ajax(settings)](#irisajaxsettings)
 	- [iris.val(obj, label)](#irisvalobj-label)
@@ -29,25 +29,26 @@ Iris exposes all of its methods and properties on the `iris` object:
 		- [iris.BEFORE_NAVIGATION](#irisbefore_navigation)
 		- [iris.AFTER_NAVIGATION](#irisafter_navigation)
 		- [iris.RESOURCE_ERROR](#irisresource_error)
+		- [iris.SCREEN_NOT_FOUND](#irisscreen_not_found)
 - [<a name="lang"></a> Language & Regional](#<a-name=lang></a>-language-&-regional)
 	- [iris.translate(text[, locale])](#iristranslatetext-locale)
-	- [iris.translations(locale, [terms]|[file, [callbacks]])](#iristranslationslocale-terms|file-callbacks)
+	- [iris.translations(locale, [terms]|[file, [callbacks]])](#iristranslationslocale-termsfile-callbacks)
 	- [iris.locale([locale][, regional])](#irislocalelocale-regional)
 	- [iris.regional([label])](#irisregionallabel)
 - [<a name="components"></a> Components](#<a-name=components></a>-components)
 	- [iris.include(paths, callback)](#irisincludepaths-callback)
 	- [iris.welcome(path)](#iriswelcomepath)
 	- [iris.navigate(path)](#irisnavigatepath)
-	- [iris.screen(function(self){...}, path)](#irisscreenfunctionself{}-path)
+	- [iris.screen(function(self){...}, path)](#irisscreenfunctionself-path)
 	- [iris.destroyScreen(path)](#irisdestroyscreenpath)
-	- [iris.ui(function(self){...}, path)](#irisuifunctionself{}-path)
+	- [iris.ui(function(self){...}, path)](#irisuifunctionself-path)
 	- [iris.tmpl(path, html)](#iristmplpath-html)
-	- [iris.resource(function(self){...}, path)](#irisresourcefunctionself{}-path)
+	- [iris.resource(function(self){...}, path)](#irisresourcefunctionself-path)
 	- [<a name="settable"></a> iris.Settable Class](#<a-name=settable></a>-irissettable-class)
 		- [self.setting(label[, value])](#selfsettinglabel-value)
 		- [self.settings(params)](#selfsettingsparams)
 	- [<a name="component"></a> iris.Component Class](#<a-name=component></a>-iriscomponent-class)
-		- [self.tmpl(path[, params, tmpl_mode])](#selftmplpath-params-tmpl_mode)
+		- [self.tmpl(path)](#selftmplpath)
 		- [self.get([data-id])](#selfgetdata-id)
 		- [self.inflate(data)](#selfinflatedata)
 		- [self.ui(container_id, path[, settings, tmpl_mode])](#selfuicontainer_id-path-settings-tmpl_mode)
@@ -56,6 +57,7 @@ Iris exposes all of its methods and properties on the `iris` object:
 	- [<a name="ui"></a> iris.UI Class](#<a-name=ui></a>-irisui-class)
 		- [self.tmplMode(mode)](#selftmplmodemode)
 	- [<a name="screen"></a> iris.Screen Class](#<a-name=screen></a>-irisscreen-class)
+		- [self.param(name)](#selfparamname)
 		- [self.screens(container_id, screens)](#selfscreenscontainer_id-screens)
 	- [<a name="resource"></a> iris.Resource Class](#<a-name=resource></a>-irisresource-class)
 		- [self.get(path, success, error)](#selfgetpath-success-error)
@@ -74,18 +76,18 @@ Set the base URL applied to load Iris components like screens, UIs & resources.
 ```javascript
 // You can define paths as
 iris.path = {
-    screen : { 
-        js: "./path/to/iris/components/screen.js",
-        html: "./path/to/iris/components/screen.html"
-    }
+		screen : { 
+				js: "./path/to/iris/components/screen.js",
+				html: "./path/to/iris/components/screen.html"
+		}
 };
 
 // Or you can use iris.baseUri to short paths
 iris.path = {
-    screen : { 
-        js: "screen.js",
-        html: "screen.html"
-    }
+		screen : { 
+				js: "screen.js",
+				html: "screen.html"
+		}
 };
 iris.baseUri("./path/to/iris/components/");
 ```
@@ -160,8 +162,8 @@ Returns a jQuery [jqXHR](http://api.jquery.com/Types/#jqXHR) object.
 
 ```javascript
 iris.ajax({
-  "url" : "http://www.example.com/",
-  "type" : "GET"
+	"url" : "http://www.example.com/",
+	"type" : "GET"
 }).done(successCallback).fail(errorCallback);
 ```
 
@@ -173,9 +175,9 @@ You can use dot to get object's children.
 
 ```javascript
 var book = {
-    author : {
-        name : "value"
-    }
+		author : {
+				name : "value"
+		}
 };
 
 var authorName = iris.val(book, "author.name");
@@ -224,11 +226,11 @@ Default `config` value are:
 
 ```javascript
 {
-    formatPos: "n",
-    formatNeg: "- n",
-    decimal: ".",
-    thousand: ",",
-    precision: 2
+		formatPos: "n",
+		formatNeg: "- n",
+		decimal: ".",
+		thousand: ",",
+		precision: 2
 }
 ```
 
@@ -236,13 +238,13 @@ e.g. :
 
 ```javascript
 iris.locale(
-    "es_ES", {
-        number : {
-            decimal: ",",
-            thousand: ".",
-            precision: 2
-        }
-    }
+		"es_ES", {
+				number : {
+						decimal: ",",
+						thousand: ".",
+						precision: 2
+				}
+		}
 );
 
 iris.number(5600.899); // "5.600,90"
@@ -250,9 +252,9 @@ iris.number(5600.899); // "5.600,90"
 iris.number(5600.899, { precision: 0 }); // "5.601"
 
 iris.number(5600.899, {
-    decimal: ".",
-    thousand: ",",
-    precision: 1
+		decimal: ".",
+		thousand: ",",
+		precision: 1
 }); // "5,600.9"
 
 ```
@@ -266,9 +268,9 @@ Default `config` value are:
 
 ```javascript
 {
-    formatPos: "sn",
-    formatNeg: "(sn)",
-    symbol : "$"
+		formatPos: "sn",
+		formatNeg: "(sn)",
+		symbol : "$"
 }
 ```
 
@@ -276,16 +278,16 @@ e.g. :
 
 ```javascript
 iris.locale(
-    "es_ES", {
-        currency : {
-            formatPos: "n s",
-            formatNeg: "- n s",
-            decimal: ",",
-            thousand: ".",
-            precision: 2,
-            symbol : "$"
-        }
-    }
+		"es_ES", {
+				currency : {
+						formatPos: "n s",
+						formatNeg: "- n s",
+						decimal: ",",
+						thousand: ".",
+						precision: 2,
+						symbol : "$"
+				}
+		}
 );
 
 iris.currency(5600.899); // "5.600,90 €"
@@ -397,33 +399,45 @@ See `iris.notify` for more details.
 #### iris.BEFORE_NAVIGATION
 *Since*: `v0.5.0`
 
-EventId fired before do a navigation.
+Fired before do a navigation.
 
 ```javascript
 iris.on(iris.BEFORE_NAVIGATION, function () {
-    iris.log("before navigation : " + document.location.hash)
+		iris.log("before navigation : " + document.location.hash)
 });
 ```
 
 #### iris.AFTER_NAVIGATION
 *Since*: `v0.5.0`
 
-EventId fired after do a navigation.
+Fired after do a navigation.
 
 ```javascript
 iris.on(iris.AFTER_NAVIGATION, function () {
-    iris.log("after navigation : " + document.location.hash)
+		iris.log("after navigation : " + document.location.hash)
 });
 ```
 
 #### iris.RESOURCE_ERROR
 *Since*: `v0.5.0`
 
-EventId fired when a resource ajax call fails.
+Fired when a resource ajax call fails.
 
 ```javascript
 iris.on(iris.RESOURCE_ERROR, function (request, textStatus, errorThrown) {
-    iris.log("resource error", request, textStatus, errorThrown);
+		iris.log("resource error", request, textStatus, errorThrown);
+});
+```
+
+#### iris.SCREEN_NOT_FOUND
+*Since*: `v0.5.2`
+
+Fired when a navigation fails.
+
+```javascript
+iris.on(iris.SCREEN_NOT_FOUND, function (path) {
+	iris.log("Upss, path[" + path + "] not found");
+	iris.navigate("#/404");
 });
 ```
 
@@ -456,12 +470,12 @@ Object with two attributes (*success* and *error*) containing the functions call
 
 ```javascript
 iris.translations("en_US", {
-    GREETING: "Hi!",
-    GREETINGS: {
-        MORNING: "Good Morning",
-        AFTERNOON: "Good Afternoon",
-        NIGHT: "Good Night"
-    }
+		GREETING: "Hi!",
+		GREETINGS: {
+				MORNING: "Good Morning",
+				AFTERNOON: "Good Afternoon",
+				NIGHT: "Good Night"
+		}
 });
 ```
 
@@ -480,24 +494,24 @@ You can use the [available locales](../localization).
 ```javascript
 //Example of regional definition. Sets de locale to "en_US" if locale is not set:
 iris.locale(
-    "en_US", {
-        dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-        monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-        dateFormat: "m/d/Y h:i:s",
-        currency: {
-            formatPos: "s n",
-            formatNeg: "(s n)",
-            decimal: ".",
-            thousand: ",",
-            precision: 2,
-            symbol: "$"
-        },
-        number : {
-            decimal: ".",
-            thousand: ",",
-            precision: 2
-        }
-    }
+		"en_US", {
+				dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+				monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+				dateFormat: "m/d/Y h:i:s",
+				currency: {
+						formatPos: "s n",
+						formatNeg: "(s n)",
+						decimal: ".",
+						thousand: ",",
+						precision: 2,
+						symbol: "$"
+				},
+				number : {
+						decimal: ".",
+						thousand: ",",
+						precision: 2
+				}
+		}
 );
 ```
 
@@ -531,24 +545,31 @@ You can load and use iris resources before call to the `iris.welcome` function, 
 
 ```javascript
 iris.path = {
-  user_resource : "resource/user.js",
-  welcome : "screen/welcome.js"
+	user_resource : "resource/user.js",
+	welcome : "screen/welcome.js"
 };
 
 iris.include([iris.path.user_resource], function () {
-  
-  iris.resource(iris.path.user_resource).checkUserInSession().done(loginDone).fail(loginFail);
+	
+	iris.resource(iris.path.user_resource).checkUserInSession().done(loginDone).fail(loginFail);
 
 });
 
 function loginDone () {
-  iris.welcome(iris.path.welcome);
+	iris.welcome(iris.path.welcome);
 }
 
 function loginFail () {
-  alert("forbidden");
+	alert("forbidden");
 }
 
+```
+Since `v0.5.2`, you can load external JS files (before only relative paths), e.g.:
+
+```js
+iris.include("http://example.com/js/file.js", function(){
+  console.log("file.js has been loaded.");
+});
 ```
 
 ### iris.welcome(path)
@@ -589,33 +610,33 @@ iris.screen(
 
  function (self) {
 
-  //Called once when the Component is created
-  self.create = function () {
-   self.tmpl(iris.path.help.html);
-  };
+	//Called once when the Component is created
+	self.create = function () {
+	 self.tmpl(iris.path.help.html);
+	};
 
-  //Called when the Component is showed.
-  self.awake = function () {
-   ...
-  };
+	//Called when the Component is showed.
+	self.awake = function () {
+	 ...
+	};
 
-  //Called when the component is hidden because you navigate to another Screen
-  self.sleep = function () {
-   ...
-  };
+	//Called when the component is hidden because you navigate to another Screen
+	self.sleep = function () {
+	 ...
+	};
 
-  //Called before hiding component.
-  //If the method returns false, the navigation is interrupted and not hidden nor self.seelp method is called
-  //This method only is applied to the Screens components
-  self.canSleep = function () {
-   ...
-  };
+	//Called before hiding component.
+	//If the method returns false, the navigation is interrupted and not hidden nor self.seelp method is called
+	//This method only is applied to the Screens components
+	self.canSleep = function () {
+	 ...
+	};
 
 
-  //Called when the component is destroyed
-  self.destroy = function () {
-   ...
-  };
+	//Called when the component is destroyed
+	self.destroy = function () {
+	 ...
+	};
 
  }, iris.path.help.js  
 );
@@ -660,22 +681,22 @@ Defines or creates a Resource Component.
 //To define
 iris.resource(function(self){
 
-    //Some RESTful methods
-    self.load = function (id) {
-      return self.get("service/book/" + id);
-    };
+		//Some RESTful methods
+		self.load = function (id) {
+			return self.get("service/book/" + id);
+		};
 
-    self.create = function (params) {
-      return self.post("service/book", params);
-    };
+		self.create = function (params) {
+			return self.post("service/book", params);
+		};
 
-    self.update = function (id, params) {
-      return self.put("service/book/" + id, params);
-    };
+		self.update = function (id, params) {
+			return self.put("service/book/" + id, params);
+		};
 
-    self.remove = function (id) {
-      return self.del("service/book/" + id);
-    };
+		self.remove = function (id) {
+			return self.del("service/book/" + id);
+		};
 
 }, iris.path.resource.js);
 ```
@@ -713,33 +734,51 @@ var attribute_value = self.setting("person.name");
 
 ###<a name="component"></a> iris.Component Class
 
-#### self.tmpl(path[, params, tmpl_mode])
+#### self.tmpl(path)
 *Since*: `v0.5.0`
 
 Loads the template of the component into the DOM.
 
-This method must be called in the *self.create* method of the Component.
+This method must be called in the *self.create* method.
 
 
 Example:
 
 ```javascript
-self.tmpl(iris.path.ui.login.html, {"name":"John"}, self.APPEND);
+// UI
+iris.ui(function(self) {
+	...
+
+	self.create = function () {
+		self.tmplMode(self.APPEND);
+		self.tmpl(iris.path.ui.login.html);
+	}
+
+	...
+});
 ```
 
-The parameters will be replaced in the template where ##parameter_name## is found.
+```javascript
+// Screen
+iris.screen(function(self) {
+	...
 
-```htmpl
-<p>The name is ##name##</p>
+	self.create = function () {
+		self.tmpl(iris.path.ui.login.html);
+	}
+
+	...
+});
 ```
-*mode*: When *self.APPEND* or *self.PREPEND* are passed as the third parameter, the template container will not be replaced with the template, otherwise the container will be replaced by the template. The default mode is *self.REPLACE*.
+
+**Mode**: When *self.APPEND* or *self.PREPEND* are passed as the third parameter, the template container will not be replaced with the template, otherwise the container will be replaced by the template. The default mode is *self.REPLACE*.
 
 #### self.get([data-id])
 *Since*: `v0.5.0`
 
 Gets the JQuery object whose *data-id* matches with the param. If no *data-id* is passed, the JQuery root DOM node will be returned.
 
-```htmpl
+```html
 <p data-id="paragraph">The name is John</p>
 ```
 ```javascript
@@ -749,18 +788,78 @@ self.get("paragraph").text("Anna");
 #### self.inflate(data)
 *Since*: `v0.5.0`
 
-Replaces in the template the object passed as parameter.
-The text of the DOM elements that have an *data-model* attribute that match some attribute of the object passed, will be replaced.
+Write text, change the visibility, change attributes values, etc... in template elements using `data-jq-*` attributes.
 
+The `data-jq-*` attributes invoke jQuery functions:
+```js
+data-jq-html == $(element).html()
+data-jq-text == $(element).text()
+data-jq-val == $(element).val()
+data-jq-toggle == $(element).toggle()
+data-jq-attr-xxx == $(element).attr(xxx)
+data-jq-prop-xxx == $(element).prop(xxx)
+```
+
+`self.inflate()` function can do boring tasks for us, e.g.:
+
+- Set element text:
+
+In the presenter:
 ```javascript
-self.inflate({date: new Date()});
+self.inflate( {user : { name: "John Doe" }} );
 ```
 
-```htmpl
-<span data-model="date">Not set yet</span>
+In the template:
+```html
+<!-- The text "Not set yet" will be replaced by "John Doe" -->
+<span data-jq-text="user.name">Not set yet</span>
 ```
 
-#### self.ui(container_id, path[, settings, tmpl_mode])
+
+- Change the visibility of an element:
+
+In the presenter:
+```javascript
+self.inflate( {user : { isAdmin: true }} );
+```
+
+In the template:
+```html
+<!-- Show or hide the admin panel, according to the user -->
+<div data-jq-toggle="user.isAdmin">
+	...
+</div>
+```
+
+- Set multiple attributes:
+
+In the presenter:
+```javascript
+self.inflate( {user : { name: "John Doe", avatarUrl: "/img/john.jpg" }} );
+```
+
+In the template:
+```html
+<!-- Set the src attribute with the user's avatar URL -->
+<!-- Set the title attribute with the user's name -->
+<img data-jq-attr-src="user.avatarUrl" data-jq-attr-title="user.name" />
+```
+
+- Set input value:
+
+In the presenter:
+```javascript
+self.inflate( {user : { name: "John Doe" }} );
+```
+
+In the template:
+```html
+<!-- Set the value attribute with the user's name -->
+<input type="text" data-jq-val="user.name" />
+```
+
+
+#### self.ui(container_id[, path, settings, tmpl_mode])
 *Since*: `v0.5.0`
 
 Create a new UI Component and replaces or adds it to the container.
@@ -785,6 +884,42 @@ self.ui("ui_container", iris.path.ui.my_ui.js, {name: "John"}, self.APPEND);
 ```
 
 For help about the *templateMode* parameter see *self.tmpl* method.
+
+Since `v0.5.2` you can use `self.ui(<data-id>)` to retrieve UIs, e.g.:
+
+- When the UI has template mode == `self.REPLACE` (default)
+```js
+iris.screen(function (self) {
+...
+	self.create = function () {
+		self.ui("example", iris.path.ui.example);
+	}
+
+	function example () {
+		self.ui("example").sayHi();
+	}
+...
+}
+```
+
+- When the UI has template mode == `self.APPEND`
+```js
+iris.screen(function (self) {
+...
+	self.create = function () {
+		self.ui("example", iris.path.ui.example);
+		self.ui("example", iris.path.ui.example);
+		self.ui("example", iris.path.ui.example);
+	}
+
+	function example () {
+		// Destroy the first UI for example
+		self.ui("example")[0].destroyUI();
+	}
+...
+}
+```
+
 
 #### self.destroyUI([ui_component])
 *Since*: `v0.5.0`
@@ -829,6 +964,47 @@ The possible values ​​are:
 
 ###<a name="screen"></a> iris.Screen Class
 Inherit methods from Component, Settable & Event classes
+
+#### self.param(name)
+*Since*: `v0.5.2`
+
+You can use `self.param(name)` instead of implement self.awake(params), e.g.:
+
+Example navigation to a example screen with params (`#/example?paramName=value`):
+
+```js
+iris.screen(function (self) {
+	...
+
+	function example () {
+		console.log(self.param("paramName")); // prints "value"
+	}
+
+	...
+}
+```
+
+Old style:
+```js
+iris.screen(function (self) {
+	...
+
+	var paramValue;
+
+	self.awake = function (params) {
+		if ( params && param.hasOwnProperty("paramName") ) {
+			paramValue = param.paramName;
+		}
+	}
+
+	function example () {
+		console.log(paramValue);
+	}
+
+	...
+}
+```
+
 #### self.screens(container_id, screens)
 *Since*: `v0.5.0`
 
@@ -855,9 +1031,9 @@ Returns a jQuery [jqXHR](http://api.jquery.com/Types/#jqXHR) object.
 
 ```javascript
  self.get(path).done(function() {
-  alert("done");
+	alert("done");
 }).fail(function() {
-  alert("fail");
+	alert("fail");
 });
 ```
 
@@ -869,9 +1045,9 @@ Returns a jQuery [jqXHR](http://api.jquery.com/Types/#jqXHR) object.
 
 ```javascript
  self.post(path).done(function() {
-  alert("done");
+	alert("done");
 }).fail(function() {
-  alert("fail");
+	alert("fail");
 });
 ```
 
@@ -883,9 +1059,9 @@ Returns a jQuery [jqXHR](http://api.jquery.com/Types/#jqXHR) object.
 
 ```javascript
  self.put(path).done(function() {
-  alert("done");
+	alert("done");
 }).fail(function() {
-  alert("fail");
+	alert("fail");
 });
 ```
 
@@ -897,8 +1073,8 @@ Returns a jQuery [jqXHR](http://api.jquery.com/Types/#jqXHR) object.
 
 ```javascript
  self.del(path).done(function() {
-  alert("done");
+	alert("done");
 }).fail(function() {
-  alert("fail");
+	alert("fail");
 });
 ```
