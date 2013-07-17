@@ -5,11 +5,7 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('iris.json'),
     meta: {
-      banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
-        '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
-        '<%= pkg.homepage ? "* " + pkg.homepage + "\n" : "" %>' +
-        '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
-        ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */'
+      
     },
     concat: {
       dist: {
@@ -18,9 +14,13 @@ module.exports = function(grunt) {
       }
     },
     uglify: {
+      options: {
+        banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %>' +
+                ' (<%= pkg.homepage %>) licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n'
+      },
       dist: {
         files: {
-          'dist/iris.min.js': ['<banner:meta.banner>', 'dist/iris.js']
+          'dist/iris.min.js': ['dist/iris.js']
         }
       }
     },
