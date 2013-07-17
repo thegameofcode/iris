@@ -6,9 +6,9 @@ Iris exposes all of its methods and properties on the `iris` object:
 	- [iris.baseUri([path])](#irisbaseuripath)
 	- [iris.cache([enabled])](#iriscacheenabled)
 	- [iris.cacheVersion([value])](#iriscacheversionvalue)
-	- [iris.noCache(environment[, ...])](#irisnocacheenvironment-)
+	- [iris.noCache(args)](#irisnocacheargs)
 	- [iris.enableLog(enabled)](#irisenablelogenabled)
-	- [iris.log(args)](#irislogargs-)
+	- [iris.log(args)](#irislogargs)
 - [<a name="util"></a> Util](#<a-name=util></a>-util)
 	- [iris.ajax(settings)](#irisajaxsettings)
 	- [iris.val(obj, label)](#irisvalobj-label)
@@ -121,10 +121,10 @@ iris.cacheVersion();
 iris.cacheVersion("v1.0");
 ```
 
-### iris.noCache(environment[, ...])
+### iris.noCache(args)
 *Since*: `v0.5.0`
 
-Set cache to false when the environment match with the current URL.
+Disable browser cache adding a timestamp param (e.g.: url?_=1374053849520) on each HTTP call when the environment match with the current URL.
 
 ```javascript
 // By default iris executes:
@@ -141,10 +141,12 @@ iris.enableLog(false);
 iris.log("test"); // "test" is not printed
 ```
 
-### iris.log(value1[, value2, value3, value4])
+### iris.log(args)
 *Since*: `v0.5.0`
 
 Prints the parameters values to the console for debugging purposes.
+If logging is disabled, it doesn't print any.
+To enable or disable logging use `iris.enableLog`.
 
 ```javascript
 iris.log("obj = ", obj);
