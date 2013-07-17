@@ -3,7 +3,7 @@ iris.resource(function (self) {
 	// Resource Events
 	self.CREATE_TODO = "create-todo";
 	self.DESTROY_TODO = "destroy-todo";
-	self.RENDER_TODO = "render-todo";
+	self.CHANGE_TODO = "change-todo";
 
 	var todos = {},
 		remaining = 0,
@@ -30,27 +30,10 @@ iris.resource(function (self) {
 		}
 	}
 
-	function save (todo) {
-		console.log("Saving todo name[" + todo.text + "]");
-		localStorage.setItem("todo_" + todo.id, JSON.stringify(todo));
-	}
-
-	function removeTodo (todo) {
-		total--;
-		if ( !todo.completed ) --remaining;
-		delete todos[todo.id];
-
-		var key = "todo_" + todo.id;
-		localStorage.removeItem(key);
-
-		ids.splice(ids.indexOf(todo.id), 1);
-		localStorage.setItem("ids" , ids.join(","));
-	}
-
 	self.add = function (text) {
 		var todo = {id: String(new Date().getTime()), text: text, completed: false};
 		todos[todo.id] = todo;
-		save(todo);
+		saveTodo(todo);
 
 		remaining++;
 		total++;
@@ -77,8 +60,8 @@ iris.resource(function (self) {
 		if ( todo.completed ) --remaining;
 		else ++remaining;
 
-		save(todo);
-		iris.notify(self.RENDER_TODO, todo.id);
+		saveTodo(todo);
+		iris.notify(self.CHANGE_TODO, todo.id);
 	};
 
 	self.removeCompleted = function () {
@@ -97,8 +80,8 @@ iris.resource(function (self) {
 			var todo = todos[id];
 			if ( todo.completed !== completed ) {
 				todo.completed = completed;
-				save(todo);
-				iris.notify(self.RENDER_TODO, todo.id);
+				saveTodo(todo);
+				iris.notify(self.CHANGE_TODO, todo.id);
 			}
 		}
 	};
@@ -106,8 +89,8 @@ iris.resource(function (self) {
 	self.edit = function (id, text) {
 		var todo = todos[id];
 		todo.text = text;
-		save(todo);
-		iris.notify(self.RENDER_TODO, todo.id);
+		saveTodo(todo);
+		iris.notify(self.CHANGE_TODO, todo.id);
 	};
 
 	self.count = function () {
@@ -121,5 +104,22 @@ iris.resource(function (self) {
 	self.completedCount = function () {
 		return total - remaining;
 	};
+
+	function saveTodo (todo) {
+		console.log("Saving todo name[" + todo.text + "]");
+		localStorage.setItem("todo_" + todo.id, JSON.stringify(todo));
+	}
+
+	function removeTodo (todo) {
+		total--;
+		if ( !todo.completed ) --remaining;
+		delete todos[todo.id];
+
+		var key = "todo_" + todo.id;
+		localStorage.removeItem(key);
+
+		ids.splice(ids.indexOf(todo.id), 1);
+		localStorage.setItem("ids" , ids.join(","));
+	}
 
 }, iris.path.resource);

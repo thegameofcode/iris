@@ -37,7 +37,7 @@ iris.screen(function(self) {
 			render();
 		});
 
-		self.on(todos.RENDER_TODO, function (id) {
+		self.on(todos.CHANGE_TODO, function (id) {
 			todoUIs[id].render().filter(currentFilter);
 			render();
 		});
