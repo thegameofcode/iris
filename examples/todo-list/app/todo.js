@@ -1,5 +1,9 @@
 iris.ui(function (self) {
 
+	self.settings({
+		id : null
+	});
+
 	var todos = iris.resource(iris.path.resource);
 
 	self.create = function() {
@@ -8,13 +12,11 @@ iris.ui(function (self) {
 		self.tmpl(iris.path.todo.html);
 
 		self.get("check").on("click", function () {
-			todos.toggle(self.data);
-			self.render();
+			todos.toggle(self.setting("id"));
 		});
 
 		self.get("destroy").on("click", function () {
-			todos.remove(self.data);
-			self.destroyUI();
+			todos.remove(self.setting("id"));
 		});
 
 		self.get().on("dblclick", function () {
@@ -23,29 +25,33 @@ iris.ui(function (self) {
 		});
 
 		self.get("text").on("blur change", function (e) {
+			if ( !self.get().hasClass("editing") ) return;
+
 			self.get().removeClass("editing");
 			if ( this.value.trim() !== "" ) {
-				todos.edit();
-				self.data.text = this.value;
-				self.render();
+				todos.edit(self.setting("id"), this.value);
 			}
-			else this.value = self.data.text;
 		});
-		
+
+		self.render();
 		self.get().hide().fadeIn("slow");
 	};
 
-	self.render = function (model) {
-		if ( model !== undefined ) {
-			self.data = model;
-		}
-		if ( self.data.completed ) {
-			self.get().addClass("completed");
-		} else {
-			self.get().removeClass("completed");
-		}
-		self.get("check").prop("checked", self.data.completed);
-		self.inflate(self.data);
+	self.render = function () {
+		var todo = todos.getTodo(self.setting("id"));
+		self.get().toggleClass("completed", todo.completed);
+		self.inflate({todo: todo});
+		return self;
+	};
+
+	self.filter = function (status) {
+		var todo = todos.getTodo(self.setting("id"));
+		var visible = ( status === "all" 
+			|| (todo.completed && status === "completed") 
+			|| (!todo.completed && status === "active")
+		);
+		self.get().toggle(visible);
+		return self;
 	};
 
 },iris.path.todo.js);

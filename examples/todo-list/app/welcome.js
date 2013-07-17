@@ -14,91 +14,62 @@ iris.screen(function(self) {
 			}
 		});
 
-		self.get("toggle-all").on("mousedown", function () {
+		self.get("toggle-all").on("change", function (e) {
+			e.preventDefault();
 			var completed = self.get("toggle-all").prop("checked");
-			todos.setAll( !completed );
-			refreshCounters();
+			todos.setAll( completed );
+			render();
 		});
 
 		self.get("clear-completed").on("click", todos.removeCompleted);
 
-		self.on("render-list", render);
-
-		self.on("create-todo", function (todo) {
-			console.log("creating todo... ", todo);
-			var ui = self.ui("todo-list", iris.path.todo.js);
-			ui.render(todo);
-			filterTodo(ui);
-			todoUIs[todo.id] = ui;
+		// Resource events
+		self.on(todos.CREATE_TODO, function (id) {
+			var ui = self.ui("todo-list", iris.path.todo.js, {id: id});
+			todoUIs[id] = ui;
+			ui.filter(currentFilter);
+			render();
 		});
 
-		self.on("destroy-todo", function (id) {
-			console.log("destroying todo... ", id);
-			self.destroyUI( todoUIs[id] );
+		self.on(todos.DESTROY_TODO, function (id) {
+			todoUIs[id].destroyUI();
+			delete todoUIs[id];
+			render();
 		});
 
-		self.on("render-todo", function (id) {
-			var ui = todoUIs[id];
-			ui.render();
-			filterTodo(ui);
+		self.on(todos.RENDER_TODO, function (id) {
+			todoUIs[id].render().filter(currentFilter);
+			render();
 		});
 
 		todos.init();
+		render();
 	}
 
-	self.awake = function (params) {
-		if ( params !== undefined && params.hasOwnProperty("filter") ) {
-			console.log("set filter = " + params.filter);
-			filterAllTodos(params.filter);
+	self.awake = function () {
+		var filter = self.param("filter");
+		if ( filter ) {
+			currentFilter = filter;
+			console.log("Set filter = " + filter);
 
-			$(".selected").removeClass("selected");
-			$("a[href='#?filter=" + params.filter + "']").addClass("selected");
-		}
-	}
+			var $footer = self.get("footer");
+			$(".selected", $footer).removeClass("selected");
+			$("a[href='#?filter=" + filter + "']", $footer).addClass("selected");
 
-	function refreshCounters () {
-		self.inflate({
-			completed: "Clear completed (" + todos.completedCount() + ")",
-			remaining: todos.remainingCount()
-		});
-
-		if ( todos.completedCount() > 0 ) {
-			self.get("clear-completed").show();
-		} else {
-			self.get("clear-completed").hide();
+			for (var id in todoUIs ) {
+				todoUIs[id].filter(currentFilter);
+			}
 		}
 	}
 
 	function render () {
-		refreshCounters();
-
-		if ( todos.count() === 0 ) {
-			self.get("toggle-all").hide();
-			self.get("footer").hide();
-		} else {
-			self.get("toggle-all").show();
-			self.get("footer").show();
-		}
-
-		self.get("toggle-all").prop("checked", todos.remainingCount() === 0);
+		self.inflate({
+			completed: "Clear completed (" + todos.completedCount() + ")",
+			remaining: todos.remainingCount(),
+			hasTodos: (todos.count() !== 0),
+			hasRemainings: (todos.completedCount() > 0),
+			noRemainingTodos: (todos.remainingCount() === 0)
+		});
 	}
-
-	function filterTodo (todoUI) {
-		if ( currentFilter === "all" 
-			|| (todoUI.data.completed && currentFilter === "completed") 
-			|| (!todoUI.data.completed && currentFilter === "active")
-		) {
-			todoUI.show();
-		} else {
-			todoUI.hide();
-		}
-	}
-
-	function filterAllTodos (filter) {
-		currentFilter = filter;
-		for (var i = 0; i < self.uis.length; i++ ) {
-			filterTodo(self.uis[i]);
-		}
-	};
 
 }, iris.path.welcome.js);

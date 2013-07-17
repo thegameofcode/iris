@@ -1,11 +1,11 @@
 <li>
 	<div class="view">
-	  <input data-id="check" class="toggle" type="checkbox">
+	  <input data-id="check" class="toggle" type="checkbox" data-jq-prop-checked="todo.completed">
 
-	  <label data-model="text"></label>
+	  <label data-jq-text="todo.text"></label>
 	  
 	  <button data-id="destroy" class="destroy"></button>
 	</div>
 
-	<input data-id="text" data-model="text" class="edit" value="">
+	<input data-id="text" data-jq-val="todo.text" class="edit">
 </li>
