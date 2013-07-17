@@ -13,10 +13,12 @@ iris.ui(function (self) {
 
 		self.get("check").on("click", function () {
 			todos.toggle(self.setting("id"));
+			self.render();
 		});
 
 		self.get("destroy").on("click", function () {
 			todos.remove(self.setting("id"));
+			self.destroyUI();
 		});
 
 		self.get().on("dblclick", function () {
@@ -30,9 +32,25 @@ iris.ui(function (self) {
 			self.get().removeClass("editing");
 			if ( this.value.trim() !== "" ) {
 				todos.edit(self.setting("id"), this.value);
+				self.render();
+			}
+
+		});
+
+		self.on(todos.DESTROY_TODO, function (id) {
+			if (self.setting("id") === id) {
+				self.destroyUI();
+			}
+		});
+
+		self.on(todos.CHANGE_TODO, function (id) {
+			if (self.setting("id") === id) {
+				self.render();
 			}
 		});
 	};
+
+
 
 	self.render = function () {
 		var todo = todos.getTodo(self.setting("id"));
