@@ -61,7 +61,10 @@ iris.screen(function(self) {
 	function render () {
 		self.inflate({
 			completed: "Clear completed (" + todos.completedCount() + ")",
-			remaining: todos.remainingCount(),
+			remaining: {
+				count: todos.remainingCount(),
+				text: "item" + (todos.remainingCount() !== 1 ? "s " : " ") + "left" 
+			},
 			hasTodos: (todos.count() !== 0),
 			hasRemainings: (todos.completedCount() > 0),
 			noRemainingTodos: (todos.remainingCount() === 0)
