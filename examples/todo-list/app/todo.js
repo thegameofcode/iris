@@ -32,9 +32,6 @@ iris.ui(function (self) {
 				todos.edit(self.setting("id"), this.value);
 			}
 		});
-
-		self.render();
-		self.get().hide().fadeIn("slow");
 	};
 
 	self.render = function () {
@@ -44,13 +41,8 @@ iris.ui(function (self) {
 		return self;
 	};
 
-	self.filter = function (status) {
-		var todo = todos.getTodo(self.setting("id"));
-		var visible = ( status === "all" 
-			|| (todo.completed && status === "completed") 
-			|| (!todo.completed && status === "active")
-		);
-		self.get().toggle(visible);
+	self.show = function () {
+		self.get().hide().fadeIn("slow");
 		return self;
 	};
 

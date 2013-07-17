@@ -1,8 +1,6 @@
 iris.screen(function(self) {
 
-	var todos = iris.resource(iris.path.resource),
-	 	currentFilter = "all",
-	 	todoUIs = {};
+	var todos = iris.resource(iris.path.resource), todoUIs = {};
 
 	self.create = function() {
 		self.tmpl(iris.path.welcome.html);
@@ -25,9 +23,8 @@ iris.screen(function(self) {
 
 		// Resource events
 		self.on(todos.CREATE_TODO, function (id) {
-			var ui = self.ui("todo-list", iris.path.todo.js, {id: id});
-			todoUIs[id] = ui;
-			ui.filter(currentFilter);
+			todoUIs[id] = self.ui("todo-list", iris.path.todo.js, {id: id})
+						.render().show();
 			render();
 		});
 
@@ -38,29 +35,28 @@ iris.screen(function(self) {
 		});
 
 		self.on(todos.CHANGE_TODO, function (id) {
-			todoUIs[id].render().filter(currentFilter);
+			todoUIs[id].render();
 			render();
 		});
 
 		todos.init();
 		render();
-	}
+	};
 
 	self.awake = function () {
 		var filter = self.param("filter");
 		if ( filter ) {
-			currentFilter = filter;
-			console.log("Set filter = " + filter);
+			todos.setFilter(filter);
 
 			var $footer = self.get("footer");
 			$(".selected", $footer).removeClass("selected");
 			$("a[href='#?filter=" + filter + "']", $footer).addClass("selected");
 
 			for (var id in todoUIs ) {
-				todoUIs[id].filter(currentFilter);
+				todoUIs[id].render();
 			}
 		}
-	}
+	};
 
 	function render () {
 		self.inflate({

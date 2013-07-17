@@ -8,7 +8,8 @@ iris.resource(function (self) {
 	var todos = {},
 		remaining = 0,
 		total = 0,
-		ids = [];
+		ids = [],
+		currentFilter = "all";
 
 	self.init = function () {
 		console.log("Reading todos from storage... ");
@@ -45,7 +46,11 @@ iris.resource(function (self) {
 	};
 
 	self.getTodo = function (id) {
-		return $.extend({}, todos[id]);
+		var todo = todos[id];
+		todo.visible = currentFilter === "all" 
+			|| (todo.completed && currentFilter === "completed") 
+			|| (!todo.completed && currentFilter === "active");
+		return $.extend({}, todo);
 	}
 
 	self.remove = function (id) {
@@ -92,6 +97,11 @@ iris.resource(function (self) {
 		saveTodo(todo);
 		iris.notify(self.CHANGE_TODO, todo.id);
 	};
+
+	self.setFilter = function (filter) {
+		console.log("Set filter = " + filter);
+		currentFilter = filter;
+	}
 
 	self.count = function () {
 		return total;
