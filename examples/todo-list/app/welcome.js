@@ -1,6 +1,6 @@
 iris.screen(function(self) {
 
-	var todos = iris.resource(iris.path.resource), todoUIs = {};
+	var todos = iris.resource(iris.path.resource);
 
 	self.create = function() {
 		self.tmpl(iris.path.welcome.html);
@@ -23,19 +23,15 @@ iris.screen(function(self) {
 
 		// Resource events
 		self.on(todos.CREATE_TODO, function (id) {
-			todoUIs[id] = self.ui("todo-list", iris.path.todo.js, {id: id})
-						.render().show();
+			self.ui("todo-list", iris.path.todo.js, {id: id}).render().show();
 			render();
 		});
 
 		self.on(todos.DESTROY_TODO, function (id) {
-			todoUIs[id].destroyUI();
-			delete todoUIs[id];
 			render();
 		});
 
 		self.on(todos.CHANGE_TODO, function (id) {
-			todoUIs[id].render();
 			render();
 		});
 
@@ -52,8 +48,8 @@ iris.screen(function(self) {
 			$(".selected", $footer).removeClass("selected");
 			$("a[href='#?filter=" + filter + "']", $footer).addClass("selected");
 
-			for (var id in todoUIs ) {
-				todoUIs[id].render();
+			for (var i = 0; i < self.ui("todo-list").length; i++ ) {
+				self.ui("todo-list")[i].render();
 			}
 		}
 	};
