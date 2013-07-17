@@ -42,6 +42,12 @@ iris.ui(function (self) {
 				self.destroyUI();
 			}
 		});
+
+		self.on(todos.CHANGE_TODO, function (id) {
+			if (self.setting("id") === id) {
+				self.render();
+			}
+		});
 	};
 
 
