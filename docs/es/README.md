@@ -2728,11 +2728,9 @@ iris.screen(
     iris.path.welcome.js
 );
 ```
-Iris puede aplicar formatos a fechas, números y monedas adaptándolos a la variación **regional** que se haya seleccionado. Esto se puede hacer desde el código Javascript o bien desde el código HTML de un componente. En este último caso, los datos a formatear se pasarán en el método *tmpl*.
+Iris puede aplicar formatos a fechas, números y monedas adaptándolos a la variación **regional** que se haya seleccionado.
 
-Veamos un ejemplo de cada uno de ellos.
-
-Para el formateado desde Javascript utilizaremos los siguientes ficheros:
+Veamos un ejemplo:
 
 En *welcome.html*:
 
@@ -2810,115 +2808,6 @@ iris.regional("dayNames");
 
 Las funciones *iris.date*, *iris.currency* e *iris.number* admiten opcionalmente como segundo parámetro un objeto de *Javascript* que será utilizado al aplicar el formato. Si este parámetro no se pasara, se utilizará el formato definido en *iris.locale*.
 
-Para el formateado desde HTML utilizaremos los siguientes ficheros:
-
-En *welcome.html*:
-
-```html
-<div>
-    <h2>Regionals from HTML</h2>
-    <div>
-        <h3>Number</h3>
-        <pre>## price ##</pre>
-        <span>
-            ##price##
-        </span>
-    </div>
-
-    <div>
-        <h3>Currency</h3>
-        <pre>## price|currency ##</pre>
-        <span>
-            ##price|currency##
-        </span>
-    </div>
-
-    <div>
-        <h3>Date</h3>
-        <pre>## date|date ##</pre>
-        <span>
-            ##date|date##
-        </span>
-    </div>
-
-    <div>
-        <h3>Custom Date</h3>
-        <pre>## date|date(y - m - d) ##</pre>
-        <span>
-            ##date|date(y - m - d)##
-        </span>
-    </div>
-
-    <div>
-        <h3>Object Property</h3>
-        <pre>## object.property ##</pre>
-        <span>
-            ##object.property##
-        </span>
-    </div>
-
-</div>
-```
-
-Y en *welcome.js*:
-
-```js
-//In welcome.js
-iris.screen(
-    function (self) {
-        self.create = function () {
-            console.log("Welcome Screen Created");
-   
-            iris.locale(
-                "en_US", {
-                    dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-                    monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-                    dateFormat: "m/d/Y h:i:s",
-                    currency: {
-                        formatPos: "n",
-                        formatNeg: "(n)",
-                        decimal: ".",
-                        thousand: ",",
-                        precision: 2
-                    }
-                }
-            );
-     
-            iris.locale(
-                "es_ES", {
-                    dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
-                    monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
-                    dateFormat: "d/m/Y H:i:s",
-                    currency: {
-                        formatPos: "n",
-                        formatNeg: "-n",
-                        decimal: ",",
-                        thousand: ".",
-                        precision: 2
-                    }
-                }
-            );
-
-            iris.locale("en_US");
-   
-            var params = {
-                "price" : 1499.99,
-                "date" : new Date(),
-                "object" : {
-                    "property" : "This is a object property value"
-                }
-            };
-   
-            self.tmpl(iris.path.welcome.html, params);
-   
-        };
-
-    },
-    iris.path.welcome.js
-);
-```
-
-Observe que la aplicación del formato en HTML se realiza de forma parecida a como se hace la traducción de vocablos pero utilizando el símbolo "#". El formato que se quiere dar se separa del nombre de variable a formatear con el símbolo "|".
 
 En el formato de fechas podemos utilizar los siguientes códigos:
 
