@@ -16,7 +16,8 @@
     _lastLoadedDependencies,
     _dependency,
     _notCreatedScreenHashses,
-    _paths
+    _paths,
+    FORMAT_REG_EXP = /(date|currency|number)(?:\(([^\)]+)\))/
     ;
 
     function _init() {
@@ -575,6 +576,8 @@
     };
 
     Component.prototype._tmpl = function(p_htmlUrl, p_mode) {
+
+        var f, childrens, tmpl;
         
         if (this.template !== null) {
             throw "self.tmpl() has already been called in '" + this.fileJs + "'";
@@ -582,8 +585,7 @@
         
         this.fileTmpl = p_htmlUrl;
 
-        var tmplTranslated = _parseLangTags(_includes[p_htmlUrl]);
-        var tmpl = $(tmplTranslated);
+        tmpl = $( _parseLangTags(_includes[p_htmlUrl]) );
 
         this.template = tmpl;
         if(tmpl.size() > 1) {
@@ -604,95 +606,89 @@
                 throw "Unknown template mode '" + p_mode + "'";
         }
 
-        // Find components with data-id and data-attr attributes
+        // Process elements with data-* attributes
         this.el = {};
-        var elements = this.el; // Keep reference
-
         this.inflateTargets = {};
-        var inflateTargets = this.inflateTargets; // Keep reference
 
-        // Variables needed to manage attr formatting
-        var FORMAT_REG_EXP = /(date|currency|number)(?:\(([^\)]+)\))/;
+        // The tmpl root node
+        this._data_attrs(tmpl);
 
-        $("*", tmpl).each(function(index, element) {
-            
-            var $el = $(element);
-            var data = $el.data();
+        // And all tmpl child nodes
+        childrens = tmpl.get(0).getElementsByTagName("*");
+        for (f = childrens.length; f--;) {
+            this._data_attrs( $(childrens[f]) );
+        }
+    };
 
-            var inflateFormats = {}, inflatesByKeys = {};
-            var target, targetParams, format, formatParams, formatMatches;
+    Component.prototype._data_attrs = function ($el) {
+        var f, key, attr, attrs = $el.get(0).attributes,
+            inflate, inflateFormats = {}, inflatesByKeys = {},
+            target, targetParams, format, formatParams, formatMatches
+            ;
 
-            for ( var key in data ) {
-                // data-id
-                if ( key === "id" ) {
-                    elements[data.id] = $el;
-                    continue;
-                }
+        for (f = attrs.length; f--;) {
+            attr = attrs[f];
 
-                // data-*-format
-                if ( /Format$/.test(key) ) {
-                    format = data[key];
-                    formatParams = undefined;
-
-                    if ( format && FORMAT_REG_EXP.test(format) ) {
-                        formatMatches = format.match(FORMAT_REG_EXP);
-
-                        format = formatMatches[1];
-                        formatParams = formatMatches[2]; // TODO manage multiple parameter using: formatParams[2].splice(",");
-                    }
-
-                    inflateFormats[ key.replace(/Format$/, "") ] = { key: format, params: formatParams };
-                    continue;
-                }
-
-                switch (key) {
-                    case "jqText":
-                        target = "_text_";
-                        break;
-                    case "jqHtml":
-                        target = "_html_";
-                        break;
-                    case "jqVal":
-                        target = "_val_";
-                        break;
-                    case "jqToggle":
-                        target = "_toggle_";
-                        break;
-                    default:
-
-                        switch (0) {
-                            case key.indexOf("jqAttr"):
-                                target = "_attr_";
-                                targetParams = key.substr(6).toLowerCase();
-                            break;
-                            case key.indexOf("jqProp"):
-                                target = "_prop_";
-                                targetParams = key.substr(6).toLowerCase();
-                            break;
-                            default:
-                                continue;
-                        }
-                }
-
-                if ( !inflateTargets.hasOwnProperty(data[key]) ) {
-                    inflateTargets[ data[key] ] = [];
-                }
-
-                var inflate = { target: target, targetParams: targetParams, el: $el };
-
-                inflateTargets[ data[key] ].push( inflate );
-                inflatesByKeys[key] = inflate;
+            if ( attr.name.indexOf("data-") === 0 ) {
+                key = attr.name.substr(5);
+            } else {
+                continue;
             }
 
-            // After of iterate the element data attributes, set the formatting to each target
-            for ( key in inflateFormats ) {
-                if ( inflatesByKeys.hasOwnProperty(key) ) {
-                    inflatesByKeys[key].format = inflateFormats[key].key;
-                    inflatesByKeys[key].formatParams = inflateFormats[key].params;
+            // data-id
+            if ( key === "id" ) {
+                this.el[ attr.value ] = $el;
+                continue;
+            }
+
+            // data-*-format
+            if ( key.indexOf("-format", key.length - 7) !== -1 ) {
+                format = attr.value;
+                formatParams = undefined;
+
+                if ( format && FORMAT_REG_EXP.test(format) ) {
+                    formatMatches = format.match(FORMAT_REG_EXP);
+
+                    format = formatMatches[1];
+                    formatParams = formatMatches[2]; // TODO manage multiple parameter using: formatParams[2].splice(",");
+                }
+                // inflateFormats key = "jq-xxxx-format" -> "xxxx"
+                inflateFormats[ key.substr(3, key.length - 10) ] = { key: format, params: formatParams };
+                continue;
+            }
+
+            if ( key.indexOf("jq-") === 0 ) {
+                key = key.substr(3);
+                if ( /^(text|html|val|toggle)$/.test(key) ) {
+                    target = key;
+
+                } else if ( /^(prop-|attr-)/.test(key) ) {
+                    target = key.substr(0, 4);
+                    targetParams = key.substr(5);
+
+                } else {
+                    // Other data-* attribute
+                    continue;
                 }
             }
 
-        });
+            if ( !this.inflateTargets.hasOwnProperty(attr.value) ) {
+                this.inflateTargets[ attr.value ] = [];
+            }
+
+            inflate = { target: target, targetParams: targetParams, el: $el };
+
+            this.inflateTargets[ attr.value ].push( inflate );
+            inflatesByKeys[key] = inflate;
+        }
+
+        // After of iterate the element data attributes, set the formatting to each target
+        for ( key in inflateFormats ) {
+            if ( inflatesByKeys.hasOwnProperty(key) ) {
+                inflatesByKeys[key].format = inflateFormats[key].key;
+                inflatesByKeys[key].formatParams = inflateFormats[key].params;
+            }
+        }
     };
 
     Component.prototype.inflate = function(data) {
@@ -724,22 +720,22 @@
                     }
 
                     switch ( inflate.target ) {
-                        case "_text_":
+                        case "text":
                             inflate.el.text(value);
                             break;
-                        case "_html_":
+                        case "html":
                             inflate.el.html(value);
                             break;
-                        case "_val_":
+                        case "val":
                             inflate.el.val(value);
                             break;
-                        case "_toggle_":
+                        case "toggle":
                             inflate.el.toggle(value);
                             break;
-                        case "_prop_":
+                        case "prop":
                             inflate.el.prop(inflate.targetParams, value);
                             break;
-                        case "_attr_":
+                        case "attr":
                             inflate.el.attr(inflate.targetParams, value);
                     }
                 }

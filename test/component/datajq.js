@@ -25,8 +25,8 @@ iris.screen(function (self) {
                 name:"test name",
                 money: -67890.678,
                 num: 1014.68,
-                acceptTerms : true,
-                isAdmin : false,
+                acceptTerms : true, // no change this value
+                isAdmin : false, // no change this value or data-jq-toggle test doesnt work well if toogle fails
                 region: {
                     country: "country test"
                 },
@@ -38,14 +38,18 @@ iris.screen(function (self) {
 
 
         // Check printed values
-        window.expect(13);
+        window.expect(15);
 
         self.inflate(data);
 
         window.strictEqual(self.get("test_div").attr("title"), data.person.name, "Data attr in div title attribute");
 
+        window.strictEqual(self.get("test_attr_on_data").attr("data-example"), data.person.name, "Data attr in div data-example attribute");
+
         window.strictEqual(self.get("test_multiple_attrs").html(), data.person.region.country, "Set up a multiple attributes, val");
+
         window.strictEqual(self.get("test_multiple_attrs").attr("title"), data.person.name, "Set up a multiple attributes, title");
+
         window.strictEqual(self.get("test_multiple_attrs").attr("style"), data.person.style, "Set up a multiple attributes, style");
 
         window.strictEqual(self.get("test_textarea").text(), data.person.name, "Data set text on textareas");
@@ -58,6 +62,8 @@ iris.screen(function (self) {
 
         window.strictEqual(self.get("test_radio").prop("checked"), data.person.isAdmin, "Data jq on radio");
 
+        // Toggle
+        window.strictEqual(self.get().css("display"), data.person.isAdmin ? "block" : "none", "Data jq toggle");
 
         // Currency
         var money = iris.currency( data.person.money );
