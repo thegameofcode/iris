@@ -13,10 +13,8 @@ iris.screen(function(self) {
 		});
 
 		self.get("toggle-all").on("change", function (e) {
-			e.preventDefault();
 			var completed = self.get("toggle-all").prop("checked");
 			todos.setAll( completed );
-			render();
 		});
 
 		self.get("clear-completed").on("click", todos.removeCompleted);
