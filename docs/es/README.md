@@ -30,13 +30,12 @@
  * <a href="#data-settings">Paso de parámetros utilizando atributos *data-*</a><br>
  * <a href="#settings_ui">Paso de parámetros con el método *self.ui*</a><br>
  * <a href="#settings_priority">Prioridad en el paso de parámetros</a><br>
- * <a href="#tmpl_settings">Paso de parámetros al *template* con el método *tmpl*</a><br>
- * <a href="#data-model">Paso de parámetros al *template* con el atributo *data-model*</a><br>
+ * <a href="#data-jq">Paso de parámetros al *template* con el atributo *data-jq-**</a><br>
  * <a href="#events">Trabajando con eventos</a><br>
  * <a href="#events_globals">Eventos predefinidos</a><br>
  * <a href="#locals">Utilizando locales y regionales</a><br>
- * <a href="#data-format">Formateando con *data-format*</a><br>
  * <a href="#ajax">Llamadas Ajax y servicios REST</a><br>
+ * <a href="#include">Incluyendo ficheros con *iris.include*</a><br>
  * <a href="#production">Paso a producción</a><br>
  * <a href="#iris_packager">Utilizando *iris_packager.js*</a><br>
  * <a href="#unit_test">Pruebas de unidad en Iris</a><br>
@@ -124,6 +123,8 @@ Iris está especialmente diseñado para dar respuesta a ambos problemas:
  * Permite la reutilización de los componentes creados.
  * Facilita la realización de pruebas, la depuración y el mantenimiento.
 
+ Iris, a diferencia de otros *frameworks MVC*, no introduce lógica de programación en la vista HTML, ni oculta la programación de la aplicación cliente. Con Iris, el desarrollo resultará más estructurado y cohesivo pero la programación se podrá hacer con el estilo que resulte más conveniente, ya que Iris no impone una determinada metodología.
+
 #<a name="how_it_works"></a>¿Cómo funciona Iris?
 
 En esta sección se van a presentar los principales componentes de Iris y los métodos para crear, destruir o interaccionar con ellos. No se preocupe si no entiende algunos conceptos, ya que lo único que se pretende en este momento es que se vaya familiarizando con la forma de trabajo de Iris.  Más adelante se propondrán ejemplos de código que le permitirán clarificar y profundizar lo aquí esbozado.
@@ -154,7 +155,7 @@ El código HTML del componente se inserta en el DOM de la página. La inserción
 
 Iris utiliza dos tipos de componentes principales: Screens y UIs.
 
-Recuérdese que ambos son componentes y, por lo tanto, se definen mediante dos ficheros: Uno en HTML para establecer el *template* o presentación y otro en Javascript para el comportamiento. 
+Recuérdese que ambos son componentes y, por lo tanto, se definen mediante dos ficheros: Uno en HTML para establecer el *template* o vista y otro en Javascript para el *presenter* o comportamiento. 
 
 Un **UI** es un componente **reutilizable**. Puede ser tan simple como un simple botón o tan complejo como sea preciso. Un UI se puede componer de otros UIs. Si queremos conseguir una reutilización efectiva, debemos diseñar el UI de tal forma que su *presenter* trabaje de la forma más desacoplada y cohesiva posible. Iris tiene mecanismos como los eventos o el paso de parámetros que facilitan esta labor.
 
@@ -213,7 +214,7 @@ Nota: Las aplicaciones de Iris deben estar situadas en un servidor Web.
 
 ##<a name="iris_path"></a>Objeto *iris.path*
 
-Iris requiere que se defina un objeto llamado *iris.path*. Debemos asociar, *mapear*, sus atributos a las URLs de acceso a los componentes que vayamos a utilizar. Se tienen que definir los ficheros *js* y *html* de todos los componentes, *screens* y *uis*. También es obligatorio definir el *resource*.
+Iris requiere que se defina un objeto llamado *iris.path*. Debemos asociar, *mapear*, sus atributos a las URLs de acceso a los componentes que vayamos a utilizar. Se tienen que definir los ficheros *js* y *html* de todos los componentes, *screens* y *uis*. También es obligatorio definir los *resources* como se explicará posteriormente.
 
 Puede estructurar el objeto *iris.path* como mejor le convenga: separando *screens* de *uis*, por módulos, con un sólo nivel o con varios, etc. Lo único realmente importante es que, todos los *templates*, *presenters* y *resources* tengan un atributo en el objeto *iris.path* que sea de tipo *string* y que contenga la ruta de acceso al fichero.
 
@@ -232,7 +233,7 @@ iris.path = {
     welcome: {js: "welcome.js", html: "welcome.html"}
 };
 
-//In any Javascrit file or in a "<script>" section of an HTML file ... 
+//In any Javascrit file or in a <script> section of an HTML file ... 
 $(document).ready(
     function () {
         iris.baseUri("./"); //Optional: It sets de base directory of the application
@@ -987,7 +988,7 @@ Se llama al evento *awake* tanto del UI *my_ui* como del Screen *Home* ya que el
 
 ##<a name="inner_UIs"></a>UIs contenidos en otros UIs
 
-Un UI puede contener otros UIs. Para probar esto creemos otro UI llamado *inner_ui* con los siguientes ficheros.
+Un UI puede contener otros UIs. Para probar esto, creemos otro UI llamado *inner_ui* con los siguientes ficheros.
 
 Primero modificamos *iris.path*:
 
@@ -1355,6 +1356,8 @@ Observe que eliminamos el UI con el método *destroyUI* a través de la referenc
 
 > El método *self.ui()* devuelve una referencia al UI creado.
 
+> Si al método *self.ui()* le pasamos un *string*, Iris buscará en el *template* un elemento cuyo *data-id* coincida con el parámetro pasado y devolverá un *array* con todos los *uis* que contenga cuando el mode sea *self.APPEND* y el UI contenido en él cuando el modo sea *self.PREPEND*.
+
 > El método *self.uis()* devuelve la colección de UIs que tiene el componente.
 
 En *my_ui.js*:
@@ -1460,6 +1463,8 @@ my_ui UI Destroyed
 my_ui UI Asleep
 my_ui UI Destroyed
 </pre>
+
+> Podemos destruir un UI desde el propio componente llamando al método *self.destroyUI()* sin pasar ningún argumento; esto hara que el UI se autodestruya.
 
 ##<a name="canSleep"></a>Evento *canSleep*
 
@@ -1678,6 +1683,10 @@ iris.screen(
 
 Observe que el parámetro lo podemos recuperar con el objeto *params* que recibimos en el método *awake*.
 
+> Otra forma de recuperar un parámetro, es utilizar el método *self.param()* pasándole en nombre del parámetro.
+
+En el caso que nos ocupa esto se podría haber hecho con: *self.param("year")*
+
 También podemos pasar un parámetro en el método *iris.navigate*. Para probar esto hagamos los siguientes cambios:
 
 En *welcome.html* cambiamos el enlace por un botón:
@@ -1776,8 +1785,8 @@ iris.screen(
             ]);
             self.awake= function (params) {
                 console.log("Welcome Screen Awaked");
-                if (params.year) {
-                    self.get("year_parameter").text("The value of the year parameter is: " + params.year);
+                if (self.param(year)) {
+                    self.get("year_parameter").text("The value of the year parameter is: " + self.param(year));
                 } else {
                     self.get("year_parameter").text("No year");
                 }
@@ -1950,6 +1959,31 @@ Para recuperar el nombre:
 
 ```js
 var name = self.setting("person.name");
+```
+
+Es conveniente inicializar los valores de los parámetros que puede recibir un componente. Esto lo podemos hacer así:
+
+```js
+//In my_ui.js
+iris.ui(
+    function (self) {
+	
+		self.settings({
+			ui_number: 0
+		});
+
+        self.create = function () {   
+            console.log("my_ui UI Created");  
+            self.tmpl(iris.path.my_ui.html);
+        };
+  
+        self.awake = function () {  
+            console.log("my_ui UI Awakened");
+            self.get("ui_number").text("This is the " + self.setting("ui_number") + " muy_ui UI.");
+        };
+    },
+    iris.path.my_ui.js
+);
 ```
 
 ##<a name="data-settings"></a>Paso de parámetros utilizando atributos *data-*
@@ -2208,39 +2242,21 @@ iris.ui(
 En este caso, la asignación del parámetro *year* será sobrescrita por cualquier otra forma de paso de parámetros que utilicemos. Podríamos considerar, por lo tanto, que esta es la forma de pasar **parámetros por defecto** a un componente.
 
 
-##<a name="tmpl_settings"></a>Paso de parámetros al *template* con el método *tmpl*
+##<a name="data-jq"></a>Paso de parámetros al *template* con el atributo *data-jq-**
 
-Podemos pasar parámetros al *template* a través del método *tmpl*. Para hacerlo, debemos añadir un segundo parámetro a este método. Este parámetro será un objeto con los nombres de variables que queramos pasar y sus valores.
+Iris permite pasar parámetros al *template* utilizando el atributo *data-jq-** en el *template* y el método *self.inflate* en el presenter.
 
-Por ejemplo, en *welcome.js*:
+El paso de parámetros con *data-jq-** permite ejecutar distintos métodos de JQuery en el *template* dependiendo del valor por el que sustituyamos el ***:
 
 ```js
-//In welcome.js
-iris.screen(
-    function (self) {
-        self.create = function () {
-            console.log("Welcome Screen Created");
-            self.tmpl(iris.path.welcome.html, {"name":"John"}); 
-        };
-    }
-);
-```
-Para recuperar el valor de un parámetro, en el *template*, pondremos su nombre entre símbolos *##*.
-
-Por ejemplo, en *welcome.html*:
-
-```html
-<div>
-    <h1>Welcome Screen</h1>
-    <p>The name is ##name##</p>
-</div>
+data-jq-html == $(element).html()
+data-jq-text == $(element).text()
+data-jq-val == $(element).val()
+data-jq-toggle == $(element).toggle()
+data-jq-attr-xxx == $(element).attr(xxx)
+data-jq-prop-xxx == $(element).prop(xxx)
 ```
 
-> Los parámetros que se pasan al *template* con el método *tmpl* son **CONSTANTES**. Es decir, que aunque cambie su valor, no serán actualizados en el *template* cuando se llame al evento *awake*. La única forma correcta de actualizar los valores recuperados en el *template* con *##..##*, es destruir y volver a crear el *template*.
-
-##<a name="data-model"></a>Paso de parámetros al *template* con el atributo *data-model*
-
-Iris dispone de una forma alternativa de pasar parámetros al *template* utilizando el atributo *data-model*. La diferencia con el anterior es que Iris actualizará el valor de los parámetros pasados mediante *data-model* cuando se invoque el método *self.inflate* en el controlador del componente.
 
 Veamos un en ejemplo.
 
@@ -2252,7 +2268,7 @@ En *welcome.html*:
     <p>This is the initial screen.</p>
     <button data-id="update_date">Update date</button>
     <br>
-    The date is: <span data-model="date">Not set yet</span>
+    The date is: <span data-jq-text="date">Not set yet</span>
 </div>
 ```
 
@@ -2276,17 +2292,10 @@ iris.screen(
 );
 ```
 
-Observe que el contenido del elemento del *DOM* que tenga un atributo *data-model*, cuyo valor coincida con algún atributo del objeto pasado al método *self.inflate*, será reemplazado. Si el valor de *data-model* no coincide con ningún atributo, el componente del DOM conservará su valor.
+Observe que el contenido del elemento del *DOM* que tenga un atributo *data-jq-text*, cuyo valor coincida con algún atributo del objeto pasado al método *self.inflate*, será reemplazado. Si el valor de *data-jq-text* no coincide con ningún atributo, el componente del DOM conservará su valor.
 
-> El paso de parámetros con *data-model* permite actualizar los valores en el *template*, por el contrario el paso con ##...## mantendrá el valor del parámetro en todo el ciclo de vida del componente.
+> El paso de parámetros con *data-jq-text* permite actualizar los valores en el *template* cuando se invoque el método *self.inflate*.
 
-> La utilización de ##...## permite hacer cosas que no se pueden hacer con *data-model*.
-
-Por ejemplo:
-
-```html
-<img src="##logo##.png"/>
-```
 
 ##<a name="events"></a>Trabajando con eventos
 
@@ -2578,11 +2587,14 @@ Iris tiene los siguiente eventos predefinidos:
 iris.BEFORE_NAVIGATION = "iris_before_navigation";
 iris.AFTER_NAVIGATION = "iris_after_navigation";
 iris.RESOURCE_ERROR = "iris_resource_error";
+iris.SCREEN_NOT_FOUND = "iris_screen_not_found"
 ```
 
 Las funciones que se suscriban a los dos primeros serán notificadas antes y después de que se produzca un cambio en el hash-URL, respectivamente.
 
 El tercero notificará cuando se produzca un error al hacer la llamada a un servicio (ver más adelante). Las funciones que se suscriban a este evento, recibirán información del error a través de tres parámetros (request, status, error) devueltos por la llamada *jquery.ajax*.
+
+El cuarto se llamará cuando la navegación falla, como ocurre, por ejemplo, cuando se intenta ir a un *Screen* que no ha sido registrado.
 
 ##<a name="locals"></a>Utilizando locales y regionales
 
@@ -2716,11 +2728,9 @@ iris.screen(
     iris.path.welcome.js
 );
 ```
-Iris puede aplicar formatos a fechas, números y monedas adaptándolos a la variación **regional** que se haya seleccionado. Esto se puede hacer desde el código Javascript o bien desde el código HTML de un componente. En este último caso, los datos a formatear se pasarán en el método *tmpl*.
+Iris puede aplicar formatos a fechas, números y monedas adaptándolos a la variación **regional** que se haya seleccionado.
 
-Veamos un ejemplo de cada uno de ellos.
-
-Para el formateado desde Javascript utilizaremos los siguientes ficheros:
+Veamos un ejemplo:
 
 En *welcome.html*:
 
@@ -2798,115 +2808,6 @@ iris.regional("dayNames");
 
 Las funciones *iris.date*, *iris.currency* e *iris.number* admiten opcionalmente como segundo parámetro un objeto de *Javascript* que será utilizado al aplicar el formato. Si este parámetro no se pasara, se utilizará el formato definido en *iris.locale*.
 
-Para el formateado desde HTML utilizaremos los siguientes ficheros:
-
-En *welcome.html*:
-
-```html
-<div>
-    <h2>Regionals from HTML</h2>
-    <div>
-        <h3>Number</h3>
-        <pre>## price ##</pre>
-        <span>
-            ##price##
-        </span>
-    </div>
-
-    <div>
-        <h3>Currency</h3>
-        <pre>## price|currency ##</pre>
-        <span>
-            ##price|currency##
-        </span>
-    </div>
-
-    <div>
-        <h3>Date</h3>
-        <pre>## date|date ##</pre>
-        <span>
-            ##date|date##
-        </span>
-    </div>
-
-    <div>
-        <h3>Custom Date</h3>
-        <pre>## date|date(y - m - d) ##</pre>
-        <span>
-            ##date|date(y - m - d)##
-        </span>
-    </div>
-
-    <div>
-        <h3>Object Property</h3>
-        <pre>## object.property ##</pre>
-        <span>
-            ##object.property##
-        </span>
-    </div>
-
-</div>
-```
-
-Y en *welcome.js*:
-
-```js
-//In welcome.js
-iris.screen(
-    function (self) {
-        self.create = function () {
-            console.log("Welcome Screen Created");
-   
-            iris.locale(
-                "en_US", {
-                    dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-                    monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-                    dateFormat: "m/d/Y h:i:s",
-                    currency: {
-                        formatPos: "n",
-                        formatNeg: "(n)",
-                        decimal: ".",
-                        thousand: ",",
-                        precision: 2
-                    }
-                }
-            );
-     
-            iris.locale(
-                "es_ES", {
-                    dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
-                    monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
-                    dateFormat: "d/m/Y H:i:s",
-                    currency: {
-                        formatPos: "n",
-                        formatNeg: "-n",
-                        decimal: ",",
-                        thousand: ".",
-                        precision: 2
-                    }
-                }
-            );
-
-            iris.locale("en_US");
-   
-            var params = {
-                "price" : 1499.99,
-                "date" : new Date(),
-                "object" : {
-                    "property" : "This is a object property value"
-                }
-            };
-   
-            self.tmpl(iris.path.welcome.html, params);
-   
-        };
-
-    },
-    iris.path.welcome.js
-);
-```
-
-Observe que la aplicación del formato en HTML se realiza de forma parecida a como se hace la traducción de vocablos pero utilizando el símbolo "#". El formato que se quiere dar se separa del nombre de variable a formatear con el símbolo "|".
 
 En el formato de fechas podemos utilizar los siguientes códigos:
 
@@ -2929,26 +2830,6 @@ U Seconds since the Unix Epoch (January 1 1970 00:00:00 UTC)
 y Year, 2 digits. '99'
 Y Year, 4 digits. '1999'
 </pre>
-
-##<a name="data-format"></a>Formateando con *data-format*
-
-Los formatos aplicados en la sección anterior no se pueden cambiar una vez que se hayan fijado. El atributo *data-format* permite modificar al formato de la misma forma que lo hacíamos con *data-model*, es decir, llamando al método *self.inflate* del componente.
-
-Por ejemplo, si en el método *create* de *welcome.js*, tuviéramos:
-
-```js
-var data = { person: { name:"test name", money: -67890.678, region: { country: "country test" }, lastLogin: 1358506927400, updated: "Fri Jan 18 2013 13:09:47 GMT+0100 (CET)" } };
-
-self.inflate(data);
-```
-
-Podríamos formatear el *template*, *welcome.js*, de la siguiente manera:
-
-```html
-<span data-model="person.money" data-format="currency"></span>
-<span data-model="person.lastLogin" data-format="date"></span>
-<span data-model="person.updated" data-format="date(y-m-d)"></span>
-```
 
 ##<a name="ajax"></a>Llamadas Ajax y servicios REST
 
@@ -2985,8 +2866,8 @@ En *welcome.html*:
 <div>
     <h1>Welcome Screen</h1>
     <p>This is the initial screen.</p>
-    <div data-model="title"></div>
-    <div data-model="author.name"></div>
+    <div data-jq-text="title"></div>
+    <div data-jq-text="author.name"></div>
 </div>
 ```
 
@@ -3066,6 +2947,15 @@ function onResourceError (request, textStatus, errorThrown) {
 	....
 }
 ```
+##<a name="include"></a>Incluyendo ficheros con *iris.include*
+
+Iris permite incluir ficheros con el método *iris.include*. Por ejemplo:
+
+```js
+iris.include("http://example.com/js/file.js", function(){
+  console.log("The file.js has been loaded.")
+});
+```
 
 ##<a name="production"></a>Paso a producción
 
@@ -3098,7 +2988,11 @@ iris.enableLog(server1, server2,...) //If no arguments are passed, returns the l
 //Or You can pass the servers that you want to use the Iris logging system.
 ```
 
-<a name="minification"></a>Iris ayuda a la **minificación** de la aplicación. Para reducir el número de ficheros que hay que descargar desde el servidor en una aplicación Iris, podemos *minificar* todos los ficheros *.js* y *html*" en uno único utilizando cualquier con la herramienta que queramos (por ejemplo [Grunt](https://github.com/gruntjs/grunt)) o con la que se suministra con Iris ([iris_packager.js](https://raw.github.com/thegameofcode/iris/master/tools/iris_packager.js)).
+```js
+iris.browser() //Returns an object with the browser information using user-agent. It contains flags for each of the four most prevalent browser classes (Internet Explorer, Mozilla, Webkit, and Opera) as well as version information.
+```
+
+<a name="minification"></a>Iris ayuda a la **minificación** de la aplicación. Para reducir el número de ficheros que hay que descargar desde el servidor en una aplicación Iris, podemos *minificar* todos los ficheros *.js* y *html* en uno único utilizando cualquier con la herramienta que queramos (por ejemplo [Grunt](https://github.com/gruntjs/grunt)) o con la que se suministra con Iris ([iris_packager.js](https://raw.github.com/thegameofcode/iris/master/tools/iris_packager.js)).
 
 El segundo parámetro que pasamos a las funciones *iris.screen*, *iris.ui* e *iris.resource* es el que permite a Iris evitar la descarga del fichero del componente y que utilice el archivo *minificado*. Iris buscará todas las rutas que contenga la variable *iris.path* y se descargará aquellos que no se encuentren en el fichero *minificado*.
 
@@ -3345,7 +3239,7 @@ En línea de comandos el parámetro es **appPath**. Por ejemplo:
 node iris_packager input=shopping/,lib/**/*.js,js/my_lib.js appPath=./www/ ...
 </pre>
 
-En el fichero *iris_package.json" el atributo es **appPath**.
+En el fichero *iris_package.json* el atributo es **appPath**.
 
 El valor por defecto del parámetro es directorio actual ("."). Es decir, que si no se indica un valor para este parámetro se presupone que todas las rutas son relativas al directorio actual.
 
@@ -3574,6 +3468,8 @@ Las pruebas de unidad son una fuente adicional para conocer el funcionamiento de
 #<a name="step_by_step"></a>Construyendo paso a paso una aplicación desde cero
 
 En esta sección vamos utilizar Iris para construir una sencilla aplicación que nos permita comprender como integrar todo lo visto anteriormente.
+
+Puede consultar este y otros ejemplos en: [ejemplo]https://github.com/thegameofcode/iris/tree/master/examples)
 
 Puede descargar la aplicación en el siguiente [enlace](https://github.com/thegameofcode/iris/blob/master/docs/iris-shopping.tar.gz?raw=true). Para probar la aplicación debe descomprimirla y desplegarla en un servidor Web (Apache, Node.js, etc). Si tiene instalado *Grunt* puede, simplemente, situarse en el directorio raíz de la aplicación y ejecutar el comando *grunt*.
 
@@ -5507,5 +5403,3 @@ $("[data-id='product']").live("click", function(event) {
     return model.shoppingList.addOrRemoveShoppingProduct(ko.dataFor(this), event.target.checked);
 });
 ```
-
-
