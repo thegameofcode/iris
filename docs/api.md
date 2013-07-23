@@ -569,8 +569,8 @@ function loginFail () {
 Since `v0.5.2`, you can load external JS files (before only relative paths), e.g.:
 
 ```js
-iris.include("http://example.com/js/file.js", function(){
-  console.log("file.js has been loaded.");
+iris.include(["http://www.example.com/js/file.js", "http://www.example.com/js/file2.js"], function(){
+  console.log("file.js & file2.js has been loaded.");
 });
 ```
 
