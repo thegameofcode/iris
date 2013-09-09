@@ -18,7 +18,6 @@ iris.ui(function (self) {
 
 		self.get("destroy").on("click", function () {
 			todos.remove(self.setting("id"));
-			self.destroyUI();
 		});
 
 		self.get().on("dblclick", function () {
