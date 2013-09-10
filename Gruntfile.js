@@ -60,12 +60,30 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('server', 'Start a custom echo web server', function() {
+  grunt.registerTask('server', 'Starts a custom echo web server', function() {
     var server = require('./echo-server');
   });
 
+  grunt.registerTask('bower', 'Creates bower.json file', function() {
+    var jsonpretty = require("jsonpretty");
+    var bowerFile = {
+      "name": "iris",
+      "version": grunt.config.data.pkg.version,
+      "main": ["./dist/*"],
+      "ignore":[
+        "**/.*"
+      ],
+      "dependencies": {
+        "jquery": ">= 1.5"
+      }
+    };
+
+    grunt.file.write("bower.json", jsonpretty(bowerFile));
+
+  });
+
   // Default task.
-  grunt.registerTask('default', ['jshint', 'server', 'qunit', 'concat', 'uglify']);
+  grunt.registerTask('default', ['jshint', 'server', 'qunit', 'concat', 'uglify', 'bower']);
 
   grunt.registerTask('test', ['jshint', 'server', 'watch']);
 
