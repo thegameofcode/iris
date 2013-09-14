@@ -75,7 +75,8 @@
 
     iris.enableLog = function () {
         if ( arguments.length > 0 ) {
-            _logEnabled = urlContains(arguments);
+            _logEnabled = urlContains.apply(this,arguments);
+
         } else {
             return _logEnabled;
         }
