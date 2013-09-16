@@ -65,7 +65,6 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('bower', 'Creates bower.json file', function() {
-    var jsonpretty = require("jsonpretty");
     var bowerFile = {
       "name": "iris",
       "version": grunt.config.data.pkg.version,
@@ -78,7 +77,7 @@ module.exports = function(grunt) {
       }
     };
 
-    grunt.file.write("bower.json", jsonpretty(bowerFile));
+    grunt.file.write("bower.json", JSON.stringify(bowerFile, undefined, 2));
 
   });
 
