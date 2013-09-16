@@ -46,8 +46,11 @@ iris.screen(function(self) {
 			$(".selected", $footer).removeClass("selected");
 			$("a[href='#?filter=" + filter + "']", $footer).addClass("selected");
 
-			for (var i = 0; i < self.ui("todo-list").length; i++ ) {
-				self.ui("todo-list")[i].render();
+			var uis = self.ui("todo-list");
+			if ( uis ) {
+				for (var i = 0; i < uis.length; i++ ) {
+					uis[i].render();
+				}
 			}
 		}
 	};
