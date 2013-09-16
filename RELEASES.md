@@ -8,6 +8,7 @@ _Creation date: 2012-01-12_
 [0.5.4] 2013-09-16
 
  * [fix] Fix iris.enableLog & iris.noCache
+ * [fix] Fix currency format bug (close #145)
  * [new] iris.log allows multiple parameters
  * [rmv] Remove jsonpretty dependency
 

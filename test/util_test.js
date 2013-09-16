@@ -34,34 +34,47 @@
 
   function createLocales () {
 
-    iris.locale(
-        "en_US", {
-            dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-            monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-            dateFormat: "m/d/Y h:i:s",
-            currency: {
-                formatPos: "sn",
-                formatNeg: "(sn)",
-                decimal: ".",
-                thousand: ",",
-                precision: 2
-            }
+iris.locale(
+    "en_US", {
+        dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+        dateFormat: "m/d/Y h:i:s",
+        currency: {
+          formatPos: "s n",
+          formatNeg: "(s n)",
+          decimal: ".",
+          thousand: ",",
+          precision: 2,
+          symbol : "$"
+        },
+        number : {
+          decimal: ".",
+          thousand: ",",
+          precision: 2
         }
+      }
     );
 
+
     iris.locale(
-        "es_ES", {
-            dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
-            monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
-            dateFormat: "d/m/Y H:i:s",
-            currency: {
-                formatPos: "n s",
-                formatNeg: "-n s",
-                decimal: ",",
-                thousand: ".",
-                precision: 2
-            }
+      "es_ES", {
+        dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+        monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+        dateFormat: "d/m/Y H:i:s",
+        currency: {
+          formatPos: "n s",
+          formatNeg: "- n s",
+          decimal: ",",
+          thousand: ".",
+          precision: 2,
+          symbol : "€"
+        },
+        number : {
+          decimal: ",",
+          thousand: ".",
+          precision: 2
         }
+      }
     );
 
   }
@@ -92,17 +105,17 @@
     iris.locale("en_US");
     var amount = 1234.559;
     var formatted = iris.currency(amount);
-    strictEqual(formatted, "$1,234.56", "Default currency format");
+    strictEqual(formatted, "$ 1,234.56", "Default currency format");
     
-    /*var amount = 1234.559;
+    amount = 1234.559;
     iris.locale("es_ES");
-    var formatted = iris.currency(amount);
-    strictEqual(formatted, "1.234,56", "Currency Spanish Format");
+    formatted = iris.currency(amount);
+    strictEqual(formatted, "1.234,56 €", "Currency Spanish Format");
 
 
     iris.locale("en_US");
     formatted = iris.currency(amount);
-    strictEqual(formatted, "1,234.56", "Currency USA Format");*/
+    strictEqual(formatted, "$ 1,234.56", "Currency USA Format");
 
     start();
 
@@ -119,27 +132,58 @@
     });
     strictEqual(formatted, "1,234.56 €", "Custom currency format");
 
-    /*iris.locale(
+    start();
+
+  });
+
+  test("With precision zero", function() {
+    stop();
+
+    var amount = 1234567.959;
+    var formatted = iris.currency(amount, {
+      formatPos: "n s",
+      formatNeg: "- n s",
+      symbol : "€",
+      precision: 0
+    });
+    strictEqual(formatted, "1,234,567 €", "Custom currency format with precision zero");
+
+    iris.locale(
       "custom-locale", {
         dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
         monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
         dateFormat: "d/m/Y H:i:s",
         currency: {
-            formatPos: "n",
-            formatNeg: "-n",
-            decimal: ",",
-            thousand: ".",
-            precision: 0
+          formatPos: "n",
+          formatNeg: "-n",
+          decimal: ",",
+          thousand: ".",
+          precision: 0
+        },
+        number : {
+          decimal: ",",
+          thousand: ".",
+          precision: 2
         }
     });
 
     iris.locale("custom-locale");
 
-    var formatted = iris.currency(amount);
-    strictEqual(formatted, "35", "Precision zero");*/
+    formatted = iris.currency(amount);
+    strictEqual(formatted, "1.234.567", "Precision zero without symbol");
+
+    formatted = iris.currency(-amount);
+    strictEqual(formatted, "-1.234.567", "Precision zero without symbol");
+
+    formatted = iris.currency(-amount, {
+      formatPos: "n s",
+      formatNeg: "(n) s",
+      symbol : "¥",
+      precision: 0
+    });
+    strictEqual(formatted, "(1.234.567) ¥", "Precision zero with custom symbol");
 
     start();
-
   });
 
   test("Number format", function() {

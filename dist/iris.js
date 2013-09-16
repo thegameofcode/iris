@@ -480,17 +480,13 @@ window.iris = iris;
         var dec = val % 1;
         var num = String(Math.abs(val - dec));
 
-        if ( settings.precision === 0 ) {
-            num = parseInt(val.toFixed(), 10);
+        for(var i = 0; i < Math.floor((num.length - (1 + i)) / 3); i++) {
+            num = num.substring(0, num.length - (4 * i + 3)) + settings.thousand + num.substring(num.length - (4 * i + 3));
+        }
 
-        } else {
+        if ( settings.precision > 0 ) {
             dec = String(Math.abs(dec).toFixed(settings.precision));
             dec = dec.substr(2);
-
-            for(var i = 0; i < Math.floor((num.length - (1 + i)) / 3); i++) {
-                num = num.substring(0, num.length - (4 * i + 3)) + settings.thousand + num.substring(num.length - (4 * i + 3));
-            }
-
             num = num + settings.decimal + dec;
         }
 
