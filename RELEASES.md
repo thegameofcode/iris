@@ -5,16 +5,23 @@ _Creation date: 2012-01-12_
 [version] date -> authors
   * upd|fix|new|dep|rmv - description
 
+[0.5.4] 2013-09-16
+
+ * [fix] Fix iris.enableLog & iris.noCache
+ * [new] iris.log allows multiple parameters
+ * [rmv] Remove jsonpretty dependency
+
+[0.5.3] 2013-09-10
+
+ * [new] Added Bower support.
 
 [0.5.2] 2013-07-18
 https://github.com/thegameofcode/iris/issues?milestone=8&page=1&state=closed
 
- * [fix] Fix iris.enableLog & iris.noCache
  * [dep] Deprecate template parameters and ##notation##
  * [dep] Deprecate data-model
  * [new] New data-jq-* attributes to print data on templates easily, close #130
  * [new] Create Screen.param() to improve components getting parameters, close #133
- * [new] iris.log allows multiple parameters
  * [new] Notify event (iris.SCREEN_NOT_FOUND) and print message instead of raise exception, close #131
  * [new] Raises exception when registering component with invalid path, close #127
  * [upd] Improve self.ui To Return UI instances, close #132

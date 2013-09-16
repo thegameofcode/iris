@@ -1,0 +1,13 @@
+{
+  "name": "iris",
+  "version": "0.5.4",
+  "main": [
+    "./dist/*"
+  ],
+  "ignore": [
+    "**/.*"
+  ],
+  "dependencies": {
+    "jquery": ">= 1.5"
+  }
+}
