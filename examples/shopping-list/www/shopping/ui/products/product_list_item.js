@@ -3,7 +3,8 @@ iris.ui(function(self) {
     self.create = function() {  
         self.tmplMode(self.APPEND);
         product = self.setting("product");
-        self.tmpl(iris.path.ui.product_list_item.html, product);
+        self.tmpl(iris.path.ui.product_list_item.html);
+        self.inflate(product);
         self.get("product").change(function (event) {
             if (this.checked) {
                 iris.notify(model.event.PRODUCTS.ADD, product);
