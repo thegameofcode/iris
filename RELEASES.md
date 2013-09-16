@@ -9,6 +9,7 @@ _Creation date: 2012-01-12_
 
  * [fix] Fix iris.enableLog & iris.noCache
  * [fix] Fix currency format bug (close #145)
+ * [fix] Update all examples (basic, todos, shopping-list)
  * [new] iris.log allows multiple parameters
  * [rmv] Remove jsonpretty dependency
 
