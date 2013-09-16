@@ -69,13 +69,13 @@
 
     iris.log = function () {
         if ( _hasConsole && _logEnabled ) {
-            window.console.log("[iris]", arguments[0], arguments[1], arguments[2], arguments[3]); // TODO
+            window.console.log.apply(window.console, arguments);
         }
     };
 
     iris.enableLog = function () {
         if ( arguments.length > 0 ) {
-            _logEnabled = urlContains(arguments);
+            _logEnabled = urlContains.apply(this, arguments);
         } else {
             return _logEnabled;
         }
@@ -83,7 +83,7 @@
 
     iris.noCache = function () {
         if ( arguments.length > 0 ) {
-            _cache = !urlContains(arguments);
+            _cache = !urlContains.apply(this, arguments);
         } else {
             return !_cache;
         }
