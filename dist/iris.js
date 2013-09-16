@@ -126,7 +126,7 @@ window.iris = iris;
         _appBaseUri,
         _cache,
         _cacheVersion,
-        _hasConsole,
+        _log,
         _logEnabled;
 
     //
@@ -140,7 +140,13 @@ window.iris = iris;
             throw "jQuery " + $().jquery + " currently loaded, jQuery " + _JQ_MIN_VER + "+ required";
         }
 
-        _hasConsole = ( window.console && window.console.log );
+        // Fix IE 9 Problem with console.
+        //   - http://stackoverflow.com/questions/5538972/console-log-apply-not-working-in-ie9
+        if ( Function.prototype.bind && typeof window.console === 'object' && typeof window.console.log === 'object' ) {
+            _log = Function.prototype.bind.call(window.console.log, window.console);
+        } else if ( window.console && window.console.log ) {
+            _log = window.console.log;
+        }
 
         var isLocalEnv = urlContains("localhost", "127.0.0.1");
         _logEnabled = isLocalEnv;
@@ -190,8 +196,8 @@ window.iris = iris;
     };
 
     iris.log = function () {
-        if ( _hasConsole && _logEnabled ) {
-            window.console.log.apply(window.console, arguments);
+        if ( _log && _logEnabled ) {
+            _log.apply(window.console, arguments);
         }
     };
 
