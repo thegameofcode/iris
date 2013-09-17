@@ -2,7 +2,7 @@ iris.ui(function(self) {
     self.create = function() {
         self.tmplMode(self.APPEND);
         var product = self.setting("product");                
-        self.tmpl(iris.path.ui.product_shopping_list_item.html, product);
+        self.tmpl(iris.path.ui.product_shopping_list_item.html);
         if (product.purchased === true) {
             self.get("order").addClass("purchased");
             self.get("nameProduct").addClass("purchased");
@@ -17,6 +17,8 @@ iris.ui(function(self) {
                 self.get("icon-shopping-cart").toggleClass("icon-shopping-cart icon-shopping-cart-remove");
             }
             );
+        
+        self.inflate(product);
     };
     
     self.destroy = function () {

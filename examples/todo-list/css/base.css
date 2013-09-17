@@ -23,7 +23,7 @@ button {
 body {
 	font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	line-height: 1.4em;
-	background-color: #eaeaea;
+	background: #eaeaea url('bg.png');
 	color: #4d4d4d;
 	width: 550px;
 	margin: 0 auto;
@@ -109,7 +109,7 @@ body {
 	border-top-right-radius: 1px;
 }
 
-.new-todo,
+#new-todo,
 .edit {
 	position: relative;
 	margin: 0;
@@ -135,7 +135,7 @@ body {
 	font-smoothing: antialiased;
 }
 
-.new-todo {
+#new-todo {
 	padding: 16px 16px 16px 60px;
 	border: none;
 	background: rgba(0, 0, 0, 0.02);
@@ -153,7 +153,7 @@ label[for='toggle-all'] {
 	display: none;
 }
 
-.toggle-all {
+#toggle-all {
 	position: absolute;
 	top: -42px;
 	left: -4px;
@@ -162,14 +162,14 @@ label[for='toggle-all'] {
 	border: none; /* Mobile Safari */
 }
 
-.toggle-all:before {
+#toggle-all:before {
 	content: '»';
 	font-size: 28px;
 	color: #d9d9d9;
 	padding: 0 25px 7px;
 }
 
-.toggle-all:checked:before {
+#toggle-all:checked:before {
 	color: #737373;
 }
 
@@ -299,7 +299,7 @@ label[for='toggle-all'] {
 	margin-bottom: -1px;
 }
 
-.footer {
+#footer {
 	color: #777;
 	padding: 0 15px;
 	position: absolute;
@@ -311,7 +311,7 @@ label[for='toggle-all'] {
 	text-align: center;
 }
 
-.footer:before {
+#footer:before {
 	content: '';
 	position: absolute;
 	right: 0;
@@ -331,7 +331,7 @@ label[for='toggle-all'] {
 	text-align: left;
 }
 
-.filters {
+#filters {
 	margin: 0;
 	padding: 0;
 	list-style: none;
@@ -340,21 +340,21 @@ label[for='toggle-all'] {
 	left: 0;
 }
 
-.filters li {
+#filters li {
 	display: inline;
 }
 
-.filters li a {
+#filters li a {
 	color: #83756f;
 	margin: 2px;
 	text-decoration: none;
 }
 
-.filters li a.selected {
+#filters li a.selected {
 	font-weight: bold;
 }
 
-.clear-completed {
+#clear-completed {
 	float: right;
 	position: relative;
 	line-height: 20px;
@@ -366,7 +366,7 @@ label[for='toggle-all'] {
 	box-shadow: 0 -1px 0 0 rgba(0, 0, 0, 0.2);
 }
 
-.clear-completed:hover {
+#clear-completed:hover {
 	background: rgba(0, 0, 0, 0.15);
 	box-shadow: 0 -1px 0 0 rgba(0, 0, 0, 0.3);
 }
@@ -388,7 +388,7 @@ label[for='toggle-all'] {
 	Can't use it globally since it destroys checkboxes in Firefox and Opera
 */
 @media screen and (-webkit-min-device-pixel-ratio:0) {
-	.toggle-all,
+	#toggle-all,
 	#todo-list li .toggle {
 		background: none;
 	}
@@ -397,7 +397,7 @@ label[for='toggle-all'] {
 		height: 40px;
 	}
 
-	.toggle-all {
+	#toggle-all {
 		top: -56px;
 		left: -15px;
 		width: 65px;
@@ -412,9 +412,3 @@ label[for='toggle-all'] {
 .hidden{
 	display:none;
 }
-
-#todoapp.filter-active #todo-list .completed {
-  display: none; }
-
-#todoapp.filter-completed #todo-list .active {
-  display: none; }

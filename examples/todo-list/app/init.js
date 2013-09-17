@@ -1,14 +1,18 @@
+// define iris components paths
 iris.path = {
-    welcome : "app/screen/welcome.js",
-    welcome_tmpl : "app/screen/welcome.html",
-    todo_item : "app/ui/todo_item.js",
-    todo_item_tmpl : "app/ui/todo_item.html"
+	welcome : { js: "welcome.js", html: "welcome.html" },
+    todo: { js: "todo.js", html : "todo.html" },
+    resource : "resource.js"
 };
 
 
-$(document).ready(
+$(window.document).ready(
+
     function () {
-    	iris.baseUri("./");
-        iris.welcome(iris.path.welcome);
+    	// set the iris components base uri
+    	iris.baseUri("app/");
+
+    	// show the initial screen
+        iris.welcome(iris.path.welcome.js);
     }
 );
