@@ -134,7 +134,7 @@ function init () {
   
  if ( !config.inputPaths ) {
  //throw "you must specify the parameter input=path_to_directory/,path_to_file...";
- //}
+ }
  
  if ( !config.outputPath && !config.outputFile ) {
   config.outputFile = config.initJs;
