@@ -10,6 +10,7 @@ iris.screen(function (self) {
 		self.on("create_ui", createUi);
 		self.on("create_ui_tmpl_replace", createUiTmplReplace);
 		self.on("get_ui", getUi);
+		self.on("get_ui_no_instantited", getUiNoInstantiated);
 		self.on("get_ui_tmpl_replace", getUiTmplReplace);
 		self.on("destroy_ui", destroyUi);
 		self.on("destroy_ui_replace", destroyUiReplace);
@@ -41,6 +42,14 @@ iris.screen(function (self) {
 		ui = self.ui("container", iris.path.ui_replace);
 
 		window.strictEqual(self.uis.length, 1, "Checking uis length after creation");
+	}
+
+	function getUiNoInstantiated () {
+		var $container = self.get("empty_container");
+		window.strictEqual($container.children().size(), 0, "Checking container childrens before call self.ui");
+
+		var uis = self.ui("empty_container");
+		window.strictEqual(uis.length, 0, "Checking uis length must be zero");
 	}
 
 	function getUi () {

@@ -796,9 +796,13 @@
 
     Component.prototype._ui = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
         if ( p_jsUrl === undefined ) {
-            
             // Get UI
-            return this.uisMap[p_id];
+
+            var ui = this.uisMap[p_id];
+            if ( ui === undefined ) {
+                ui = [];
+            }
+            return ui;
 
         } else {
             // Create UI

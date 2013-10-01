@@ -200,7 +200,7 @@
 
     asyncTest("Create UI With Template Mode Append", function() {
 
-        expect(13);
+        expect(15);
 
         iris.welcome("test/component/welcome.js"); // + 4
 
@@ -213,6 +213,7 @@
             iris.on(iris.AFTER_NAVIGATION, function () {
                 iris.notify("create_ui"); // + 4
                 iris.notify("get_ui"); // + 2
+                iris.notify("get_ui_no_instantited"); // + 3
 
                 start();
             });
