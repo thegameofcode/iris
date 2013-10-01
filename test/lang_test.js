@@ -43,7 +43,8 @@
 
     iris.translations("es_ES", {
       TEST: {
-        LABEL_1: "VALUE"
+        LABEL_1: "VALUE",
+        EMPTY_STRING: ""
       }
     });
     
@@ -57,6 +58,9 @@
 
     var translated = iris.translate("TEST.LABEL_1");
     strictEqual(translated, "VALUE", "Should get a lang value");
+
+    translated = iris.translate("TEST.EMPTY_STRING");
+    strictEqual(translated, "", "Should get a empty value");
     
     translated = iris.translate("TEST.LABEL_1", "en_US");
     strictEqual(translated, "VALUE2", "Should get a lang value in non default locale");

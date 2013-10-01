@@ -312,7 +312,7 @@ window.iris = iris;
         } else {
             iris.log(logPrefix + " locale '" + locale + "' not loaded", this);
         }
-        return (value) ? value : "??" + p_label + "??";
+        return (value !== undefined) ? value : "??" + p_label + "??";
     };
     
     _init();
