@@ -1,4 +1,4 @@
-# Iris
+![Iris](https://raw.github.com/thegameofcode/iris/gh-pages/images/iris-logo-white.png)
 
 Iris is not only another framework.
 
