@@ -7,6 +7,8 @@ _Creation date: 2012-01-12_
 
 [0.5.5-SNAPSHOT] 2013-XX-XX
 
+ * [fix] Solved #149, now iris.translate returns empty strings
+ * [new] Solved #150, self.ui returns empty array insted of undefined
 
 
 [0.5.4] 2013-09-16
