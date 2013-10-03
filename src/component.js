@@ -436,37 +436,8 @@
     }
 
 
-    var Settable = function() {
-        iris.Event.call(this);
-
-        this.cfg = {};
-    };
-
-    iris.inherits(Settable, iris.Event);
-
-    var pSettable = Settable.prototype;
-    pSettable.settings = function(p_settings) {
-        if ( this.cfg === null ) {
-            this.cfg = {};
-        }
-
-        return $.extend(this.cfg, p_settings);
-    };
-
-    pSettable.setting = function(p_label, p_value) {
-        if(p_value === undefined) {
-            if(!this.cfg.hasOwnProperty(p_label)) {
-                iris.log("setting " + p_label + " not found", this.cfg, this);
-            }
-            return this.cfg[p_label];
-        } else {
-            this.cfg[p_label] = p_value;
-        }
-    };
-
-
     var Component = function(id, $container, fileJs) {
-        Settable.call(this);
+        iris.Settable.call(this);
 
         this.id = id;
         this.uis = []; // child UIs
@@ -483,8 +454,8 @@
         _includes[fileJs](this);
     };
 
-    iris.inherits(Component, Settable);
-    
+    iris.inherits(Component, iris.Settable);
+
     var pComponent = Component.prototype;
 
     pComponent.APPEND = "append";
@@ -996,7 +967,6 @@
     //
     // Classes
     //
-    iris.Settable = Settable;
     iris.Component = Component;
     iris.UI = UI;
     iris.Screen = Screen;
