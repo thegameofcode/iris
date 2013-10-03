@@ -140,12 +140,23 @@ window.iris = iris;
             throw "jQuery " + $().jquery + " currently loaded, jQuery " + _JQ_MIN_VER + "+ required";
         }
 
-        // Fix IE 9 Problem with console.
-        //   - http://stackoverflow.com/questions/5538972/console-log-apply-not-working-in-ie9
-        if ( Function.prototype.bind && typeof window.console === 'object' && typeof window.console.log === 'object' ) {
-            _log = Function.prototype.bind.call(window.console.log, window.console);
-        } else if ( window.console && window.console.log ) {
-            _log = window.console.log;
+        var console = window.console;
+        if ( typeof console !== 'undefined' && typeof console.log === 'object' ) {
+            var bind = Function.prototype.bind;
+            if ( bind ) {
+                // Fix IE 9 Problem with console.
+                // http://stackoverflow.com/questions/5538972/console-log-apply-not-working-in-ie9
+                _log = bind.call(console.log, console);
+            } else {
+                // Fix IE 8 Problem with console.
+                // http://patik.com/blog/complete-cross-browser-console-log/
+                _log = function () {
+                    Function.prototype.call.call(console.log, console, Array.prototype.slice.call(arguments));
+                };
+            }
+        } else if ( console && console.log ) {
+            // Modern browser
+            _log = console.log;
         }
 
         var isLocalEnv = urlContains("localhost", "127.0.0.1");
@@ -196,7 +207,7 @@ window.iris = iris;
     };
 
     iris.log = function () {
-        if ( _log && _logEnabled ) {
+        if ( _logEnabled && _log ) {
             _log.apply(window.console, arguments);
         }
     };

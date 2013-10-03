@@ -7,7 +7,7 @@ Iris exposes all of its methods and properties on the `iris` object:
 	- [iris.cache([enabled])](#iriscacheenabled)
 	- [iris.cacheVersion([value])](#iriscacheversionvalue)
 	- [iris.noCache(args)](#irisnocacheargs)
-	- [iris.enableLog(enabled)](#irisenablelogenabled)
+	- [iris.enableLog(args)](#irisenablelogargs)
 	- [iris.log(args)](#irislogargs)
 - [<a name="util"></a> Util](#<a-name=util></a>-util)
 	- [iris.ajax(settings)](#irisajaxsettings)
@@ -131,14 +131,14 @@ Disable browser cache adding a timestamp param (e.g.: url?_=1374053849520) on ea
 iris.noCache("localhost", "127.0.0.1");
 ```
 
-### iris.enableLog(enabled)
+### iris.enableLog(args)
 *Since*: `v0.5.0`
 
-Enable or disable the *iris.log* outputs.
+Enable or disable the *iris.log* outputs according to the current URL.
 
 ```javascript
-iris.enableLog(false);
-iris.log("test"); // "test" is not printed
+// Enable logs only in development hosts
+iris.enableLog("localhost", "dev.example.com", "int.example.com");
 ```
 
 ### iris.log(args)
@@ -147,9 +147,23 @@ iris.log("test"); // "test" is not printed
 Prints the parameters values to the console for debugging purposes.
 If logging is disabled, it doesn't print any.
 To enable or disable logging use `iris.enableLog`.
+It uses the native `console.log` and works in all modern browsers and IE8+.
 
 ```javascript
-iris.log("obj = ", obj);
+// Basic example
+iris.log("Hello world!");
+```
+
+```javascript
+// Multiple parameters
+iris.log("obj = ", obj, " obj2 = ", obj2);
+```
+
+```javascript
+// Enable logs only in the development machine
+iris.enableLog("127.0.1.30");
+
+iris.log("This is only printed in 127.0.1.30");
 ```
 
 

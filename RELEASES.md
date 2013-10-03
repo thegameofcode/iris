@@ -7,6 +7,7 @@ _Creation date: 2012-01-12_
 
 [0.5.5-SNAPSHOT] 2013-XX-XX
 
+ * [fix] Fixed iris.log on IE8 browsers
  * [fix] Solved #149, now iris.translate returns empty strings
  * [new] Solved #150, self.ui returns empty array insted of undefined
 
