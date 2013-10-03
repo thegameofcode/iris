@@ -3,6 +3,24 @@
     //
     // Private
     //
+
+    var browser;
+
+    function setBrowser (ua) {
+        ua = ua.toLowerCase();
+
+        var match = /(chrome)[ \/]([\w.]+)/.exec( ua ) ||
+            /(webkit)[ \/]([\w.]+)/.exec( ua ) ||
+            /(opera)(?:.*version|)[ \/]([\w.]+)/.exec( ua ) ||
+            /(msie) ([\w.]+)/.exec( ua ) ||
+            ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec( ua ) ||
+            [];
+
+        return {
+            name: match[ 1 ] || "",
+            version: match[ 2 ] || "0"
+        };
+    }
     
     function leadingZero(p_number) {
         return(p_number < 10) ? "0" + p_number : p_number;
@@ -57,6 +75,11 @@
         }
     }
 
+
+    //
+    // Public
+    //
+
     iris.date = function (p_date, p_format) {
         if ( p_date === null ) {
             return "";
@@ -76,11 +99,6 @@
         }
         return dateFormat;
     };
-
-
-    //
-    // Public
-    //
 
     iris.ajax = function (p_settings) {
         return $.ajax(p_settings);
@@ -149,25 +167,6 @@
 
     // The jQuery.browser() method has been deprecated since jQuery 1.3 and is removed in 1.9. If needed, it is available as part of the jQuery Migrate plugin
     // https://github.com/jquery/jquery-migrate/blob/master/src/core.js
-
-    var browser;
-
-    function setBrowser (ua) {
-        ua = ua.toLowerCase();
-
-        var match = /(chrome)[ \/]([\w.]+)/.exec( ua ) ||
-            /(webkit)[ \/]([\w.]+)/.exec( ua ) ||
-            /(opera)(?:.*version|)[ \/]([\w.]+)/.exec( ua ) ||
-            /(msie) ([\w.]+)/.exec( ua ) ||
-            ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec( ua ) ||
-            [];
-
-        return {
-            name: match[ 1 ] || "",
-            version: match[ 2 ] || "0"
-        };
-    }
-
     iris.browser = function () {
         if ( !browser ) {
             var matched = setBrowser( navigator.userAgent );
@@ -186,6 +185,12 @@
             }
         }
         return browser;
+    };
+
+    iris.inherits = function (subClass, superClass) {
+        var Aux = function() {};
+        Aux.prototype = superClass.prototype;
+        subClass.prototype = new Aux();
     };
 
 })(jQuery);

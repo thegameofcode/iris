@@ -286,7 +286,7 @@
                 } else {
 
                     if ( !_screen.hasOwnProperty(screenPath) ) {
-                        var screenObj = _instanceScreen(screenPath);
+                        var screenObj = new Screen(screenPath);
                         screenObj.create();
                         _screen[screenPath] = screenObj;
                     }
@@ -363,38 +363,6 @@
         _setInclude(ui, path, "ui");
     }
 
-    function _instanceUI(p_$container, p_uiId, p_jsUrl, p_uiSettings, p_templateMode, parentComponent) {
-
-        var uiInstance = new UI();
-        uiInstance.id = p_uiId;
-        uiInstance.uis = [];
-        uiInstance.uisMap = {};
-        uiInstance.el = {};
-        uiInstance.events = {};
-        uiInstance.con = p_$container;
-        uiInstance.fileJs = p_jsUrl;
-        uiInstance.parentComponent = parentComponent;
-        
-        _includes[p_jsUrl](uiInstance);
-        if(p_templateMode !== undefined) {
-            uiInstance._tmplMode = p_templateMode;
-        }
-
-        p_uiSettings = p_uiSettings === undefined ? {} : p_uiSettings;
-        var jqToHash = _jqToHash(p_$container);
-
-        if ( uiInstance.cfg === null ) {
-            uiInstance.cfg = {};
-        }
-
-        $.extend(uiInstance.cfg, jqToHash, p_uiSettings);
-
-        uiInstance.create(jqToHash, p_uiSettings);
-        uiInstance._awake();
-        
-        return uiInstance;
-    }
-
     function _jqToHash(p_$obj) {
         var hash = {};
         var attrs = p_$obj.get(0).attributes;
@@ -416,29 +384,6 @@
 
     function _registerScreen(screen, path) {
         _setInclude(screen, path, "screen");
-    }
-
-    function _instanceScreen (p_screenPath) {
-
-        var jsUrl = _screenJsUrl[p_screenPath];
-        var screenObj = new Screen();
-        _includes[jsUrl](screenObj);
-
-        screenObj.id = p_screenPath;
-        screenObj.el = {};
-        screenObj.uis = [];
-        screenObj.uisMap = {};
-        screenObj.events = {};
-        screenObj.con = _screenContainer[p_screenPath];
-        screenObj.fileJs = jsUrl;
-        screenObj.params = {};
-        if ( screenObj.cfg === null ) {
-            screenObj.cfg = {};
-        }
-
-        _screen[p_screenPath] = screenObj;
-
-        return screenObj;
     }
 
     function _destroyScreenByPath(p_screenPath) {
@@ -492,12 +437,15 @@
 
 
     var Settable = function() {
-        this.cfg = null;
+        iris.Event.call(this);
+
+        this.cfg = {};
     };
 
-    Settable.prototype = new iris.Event();
+    iris.inherits(Settable, iris.Event);
 
-    Settable.prototype.settings = function(p_settings) {
+    var pSettable = Settable.prototype;
+    pSettable.settings = function(p_settings) {
         if ( this.cfg === null ) {
             this.cfg = {};
         }
@@ -505,7 +453,7 @@
         return $.extend(this.cfg, p_settings);
     };
 
-    Settable.prototype.setting = function(p_label, p_value) {
+    pSettable.setting = function(p_label, p_value) {
         if(p_value === undefined) {
             if(!this.cfg.hasOwnProperty(p_label)) {
                 iris.log("setting " + p_label + " not found", this.cfg, this);
@@ -517,27 +465,34 @@
     };
 
 
-    var Component = function() {
+    var Component = function(id, $container, fileJs) {
+        Settable.call(this);
 
-        this.APPEND = "append";
-        this.REPLACE = "replace";
-        this.PREPEND = "prepend";
+        this.id = id;
+        this.uis = []; // child UIs
+        this.uisMap = {}; // UIs sorted by id
+        this.el = {}; // Map contains data-id elements
+        
+        this.con = $container; // JQ container
+        this.fileJs = fileJs; // Path to the script
 
-        this.id = null;
-        this.fileJs = null;
         this.fileTmpl = null;
         this.template = null;
-        this.uis = null; // child UIs
-        this.uisMap = null; // UIs sorted by id
-        this.con = null; // JQ container
         this.sleeping = null;
-        this.el = null; // cached elements
-        this.events = null;
+
+        _includes[fileJs](this);
     };
 
-    Component.prototype = new Settable();
+    iris.inherits(Component, Settable);
+    
+    var pComponent = Component.prototype;
 
-    Component.prototype._sleep = function() {
+    pComponent.APPEND = "append";
+    pComponent.REPLACE = "replace";
+    pComponent.PREPEND = "prepend";
+
+
+    pComponent._sleep = function() {
         for(var f = 0, F = this.uis.length; f < F; f++) {
             this.uis[f]._sleep();
         }
@@ -545,7 +500,7 @@
         this.sleep();
     };
 
-    Component.prototype._awake = function(p_params) {
+    pComponent._awake = function(p_params) {
         this.sleeping = false;
         this.awake(p_params);
         for(var f = 0, F = this.uis.length; f < F; f++) {
@@ -555,7 +510,7 @@
         }
     };
 
-    Component.prototype._destroy = function() {
+    pComponent._destroy = function() {
         if(!this.sleeping) {
             this._sleep();
         }
@@ -575,7 +530,7 @@
         this.events = null;
     };
 
-    Component.prototype._tmpl = function(p_htmlUrl, p_mode) {
+    pComponent._tmpl = function(p_htmlUrl, p_mode) {
 
         var f, childrens, tmpl;
         
@@ -620,7 +575,7 @@
         }
     };
 
-    Component.prototype._data_attrs = function ($el) {
+    pComponent._data_attrs = function ($el) {
         var f, key, attr, attrs = $el.get(0).attributes,
             inflate, inflateFormats = {}, inflatesByKeys = {},
             target, targetParams, format, formatParams, formatMatches
@@ -691,7 +646,7 @@
         }
     };
 
-    Component.prototype.inflate = function(data) {
+    pComponent.inflate = function(data) {
 
         var dataKey, f, F, targets, inflate, format, unformattedValue, value;
 
@@ -744,23 +699,23 @@
     };
 
     // Check if the template is set (https://github.com/intelygenz/iris/issues/19)
-    Component.prototype._checkTmpl = function() {
+    pComponent._checkTmpl = function() {
         if(this.template === null) {
             throw "Set a template using self.tmpl() in '" + this.fileJs + "'";
         }
     };
 
-    Component.prototype.show = function() {
+    pComponent.show = function() {
         this._checkTmpl();
         this.template.show();
     };
 
-    Component.prototype.hide = function() {
+    pComponent.hide = function() {
         this._checkTmpl();
         this.template.hide();
     };
 
-    Component.prototype.get = function(p_id) {
+    pComponent.get = function(p_id) {
         this._checkTmpl();
 
         if(p_id) {
@@ -794,7 +749,7 @@
         return this.template;
     };
 
-    Component.prototype._ui = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
+    pComponent._ui = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
         if ( p_jsUrl === undefined ) {
             // Get UI
 
@@ -810,11 +765,11 @@
         }
     };
 
-    Component.prototype._createUi = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
+    pComponent._createUi = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
         var $container = this.get(p_id);
         
         if($container !== undefined && $container.size() === 1) {
-            var uiInstance = _instanceUI($container, $container.data("id"), p_jsUrl, p_uiSettings, p_templateMode, this);
+            var uiInstance = new UI($container, $container.data("id"), p_jsUrl, p_uiSettings, p_templateMode, this);
             if (uiInstance._tmplMode === undefined || uiInstance._tmplMode === uiInstance.REPLACE) {
                 this.el[p_id] = undefined;
             }
@@ -837,10 +792,10 @@
     };
 
 
-    Component.prototype.destroyUI = function(p_ui) {
+    pComponent.destroyUI = function(p_ui) {
         if ( p_ui === undefined ) {
             // Self destroy
-            this.parentComponent.destroyUI(this);
+            this.parentUI.destroyUI(this);
         } else {
             var idx;
 
@@ -869,7 +824,7 @@
         }
     };
 
-    Component.prototype.destroyUIs = function(id) {
+    pComponent.destroyUIs = function(id) {
         var uis = this.uisMap[id];
         if ( $.isArray(uis) ) {
             var f, F;
@@ -883,44 +838,55 @@
         }
     };
 
-    Component.prototype.container = function() {
+    pComponent.container = function() {
         return this.con;
     };
 
     //
     // To override functions
     //
-    Component.prototype.create = function() {};
+    pComponent.create = function() {};
 
-    Component.prototype.awake = function() {};
+    pComponent.awake = function() {};
 
-    Component.prototype.canSleep = function() {
+    pComponent.canSleep = function() {
         return true;
     };
 
-    Component.prototype.sleep = function() {};
+    pComponent.sleep = function() {};
 
-    Component.prototype.destroy = function() {};
+    pComponent.destroy = function() {};
 
 
     //
     // UI
     //
-    var UI = function() {
-        this._tmplMode = "replace";
+    var UI = function($container, id, fileJs, settings, tmplMode, parentUI) {
+        Component.call(this, id, $container, fileJs);
+
+        var jqToHash = _jqToHash($container);
+
+        this.parentUI = parentUI;
+        this._tmplMode = tmplMode || "replace";
+        
+        $.extend(this.cfg, jqToHash, settings || {});
+
+        this.create();
+        this._awake();
     };
 
-    UI.prototype = new Component();
+    iris.inherits(UI, Component);
 
-    UI.prototype.tmplMode = function(p_mode) {
+    var pUI = UI.prototype;
+    pUI.tmplMode = function(p_mode) {
         this._tmplMode = p_mode;
     };
 
-    UI.prototype.tmpl = function(p_htmlUrl) {
+    pUI.tmpl = function(p_htmlUrl) {
         this._tmpl(p_htmlUrl, this._tmplMode);
     };
 
-    UI.prototype.ui = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
+    pUI.ui = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
         return this._ui(p_id, p_jsUrl, p_uiSettings, p_templateMode);
     };
 
@@ -928,18 +894,21 @@
     //
     // SCREEN
     //
-    var Screen = function() {
+    var Screen = function(path) {
+        Component.call(this, path, _screenContainer[path], _screenJsUrl[path]);
+
+        this.params = {};
         this.screenConId = null;
-        this.params = null;
     };
 
-    Screen.prototype = new Component();
+    iris.inherits(Screen, Component);
 
-    Screen.prototype.param = function(p_key) {
+    var pScreen = Screen.prototype;
+    pScreen.param = function(p_key) {
         return this.params[p_key];
     };
 
-    Screen.prototype.ui = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
+    pScreen.ui = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
         if ( p_id === this.screenConId ) {
             throw "'" + p_id + "' has already been registered as a screen container";
         }
@@ -947,11 +916,11 @@
         return this._ui(p_id, p_jsUrl, p_uiSettings, p_templateMode);
     };
 
-    Screen.prototype.tmpl = function(p_htmlUrl) {
+    pScreen.tmpl = function(p_htmlUrl) {
         this._tmpl(p_htmlUrl, this.APPEND);
     };
 
-    Screen.prototype.screens = function(p_containerId, p_screens) {
+    pScreen.screens = function(p_containerId, p_screens) {
 
         this.screenConId = p_containerId;
 
