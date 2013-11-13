@@ -579,10 +579,6 @@ window.iris = iris;
 
 (function($) {
 
-  function _init() {
-    iris.on("iris-reset", _init);
-  }
-
   /**
    * Settable class to manage object configurations.
    */
@@ -601,8 +597,8 @@ window.iris = iris;
   };
 
   pSettable.setting = function(label, value) {
-    if(value === undefined) {
-      if(!this.cfg.hasOwnProperty(label)) {
+    if ( value === undefined ) {
+      if ( !this.cfg.hasOwnProperty(label) ) {
         iris.log("setting " + label + " not found", this.cfg, this);
       }
       return this.cfg[label];
@@ -612,8 +608,6 @@ window.iris = iris;
   };
 
   iris.Settable = Settable;
-
-  _init();
 
 })(jQuery);
 

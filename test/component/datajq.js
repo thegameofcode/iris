@@ -32,13 +32,14 @@ iris.screen(function (self) {
                 },
                 lastLogin: 1358506927400,
                 updated: "Fri Jan 18 2013 13:09:47 GMT+0100 (CET)",
-                style: "color:green;"
+                style: "color:green;",
+                undefinedValue: undefined
             }
         };
 
 
         // Check printed values
-        window.expect(15);
+        window.expect(17);
 
         self.inflate(data);
 
@@ -79,6 +80,10 @@ iris.screen(function (self) {
         var num = iris.number(data.person.num);
         window.strictEqual(self.get("test_format_number").text(), num, "With number format");
 
+        
+        window.strictEqual(self.get("test_toggle_undefined").is(":visible"), false, "Toggle with undefined value");
+
+        window.strictEqual(self.get("test_toggle_not_exist_property").is(":visible"), false, "Toggle with not exist property");
 
         window.start();
 
