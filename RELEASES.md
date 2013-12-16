@@ -11,6 +11,7 @@ _Creation date: 2012-01-12_
  * [fix] Solved #149, now iris.translate returns empty strings
  * [new] Solved #150, self.ui returns empty array insted of undefined
  * [new] iris.inherits, inheritance with the prototype chain
+ * [upd] Solved #156, iris.on and iris.off check if the param is a function
 
 
 [0.5.4] 2013-09-16

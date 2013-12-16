@@ -18,6 +18,11 @@ window.iris = iris;
     }
 
     iris.on = function (p_eventName, f_func) {
+        
+        if ( ! $.isFunction(f_func) ) {
+            throw "invalid function";
+        }
+
         if ( !_events.hasOwnProperty(p_eventName) ) {
             _events[p_eventName] = [];
         }
@@ -33,6 +38,11 @@ window.iris = iris;
     iris.off = function (p_eventName, f_func){
         if ( _events.hasOwnProperty(p_eventName) ){
             if (f_func !== undefined) {
+                
+                if ( ! $.isFunction(f_func) ) {
+                    throw "invalid function";
+                }
+
                 var index = $.inArray(f_func, _events[p_eventName]);
                 if ( index !== -1 ) {
                     _events[p_eventName].splice(index, 1);
@@ -46,7 +56,7 @@ window.iris = iris;
 
     iris.notify = function (p_eventName, p_data){
         if ( p_eventName === undefined ) {
-            throw "[notify] event name parameter is not defined";
+            throw "event name undefined";
         }
         
         if ( _events[p_eventName] ) {
