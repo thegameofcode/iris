@@ -2,21 +2,22 @@
 
 Iris exposes all of its methods and properties on the `iris` object:
 
-- [<a name="core"></a> Core](#<a-name=core></a>-core)
+- [Core](#core)
 	- [iris.baseUri([path])](#irisbaseuripath)
 	- [iris.cache([enabled])](#iriscacheenabled)
 	- [iris.cacheVersion([value])](#iriscacheversionvalue)
 	- [iris.noCache(args)](#irisnocacheargs)
 	- [iris.enableLog(args)](#irisenablelogargs)
 	- [iris.log(args)](#irislogargs)
-- [<a name="util"></a> Util](#<a-name=util></a>-util)
+- [Util](#util)
 	- [iris.ajax(settings)](#irisajaxsettings)
 	- [iris.val(obj, label)](#irisvalobj-label)
 	- [iris.date(date, format)](#irisdatedate-format)
 	- [iris.number(number, config)](#irisnumbernumber-config)
 	- [iris.currency(amount, config)](#iriscurrencyamount-config)
 	- [iris.browser()](#irisbrowser)
-- [<a name="event"></a> Event](#<a-name=event></a>-event)
+	- [iris.inherits(subClass, superClass)](#irisinheritssubClass-superClass)
+- [Event](#event)
 	- [iris.notify(eventId[, params])](#irisnotifyeventid-params)
 	- [iris.on(eventId, callback)](#irisoneventid-callback)
 	- [iris.off(eventId[, callback])](#irisoffeventid-callback)
@@ -30,12 +31,12 @@ Iris exposes all of its methods and properties on the `iris` object:
 		- [iris.AFTER_NAVIGATION](#irisafter_navigation)
 		- [iris.RESOURCE_ERROR](#irisresource_error)
 		- [iris.SCREEN_NOT_FOUND](#irisscreen_not_found)
-- [<a name="lang"></a> Language & Regional](#<a-name=lang></a>-language-&-regional)
+- [Language & Regional](#language-&-regional)
 	- [iris.translate(text[, locale])](#iristranslatetext-locale)
 	- [iris.translations(locale, [terms]|[file, [callbacks]])](#iristranslationslocale-termsfile-callbacks)
 	- [iris.locale([locale][, regional])](#irislocalelocale-regional)
 	- [iris.regional([label])](#irisregionallabel)
-- [<a name="components"></a> Components](#<a-name=components></a>-components)
+- [Components](#components)
 	- [iris.include(paths, callback)](#irisincludepaths-callback)
 	- [iris.welcome(path)](#iriswelcomepath)
 	- [iris.navigate(path)](#irisnavigatepath)
@@ -44,29 +45,29 @@ Iris exposes all of its methods and properties on the `iris` object:
 	- [iris.ui(function(self){...}, path)](#irisuifunctionself-path)
 	- [iris.tmpl(path, html)](#iristmplpath-html)
 	- [iris.resource(function(self){...}, path)](#irisresourcefunctionself-path)
-	- [<a name="settable"></a> iris.Settable Class](#<a-name=settable></a>-irissettable-class)
+	- [iris.Settable Class](#irissettable-class)
 		- [self.setting(label[, value])](#selfsettinglabel-value)
 		- [self.settings(params)](#selfsettingsparams)
-	- [<a name="component"></a> iris.Component Class](#<a-name=component></a>-iriscomponent-class)
+	- [iris.Component Class](#iriscomponent-class)
 		- [self.tmpl(path)](#selftmplpath)
 		- [self.get([data-id])](#selfgetdata-id)
 		- [self.inflate(data)](#selfinflatedata)
 		- [self.ui(container_id, path[, settings, tmpl_mode])](#selfuicontainer_id-path-settings-tmpl_mode)
 		- [self.destroyUI([ui_component])](#selfdestroyuiui_component)
 		- [self.destroyUIs(container_id)](#selfdestroyuiscontainer_id)
-	- [<a name="ui"></a> iris.UI Class](#<a-name=ui></a>-irisui-class)
+	- [iris.UI Class](#irisui-class)
 		- [self.tmplMode(mode)](#selftmplmodemode)
-	- [<a name="screen"></a> iris.Screen Class](#<a-name=screen></a>-irisscreen-class)
+	- [iris.Screen Class](#irisscreen-class)
 		- [self.param(name)](#selfparamname)
 		- [self.screens(container_id, screens)](#selfscreenscontainer_id-screens)
-	- [<a name="resource"></a> iris.Resource Class](#<a-name=resource></a>-irisresource-class)
+	- [iris.Resource Class](#irisresource-class)
 		- [self.get(path, success, error)](#selfgetpath-success-error)
 		- [self.post(path, params, success, error)](#selfpostpath-params-success-error)
 		- [self.put(path, params, success, error)](#selfputpath-params-success-error)
 		- [self.del(path, success, error)](#selfdelpath-success-error)
 
 
-##<a name="core"></a> Core
+## Core
 
 ### iris.baseUri([path])
 *Since*: `v0.5.0`
@@ -167,7 +168,7 @@ iris.log("This is only printed in 127.0.1.30");
 ```
 
 
-##<a name="util"></a> Util
+## Util
 ### iris.ajax(settings)
 *Since*: `v0.5.0`
 
@@ -339,7 +340,37 @@ iris.browser().msie;
 console.log( iris.browser() );
 ```
 
-##<a name="event"></a> Event
+### iris.inherits(subClass, superClass)
+*Since*: `v0.5.5`
+
+Inheritance with the prototype chain.
+
+```javascript
+// Basic example
+
+// SuperClass
+function Mammal (name) {
+  this.name = name;
+}
+Mammal.prototype.sayName = function() { 
+	console.log('[Mammal "' + this.name + '"]');
+}
+
+// SubClass
+function Cat (name) {
+  Mammal.call(this, name); // Call SuperClass constructor
+}
+
+// Cat will inherit the Mammal prototyped functions
+iris.inherits(Cat, Mammal);
+
+var kitty = new Cat('Kitty');
+kitty.sayName(); // [Mammal Kitty]
+
+```
+
+
+## Event
 
 ### iris.notify(eventId[, params])
 *Since*: `v0.5.0`
@@ -457,7 +488,7 @@ iris.on(iris.SCREEN_NOT_FOUND, function (path) {
 });
 ```
 
-##<a name="lang"></a> Language & Regional
+## Language & Regional
 ### iris.translate(text[, locale])
 *Since*: `v0.5.0`
 
@@ -551,7 +582,7 @@ If *label* is not passed, returns all the regional definition.
 iris.regional("dayNames");
 ```
 
-##<a name="components"></a> Components
+## Components
 
 ### iris.include(paths, callback)
 *Since*: `v0.5.1`
@@ -729,7 +760,7 @@ iris.resource(function(self){
 iris.resource(iris.path.resource.js);
 ```
 
-###<a name="settable"></a> iris.Settable Class
+### iris.Settable Class
 #### self.setting(label[, value])
 *Since*: `v0.5.0`
 
@@ -755,7 +786,7 @@ self.settings({ person: { name:"test name"}, money: -67890.678, region: { countr
 var attribute_value = self.setting("person.name");
 ```
 
-###<a name="component"></a> iris.Component Class
+### iris.Component Class
 
 #### self.tmpl(path)
 *Since*: `v0.5.0`
@@ -970,7 +1001,7 @@ self.destroyUIs("ui_container");
 ```
 
 
-###<a name="ui"></a> iris.UI Class
+### iris.UI Class
 Inherit methods from Component, Settable & Event classes
 
 #### self.tmplMode(mode)
@@ -985,7 +1016,7 @@ The possible values ​​are:
 * `self.REPLACE` : Replace the container with the UI template. This is the default behavior.
 
 
-###<a name="screen"></a> iris.Screen Class
+### iris.Screen Class
 Inherit methods from Component, Settable & Event classes
 
 #### self.param(name)
@@ -1043,7 +1074,7 @@ self.screens("screens", [
 //The first parameter is the data-id attribute of the container
 ```
 
-###<a name="resource"></a> iris.Resource Class
+### iris.Resource Class
 Inherit methods from Settable class
 
 #### self.get(path, success, error)

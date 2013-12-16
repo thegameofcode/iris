@@ -10,6 +10,7 @@ _Creation date: 2012-01-12_
  * [fix] Fixed iris.log on IE8 browsers
  * [fix] Solved #149, now iris.translate returns empty strings
  * [new] Solved #150, self.ui returns empty array insted of undefined
+ * [new] iris.inherits, inheritance with the prototype chain
 
 
 [0.5.4] 2013-09-16
