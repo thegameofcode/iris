@@ -6,8 +6,6 @@ iris.resource(function (self) {
 	self.CHANGE_TODO = "change-todo";
 
 	var todos = {},
-		remaining = 0,
-		total = 0,
 		ids = [],
 		currentFilter = "all";
 
@@ -24,8 +22,6 @@ iris.resource(function (self) {
 
 			todo = JSON.parse(todoString);
 			todos[todo.id] = todo;
-			if ( !todo.completed ) ++remaining;
-			total++;
 
 			iris.notify(self.CREATE_TODO, todo.id);
 		}
@@ -35,9 +31,6 @@ iris.resource(function (self) {
 		var todo = {id: String(new Date().getTime()), text: text, completed: false};
 		todos[todo.id] = todo;
 		saveTodo(todo);
-
-		remaining++;
-		total++;
 		
 		ids.push(todo.id);
 		localStorage.setItem("ids" , ids.join(","));
@@ -61,11 +54,8 @@ iris.resource(function (self) {
 	self.toggle = function (id) {
 		var todo = todos[id];
 		todo.completed = !todo.completed;
-
-		if ( todo.completed ) --remaining;
-		else ++remaining;
-
 		saveTodo(todo);
+
 		iris.notify(self.CHANGE_TODO, todo.id);
 	};
 
@@ -80,7 +70,6 @@ iris.resource(function (self) {
 	};
 
 	self.setAll = function (completed) {
-		remaining = ( completed ) ? 0 : total;
 		for (var id in todos ) {
 			var todo = todos[id];
 			if ( todo.completed !== completed ) {
@@ -104,15 +93,15 @@ iris.resource(function (self) {
 	}
 
 	self.count = function () {
-		return total;
-	};
+		var remaining = 0;
+		var total = ids.length;
 
-	self.remainingCount = function () {
-		return remaining;
-	};
-
-	self.completedCount = function () {
-		return total - remaining;
+		for ( var id in todos ) {
+			if ( !todos[id].completed ) {
+				remaining++;
+			}
+		}
+		return { remaining: remaining, total: total, completed: total - remaining };
 	};
 
 	function saveTodo (todo) {
@@ -121,8 +110,6 @@ iris.resource(function (self) {
 	}
 
 	function removeTodo (todo) {
-		total--;
-		if ( !todo.completed ) --remaining;
 		delete todos[todo.id];
 
 		var key = "todo_" + todo.id;

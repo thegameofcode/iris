@@ -47,24 +47,23 @@ iris.screen(function(self) {
 			$("a[href='#?filter=" + filter + "']", $footer).addClass("selected");
 
 			var uis = self.ui("todo-list");
-			if ( uis ) {
-				for (var i = 0; i < uis.length; i++ ) {
-					uis[i].render();
-				}
+			for (var i = 0; i < uis.length; i++ ) {
+				uis[i].render();
 			}
 		}
 	};
 
 	function render () {
+		var count = todos.count();
 		self.inflate({
-			completed: "Clear completed (" + todos.completedCount() + ")",
+			completed: "Clear completed (" + count.completed + ")",
 			remaining: {
-				count: todos.remainingCount(),
-				text: "item" + (todos.remainingCount() !== 1 ? "s " : " ") + "left" 
+				count: count.remaining,
+				text: "item" + (count.remaining !== 1 ? "s " : " ") + "left" 
 			},
-			hasTodos: (todos.count() !== 0),
-			hasRemainings: (todos.completedCount() > 0),
-			noRemainingTodos: (todos.remainingCount() === 0)
+			hasTodos: (count.total !== 0),
+			hasRemainings: (count.completed > 0),
+			noRemainingTodos: (count.remaining === 0)
 		});
 	}
 
