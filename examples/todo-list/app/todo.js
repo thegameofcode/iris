@@ -13,7 +13,6 @@ iris.ui(function (self) {
 
 		self.get("check").on("click", function () {
 			todos.toggle(self.setting("id"));
-			self.render();
 		});
 
 		self.get("destroy").on("click", function () {
@@ -31,7 +30,6 @@ iris.ui(function (self) {
 			self.get().removeClass("editing");
 			if ( this.value.trim() !== "" ) {
 				todos.edit(self.setting("id"), this.value);
-				self.render();
 			}
 
 		});

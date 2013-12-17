@@ -25,13 +25,8 @@ iris.screen(function(self) {
 			render();
 		});
 
-		self.on(todos.DESTROY_TODO, function (id) {
-			render();
-		});
-
-		self.on(todos.CHANGE_TODO, function (id) {
-			render();
-		});
+		self.on(todos.DESTROY_TODO, render);
+		self.on(todos.CHANGE_TODO, render);
 
 		todos.init();
 		render();
