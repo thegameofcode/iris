@@ -5,7 +5,7 @@ _Creation date: 2012-01-12_
 [version] date -> authors
   * upd|fix|new|dep|rmv - description
 
-[0.5.5-SNAPSHOT] 2013-XX-XX
+[0.5.5] 2013-12-17
 
  * [fix] Fixed iris.log on IE8 browsers
  * [fix] Solved #149, now iris.translate returns empty strings

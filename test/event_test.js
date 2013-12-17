@@ -122,6 +122,54 @@
       iris.on("off-all-functions", onEvent);
       iris.notify("off-all-functions"); // +1
   });
+
+  test("Invalid functions", function () {
+      expect(7);
+      
+      raises(function () {
+          iris.on("test", undefined);
+      },
+      "invalid function",
+      "Thrown an exception when callback is undefined");
+
+      raises(function () {
+          iris.on("test", new Date());
+      },
+      "invalid function",
+      "Thrown an exception when callback is Date");
+
+      raises(function () {
+          iris.on("test", 'function');
+      },
+      "invalid function",
+      "Thrown an exception when callback is 'function'");
+
+      raises(function () {
+          iris.on("test", null);
+      },
+      "invalid function",
+      "Thrown an exception when callback is null");
+
+      iris.on("test", function () {}); // first create test callback array before test iris.off
+
+      raises(function () {
+          iris.off("test", new Date());
+      },
+      "invalid function",
+      "Thrown an exception when callback is Date");
+
+      raises(function () {
+          iris.off("test", 'function');
+      },
+      "invalid function",
+      "Thrown an exception when callback is 'function'");
+
+      raises(function () {
+          iris.off("test", null);
+      },
+      "invalid function",
+      "Thrown an exception when callback is null");
+  });
   
   
   function onEvent () {
