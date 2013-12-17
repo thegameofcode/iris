@@ -16,7 +16,7 @@ Iris exposes all of its methods and properties on the `iris` object:
 	- [iris.number(number, config)](#irisnumbernumber-config)
 	- [iris.currency(amount, config)](#iriscurrencyamount-config)
 	- [iris.browser()](#irisbrowser)
-	- [iris.inherits(subClass, superClass)](#irisinheritssubClass-superClass)
+	- [iris.inherits(subClass, superClass)](#irisinheritssubclass-superclass)
 - [Event](#event)
 	- [iris.notify(eventId[, params])](#irisnotifyeventid-params)
 	- [iris.on(eventId, callback)](#irisoneventid-callback)
@@ -31,7 +31,7 @@ Iris exposes all of its methods and properties on the `iris` object:
 		- [iris.AFTER_NAVIGATION](#irisafter_navigation)
 		- [iris.RESOURCE_ERROR](#irisresource_error)
 		- [iris.SCREEN_NOT_FOUND](#irisscreen_not_found)
-- [Language & Regional](#language-&-regional)
+- [Language & Regional](#language--regional)
 	- [iris.translate(text[, locale])](#iristranslatetext-locale)
 	- [iris.translations(locale, [terms]|[file, [callbacks]])](#iristranslationslocale-termsfile-callbacks)
 	- [iris.locale([locale][, regional])](#irislocalelocale-regional)
@@ -45,6 +45,7 @@ Iris exposes all of its methods and properties on the `iris` object:
 	- [iris.ui(function(self){...}, path)](#irisuifunctionself-path)
 	- [iris.tmpl(path, html)](#iristmplpath-html)
 	- [iris.resource(function(self){...}, path)](#irisresourcefunctionself-path)
+- [Classes](#classes)
 	- [iris.Settable Class](#irissettable-class)
 		- [self.setting(label[, value])](#selfsettinglabel-value)
 		- [self.settings(params)](#selfsettingsparams)
@@ -205,7 +206,7 @@ var authorName = iris.val(book, "author.name");
 *Since*: `v0.5.0`
 
 Formats a Date object or timestamp to the specified format and according to the current locale.
-See [Language & Regional](#lang) for more information.
+See [Language & Regional](#language--regional) for more information.
 You can use the following special characters:
 
 * __a__ 'a.m.' or 'p.m.'
@@ -760,7 +761,10 @@ iris.resource(function(self){
 iris.resource(iris.path.resource.js);
 ```
 
+## Classes
+
 ### iris.Settable Class
+
 #### self.setting(label[, value])
 *Since*: `v0.5.0`
 
