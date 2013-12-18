@@ -180,4 +180,61 @@
     window.ok(true, "On event2 callback");
   }
 
+  // Test component event functions
+
+  module('Module Event in Components', {
+      setup: function() {
+          iris.notify("iris-reset");
+          iris.path = {
+              welcome : "test/event/welcome.js",
+              welcome_tmpl : "test/event/welcome.html"
+          };
+      },
+      teardown: function () {
+          clearBody();
+      }
+  });
+
+  asyncTest("Execute self.on event defined whitin screen", function() {
+    
+    expect(1);
+
+    iris.welcome(iris.path.welcome);
+
+    iris.on(iris.AFTER_NAVIGATION, function () {
+      iris.off(iris.AFTER_NAVIGATION);
+      iris.notify('test-event');
+
+      start();
+    });
+  });
+
+  asyncTest("Execute self.off event defined within screen", function() {
+    
+    expect(1);
+
+    iris.welcome(iris.path.welcome);
+
+    iris.on(iris.AFTER_NAVIGATION, function () {
+      iris.off(iris.AFTER_NAVIGATION);
+      iris.notify('remove-test-event');
+
+      start();
+    });
+  });
+
+  asyncTest("Execute self.off event (without callback) defined within screen", function() {
+    
+    expect(1);
+
+    iris.welcome(iris.path.welcome);
+
+    iris.on(iris.AFTER_NAVIGATION, function () {
+      iris.off(iris.AFTER_NAVIGATION);
+      iris.notify('remove-all-test-event');
+
+      start();
+    });
+  });
+
 }(jQuery));
