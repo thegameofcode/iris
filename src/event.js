@@ -90,6 +90,10 @@ window.iris = iris;
     var eventPrototype = iris.Event.prototype;
 
     eventPrototype.on = function (p_eventName, f_func) {
+        if ( ! $.isFunction(f_func) ) {
+            throw "invalid function";
+        }
+
         if ( !this.events.hasOwnProperty(p_eventName) ) {
             this.events[p_eventName] = [];
         }
@@ -103,13 +107,31 @@ window.iris = iris;
 
     };
 
-    eventPrototype.off = function (p_eventName, f_func){
+    eventPrototype.off = function (p_eventName, f_func) {
+
+        // if f_func is undefined removes all callbacks
+        if ( f_func !== undefined && ! $.isFunction(f_func) ) {
+            throw "invalid function";
+        }
+
         var callbacks = this.events[p_eventName];
         if ( callbacks ) {
-            var index = $.inArray(f_func, callbacks);
 
-            if ( index !== -1 ) {
-                callbacks.splice(index, 1);
+            if (f_func !== undefined) {
+                var index = $.inArray(f_func, callbacks);
+
+                if ( index !== -1 ) {
+                    callbacks.splice(index, 1);
+                    iris.off(p_eventName, f_func);
+                }
+
+            } else {
+
+                for (var i = 0; i < callbacks.length; i++ ) {
+                    iris.off(p_eventName, callbacks[i]);
+                }
+
+                this.events[p_eventName] = {};
             }
         }
     };
