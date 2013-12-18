@@ -14,13 +14,13 @@
   var pSettable = Settable.prototype;
 
   pSettable.settings = function(settings) {
-    $.extend(this.cfg, settings);
+    return $.extend(this.cfg, settings);
   };
 
   pSettable.setting = function(label, value) {
     if ( value === undefined ) {
       if ( !this.cfg.hasOwnProperty(label) ) {
-        iris.log("setting " + label + " not found", this.cfg, this);
+        iris.log("setting '" + label + "' missing", this.cfg, this);
       }
       return this.cfg[label];
     } else {
