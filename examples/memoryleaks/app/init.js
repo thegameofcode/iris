@@ -5,7 +5,9 @@ $(document).ready(
 
         iris.path = {
         	welcome : "screen/welcome.js",
-        	ui : "ui/example.js"
+        	welcome_html : "screen/welcome.html",
+        	ui : "ui/example.js",
+        	ui_html : "ui/example.html"
         };
 
 		iris.welcome(iris.path.welcome);

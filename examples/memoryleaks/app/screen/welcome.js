@@ -3,7 +3,7 @@ iris.screen(function(self) {
 	var inputMaxUIs, inputMaxScreens, screenCount, screenInter, val, uiResults;
 	
 	self.create = function() {
-		self.tmpl("screen/welcome.html");
+		self.tmpl(iris.path.welcome_html);
 
 		self.get("btn_create_uis").click(createUIs);
 		self.get("btn_destroy_all_uis").click(destroyAllUIs);
