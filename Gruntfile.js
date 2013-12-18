@@ -1,13 +1,20 @@
 /*global module:false*/
 module.exports = function(grunt) {
 
+  var banner = '/*! <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %>' +
+                ' (<%= pkg.homepage %>) licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n';
+
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('iris.json'),
     meta: {
-      
+      banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %>' +
+                ' (<%= pkg.homepage %>) licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n'
     },
     concat: {
+      options: {
+        banner: banner
+      },
       dist: {
         src: ['<banner:meta.banner>', 'src/event.js', 'src/core.js', 'src/lang.js', 'src/regional.js', 'src/util.js', 'src/settable.js', 'src/component.js', 'src/resource.js'],
         dest: 'dist/iris.js'
@@ -15,8 +22,7 @@ module.exports = function(grunt) {
     },
     uglify: {
       options: {
-        banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %>' +
-                ' (<%= pkg.homepage %>) licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n'
+        banner: banner
       },
       dist: {
         files: {
