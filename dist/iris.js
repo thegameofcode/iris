@@ -1,3 +1,4 @@
+/*! iris - v0.5.5 - 2013-12-19 (http://thegameofcode.github.io/iris) licensed New-BSD */
 
 var iris = {};
 
@@ -90,6 +91,10 @@ window.iris = iris;
     var eventPrototype = iris.Event.prototype;
 
     eventPrototype.on = function (p_eventName, f_func) {
+        if ( ! $.isFunction(f_func) ) {
+            throw "invalid function";
+        }
+
         if ( !this.events.hasOwnProperty(p_eventName) ) {
             this.events[p_eventName] = [];
         }
@@ -103,13 +108,31 @@ window.iris = iris;
 
     };
 
-    eventPrototype.off = function (p_eventName, f_func){
+    eventPrototype.off = function (p_eventName, f_func) {
+
+        // if f_func is undefined removes all callbacks
+        if ( f_func !== undefined && ! $.isFunction(f_func) ) {
+            throw "invalid function";
+        }
+
         var callbacks = this.events[p_eventName];
         if ( callbacks ) {
-            var index = $.inArray(f_func, callbacks);
 
-            if ( index !== -1 ) {
-                callbacks.splice(index, 1);
+            if (f_func !== undefined) {
+                var index = $.inArray(f_func, callbacks);
+
+                if ( index !== -1 ) {
+                    callbacks.splice(index, 1);
+                    iris.off(p_eventName, f_func);
+                }
+
+            } else {
+
+                for (var i = 0; i < callbacks.length; i++ ) {
+                    iris.off(p_eventName, callbacks[i]);
+                }
+
+                this.events[p_eventName] = {};
             }
         }
     };
@@ -223,8 +246,12 @@ window.iris = iris;
     };
 
     iris.enableLog = function () {
-        if ( arguments.length > 0 ) {
+        if ( typeof arguments[0] === "boolean" ) {
+            _logEnabled = arguments[0];
+
+        } else if ( arguments.length > 0 ) {
             _logEnabled = urlContains.apply(this, arguments);
+            
         } else {
             return _logEnabled;
         }
@@ -603,13 +630,13 @@ window.iris = iris;
   var pSettable = Settable.prototype;
 
   pSettable.settings = function(settings) {
-    $.extend(this.cfg, settings);
+    return $.extend(this.cfg, settings);
   };
 
   pSettable.setting = function(label, value) {
     if ( value === undefined ) {
       if ( !this.cfg.hasOwnProperty(label) ) {
-        iris.log("setting " + label + " not found", this.cfg, this);
+        iris.log("setting '" + label + "' missing", this.cfg, this);
       }
       return this.cfg[label];
     } else {

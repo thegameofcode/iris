@@ -5,13 +5,16 @@ _Creation date: 2012-01-12_
 [version] date -> authors
   * upd|fix|new|dep|rmv - description
 
-[0.5.5] 2013-12-17
+[0.5.5] 2013-12-19
 
+ * [fix] Solved iris.Event.off() doesn't remove global callbacks
  * [fix] Fixed iris.log on IE8 browsers
  * [fix] Solved #149, now iris.translate returns empty strings
  * [new] Solved #150, self.ui returns empty array insted of undefined
  * [new] iris.inherits, inheritance with the prototype chain
  * [upd] Solved #156, iris.on and iris.off check if the param is a function
+ * [upd] iris.enableLog(boolean) accepts a boolean to enable or disable logs
+ * [upd] iris.Event.off(string) accepts only a string and removes all callbacks
 
 
 [0.5.4] 2013-09-16
