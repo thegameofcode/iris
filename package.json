@@ -1,5 +1,12 @@
 {
   "name": "iris",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thegameofcode/iris.git"
+  },
+  "scripts": {
+    "test": "grunt"
+  },
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-uglify": "~0.2.0",
