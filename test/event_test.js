@@ -22,6 +22,7 @@
       raises(block, [expected], [message])
   */
 
+
   function clearBody() {
       var irisGeneratedCode = $("#start_iris").nextAll();
       if (irisGeneratedCode !== undefined) {
@@ -32,6 +33,7 @@
   module('Module Event', {
       setup: function() {
           iris.notify("iris-reset");
+          iris.enableLog(false);
       },
       teardown: function () {
           clearBody();
@@ -189,6 +191,7 @@
               welcome : "test/event/welcome.js",
               welcome_tmpl : "test/event/welcome.html"
           };
+          iris.enableLog(false);
       },
       teardown: function () {
           clearBody();

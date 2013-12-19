@@ -1,7 +1,7 @@
 iris.screen(
     function (self) {
         self.create = function () {
-            window.console.log("Main3 Screen Created");
+            iris.log("Main3 Screen Created");
             self.tmpl("test/ui_life_cycle/main.html");
             self.get("create_my_ui").on("click",
                 function () {
@@ -11,7 +11,7 @@ iris.screen(
         };
         
         self.awake = function () {
-            window.console.log("Main3 Screen Awaked");
+            iris.log("Main3 Screen Awaked");
             window.setTimeout(
                 function () {
                     self.get("create_my_ui").trigger("click");

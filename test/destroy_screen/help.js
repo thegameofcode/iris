@@ -2,7 +2,7 @@
 iris.screen(
     function (self) {
         self.create = function () {
-            window.console.log("Help Screen Created");
+            iris.log("Help Screen Created");
             self.tmpl("test/destroy_screen/help.html");
             self.get("destroy_home").click(
                 function() {
@@ -13,7 +13,7 @@ iris.screen(
         };
         
         self.awake = function () {
-            window.console.log("Help Screen Awaked");
+            iris.log("Help Screen Awaked");
             
         };
     },

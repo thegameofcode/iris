@@ -25,6 +25,7 @@
   module('Module Regional', {
       setup: function() {
           iris.notify("iris-reset");
+          iris.enableLog(false);
       },
       teardown: function () {
           clearBody();

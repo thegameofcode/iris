@@ -2,7 +2,7 @@
 iris.screen(
     function (self) {
         self.create = function () {
-            window.console.log("Welcome7 Screen Created: Same URL");
+            iris.log("Welcome7 Screen Created: Same URL");
 
             self.tmpl("test/bad_practices/welcome.html");
 

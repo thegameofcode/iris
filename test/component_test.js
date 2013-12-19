@@ -24,7 +24,6 @@
       http://api.qunitjs.com/throws/
   */
 
-    iris.cache(false);
 
     function clearBody() {
         var irisGeneratedCode = $("#start_iris").nextAll();
@@ -50,6 +49,8 @@
                 datajq : "test/component/datajq.js",
                 datajq_tmpl : "test/component/datajq.html"
             };
+            iris.cache(false);
+            iris.enableLog(false);
         },
         teardown: function () {
             clearBody();

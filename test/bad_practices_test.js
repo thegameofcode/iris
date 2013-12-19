@@ -22,7 +22,6 @@
       raises(block, [expected], [message])
   */
  
-    iris.cache(false);
 
     function clearBody() {
         var irisGeneratedCode = $("#start_iris").nextAll();
@@ -46,6 +45,8 @@
                 my_ui : "test/bad_practices/my_ui.js",
                 my_ui_tmpl : "test/bad_practices/my_ui.html"
             };
+            iris.cache(false);
+            iris.enableLog(false);
         },teardown: function () {
             clearBody();
         }

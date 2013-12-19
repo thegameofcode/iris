@@ -11,6 +11,7 @@
             empty_tmpl : "test/resource/empty.html",
             welcome : "test/resource/welcome.js"
           };
+          iris.enableLog(false);
           iris.welcome(iris.path.welcome);
       },
       teardown: function () {

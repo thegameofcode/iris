@@ -22,8 +22,6 @@
       raises(block, [expected], [message])
   */
  
-    iris.cache(false);
-    
     function clearBody() {
         var irisGeneratedCode = $("#start_iris").nextAll();
         if (irisGeneratedCode !== undefined) {
@@ -56,6 +54,8 @@
                 help_tmpl : "test/ui_life_cycle/help.html",
                 help2 : "test/ui_life_cycle/help2.js"
             };
+            iris.cache(false);
+            iris.enableLog(false);
             iris.welcome(iris.path.welcome);
         },
         teardown: function () {

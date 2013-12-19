@@ -2,7 +2,7 @@
 iris.screen(
     function (self) {
         self.create = function () {
-            window.console.log("Home Screen Created");
+            iris.log("Home Screen Created");
 
             self.tmpl("test/destroy_screen/home.html");
 
@@ -26,16 +26,16 @@ iris.screen(
         };
         
         self.awake = function () {
-            window.console.log("Home Screen Awaked");
+            iris.log("Home Screen Awaked");
         };
         
         self.sleep = function () {
-            window.console.log("Home Screen asleep");
+            iris.log("Home Screen asleep");
             window.ok(true, "Home Screen asleep");
         };
         
         self.destroy = function () {
-            window.console.log("Home Screen Destroyed");
+            iris.log("Home Screen Destroyed");
             window.ok(true, "Home Screen Destroyed");
         };
 

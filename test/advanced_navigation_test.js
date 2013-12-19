@@ -22,8 +22,6 @@
       raises(block, [expected], [message])
   */
 
-    iris.cache(false);
-
     function clearBody() {
         var irisGeneratedCode = $("#start_iris").nextAll();
         if (irisGeneratedCode !== undefined) {
@@ -47,6 +45,8 @@
                 ui_tmpl : "test/advanced_navigation/ui.html",
                 empty_tmpl : "test/advanced_navigation/empty.html"
             };
+            iris.cache(false);
+            iris.enableLog(false);
         },
         teardown: function () {
             iris.notify("iris-reset");

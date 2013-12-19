@@ -3,7 +3,7 @@ iris.screen(
     function (self) {
         self.create = function () {
             var myUI = null;
-            window.console.log("Main Screen Created");
+            iris.log("Main Screen Created");
             self.tmpl("test/ui_replacement/main.html");
             self.get("create_my_ui").click(
                 function() {
@@ -43,7 +43,7 @@ iris.screen(
         
         
         self.awake = function () {
-            window.console.log("Main Screen Awaked");
+            iris.log("Main Screen Awaked");
         };
         
     },

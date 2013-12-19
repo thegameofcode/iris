@@ -25,6 +25,8 @@
   module('Module Core', {
       setup: function() {
           iris.notify("iris-reset");
+          iris.cache(false);
+          iris.enableLog(false);
       },
       teardown: function () {
           clearBody();

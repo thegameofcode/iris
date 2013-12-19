@@ -2,7 +2,7 @@
 iris.screen(
     function (self) {
         self.create = function () {
-            window.console.log("Welcome8 Screen Created");
+            iris.log("Welcome8 Screen Created");
 
             self.tmpl("test/bad_practices/welcome.html");
 
