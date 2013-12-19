@@ -19,12 +19,12 @@ Iris exposes all of its methods and properties on the `iris` object:
 	- [iris.inherits(subClass, superClass)](#irisinheritssubclass-superclass)
 - [Event](#event)
 	- [iris.notify(eventId[, params])](#irisnotifyeventid-params)
-	- [iris.on(eventId, callback)](#irisoneventid-callback)
-	- [iris.off(eventId[, callback])](#irisoffeventid-callback)
-	- [iris.destroyEvents(eventId, callbacks)](#irisdestroyeventseventid-callbacks)
+	- [iris.on(eventId, listener)](#irisoneventid-listener)
+	- [iris.off(eventId[, listener])](#irisoffeventid-listener)
+	- [iris.destroyEvents(eventId, listeners)](#irisdestroyeventseventid-listeners)
 	- [iris.Event class](#irisevent-class)
-		- [self.on(eventId, callback)](#selfoneventid-callback)
-		- [self.off(eventId[, callback])](#selfoffeventid-callback)
+		- [self.on(eventId, listener)](#selfoneventid-listener)
+		- [self.off(eventId[, listener])](#selfoffeventid-listener)
 		- [self.notify(eventId[, params])](#selfnotifyeventid-params)
 	- [Iris Events](#iris-events)
 		- [iris.BEFORE_NAVIGATION](#irisbefore_navigation)
@@ -392,41 +392,41 @@ iris.notify("my-event", {param : value});
 iris.notify("my-event");
 ```
 
-### iris.on(eventId, callback)
+### iris.on(eventId, listener)
 *Since*: `v0.5.0`
 
 Adds an event listener.
 See `iris.notify` and `iris.off` for more details.
 
 ```javascript
-iris.on("my-event", callback);
+iris.on("my-event", listener);
 ```
 
-### iris.off(eventId[, callback])
+### iris.off(eventId[, listener])
 *Since*: `v0.5.0`
 
 Removes an event listener.
 See `iris.notify` and `iris.on` for more details.
-If callback is not specified, all callback are removed.
+If listener is not specified, all listeners are removed.
 
 ```javascript
-iris.off("my-event", callback);
+iris.off("my-event", listener);
 
-iris.off("my-event"); // remove all callbacks
+iris.off("my-event"); // remove all listeners
 ```
 
-### iris.destroyEvents(eventId, callbacks)
+### iris.destroyEvents(eventId, listeners)
 *Since*: `v0.5.0`
 
 Removes a collection of event listeners.
 
 ```javascript
-iris.destroyEvents("my-event", [callback1, callback2]);
+iris.destroyEvents("my-event", [listener1, listener2]);
 ```
 
 ### iris.Event class
 
-#### self.on(eventId, callback)
+#### self.on(eventId, listener)
 *Since*: `v0.5.0`
 
 Adds an event listener associated with a component. When the component is destroyed, the listener will be deleted.
@@ -434,14 +434,22 @@ Adds an event listener associated with a component. When the component is destro
 For more details, see `iris.on`.
 
 ```javascript
-self.on("my-event", callback);
+self.on("my-event", listener);
 ```
 
-#### self.off(eventId[, callback])
+#### self.off(eventId[, listener])
 *Since*: `v0.5.0`
 
 Removes an event listener.
-See `iris.off` for more details.
+Updated in `v0.5.5`, listener are not required. If listener is `undefined`, all component's listeners for `eventId` will be removed.
+
+```javascript
+self.off(iris.BEFORE_NAVIGATION, onBeforeNavigation); // Unsubscribe one listener
+
+// Since v0.5.5
+self.off(iris.BEFORE_NAVIGATION); // Remove all listeners
+```
+
 
 #### self.notify(eventId[, params])
 *Since*: `v0.5.0`
