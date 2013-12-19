@@ -91,8 +91,12 @@
     };
 
     iris.enableLog = function () {
-        if ( arguments.length > 0 ) {
+        if ( typeof arguments[0] === "boolean" ) {
+            _logEnabled = arguments[0];
+
+        } else if ( arguments.length > 0 ) {
             _logEnabled = urlContains.apply(this, arguments);
+            
         } else {
             return _logEnabled;
         }

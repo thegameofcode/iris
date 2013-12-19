@@ -143,6 +143,13 @@ Enable or disable the *iris.log* outputs according to the current URL.
 iris.enableLog("localhost", "dev.example.com", "int.example.com");
 ```
 
+Since `v0.5.5`, you can enable or disable iris logs using a boolean, e.g.:
+
+```javascript
+iris.enableLog(false); // Disable all iris logs
+```
+
+
 ### iris.log(args)
 *Since*: `v0.5.0`
 
