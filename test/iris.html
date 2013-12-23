@@ -47,5 +47,19 @@
     <span>awesome test markup</span>
   </div>
   <span id="start_iris"></span>
+  <script>
+  $(document)
+    .ready(function(){
+        $('#qunit-tests').addClass('hidepass');
+    })
+    .delegate("#qunit-testrunner-toolbar", "DOMNodeInserted", function(e){
+        $("#qunit-filter-pass").attr("checked", true)   
+    })
+    .delegate("#qunit-filter-pass", "click", function(e){
+        e.stopPropagation();
+        var newValue = $(this).is(":checked");
+        $('#qunit-tests').toggleClass('hidepass', newValue);
+  });
+  </script>
 </body>
 </html>
