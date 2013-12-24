@@ -3,6 +3,7 @@ iris.screen(function (self) {
 	// var resource = iris.resource(iris.path.resource);
 
 	self.create = function() {
+		window.console.warn('friend create');
 		
 		self.tmpl(iris.path.screen.friend.html);
 
@@ -12,20 +13,26 @@ iris.screen(function (self) {
 	};
 
 	self.awake = function () {
+		window.console.warn('friend awake');
+		
 		self.get('id_friend').text(self.param('id_friend'))
 		self.get('id_group').text(self.param('id_group'))
 	};
 
-	// self.canSleep = function () {
-	// 	return true;
-	// };
+	self.canSleep = function () {
+		window.console.warn('friend canSleep');
 
-	// self.sleep = function () {
-		
-	// };
+		return true;
+	};
 
-	// self.destroy = function () {
+	self.sleep = function () {
+		window.console.warn('friend sleep');
 		
-	// };
+	};
+
+	self.destroy = function () {
+		window.console.warn('friend destroy');
+		
+	};
 
 },iris.path.screen.friend.js);

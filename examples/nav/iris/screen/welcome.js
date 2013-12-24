@@ -3,6 +3,7 @@ iris.screen(function (self) {
 	// var resource = iris.resource(iris.path.resource);
 
 	self.create = function() {
+		window.console.warn('welcome create');
 		
 		self.tmpl(iris.path.screen.welcome.html);
 
@@ -12,8 +13,8 @@ iris.screen(function (self) {
 		]);
 	};
 
-	// self.awake = function () {
-		
-	// };
+	self.awake = function () {
+		window.console.warn('welcome awake');
+	};
 
 },iris.path.screen.welcome.js);

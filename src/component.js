@@ -285,14 +285,11 @@ window.console.log("  Navigation: hash[" + hash + "] deep[" + deep + "]");
 window.console.log('  Searching in currNav = ', currNav);
             found = false;
             for ( var childScreenHash in currNav ) {
-hashRegex = _getHashRegex(childScreenHash);
-window.console.log("-*-*- ******* hashRegex["+hashRegex+"]");
-
-window.console.log("    ?? childScreenHash [" + childScreenHash + "] in hash [" + hash + "]");
+                
+                hashRegex = _getHashRegex(childScreenHash);
+window.console.log("    ?? childScreenHash [" + childScreenHash + "] in hash [" + hash + "] hashRegex["+hashRegex+"]");
 
                 // added last / to ignore contained child hash, ejem: "screen_name/" && "screen/"
-                // if ( (hash + '/').indexOf(childScreenHash + '/') === 0 ) {
-
                 if ( hashRegex.test(childScreenHash + '/') ) {
 window.console.log("    Found childScreenHash: " + childScreenHash);
                     found = true;
@@ -1086,13 +1083,8 @@ window.console.log("***********************");
             var $cont = this.get(p_containerId);
             this.screenChilds = [];
 
-
-if ( this.id === '#' ) {
-    _navMap['#'] = {};
-    this.navMap = _navMap['#'];
-} else {
-    this.navMap = _screenParentNavMap[this.id][_screenHashFragment[this.id]];
-}
+            // TODO use screenMetadata isntead of _screenParentNavMap, _screenHashFragment
+            this.navMap =  ( this.id === '#' ) ? _navMap['#'] : _screenParentNavMap[this.id][_screenHashFragment[this.id]];
 
             for ( var i=0; i < p_screens.length; i++ ) {
 
