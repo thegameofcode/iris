@@ -17,7 +17,16 @@
     _dependency,
     _notCreatedScreenHashses,
     _paths,
-    FORMAT_REG_EXP = /(date|currency|number)(?:\(([^\)]+)\))/
+    FORMAT_REG_EXP = /(date|currency|number)(?:\(([^\)]+)\))/,
+
+    // New system navigation
+
+    // TODO join _screenHashFragment, _screenParentNavMap, _screenJsUrl, _screenContainer in
+    // _screenMetadata["#parent/hash/:id"] = { hashFragment: "hash/:id", js:"path.js", container: $, parentNavMap: {} }
+    _navMap,
+    _screenHashFragment, 
+    _screenParentNavMap,
+    _prevNav
     ;
 
     function _init() {
@@ -32,6 +41,13 @@
 
         // _jsUrlScreens["/path/to/file.js"] indicates if a js-URL has been used by some screen
         _jsUrlScreens = {};
+
+        // New system navigation
+        _navMap = {};
+        _screenParentNavMap = {};
+        _screenHashFragment = {};
+        _prevNav = [];
+
 
         _prevHash = undefined;
         _includes = {};
@@ -62,6 +78,7 @@
         _welcomeCreated = true;
         _screenJsUrl["#"] = p_jsUrl;
         _screenContainer["#"] = $(document.body);
+        _navMap["#"] = {};
 
         if ( window.console && window.console.log ) {
             window.console.log("[iris] noCache[" + iris.noCache() + "] enableLog[" + iris.enableLog() + "]");
@@ -104,9 +121,17 @@
         if(!("onhashchange" in window)) {
             throw "hashchange event unsupported";
         } else {
-            // force to do an initial navigation
-            _startHashChange();
-            $(window).on("hashchange", _startHashChange);
+
+            if ( iris.useNewNavigation ) {
+                // force to do an initial navigation
+                _startHashChange();
+                $(window).on("hashchange", _startHashChange);
+
+            } else {
+                // force to do an initial navigation
+                _startHashChangeLegacy();
+                $(window).on("hashchange", _startHashChangeLegacy);
+            }
         }
     }
 
@@ -177,10 +202,164 @@
     // Navigation
     //
     function _goto(p_hashUri) {
-        document.location.hash = p_hashUri; // Trigger hashchange event, then execute _startHashChange()
+        document.location.hash = p_hashUri; // Trigger hashchange event, then execute _startHashChangeLegacy()
+    }
+
+
+    function _wakeUpScreen (screenPath, params) {
+        window.console.log('Wake up screenPath = ' + screenPath);
+
+        if ( !_screenJsUrl.hasOwnProperty(screenPath) ) {
+            throw 'Invalid screenPath = ' + screenPath;
+        }
+
+        if ( !_screen.hasOwnProperty(screenPath) ) {
+            var screenObj = new Screen(screenPath);
+            screenObj.create();
+            _screen[screenPath] = screenObj;
+        }
+
+        var screenInstance = _screen[screenPath];
+        screenInstance.params = params;
+        screenInstance.show();
+        screenInstance._awake(params);
+    }
+
+    function _getHashRegex (hash) {
+        return new RegExp('^' + hash.replace(/:[\w_\-\.]+/g, '([^/]+)') + '/*'); // added last / to ignore contained child hash, ejem: "screen_name/" && "screen/"
+    }
+
+    function _getScreenPathParams (childScreenHash, hash, hashRegex) {
+        // Get screen path params
+        var params = {};
+        var paramsValues = hash.match(hashRegex);
+        if ( paramsValues ) {
+            paramsValues = paramsValues.slice(1); // the first item is the whole match
+            if ( paramsValues.length > 0 ) {
+                var paramsNames = childScreenHash.match(hashRegex).slice(1);
+                for ( var i = 0; i < paramsValues.length; i++ ) {
+                    params[ paramsNames[i].substr(1) ] = paramsValues[i]; // Remove first ':'
+                }
+            }
+        }
+        return params;
     }
 
     function _startHashChange(e) {
+
+        // Check if welcome screen has been created
+        if ( !_welcomeCreated ) {
+            throw "set the first screen using iris.welcome()";
+        }
+        
+        // when document.location.href is [http://localhost:8080/#] then document.location.hash is [] (empty string)
+        // to avoid the use of empty strings and prevent mistakes, we replace it by #. (# == welcome-screen)
+        var hash = document.location.hash;
+        if ( hash === "" ) {
+            hash = "#";
+        }
+
+        // Prevent multiple calls with the same hash
+        // http://stackoverflow.com/questions/4106702/change-hash-without-triggering-a-hashchange-event#fggij
+        if ( _lastFullHash === hash ) {
+            return false;
+        }
+
+        // when a screen cannot sleep, finish navegation process
+        if ( _gotoCancelled ) {
+            _gotoCancelled = false;
+            iris.notify(iris.AFTER_NAVIGATION);
+            _lastFullHash = _prevHashString;
+            return false;
+        }
+
+window.console.log("***********************");
+        iris.log("Starting a new navigation[" + hash + "]");
+        _lastFullHash = hash;
+        iris.notify(iris.BEFORE_NAVIGATION);
+var hashRegex;
+        var found, currentHash = '', deep = 0, currNav = _navMap;
+        while ( hash ) {
+
+window.console.log("  Navigation: hash[" + hash + "] deep[" + deep + "]");
+window.console.log('  Searching in currNav = ', currNav);
+            found = false;
+            for ( var childScreenHash in currNav ) {
+hashRegex = _getHashRegex(childScreenHash);
+window.console.log("-*-*- ******* hashRegex["+hashRegex+"]");
+
+window.console.log("    ?? childScreenHash [" + childScreenHash + "] in hash [" + hash + "]");
+
+                // added last / to ignore contained child hash, ejem: "screen_name/" && "screen/"
+                // if ( (hash + '/').indexOf(childScreenHash + '/') === 0 ) {
+
+                if ( hashRegex.test(childScreenHash + '/') ) {
+window.console.log("    Found childScreenHash: " + childScreenHash);
+                    found = true;
+                    break;
+                }
+            }
+
+            if ( found ) {
+                // If it's the first screen dont add '/'
+                if ( currentHash ) {
+                    currentHash += '/' + childScreenHash;
+                } else {
+                    currentHash = childScreenHash;
+                }
+
+                if ( _prevNav[deep] && _prevNav[deep] === childScreenHash ) {
+window.console.log('  The screen "' + childScreenHash + '" was created previously and awaked, next screen');
+                } else {
+
+                    // Can sleep?
+                    var i;
+                    for ( i = _prevNav.length-1; i >= deep; i-- ) {
+                        if ( _screen[_prevNav[i]].canSleep() === false ) {
+                            _gotoCancelled = true;
+                            document.location.href = _prevHashString;
+                            return false;
+                        }
+                    }
+
+                    // Hide previous screens
+                    while ( _prevNav.length > deep ) {
+                        
+                        var pathToSleep = _prevNav.pop();
+window.console.log('    Sleep the previous screen "' + pathToSleep + '"');
+                        var screenToSleep = _screen[pathToSleep];
+                        screenToSleep._sleep();
+                        screenToSleep.hide();
+                    }
+
+                    // Wake up the screen at this deep
+                    _wakeUpScreen(currentHash, _getScreenPathParams(childScreenHash, hash, hashRegex));
+                    _prevNav.push(currentHash);
+                }
+
+                // Prepare to the next iteration
+                hash = hash.replace(hashRegex, '');
+                currNav = currNav[childScreenHash];
+window.console.log("  Remaining hash = " + hash);
+
+            } else {
+                iris.notify(iris.SCREEN_NOT_FOUND, hash);
+                iris.log("[warning] '" + hash + "' must be registered using self.screens()");
+                return;
+            }
+
+            deep++;
+        }
+
+        // _prevHash = curr;
+        _prevHashString = hash;
+
+        iris.log("Navigation finished");
+        iris.notify(iris.AFTER_NAVIGATION);        
+window.console.log("***********************");
+    }
+
+    function _startHashChangeLegacy(e) {
 
         // Check if welcome screen has been created
         if(!_welcomeCreated) {
@@ -201,14 +380,14 @@
         }
 
         // when a screen cannot sleep, finish navegation process
-        if(_gotoCancelled) {
+        if ( _gotoCancelled ) {
             _gotoCancelled = false;
             iris.notify(iris.AFTER_NAVIGATION);
             _lastFullHash = _prevHashString;
             return false;
         }
 
-        iris.log("Starting a new navigation["+hash+"]");
+        iris.log("Starting a new navigation[" + hash + "]");
         _lastFullHash = hash;
         iris.notify(iris.BEFORE_NAVIGATION);
 
@@ -870,6 +1049,8 @@
 
         this.params = {};
         this.screenConId = null;
+        this.navMap = null;
+        this.hash = null;
     };
 
     iris.inherits(Screen, Component);
@@ -905,22 +1086,30 @@
             var $cont = this.get(p_containerId);
             this.screenChilds = [];
 
+
+if ( this.id === '#' ) {
+    _navMap['#'] = {};
+    this.navMap = _navMap['#'];
+} else {
+    this.navMap = _screenParentNavMap[this.id][_screenHashFragment[this.id]];
+}
+
             for ( var i=0; i < p_screens.length; i++ ) {
 
                 var screen = p_screens[i];
                 var hashUrl = screen[0];
                 if ( hashUrl.indexOf("#") !== -1 ) {
-                    throw "[self.screens] incorrect screen path[" + hashUrl + "] cannot contain #";
+                    throw "Incorrect screen path[" + hashUrl + "] cannot contain #";
                 }
                 hashUrl = this.id + "/" + hashUrl;
 
                 var js = screen[1];
                 if ( _jsUrlScreens.hasOwnProperty(js) ) {
-                    throw "[self.screens] js-URL repeated '" + js + "': " + this.id;
+                    throw "js-URL repeated '" + js + "': " + this.id;
                 }
 
                 if ( _screenContainer.hasOwnProperty(hashUrl) ) {
-                    throw "[self.screens] hash-URL repeated  '" + hashUrl + "' in " + this.fileJs;
+                    throw "hash-URL repeated  '" + hashUrl + "' in " + this.fileJs;
                 }
 
                 iris.log("Register screen hash[" + hashUrl + "] js[" + js + "]");
@@ -929,7 +1118,13 @@
                 _screenContainer[hashUrl] = $cont;
                 _jsUrlScreens[js] = true;
 
+                _screenParentNavMap[hashUrl] = this.navMap;
+                _screenHashFragment[hashUrl] = screen[0];
+
                 this.screenChilds[i] = hashUrl;
+
+                this.navMap[screen[0]] = {};
+window.console.log(this.id + ", Add screen child to navMap: " + screen[0], _navMap);
             }
         }
     };
