@@ -51,7 +51,7 @@ iris.screen(function (self) {
 
         window.strictEqual(self.get("test_multiple_attrs").attr("title"), data.person.name, "Set up a multiple attributes, title");
 
-        window.strictEqual(self.get("test_multiple_attrs").attr("style"), data.person.style, "Set up a multiple attributes, style");
+        window.strictEqual(self.get("test_multiple_attrs").attr("style").replace(" ","", "g"), data.person.style, "Set up a multiple attributes, style");
 
         window.strictEqual(self.get("test_textarea").text(), data.person.name, "Data set text on textareas");
 
