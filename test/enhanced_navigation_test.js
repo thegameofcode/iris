@@ -423,12 +423,12 @@
             iris.off(iris.AFTER_NAVIGATION);
 
             // this will make an async call
-            iris.navigate("#/first/screen;PARAM-1=value_1234;Param_2=value_€ñ"); // +1 create, +1 awake, +1 param
+            iris.navigate("#/first/screen;PARAM-1=value_1234;Param_2=value_test"); // +1 create, +1 awake, +1 param
 
             iris.on(iris.AFTER_NAVIGATION, function () {
                 iris.off(iris.AFTER_NAVIGATION);
                 
-                strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #/first/screen,[awake] #/first/screen,[params] #/first/screen PARAM-1[value_1234] Param_2[value_€ñ]", "The navigation map is correct"); // +1
+                strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #/first/screen,[awake] #/first/screen,[params] #/first/screen PARAM-1[value_1234] Param_2[value_test]", "The navigation map is correct"); // +1
 
                 start();
             });
@@ -446,7 +446,7 @@
             iris.off(iris.AFTER_NAVIGATION);
 
             // this will make an async call
-            iris.navigate("#/first/screen;PARAM-1=value_1234;Param_2=value_€ñ"); // +1 create, +1 awake, +1 param
+            iris.navigate("#/first/screen;PARAM-1=value_1234;Param_2=value_test"); // +1 create, +1 awake, +1 param
 
             iris.on(iris.AFTER_NAVIGATION, function () {
                 iris.off(iris.AFTER_NAVIGATION);
@@ -457,7 +457,7 @@
                     iris.off(iris.AFTER_NAVIGATION);
 
                     
-                    strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #/first/screen,[awake] #/first/screen,[params] #/first/screen PARAM-1[value_1234] Param_2[value_€ñ],[awake] #/first/screen,[params] #/first/screen PARAM-1[NewValue] Param_2[OtherNewValue]", "The navigation map is correct"); // +1
+                    strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #/first/screen,[awake] #/first/screen,[params] #/first/screen PARAM-1[value_1234] Param_2[value_test],[awake] #/first/screen,[params] #/first/screen PARAM-1[NewValue] Param_2[OtherNewValue]", "The navigation map is correct"); // +1
                     start();
                 });
             });

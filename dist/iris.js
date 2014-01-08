@@ -1,4 +1,4 @@
-/*! iris - v0.5.6-SNAPSHOT - 2014-01-03 (http://thegameofcode.github.io/iris) licensed New-BSD */
+/*! iris - v0.5.6-SNAPSHOT - 2014-01-08 (http://thegameofcode.github.io/iris) licensed New-BSD */
 
 var iris = {};
 
@@ -676,7 +676,8 @@ window.iris = iris;
     _navMap,
     _screenHashFragment, 
     _screenParentNavMap,
-    _prevNav
+    _prevNav,
+    _prevNavRaw
     ;
 
     function _init() {
@@ -697,6 +698,7 @@ window.iris = iris;
         _screenParentNavMap = {};
         _screenHashFragment = {};
         _prevNav = [];
+        _prevNavRaw = [];
 
 
         _prevHash = undefined;
@@ -879,65 +881,99 @@ window.iris = iris;
         screenInstance._awake();
     }
 
-var paramNameRegex = /:[\w_\-\.]+/g;
+var paramNameRegex = /:[\d\w_\-\.]+/g;
+var matrixParamsRegex = ';[^=]+=[^;\/]+';
 
     function _getHashRegex (hash) {
-        return new RegExp('^' + hash.replace(paramNameRegex, '([^/]+)') + '/*' );
+        return new RegExp('^' + hash.replace(paramNameRegex, '([^/]+)') + '(?:' + matrixParamsRegex + ')*/*' );
     }
 
-    function _getScreenPathParams (childScreenHash, hash, hashRegex) {
+    function _getScreenPathParams (screenHash, hash, hashRegex) {
         // Get screen path params
         var params = {};
         var paramsValues = hash.match(hashRegex);
+        var i;
         
         if ( paramsValues ) {
             paramsValues = paramsValues.slice(1); // the first item is the whole match
             if ( paramsValues.length > 0 ) {
-                var paramsNames = childScreenHash.match(paramNameRegex);
-                for ( var i = 0; i < paramsValues.length; i++ ) {
+                var paramsNames = screenHash.match(paramNameRegex);
+                for ( i = 0; i < paramsValues.length; i++ ) {
                     params[ paramsNames[i].substr(1) ] = paramsValues[i]; // Remove first ':'
                 }
             }
         }
+
+        
+        // Get matrix params
+        var mpRegex = new RegExp('^' + screenHash + '(;[^=]+=[^;\/]+)+');
+        var screenHashRaw = hash.match(mpRegex);
+        if ( screenHashRaw && screenHashRaw.length > 0 ) {
+            var matrixParams = screenHashRaw[0].match(/;[^=]+=[^;\/]+/g);
+            var idx;
+            for ( i = 0; i < matrixParams.length; i++ ) {
+                idx = matrixParams[i].indexOf('=');
+                params[ matrixParams[i].substr(1, idx - 1) ] = matrixParams[i].substr(idx + 1);
+            }
+        }
+        
+window.console.log("@@@@                       params", params);
         return params;
     }
 
-    function _startHashChange(e) {
+    function _getRawHashRegex (hash) {
+        return hash.replace(paramNameRegex, '(?:[^/]+)') + '(?:' + matrixParamsRegex + ')*(?:/?)';
+    }
 
-        // Check if welcome screen has been created
-        if ( !_welcomeCreated ) {
-            throw "set the first screen using iris.welcome()";
-        }
+    function _startHashChange(e) {
         
         // when document.location.href is [http://localhost:8080/#] then document.location.hash is [] (empty string)
         // to avoid the use of empty strings and prevent mistakes, we replace it by #. (# == welcome-screen)
-        var hash = document.location.hash || "#", hashWithParams;
-window.console.log("*********************** hash -> ", hash);
+        var hash = document.location.hash || "#";
+        var fullHash = hash;
+
+window.console.log("***********************");
+window.console.log("hash[" + hash + "] _prevHashString[" + _prevHashString + "] _lastFullHash[" + _lastFullHash + "] _gotoCancelled[" + _gotoCancelled + "]");
 
         // Prevent multiple calls with the same hash
         // http://stackoverflow.com/questions/4106702/change-hash-without-triggering-a-hashchange-event#fggij
         if ( _lastFullHash === hash ) {
+window.console.log("No New Navigation!!!!!!!!!! _lastFullHash === hash", _lastFullHash);
             return false;
         }
 
         // when a screen cannot sleep, finish navegation process
         if ( _gotoCancelled ) {
+window.console.log("Navigation CANCELED!!!!!!!!!!!!!!!!!!!!");
             _gotoCancelled = false;
-            iris.notify(iris.AFTER_NAVIGATION);
             _lastFullHash = _prevHashString;
+            iris.notify(iris.AFTER_NAVIGATION);
             return false;
         }
 
-window.console.log("***********************");
-        iris.log("Starting a new navigation[" + hash + "]");
         _lastFullHash = hash;
         iris.notify(iris.BEFORE_NAVIGATION);
 
-        var hashRegex, found, currentHash = '', deep = 0, currNav = _navMap, historyNav = [], firstNodeToSleep;
+        var hashRegex,
+            fullRawHashRegex,
+            found,
+            deep = 0,
+            fullScreenHash = '',
+            fullScreenHashRaw = '',
+            currNav = _navMap,
+            historyNavRaw = [],
+            historyNav = [],
+            firstNodeToSleep,
+            hashWithParams,
+            i,
+            screenHash,
+            screenChilds
+            ;
+
         while ( hash ) {
 
-window.console.log("  Navigation: hash[" + hash + "] deep[" + deep + "] _prevNav[" + _prevNav + "]");
-window.console.log('  Searching in currNav = ', currNav);
+window.console.log("  currNav[", currNav ,"] hash[" + hash + "] deep[" + deep + "] _prevNav[" + _prevNav + "]");
+
             found = false;
 
 
@@ -954,64 +990,74 @@ window.console.log('  Searching in currNav = ', currNav);
             //   - search child['screen/other'] in hash['screen'] : Not Found, screen/other contains screen but is skipped
             //   - search child['screen'] in hash['screen'] : Found!
             //
-            var i, childScreenHash, screenChilds = [];
-            for ( childScreenHash in currNav ) {
-                screenChilds.push(childScreenHash);
+            screenChilds = [];
+            for ( screenHash in currNav ) {
+                screenChilds.push(screenHash);
             }
             screenChilds.sort();
             screenChilds.reverse();
 
             for ( i = 0; i < screenChilds.length; i++ ) {
 
-                childScreenHash = screenChilds[i];
+                screenHash = screenChilds[i];
                 
-                hashRegex = _getHashRegex(childScreenHash);
-window.console.log("      ?? test hashRegex[" + hashRegex + "] with hash [" + hash + "]");
+                hashRegex = _getHashRegex(screenHash);
+window.console.log("      ?? test  hashRegex[" + hashRegex + "] with hash [" + hash + "]");
 
                 // added last / to ignore contained child hash, ejem: "screen_name/" && "screen/"
-                if ( hashRegex.test(hash + '/') ) {
-window.console.log("    Found childScreenHash: " + childScreenHash);
+
+                if ( hashRegex.test(hash) ) {
                     found = true;
+
+                    // If it's the first screen dont add '/'
+                    if ( fullScreenHash ) {
+                        fullScreenHash += '/' + screenHash;
+                    } else {
+                        fullScreenHash = screenHash;
+                    }
+
+                    if ( fullRawHashRegex ) {
+                        fullRawHashRegex += '/' + _getRawHashRegex(screenHash);
+                    } else {
+                        fullRawHashRegex = '^' + _getRawHashRegex(screenHash);
+                    }
+
+window.console.log("          ?? test  fullRawHashRegex[" + fullRawHashRegex + "] in fullHash[" + fullHash + "]");
+
+                    fullScreenHashRaw = fullHash.match(fullRawHashRegex)[0].replace(/\/?$/, ''); // With matrix params
+
+window.console.log("    Found fullScreenHash: " + fullScreenHash + ', fullScreenHashRaw:' + fullScreenHashRaw );
+
+
                     break;
                 }
             }
 
-            //
-            //
-            //
             if ( found ) {
-                // If it's the first screen dont add '/'
-                if ( currentHash ) {
-                    currentHash += '/' + childScreenHash;
-                } else {
-                    currentHash = childScreenHash;
-                }
-                var screenCreated = _prevNav[deep] && _prevNav[deep] === currentHash;
-window.console.log('   @@@@@@@@@@@@@@@@@@@@@@@@@@@@ _prevNav[deep]', _prevNav[deep], ' deep ', deep, ' currentHash ', currentHash, '  screenCreated ', screenCreated);
 
-
-                if ( screenCreated ) {
-window.console.log('  The screen "' + childScreenHash + '" was created previously');
-                }
+                var screenInPrevNav = _prevNav[deep] && _prevNav[deep] === fullScreenHash;
 
 
                 // Prepare to the next iteration
-                historyNav.push(currentHash);
+                historyNav.push(fullScreenHash);
+                historyNavRaw.push(fullScreenHashRaw);
+
                 hashWithParams = hash;
                 hash = hash.replace(hashRegex, '');
-                currNav = currNav[childScreenHash];
+                currNav = currNav[screenHash];
+
 
                 if ( !hash && _prevNav.length > deep ) {
 
-                    firstNodeToSleep = screenCreated ? deep + 1 : deep;
+                    firstNodeToSleep = screenInPrevNav ? deep + 1 : deep;
 
-    window.console.log('   @@@@@@@@@@@@@@@@@@@@@@@@@@@@ We\'re going to execute canSleep functions deep['+deep+'] firstNodeToSleep[' + firstNodeToSleep +'] _prevNav.length['+_prevNav.length+']', [].concat(_prevNav));
+window.console.log('deep['+deep+'] firstNodeToSleep[' + firstNodeToSleep +'] _prevNav.length['+_prevNav.length+']', [].concat(_prevNav));
                     // Can sleep?
                     for ( i = _prevNav.length-1; i >= firstNodeToSleep; i-- ) {
-    window.console.log('      ?? Can sleep "' + _prevNav[i] + '"');
+window.console.log('      ?? Can sleep "' + _prevNav[i] + '"');
                         if ( _prevNav[i] !== "#" ) {
                             if ( _screen[_prevNav[i]].canSleep() === false ) {
-        window.console.log('        Navigation STOPPED!', _prevNav[i], ' CANNOT SLEEP!');
+window.console.log('        Navigation STOPPED!', _prevNav[i], ' CANNOT SLEEP!');
                                 _gotoCancelled = true;
                                 document.location.href = _prevHashString;
                                 return false;
@@ -1022,9 +1068,10 @@ window.console.log('  The screen "' + childScreenHash + '" was created previousl
                     // Hide previous screens
                     while ( _prevNav.length > firstNodeToSleep ) {
                         var pathToSleep = _prevNav.pop();
+                        _prevNavRaw.pop();
                         if ( pathToSleep !== "#" ) {
 
-        window.console.log('      Sleep the previous screen "' + pathToSleep + '"');
+window.console.log('      Sleep the previous screen "' + pathToSleep + '"');
                             var screenToSleep = _screen[pathToSleep];
                             screenToSleep._sleep();
                             screenToSleep.hide();
@@ -1033,21 +1080,21 @@ window.console.log('  The screen "' + childScreenHash + '" was created previousl
                 }
 
 
-                if ( !screenCreated ) {
-                    // Wake up the screen at this deep
-                    var params = _getScreenPathParams(childScreenHash, hashWithParams, hashRegex);
-                    _wakeUpScreen(currentHash, params);
+                // Wake up the screen at this deep
+                var params = _getScreenPathParams(screenHash, hashWithParams, hashRegex);
+                if ( !screenInPrevNav ) {
+                    _wakeUpScreen(fullScreenHash, params);
                 } else {
+
+                    var newParameters = _prevNavRaw[deep] && _prevNavRaw[deep] !== fullScreenHashRaw;
                     // Awake if the screen is asleep
-                    var screenInstance = _screen[currentHash];
-                    if ( screenInstance.sleeping ) {
+                    var screenInstance = _screen[fullScreenHash];
+                    if ( screenInstance.sleeping || newParameters ) {
+                        screenInstance.params = params;
                         screenInstance.show();
-                        screenInstance._awake();
+                        screenInstance._awake(params);
                     }
                 }
-                
-window.console.log("  Remaining hash = " + hash);
-
             } else {
                 iris.notify(iris.SCREEN_NOT_FOUND, hash);
                 iris.log("[warning] '" + hash + "' must be registered using self.screens()");
@@ -1055,13 +1102,16 @@ window.console.log("  Remaining hash = " + hash);
             }
 
             deep++;
+window.console.log('!!!! New hash['+hash+']');
         }
 
         // _prevHash = curr;
         _prevHashString = hash;
         _prevNav = historyNav;
+        _prevNavRaw = historyNavRaw;
 
         iris.log("Navigation finished");
+window.console.log("hash[" + hash + "] _prevHashString[" + _prevHashString + "] _prevNav[" + _prevNav + "] _prevNavRaw[" + _prevNavRaw + "]");
         iris.notify(iris.AFTER_NAVIGATION);        
 window.console.log("***********************");
     }

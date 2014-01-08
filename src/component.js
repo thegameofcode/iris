@@ -259,7 +259,7 @@ var matrixParamsRegex = ';[^=]+=[^;\/]+';
         var mpRegex = new RegExp('^' + screenHash + '(;[^=]+=[^;\/]+)+');
         var screenHashRaw = hash.match(mpRegex);
         if ( screenHashRaw && screenHashRaw.length > 0 ) {
-            matrixParams = screenHashRaw[0].match(/;[^=]+=[^;\/]+/g)
+            var matrixParams = screenHashRaw[0].match(/;[^=]+=[^;\/]+/g);
             var idx;
             for ( i = 0; i < matrixParams.length; i++ ) {
                 idx = matrixParams[i].indexOf('=');
