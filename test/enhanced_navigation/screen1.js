@@ -21,8 +21,11 @@ iris.screen(function (self) {
 		window.ok(true, msg);
 		window.navigations.push(msg);
 
-		if ( params !== undefined && params.hasOwnProperty("param") && params.hasOwnProperty("param2") ) {
-			msg = "[params] " + self.id + " param[" + params.param + "] param2[" + params.param2 + "]";
+		var param = self.param('PARAM-1');
+		var param2 = self.param('Param_2');
+
+		if ( param && param2 ) {
+			msg = "[params] " + self.id + " PARAM-1[" + param + "] Param_2[" + param2 + "]";
 			window.ok(true, msg);
 			iris.log(msg);
 			window.navigations.push(msg);

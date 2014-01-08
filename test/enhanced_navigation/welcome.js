@@ -15,14 +15,17 @@ iris.screen(function (self) {
 
 	};
 
-	self.awake = function (params) {
+	self.awake = function () {
 		var msg = "[awake] " + self.id;
 		iris.log(msg);
 		window.ok(true, msg);
 		window.navigations.push(msg);
 
-		if ( params !== undefined && params.hasOwnProperty("param") && params.hasOwnProperty("param2") ) {
-			msg = "[params] " + self.id + " param[" + params.param + "] param2[" + params.param2 + "]";
+		var param = self.param('param');
+		var param2 = self.param('param2');
+
+		if ( param && param2 ) {
+			msg = "[params] " + self.id + " param[" + param + "] param2[" + param2 + "]";
 			window.ok(true, msg);
 			iris.log(msg);
 			window.navigations.push(msg);

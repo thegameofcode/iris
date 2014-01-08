@@ -392,8 +392,7 @@
     });
 
     
-/*
-    asyncTest("Create welcome screen and navigate to it passing parameters", function() {
+    asyncTest("Create the welcome screen and navigate to it passing matrix parameters", function() {
 
         expect(5);
 
@@ -402,7 +401,7 @@
         iris.on(iris.AFTER_NAVIGATION, function () {
             iris.off(iris.AFTER_NAVIGATION);
 
-            iris.navigate("#?param=value&param2=value2"); // +1 awake, +1 params
+            iris.navigate("#;param=value;param2=value2"); // +1 awake, +1 params
 
             iris.on(iris.AFTER_NAVIGATION, function () {
                 iris.off(iris.AFTER_NAVIGATION);
@@ -413,6 +412,83 @@
         });
 
     });
+
+    asyncTest("Navigate to a screen at level 1 with matrix params", function() {
+
+        expect(6);
+
+        iris.welcome(iris.path.welcome); // +1 create, +1 awake
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            // this will make an async call
+            iris.navigate("#/first/screen;PARAM-1=value_1234;Param_2=value_€ñ"); // +1 create, +1 awake, +1 param
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.off(iris.AFTER_NAVIGATION);
+                
+                strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #/first/screen,[awake] #/first/screen,[params] #/first/screen PARAM-1[value_1234] Param_2[value_€ñ]", "The navigation map is correct"); // +1
+
+                start();
+            });
+        });
+    
+    });
+
+    asyncTest("Navigate to a screen at level 1 with matrix params and change the parameters", function() {
+
+        expect(8);
+
+        iris.welcome(iris.path.welcome); // +1 create, +1 awake
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            // this will make an async call
+            iris.navigate("#/first/screen;PARAM-1=value_1234;Param_2=value_€ñ"); // +1 create, +1 awake, +1 param
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.off(iris.AFTER_NAVIGATION);
+                
+
+                iris.navigate("#/first/screen;PARAM-1=NewValue;Param_2=OtherNewValue"); // +1 awake, +1 param
+                iris.on(iris.AFTER_NAVIGATION, function () {
+                    iris.off(iris.AFTER_NAVIGATION);
+
+                    
+                    strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #/first/screen,[awake] #/first/screen,[params] #/first/screen PARAM-1[value_1234] Param_2[value_€ñ],[awake] #/first/screen,[params] #/first/screen PARAM-1[NewValue] Param_2[OtherNewValue]", "The navigation map is correct"); // +1
+                    start();
+                });
+            });
+        });
+    
+    });
+
+    asyncTest("Navigate to a screen at level 2, all screens receive some parameter", function() {
+
+        expect(11);
+
+        iris.welcome(iris.path.welcome); // +1 create, +1 awake
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            // this will make an async call
+            iris.navigate("#;param=valueWelcome;param2=valueWelcome-2/first/screen;PARAM-1=valueS1;Param_2=valueS1-2/screen/at/deep/two;param=valueS1_1;param2=valueS1_1-2"); // +2 create, +3 awake, +3 param
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.off(iris.AFTER_NAVIGATION);
+                
+                strictEqual(window.navigations.join(","), "[create] #,[awake] #,[awake] #,[params] # param[valueWelcome] param2[valueWelcome-2],[create] #/first/screen,[awake] #/first/screen,[params] #/first/screen PARAM-1[valueS1] Param_2[valueS1-2],[create] #/first/screen/screen/at/deep/two,[awake] #/first/screen/screen/at/deep/two,[params] #/first/screen/screen/at/deep/two param[valueS1_1] param2[valueS1_1-2]", "The navigation map is correct"); // +1
+
+                start();
+            });
+        });
+    
+    });
+
+/*
 
     asyncTest("Navigate to a screen at level 3 and do history back but one screen cannot sleep", function() {
         expect(12);
@@ -445,55 +521,7 @@
 
     });
 
-    
 
-    
-
-    asyncTest("Navigate to a screen at level 1 with params", function() {
-
-        expect(6);
-
-        iris.welcome(iris.path.welcome); // +1 create, +1 awake
-
-        iris.on(iris.AFTER_NAVIGATION, function () {
-            iris.off(iris.AFTER_NAVIGATION);
-
-            // this will make an async call
-            iris.navigate("#/first/screen?param=value&param2=value2"); // +1 create, +1 awake, +1 param
-
-            iris.on(iris.AFTER_NAVIGATION, function () {
-                iris.off(iris.AFTER_NAVIGATION);
-                
-                strictEqual(window.navigations.join(","), "[create] #,[awake] #,[create] #/first/screen,[awake] #/first/screen,[params] #/first/screen param[value] param2[value2]", "The navigation map is correct"); // +1
-
-                start();
-            });
-        });
-    
-    });
-
-    asyncTest("Navigate to a screen at level 2, all screens receives parameters", function() {
-
-        expect(11);
-
-        iris.welcome(iris.path.welcome); // +1 create, +1 awake
-
-        iris.on(iris.AFTER_NAVIGATION, function () {
-            iris.off(iris.AFTER_NAVIGATION);
-
-            // this will make an async call
-            iris.navigate("#?param=valueWelcome&param2=valueWelcome-2/first/screen?param=valueS1&param2=valueS1-2/screen/at/deep/two?param=valueS1_1&param2=valueS1_1-2"); // +2 create, +3 awake, +3 param
-
-            iris.on(iris.AFTER_NAVIGATION, function () {
-                iris.off(iris.AFTER_NAVIGATION);
-                
-                strictEqual(window.navigations.join(","), "[create] #,[awake] #,[awake] #,[params] # param[valueWelcome] param2[valueWelcome-2],[create] #/first/screen,[awake] #/first/screen,[params] #/first/screen param[valueS1] param2[valueS1-2],[create] #/first/screen/screen/at/deep/two,[awake] #/first/screen/screen/at/deep/two,[params] #/first/screen/screen/at/deep/two param[valueS1_1] param2[valueS1_1-2]", "The navigation map is correct"); // +1
-
-                start();
-            });
-        });
-    
-    });
 
 */
 
