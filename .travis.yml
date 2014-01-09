@@ -1,0 +1,14 @@
+language: node_js
+install:
+- npm install grunt-cli -g
+- npm install
+env:
+  global:
+  - secure: br9/LrfJTN0I4wFkpjbmzyserA22Mll/LxdpKRvv0l49EXGH8a7PZOzJ4tNlLGUDKDfoYgEKmmdQO/xdxEGEO89uh2Nz1vIDk6gPv3GTkWGMhm320C3f3PoQHGYqFiAZF+lgrok5Ceeu8r/S3dk1eqH+y5DEkqifECPfWm+snWU=
+  - secure: GQQikbURxTPMrryzpz+T8lkmInois4YRuRWyNEi9pNqCkCzOnMp+o8fg5W0C+3pYdytKuHxuKBQoTbY0blqiGTLMt7mhD8/31GeRVBThgD//VyJSL7qi7nRvsDy7I8e8WCWjSsjqlBWUxSmVcJ1vmu2mZgmuaRVKc0qIY+7ST+0=
+cache:
+  directories:
+  - node_modules
+after_script:
+- grunt test-saucelabs
+

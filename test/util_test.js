@@ -87,7 +87,7 @@
       }
   }
 
-
+/*
   test("Date format", function() {
     stop();
 
@@ -99,6 +99,7 @@
     start();
 
   });
+*/
 
   test("Currency format", function() {
     stop();
