@@ -39,7 +39,6 @@
                 ui : "test/enhanced_navigation/ui.js",
                 ui_tmpl : "test/enhanced_navigation/ui.html"
             };
-            iris.useNewNavigation = true;
             iris.cache(false);
             iris.enableLog(false);
         },
@@ -475,7 +474,7 @@
             iris.off(iris.AFTER_NAVIGATION);
 
             // this will make an async call
-            iris.navigate("#;param=valueWelcome;param2=valueWelcome-2/first/screen;PARAM-1=valueS1;Param_2=valueS1-2/screen/at/deep/two;param=valueS1_1;param2=valueS1_1-2"); // +2 create, +3 awake, +3 param
+            iris.navigate("#?param=valueWelcome&param2=valueWelcome-2/first/screen;PARAM-1=valueS1;Param_2=valueS1-2/screen/at/deep/two;param=valueS1_1;param2=valueS1_1-2"); // +2 create, +3 awake, +3 param
 
             iris.on(iris.AFTER_NAVIGATION, function () {
                 iris.off(iris.AFTER_NAVIGATION);
@@ -487,8 +486,6 @@
         });
     
     });
-
-/*
 
     asyncTest("Navigate to a screen at level 3 and do history back but one screen cannot sleep", function() {
         expect(12);
@@ -521,8 +518,5 @@
 
     });
 
-
-
-*/
 
 }(jQuery));

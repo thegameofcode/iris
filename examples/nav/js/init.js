@@ -42,8 +42,6 @@ iris.locale(
 
 $(window.document).ready(function () {
 
-    iris.useNewNavigation = true;
-
 	iris.baseUri('iris/');
     
     // show the initial screen

@@ -1,4 +1,4 @@
-/*! iris - v0.5.6-SNAPSHOT - 2014-01-08 (http://thegameofcode.github.io/iris) licensed New-BSD */
+/*! iris - v0.5.6-SNAPSHOT - 2014-01-09 (http://thegameofcode.github.io/iris) licensed New-BSD */
 
 var iris = {};
 
@@ -654,7 +654,6 @@ window.iris = iris;
     _screenJsUrl,
     _screenContainer,
     _jsUrlScreens,
-    _prevHash,
     _prevHashString,
     _includes,
     _welcomeCreated,
@@ -700,8 +699,6 @@ window.iris = iris;
         _prevNav = [];
         _prevNavRaw = [];
 
-
-        _prevHash = undefined;
         _includes = {};
         _welcomeCreated = false;
         _gotoCancelled = false;
@@ -724,8 +721,8 @@ window.iris = iris;
 
 
     function _welcome(p_jsUrl) {
-        if (_welcomeCreated === true) {
-            throw "the welcome screen already exists";
+        if ( _welcomeCreated ) {
+            throw "welcome screen already exists";
         }
         _welcomeCreated = true;
         _screenJsUrl["#"] = p_jsUrl;
@@ -774,16 +771,9 @@ window.iris = iris;
             throw "hashchange event unsupported";
         } else {
 
-            if ( iris.useNewNavigation ) {
-                // force to do an initial navigation
-                _startHashChange();
-                $(window).on("hashchange", _startHashChange);
-
-            } else {
-                // force to do an initial navigation
-                _startHashChangeLegacy();
-                $(window).on("hashchange", _startHashChangeLegacy);
-            }
+            // force to do an initial navigation
+            _startHashChange();
+            $(window).on("hashchange", _startHashChange);
         }
     }
 
@@ -854,7 +844,7 @@ window.iris = iris;
     // Navigation
     //
     function _goto(p_hashUri) {
-        document.location.hash = p_hashUri; // Trigger hashchange event, then execute _startHashChangeLegacy()
+        document.location.hash = p_hashUri; // Trigger hashchange event, then execute _startHashChange()
     }
 
 
@@ -878,11 +868,11 @@ window.iris = iris;
 
         screenInstance.params = params; // TODO check if duplicate this (above do the same on creation)
         screenInstance.show();
-        screenInstance._awake();
+        screenInstance._awake(params);
     }
 
 var paramNameRegex = /:[\d\w_\-\.]+/g;
-var matrixParamsRegex = ';[^=]+=[^;\/]+';
+var matrixParamsRegex = '[;?&][^=]+=[^;\/&]+';
 
     function _getHashRegex (hash) {
         return new RegExp('^' + hash.replace(paramNameRegex, '([^/]+)') + '(?:' + matrixParamsRegex + ')*/*' );
@@ -906,10 +896,11 @@ var matrixParamsRegex = ';[^=]+=[^;\/]+';
 
         
         // Get matrix params
-        var mpRegex = new RegExp('^' + screenHash + '(;[^=]+=[^;\/]+)+');
+        var mpRegex = new RegExp('^' + screenHash + '(' + matrixParamsRegex + ')+');
         var screenHashRaw = hash.match(mpRegex);
         if ( screenHashRaw && screenHashRaw.length > 0 ) {
-            var matrixParams = screenHashRaw[0].match(/;[^=]+=[^;\/]+/g);
+            
+            var matrixParams = screenHashRaw[0].match(new RegExp(matrixParamsRegex, 'g'));
             var idx;
             for ( i = 0; i < matrixParams.length; i++ ) {
                 idx = matrixParams[i].indexOf('=');
@@ -926,6 +917,7 @@ window.console.log("@@@@                       params", params);
     }
 
     function _startHashChange(e) {
+
         
         // when document.location.href is [http://localhost:8080/#] then document.location.hash is [] (empty string)
         // to avoid the use of empty strings and prevent mistakes, we replace it by #. (# == welcome-screen)
@@ -956,16 +948,16 @@ window.console.log("Navigation CANCELED!!!!!!!!!!!!!!!!!!!!");
 
         var hashRegex,
             fullRawHashRegex,
+            currNav = _navMap,
             found,
             deep = 0,
-            fullScreenHash = '',
-            fullScreenHashRaw = '',
-            currNav = _navMap,
+            i,
+            fullScreenHash = '', // e.g.: #/user/:id/friends
+            fullScreenHashRaw = '', // e.g.: #/user/1234/friends;filter=all
             historyNavRaw = [],
             historyNav = [],
             firstNodeToSleep,
             hashWithParams,
-            i,
             screenHash,
             screenChilds
             ;
@@ -1096,8 +1088,8 @@ window.console.log('      Sleep the previous screen "' + pathToSleep + '"');
                     }
                 }
             } else {
-                iris.notify(iris.SCREEN_NOT_FOUND, hash);
-                iris.log("[warning] '" + hash + "' must be registered using self.screens()");
+                iris.notify(iris.SCREEN_NOT_FOUND, fullHash);
+                iris.log("[warning] '" + fullHash + "' must be registered using self.screens()");
                 return;
             }
 
@@ -1105,174 +1097,14 @@ window.console.log('      Sleep the previous screen "' + pathToSleep + '"');
 window.console.log('!!!! New hash['+hash+']');
         }
 
-        // _prevHash = curr;
-        _prevHashString = hash;
+        _prevHashString = fullHash;
         _prevNav = historyNav;
         _prevNavRaw = historyNavRaw;
 
         iris.log("Navigation finished");
 window.console.log("hash[" + hash + "] _prevHashString[" + _prevHashString + "] _prevNav[" + _prevNav + "] _prevNavRaw[" + _prevNavRaw + "]");
         iris.notify(iris.AFTER_NAVIGATION);        
-window.console.log("***********************");
-    }
-
-    function _startHashChangeLegacy(e) {
-
-        // Check if welcome screen has been created
-        if(!_welcomeCreated) {
-            throw "set the first screen using iris.welcome()";
-        }
-        
-        // when document.location.href is [http://localhost:8080/#] then document.location.hash is [] (empty string)
-        // to avoid the use of empty strings and prevent mistakes, we replace it by #. (# == welcome-screen)
-        var hash = document.location.hash;
-        if ( hash === "" ) {
-            hash = "#";
-        }
-
-        // Prevent multiple calls with the same hash
-        // http://stackoverflow.com/questions/4106702/change-hash-without-triggering-a-hashchange-event#fggij
-        if ( _lastFullHash === hash ) {
-            return false;
-        }
-
-        // when a screen cannot sleep, finish navegation process
-        if ( _gotoCancelled ) {
-            _gotoCancelled = false;
-            iris.notify(iris.AFTER_NAVIGATION);
-            _lastFullHash = _prevHashString;
-            return false;
-        }
-
-        iris.log("Starting a new navigation[" + hash + "]");
-        _lastFullHash = hash;
-        iris.notify(iris.BEFORE_NAVIGATION);
-
-        
-        var i, screenPath, firstDiffNode = -1, curr = hash.split("/"), firstNodeToSleep;
-
-        // Call to canSleeps and sleeps of previous screens
-        if ( _prevHash !== undefined ) {
-
-            // get firstDiffNode attending to current hash
-            for ( i = 0; i < curr.length; i++ ) {
-                if ( _prevHash[i] === undefined || _prevHash[i] !== curr[i] ) {
-                    firstDiffNode = i;
-                    break;
-                }
-            }
-            
-            firstNodeToSleep = firstDiffNode;
-
-            // For cases like this: prev = #/s1/s2, curr = #/s1
-            // we need sleep s2, therefor firstNodeToSleep = curr.length
-            if ( (firstNodeToSleep === -1) && (curr.length < _prevHash.length) ) {
-                firstNodeToSleep = curr.length;
-
-            // if welcome screen has been changed firstDiffNode == 0, and there are not previous screens to sleep, _prevHash.length == 1
-            // ignore cansleep and sleep of welcome screen, firstNodeToSleep = -1
-            } else if ( firstDiffNode === 0 && _prevHash.length === 1 ) {
-                firstNodeToSleep = -1;
-            }
-
-            // if goto welcome screen [curr.length === 1] and there are not differents [firstDiffNode === -1],
-            // then sleep the previous screens except welcome screen
-            if ( curr.length === 1 && firstDiffNode === -1 ) {
-                firstDiffNode = 1;
-            }
-
-            if ( firstNodeToSleep !== -1 ) {
-
-                // check if can sleep
-                for ( i = _prevHash.length-1; i >= firstNodeToSleep; i-- ) {
-                    screenPath = _getScreenPath(_prevHash, i);
-                    if( _screen[screenPath].canSleep() === false ) {
-                        _gotoCancelled = true;
-                        document.location.href = _prevHashString;
-                        return false;
-                    }
-                }
-
-                // hide previous screens
-                for ( i = _prevHash.length - 1; i >= firstNodeToSleep; i-- ) {
-                    var screenToSleep = _screen[ _getScreenPath(_prevHash, i) ];
-                    screenToSleep._sleep();
-                    screenToSleep.hide();
-                }
-            }
-
-        } else {
-            // No previous screens loaded
-            firstDiffNode = 0;
-        }
-        
-        if ( firstDiffNode !== -1 ) {
-            // show new screens
-            for ( i = firstDiffNode; i < curr.length; i++ ) {
-
-                screenPath = _getScreenPath(curr, i);
-
-                if ( !_screenContainer.hasOwnProperty(screenPath) ) {
-                    
-                    // Notify event and print message instead of raise exception, since v0.5.2
-                    iris.notify(iris.SCREEN_NOT_FOUND, screenPath);
-                    iris.log("[warning] '" + screenPath + "' must be registered using self.screens()");
-                    return;
-
-                } else {
-
-                    if ( !_screen.hasOwnProperty(screenPath) ) {
-                        var screenObj = new Screen(screenPath);
-                        screenObj.create();
-                        _screen[screenPath] = screenObj;
-                    }
-
-                    var screenInstance = _screen[screenPath];
-                    var screenParams = _navGetParams(curr[i]);
-                    screenInstance.params = screenParams;
-                    screenInstance.show();
-                    screenInstance._awake(screenParams);
-                }
-
-            }
-        }
-
-        // set navigation variables to the next hashchange event
-        _prevHash = curr;
-        _prevHashString = hash;
-
-        iris.log("Navigation finished");
-        iris.notify(iris.AFTER_NAVIGATION);
-    }
-
-    function _removeURLParams(p_url) {
-        return _removeLastSlash(p_url.replace(/\?[^\/]*/, ""));
-    }
-
-    function _removeLastSlash(p_url) {
-        return p_url.replace(/\/$/, "");
-    }
-
-    function _navGetParams(p_hashPart) {
-        var params = {},
-        regex = /([\.\w_\-]*)=([^&]*)/g,
-        matches = regex.exec(p_hashPart);
-
-        while(matches) {
-            params[matches[1]] = decodeURIComponent(matches[2]);
-            matches = regex.exec(p_hashPart);
-        }
-
-        return params;
-    }
-
-    function _getScreenPath (paths, pos) {
-        var path = "";
-        for(var i = 0; i <= pos; i++) {
-            path += "/" + _removeURLParams( paths[i] );
-        }
-        return path.substr(1);
-    }
+    }    
 
     function _parseLangTags(p_html) {
         var html = p_html;
