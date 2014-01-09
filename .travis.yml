@@ -1,0 +1,15 @@
+language: node_js
+install:
+- npm install grunt-cli -g
+- npm install vargs
+- npm install
+env:
+  global:
+  - secure: kpfQjirYiO26KzynOZ4Q/z9F7LTY4VKWMwVwYj8FZvXm/bjF/E+kvGCigtvo/8OqEGAO7QNeSf45LfHu1aZwBVpMdKK5kInFAKCK5durQp3cwsaws1thi0NYRbEt5npfXgvps3Mttdk85UmTVfAyHc5Den+THXQVulaFpzDb17M=
+  - secure: i3dBm8jpxqSZ95HjaPXXGGOX97oZbnGMCvEndXrMOn2iUUp773EIDsuTt8vupAF5QivcO2ZLMZccvaktU3ioIEunvFgcynsaPwmd4QCzBvCXQBJj7rQcJqGRDMnJJMSR2PkaccYoYujsaQYunrK1KmB17mIniQJpivqS+wQud10=
+cache:
+  directories:
+  - node_modules
+after_script:
+- grunt test-saucelabs
+

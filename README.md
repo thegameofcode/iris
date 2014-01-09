@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/IGZJavierPerez/iris.png?branch=master)](https://travis-ci.org/IGZJavierPerez/iris)
+
+[![Selenium Test Status](https://saucelabs.com/browser-matrix/surtich.svg?auth=861baeb3ee8833c887f16f59cbc41d1e)](https://saucelabs.com/u/surtich)
+
 ![Iris](https://raw.github.com/thegameofcode/iris/gh-pages/images/iris-logo-white.png)
 
 Iris is not only another framework.
