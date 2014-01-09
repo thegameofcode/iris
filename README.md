@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/iris-js/iris.png)](https://travis-ci.org/iris-js/iris)
+[![Build Status](https://travis-ci.org/thegameofcode/iris.png)](https://travis-ci.org/thegameofcode/iris)
 
 
 ![Iris](https://raw.github.com/thegameofcode/iris/gh-pages/images/iris-logo-white.png)
