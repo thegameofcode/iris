@@ -1,12 +1,11 @@
 language: node_js
 install:
 - npm install grunt-cli -g
-- npm install vargs
 - npm install
 env:
   global:
-  - secure: kpfQjirYiO26KzynOZ4Q/z9F7LTY4VKWMwVwYj8FZvXm/bjF/E+kvGCigtvo/8OqEGAO7QNeSf45LfHu1aZwBVpMdKK5kInFAKCK5durQp3cwsaws1thi0NYRbEt5npfXgvps3Mttdk85UmTVfAyHc5Den+THXQVulaFpzDb17M=
-  - secure: i3dBm8jpxqSZ95HjaPXXGGOX97oZbnGMCvEndXrMOn2iUUp773EIDsuTt8vupAF5QivcO2ZLMZccvaktU3ioIEunvFgcynsaPwmd4QCzBvCXQBJj7rQcJqGRDMnJJMSR2PkaccYoYujsaQYunrK1KmB17mIniQJpivqS+wQud10=
+  - secure: br9/LrfJTN0I4wFkpjbmzyserA22Mll/LxdpKRvv0l49EXGH8a7PZOzJ4tNlLGUDKDfoYgEKmmdQO/xdxEGEO89uh2Nz1vIDk6gPv3GTkWGMhm320C3f3PoQHGYqFiAZF+lgrok5Ceeu8r/S3dk1eqH+y5DEkqifECPfWm+snWU=
+  - secure: GQQikbURxTPMrryzpz+T8lkmInois4YRuRWyNEi9pNqCkCzOnMp+o8fg5W0C+3pYdytKuHxuKBQoTbY0blqiGTLMt7mhD8/31GeRVBThgD//VyJSL7qi7nRvsDy7I8e8WCWjSsjqlBWUxSmVcJ1vmu2mZgmuaRVKc0qIY+7ST+0=
 cache:
   directories:
   - node_modules

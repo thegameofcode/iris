@@ -2,92 +2,34 @@
 module.exports = function(grunt) {
 
   var browsers = [
-    {
-        browserName: "chrome",
-        platform: "Linux"
-    },
-    {
-        browserName: "firefox",
-        platform: "Linux"
-    },
-    {
-        browserName: "opera",
-        platform: "Linux"
-    },
-    {
-        browserName: "android",
-        platform: "Linux"
-    },
-    {
-        browserName: "chrome",
-        platform: "Windows 8"
-    },
-    {
-        browserName: "firefox",
-        platform: "Windows 8"
-    },
-    {
-        browserName: "internet explorer",
-        platform: "Windows 8"
-    },
-    {
-        browserName: "chrome",
-        platform: "Windows 7"
-    },
-    {
-        browserName: "firefox",
-        platform: "Windows 7"
-    },
-    {
-        browserName: "internet explorer",
-        platform: "Windows 7",
-        version: "9"
-    },
-    {
-        browserName: "internet explorer",
-        platform: "Windows 7",
-        version: "8"
-    },
-    {
-        browserName: "opera",
-        platform: "Windows 7"
-    },
-    {
-        browserName: "safari",
-        platform: "Windows 7"
-    },
-    {
-        browserName: "chrome",
-        platform: "Windows XP"
-    },
-    {
-        browserName: "firefox",
-        platform: "Windows XP"
-    },
-    {
-        browserName: "chrome",
-        platform: "OS X 10.6"
-    },
-    {
-        browserName: "firefox",
-        platform: "OS X 10.6"
-    },
-    {
-        browserName: "safari",
-        platform: "OS X 10.6"
-    },
-    {
-        browserName: "iphone",
-        platform: "OS X 10.6"
-    },
-    {
-        browserName: "iphone",
-        platform: "OS X 10.8"
-    },
-    {
-        browserName: "iphone",
-        platform: "OS X 10.9"
-    }
+    { browserName: "chrome", platform: "Linux" },
+    { browserName: "chrome", platform: "Windows 7" },
+    { browserName: "chrome", platform: "Windows 8" },
+    { browserName: "chrome", platform: "OS X 10.6" },
+
+    { browserName: "firefox", platform: "Linux" },
+    { browserName: "firefox", platform: "Windows 7" },
+    { browserName: "firefox", platform: "Windows 8" },
+    { browserName: "firefox", platform: "OS X 10.6" },
+
+    { browserName: "internet explorer", platform: "Windows 8" },
+    { browserName: "internet explorer", platform: "Windows 7", version: "9" },
+
+    { browserName: "safari", platform: "OS X 10.9" },
+
+    { browserName: "iphone", platform: "OS X 10.8" },
+    { browserName: "iphone", platform: "OS X 10.9" }
+    /*
+    { browserName: "iphone", platform: "OS X 10.6" },
+    { browserName: "android", platform: "Linux" },
+
+    { browserName: "safari", platform: "Windows 7" },
+    { browserName: "internet explorer", platform: "Windows 7", version: "8" },
+    { browserName: "firefox", platform: "Windows XP" },
+    { browserName: "chrome", platform: "Windows XP" },
+    { browserName: "opera", platform: "Linux" },
+    { browserName: "opera", platform: "Windows 7" },
+    */
   ];
 
   var banner = '/*! <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %>' +
@@ -161,8 +103,7 @@ module.exports = function(grunt) {
                 build: process.env.TRAVIS_JOB_ID,
                 concurrency: 3,
                 browsers: browsers,
-                testname: "qunit tests from saucelabs",
-                tags: ["master"]
+                testname: "qunit tests from saucelabs"
             }
         }
     }
