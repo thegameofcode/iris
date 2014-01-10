@@ -97,7 +97,6 @@
 
         iris.on(iris.AFTER_NAVIGATION, function () {
             iris.off(iris.AFTER_NAVIGATION);
-
             // this will make an async call
             iris.navigate("#/screen1"); // +1 create, +1 awake
 
@@ -203,7 +202,6 @@
 
             // this will make an async call
             iris.navigate(navigationHash); // +3 create, +3 awake
-
             
             iris.on(iris.AFTER_NAVIGATION, function () {
 
