@@ -739,10 +739,10 @@ iris.screen(
 ### iris.destroyScreen(path)
 *Since*: `v0.5.0`
 
-Destroys a Screen component.
+Destroys a Screen component. Cannot delete the current screen or its parents.
 
 ```javascript
-iris.destroyScreen(iris.path.help.js);
+iris.destroyScreen('#/user/help');
 ```
 
 ### iris.ui(function(self){...}, path)

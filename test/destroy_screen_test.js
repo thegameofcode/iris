@@ -21,19 +21,6 @@
       notStrictEqual(actual, expected, [message])
       raises(block, [expected], [message])
   */
- 
-
-    function clearBody() {
-        var irisGeneratedCode = $("#start_iris").nextAll();
-        if (irisGeneratedCode !== undefined) {
-            //irisGeneratedCode.remove();
-        }
-    }
-    
-    function gotoMain() {
-        iris.welcome(iris.path.welcome);
-    }
-    
     
     module( "Module Destroy Screen", {
         setup: function() {
@@ -54,10 +41,10 @@
             };
             iris.cache(false);
             iris.enableLog(false);
-            gotoMain();
+            iris.welcome(iris.path.welcome);
         },
         teardown: function () {
-            clearBody();
+            $("#start_iris").empty();
         }
     });
     
