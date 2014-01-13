@@ -8,42 +8,41 @@
 
 Iris is not only another framework.
 
-It's a methodology that will help you to build structured and organized Web applications. It provides different client-side optimization techniques for front construction.
+It's a methodology that will help you to build structured and organized Web applications. It provides different client-side optimization techniques for front construction:
 
 * Strong object oriented coding and file system organization
-* Presenter-View-Resource pattern
-* Easy and fast templating engine
-* One page navigation using Hash-URL
-* 100% Client multilanguage support
-* Crossbrowser: Chrome, Firefox & Internet Explorer
-* Light and fast: 18 KB
-* Open source: New BSD License
+* Reusable components
+* Client-side navigation with hashbang urls
+* 100% Client-side multilanguage support
 
 _Remmeber that you can [make suggestions][issues] or [report bugs][issues]!_
 
 [issues]: /thegameofcode/iris/issues
 
-## Getting Started
-Download the [production version][min] or the [development version][max].
-
-[min]: https://raw.github.com/thegameofcode/iris/master/dist/iris.min.js
-[max]: https://raw.github.com/thegameofcode/iris/master/dist/iris.js
-
-## Documentation
+## Links
  * [Web page](http://thegameofcode.github.io/iris/)
  * [API Reference](docs/api.md)
  * [Developer Guide (Spanish)](docs/es/README.md)
  * [Tutorial (Spanish)](http://thegameofcode.github.io/iris/tutorials/todo/index.html)
  * [Video-tutorial (Spanish)](http://www.youtube.com/watch?feature=player_detailpage&v=6evSeCDXjSQ)
 
-## Examples
-You simply can run the tests doing `grunt test`, then open `http://localhost:8080/examples/index.html` in your browser.
+## Building Iris
 
- * [Basic](examples/basic) explains how to do basic operations with iris.
- * [Todo-list](examples/todo-list)  is a port of the famous backbone todos example app.
- * [Shopping-list](examples/shopping-list) a completed sample application to manage the shopping list.
+If all goes well, this will generate 'dist/iris.js' and the minified version 'dist/iris.min.js'.
+
+```javascript
+grunt
+```
+
+## Testing Iris
+
+If you want to run the unit tests in a browser (`http://localhost:8080`).
+
+```javascript
+grunt test
+```
 
 ## License
 Copyright (c) 2014 Iris
 
-Licensed under the New-BSD license: <https://github.com/thegameofcode/iris/blob/master/LICENSE-New-BSD>
+Licensed under the [New-BSD license](LICENSE-New-BSD)
