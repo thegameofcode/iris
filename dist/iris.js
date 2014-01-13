@@ -1,4 +1,4 @@
-/*! iris - v0.5.6-SNAPSHOT - 2014-01-10 (http://thegameofcode.github.io/iris) licensed New-BSD */
+/*! iris - v0.5.6-SNAPSHOT - 2014-01-13 (http://thegameofcode.github.io/iris) licensed New-BSD */
 
 var iris = {};
 
@@ -1546,10 +1546,6 @@ window.iris = iris;
 
     pComponent.awake = function() {};
 
-    pComponent.canSleep = function() {
-        return true;
-    };
-
     pComponent.sleep = function() {};
 
     pComponent.destroy = function() {};
@@ -1668,6 +1664,11 @@ window.iris = iris;
                 this.navMap[screen[0]] = {};
             }
         }
+    };
+
+    // To override
+    pScreen.canSleep = function() {
+        return true;
     };
 
     function _registerRes (resourceOrPath, path) {

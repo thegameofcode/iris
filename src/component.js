@@ -896,10 +896,6 @@
 
     pComponent.awake = function() {};
 
-    pComponent.canSleep = function() {
-        return true;
-    };
-
     pComponent.sleep = function() {};
 
     pComponent.destroy = function() {};
@@ -1018,6 +1014,11 @@
                 this.navMap[screen[0]] = {};
             }
         }
+    };
+
+    // To override
+    pScreen.canSleep = function() {
+        return true;
     };
 
     function _registerRes (resourceOrPath, path) {
