@@ -651,24 +651,48 @@ iris.welcome(iris.path.welcome.js);
 ### iris.navigate(path)
 *Since*: `v0.5.0`
 
-Navigates to a screen.
-To send parameters to the screens use this format: `/screen?param1=value1&param2=value2`.
-You can get the value of this parameters in the `self.awake(params)` function.
-Use `self.screens()` to define screen childs.
+Navigates to a screen changing the hash URL (this function is equivalent to `document.location.hash = path`).
+
+Iris looks for the target screen using the hash URL (`path` parameter) and wakes the target screen and its parents. The previous screens will sleep, if its `canSleep()` functions allows it. The screens are not destroyed, the screens change their status to sleeping. If you want destroy the hidden screens, use [iris.destroyScreen(path)](#irisdestroyscreenpath). Use [self.screens(container_id, screens)](#selfscreenscontainer_id-screens) inside screen to define screen childs. When a parameter value is changed, the screen awake function is called again (the same for its child screens). The welcome screen never can sleep, it is always visible. Show the [lifecycle](lifecycle.md) for more details.
+
+The [iris.BEFORE_NAVIGATION](#irisbefore_navigation) event is triggered on new navigation. When the navigation finished [iris.AFTER_NAVIGATION](#irisafter_navigation) is triggered. If the screen is not found the [iris.SCREEN_NOT_FOUND](#irisscreen_not_found) event is notified.
+
+Since `v0.5.6`, you can use the matrix paramaters (`;name=value;name2=value2...`) to send them data, e.g.: `#;param0=value0/screen1;param1=value1;param2=value2/screen2`
+In this example the welcome screen receives `param0`, screen1 receives `param1` & `param2`, the screen2 doesn't receive any parameter. Use [self.param(name)](#selfparamname) inside the screen to retrieve parameter values.
 
 ```javascript
-// The screen is child of the welcome screen
-iris.navigate("#/screen1");
 
-// Navigates to screen child of the previous screen
+// Navigate without params
 iris.navigate("#/screen1/child_of_screen1");
 
 // Send parameters to the welcome screen
-iris.navigate("#?param=value/screen1/child_of_screen1");
+iris.navigate("#;param=value/screen1/child_of_screen1");
 
 // Send parameters to other screen
-iris.navigate("#/screen1?param=value&other=paramater/child_of_screen1");
+iris.navigate("#/screen1;param=value;param2=value2/child_of_screen1");
+
+// More examples
+
+// To get the param value, use self.param('mode') inside welcome screen
+iris.navigate('#;mode=offline/dashboard');
+
+// If the param is changed, the welcome screen awake function
+// is called (the same for its child screens)
+iris.navigate('#;mode=online/dashboard');
+
+// If you want to navigate to another screen, the dashboard screen
+// will sleep and otherscreen will wake up
+iris.navigate('#;mode=online/otherscreen');
+
+
+// Another examples
+iris.navigate('#/book/17354;show=details');
+
+iris.navigate('#/user/me/friends;filter=all;show=nearest');
+
 ```
+
+__Before v0.5.6 (Deprecated, use matrix params instead of)__: To send parameters to screen use this format (query params): `/screen?param1=value1&param2=value2`. You can get the value of this parameters in the `self.awake(params)` function.
 
 ### iris.screen(function(self){...}, path)
 *Since*: `v0.5.0`
@@ -682,7 +706,7 @@ iris.screen(
 
 	//Called once when the Component is created
 	self.create = function () {
-	 self.tmpl(iris.path.help.html);
+	 self.tmpl(iris.path.screen.example.html);
 	};
 
 	//Called when the Component is showed.
@@ -708,7 +732,7 @@ iris.screen(
 	 ...
 	};
 
- }, iris.path.help.js  
+ }, iris.path.screen.example.js  
 );
 ```
 
@@ -729,8 +753,6 @@ Defines an UI Component.
 ```javascript
 iris.ui(function(self){...});
 ```
-
-See `iris.screen` for more details.
 
 ### iris.tmpl(path, html)
 *Since*: `v0.5.0`
@@ -1041,41 +1063,77 @@ Inherit methods from Component, Settable & Event classes
 #### self.param(name)
 *Since*: `v0.5.2`
 
-You can use `self.param(name)` instead of implement self.awake(params), e.g.:
+Retrieve the parameter value using the parameter name.
+Since `v0.5.6` you can define pretty URLs using path & matrix parameters.
 
-Example navigation to a example screen with params (`#/example?paramName=value`):
+E.g. (Since `v0.5.6`): navigate to the welcome screen with matrix params (`#;paramName=paramValue`):
 
 ```js
+// Welcome screen
 iris.screen(function (self) {
+	self.awake = function () {
 	...
-
-	function example () {
-		console.log(self.param("paramName")); // prints "value"
+		console.log( self.param("paramName") ); // prints "paramValue"
+	...
 	}
+}, iris.path.screen.welcome.js);
+```
+E.g. (Since `v0.5.6`): navigate to a example screen with path params (`#/user/1234`):
 
+```js
+
+// Welcome Screen
+iris.screen(function (self) {
+	self.create = function () {
 	...
-}
+		self.screens("screens",[
+		  [ "user/:user_id", iris.path.screen.user.js]
+		]);
+	...
+	}
+}, iris.path.screen.welcome.js);
+
+// User screen (iris.path.screen.user.js)
+iris.screen(function (self) {
+	self.awake = function () {
+	...
+		var id = self.param("user_id"); // id == "1234"
+	...
+	}
+}, iris.path.screen.example.js);
 ```
 
-Old style:
+Old style (__Before v0.5.6__), path & matrix params are not allowed, you can only get query params (`#?paramName=paramValue`):
+```js
+iris.screen(function (self) {
+	self.awake = function () {
+	...
+		var value = self.param("paramName"); // value == "paramValue"
+	...
+	}
+});
+```
+
+
+Old style (__Before v0.5.2__), the only way to get query parameters is using the awake function parameter, e.g.: (`#?paramName=paramValue`)
 ```js
 iris.screen(function (self) {
 	...
 
-	var paramValue;
+	var value;
 
 	self.awake = function (params) {
 		if ( params && param.hasOwnProperty("paramName") ) {
-			paramValue = param.paramName;
+			value = param.paramName;
 		}
 	}
 
 	function example () {
-		console.log(paramValue);
+		console.log(value); // value == "paramValue"
 	}
 
 	...
-}
+});
 ```
 
 #### self.screens(container_id, screens)
@@ -1091,6 +1149,34 @@ self.screens("screens", [
 ]);
 
 //The first parameter is the data-id attribute of the container
+```
+
+Since `v0.5.6`, "pretty URLs" are allowed, you can register screens with path params and the `/` character is also allowed, e.g.:
+
+```javascript
+// Welcome screen
+iris.screen(function (self) {
+	self.create = function () {
+	...
+		self.screens("screens", [
+		 ["user/:user_id/detail", iris.path.screen.user_detail.js],
+		 ["user/:user_id/friends/list", iris.path.screen.friends.js],
+		 ["user/:user_id/friend/:friend_id/detail", iris.path.screen.friend_detail.js]
+		]);
+	...
+	}
+}, iris.path.screen.welcome.js);
+
+// Friend detail screen
+iris.screen(function (self) {
+	self.awake = function () {
+	...
+		// If the current hash is: #/user/1234/friend/4321/detail
+		var userId = self.param("user_id"); // "1234"
+		var friendId = self.param("friend_id"); // "4321"
+	...
+	}
+}, iris.path.screen.friend_detail.js);
 ```
 
 ### iris.Resource Class
