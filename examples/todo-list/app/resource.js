@@ -7,7 +7,16 @@ iris.resource(function (self) {
 
 	var todos = {},
 		ids = [],
+		currentFilter = "all",
+		id = 0;
+
+	self.reset = function() {
+		todos = {};
+		ids = [];
 		currentFilter = "all";
+		localStorage.clear();
+		id = 0;
+	};
 
 	self.init = function () {
 		console.log("Reading todos from storage... ");
@@ -23,31 +32,37 @@ iris.resource(function (self) {
 			todo = JSON.parse(todoString);
 			todos[todo.id] = todo;
 
+			if(todo.id > id) {
+				id = todo.id;
+			}
+
 			iris.notify(self.CREATE_TODO, todo.id);
 		}
-	}
+	};
 
 	self.add = function (text) {
-		var todo = {id: String(new Date().getTime()), text: text, completed: false};
+		id++;
+		var todo = {id: String(id), text: text, completed: false};
 		todos[todo.id] = todo;
 		saveTodo(todo);
 		
 		ids.push(todo.id);
 		localStorage.setItem("ids" , ids.join(","));
-
+		
 		iris.notify(self.CREATE_TODO, todo.id);
+		return todo.id;
 	};
 
 	self.getTodo = function (id) {
 		var todo = todos[id];
-		todo.visible = currentFilter === "all" 
-			|| (todo.completed && currentFilter === "completed") 
-			|| (!todo.completed && currentFilter === "active");
+		todo.visible = currentFilter === "all" || 
+		(todo.completed && currentFilter === "completed") ||
+		(!todo.completed && currentFilter === "active");
 		return $.extend({}, todo);
-	}
+	};
 
 	self.remove = function (id) {
-		removeTodo(todos[id])
+		removeTodo(todos[id]);
 		iris.notify(self.DESTROY_TODO, id);
 	};
 
@@ -90,7 +105,7 @@ iris.resource(function (self) {
 	self.setFilter = function (filter) {
 		console.log("Set filter = " + filter);
 		currentFilter = filter;
-	}
+	};
 
 	self.count = function () {
 		var remaining = 0;

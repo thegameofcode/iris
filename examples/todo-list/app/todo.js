@@ -25,7 +25,9 @@ iris.ui(function (self) {
 		});
 
 		self.get("text").on("blur change", function (e) {
-			if ( !self.get().hasClass("editing") ) return;
+			if ( !self.get().hasClass("editing") ) {
+				return;	
+			} 
 
 			self.get().removeClass("editing");
 			if ( this.value.trim() !== "" ) {

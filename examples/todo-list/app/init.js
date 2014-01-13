@@ -9,10 +9,13 @@ iris.path = {
 $(window.document).ready(
 
     function () {
-    	// set the iris components base uri
-    	iris.baseUri("app/");
+		// set the iris components base uri
+		iris.baseUri("app/");
 
-    	// show the initial screen
+		// show the initial screen
         iris.welcome(iris.path.welcome.js);
+        iris.on(iris.AFTER_NAVIGATION, function () {
+			iris.resource(iris.path.resource).init();
+		});
     }
 );
