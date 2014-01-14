@@ -25,7 +25,7 @@
  * <a href="#destroy_screens_bad_practices">Malas prácticas destruyendo Screens</a><br>
  * <a href="#UIs_destroy">Destruyendo UIs</a><br>
  * <a href="#canSleep">Evento *canSleep*</a><br>
- * <a href="#querystring_params">Enviando parámetros a un Screen</a><br>
+ * <a href="#path_params">Enviando parámetros a un Screen</a><br>
  * <a href="#settings">Paso de parámetros con el método *setting*</a><br>
  * <a href="#data-settings">Paso de parámetros utilizando atributos *data-*</a><br>
  * <a href="#settings_ui">Paso de parámetros con el método *self.ui*</a><br>
@@ -42,16 +42,11 @@
 * <a href="#step_by_step">Construyendo paso a paso una aplicación desde cero</a><br>
  * <a href="#directories">Estructura de directorios</a><br>
  * <a href="#step_by_step_welcome">*Screen* Welcome</a><br>
- * <a href="#step_by_step_home">*Screen* Home</a><br>
- * <a href="#step_by_step_model">ShoppingList Model</a><br>
- * <a href="#step_by_step_caterogies">*Screen* Categories</a><br>
- * <a href="#step_by_step_products">*Screen* Products</a><br>
- * <a href="#step_by_step_shopping">*Screen* Shopping</a><br>
+ * <a href="#step_by_step_todoUI">*UI* Todo</a><br>
+ * <a href="#step_by_step_resource">Todo resource</a><br>
  * <a href="#step_by_step_qunit">Pruebas unitarias con *QUnit*</a><br>
  * <a href="#step_by_step_grunt">Automatizando procesos con *Grunt*</a><br>
- * <a href="#step_by_step_exercise">Ejercicio: Modificando la aplicación</a><br>
- * <a href="#step_by_step_exercise2">Ejercicio: Integrando Knockout</a><br>
-
+ 
 #<a name="what_is_it"></a>¿Qué es Iris?
 
 [Iris](http://thegameofcode.github.com/iris/) es un *framework* escrito en Javascript para construir el *front-end* de una aplicación Web que, aplicando distintas técnicas, permite que las aplicaciones sean eficientes, rápidas, estructuradas y modulares.
@@ -1598,13 +1593,13 @@ iris.screen(
 
 Observe que el método *canSleep* devuelve *false*. Esto impedirá ir a *#/help* cuando pulsemos sobre el enlace.
 
-##<a name="querystring_params"></a>Enviando parámetros a un Screen
+##<a name="path_params"></a>Enviando parámetros a un Screen
 
 En esta y en las siguientes secciones vamos a ver diversas formas de pasar parámetros entre componentes. 
 
 Comencemos por el paso de parámetros a Screens:
 
-Una forma de pasar un parámetro a un Screen es en el *[Query String](http://en.wikipedia.org/wiki/Query_string)* de la URL.
+Una forma de pasar un parámetro a un Screen como *path param* en la URI del Screen.
 
 Observe como se pasa el parámetro al Screen Home en el archivo *welcome.html*:
 
@@ -1612,7 +1607,7 @@ Observe como se pasa el parámetro al Screen Home en el archivo *welcome.html*:
 <div>
     <h1>Welcome Screen</h1>
     <p>This is the initial screen.</p>
-    <a href="#/home?year=2013">Click to go to Home Screen</a>
+    <a href="#/home/2013">Click to go to Home Screen</a>
     </br>
     <a href="#/help">Click to gets some help</a>
     </br> 
@@ -1622,7 +1617,7 @@ Observe como se pasa el parámetro al Screen Home en el archivo *welcome.html*:
 </div>
 ```
 
-El archivo *welcome.js* no tendría nada de particular:
+En  el archivo *welcome.js* mapeamos el *screen home* indicando que va a recibir un *path param* con nombre *year*:
 
 ```js
 //In welcome.js
@@ -1631,8 +1626,9 @@ iris.screen(
         self.create = function () {
             console.log("Welcome Screen Created");
             self.tmpl(iris.path.welcome.html); 
+            
             self.screens("screens", [
-                ["home", iris.path.home.js],
+                ["home/:year", iris.path.home.js],
                 ["help", iris.path.help.js]
             ]);
         };
@@ -1640,6 +1636,7 @@ iris.screen(
     iris.path.welcome.js
 );
 ```
+
 
 El parámetro lo recibimos en el Screen Home de esta forma:
 
@@ -1715,12 +1712,12 @@ iris.screen(
             console.log("Welcome Screen Created");
             self.tmpl(iris.path.welcome.html); 
             self.screens("screens", [
-                ["home", iris.path.home.js],
+                ["home/:year", iris.path.home.js],
                 ["help", iris.path.help.js]
             ]);
             self.get("navigate_home").click(
                 function() {
-                    iris.navigate("#/home?year=" + (new Date().getFullYear())); //Send the current year instead a fixed value
+                    iris.navigate("#/home/" + (new Date().getFullYear())); //Send the current year instead a fixed value
                 }
             );
         };
@@ -1730,9 +1727,53 @@ iris.screen(
 );
 ```
 
-Se pueden pasar parámetros simultáneamente a varios Screens (padres e hijos). En el siguiente ejemplo pasamos un parámetro al Screen Welcome y otro al Screen Home.
+Se pueden pasar parámetros simultáneamente a varios Screens (padres e hijos). En el siguiente ejemplo pasamos un parámetro al Screen Home y otro al Screen Inner Home.
 
-El Screen Home queda inalterado:
+En *welcome.js*:
+
+```js
+iris.screen(
+    function (self) {
+        self.create = function () {
+            console.log("Welcome Screen Created");
+            self.tmpl(iris.path.welcome.html); 
+            self.screens("screens", [
+                ["home/:year", iris.path.home.js]
+            ]);
+        };
+
+        self.awake= function (params) {
+            console.log("Welcome Screen Awaked");
+        };
+
+        self.sleep = function () {
+            console.log("Welcome Screen Asleep");
+        };
+
+        self.destroy = function () {
+            console.log("Welcome Screen Destroyed");
+        };
+    },
+    iris.path.welcome.js
+);
+```
+
+Y en *welcome.html*:
+
+```html
+<div>
+    <h1>Welcome Screen</h1>
+    <p>This is the initial screen.</p>
+    <a href="#/home/2013/inner_home/2013">Click to go to Inner Home Screen (2013)</a>
+    </br>
+    <a href="#/home/2014/inner_home/2014">Click to go to Inner Home Screen (2014)</a>
+    </br>
+    </br>
+    <div data-id="screens">
+        Here is where Iris will load all the Screens
+    </div>  
+</div>
+```
 
 En *home.js*:
 
@@ -1743,17 +1784,20 @@ iris.screen(
         self.create = function () {   
             console.log("Home Screen Created");
             self.tmpl(iris.path.home.html);
+            self.screens("inner_home_container", [
+                ["inner_home/:year", iris.path.inner_home.js]
+            ]);
         };
-  
+
         self.awake = function (params) {  
             console.log("Home Screen Awakened");
-            self.get("year_parameter").text("The value of the year parameter is: " + params.year);
+            self.get("year_parameter").text("The value of the year parameter is: " + self.params.year);
         };
-		
+
         self.sleep = function () {
             console.log("Home Screen Asleep");
         };
-  
+
         self.destroy = function () {
             console.log("Home Screen Destroyed");
         };
@@ -1769,8 +1813,83 @@ En *home.html*:
     <h1>Home Screen</h1>
     <p>This is the home screen.</p>
     <div data-id="year_parameter"></div>
+    <div data-id="inner_home_container"></div>
 </div>
 ```
+
+En *inner_home.js*:
+
+```js
+//In inner_home.js
+iris.screen(
+    function (self) {
+        self.create = function () {   
+            console.log("Inner Home Screen Created");
+            self.tmpl(iris.path.inner_home.html);
+        };
+
+        self.awake = function (params) {  
+            console.log("Inner Home Screen Awakened");
+            self.get("year_parameter").text("The value of the year parameter is: " + self.params.year);
+        };
+
+        self.sleep = function () {
+            console.log("Inner Home Screen Asleep");
+        };
+
+        self.destroy = function () {
+            console.log("Inner Home Screen Destroyed");
+        };
+    },
+    iris.path.inner_home.js
+);
+```
+
+En *inner_home.html*:
+
+```html
+<div>
+    <h1>Inner Home Screen</h1>
+    <p>This is the inner_home screen.</p>
+    <div data-id="year_parameter"></div>
+</div>
+```
+
+
+Observe que el parámetro *year* se pasa tanto al Screen Home como al Screen Inner Home.
+
+> Si se quiere pasar un mismo parámetro a varios Screens hay que repetirlo en cada uno de ellos.
+
+Es importante comprender lo que sucede con los eventos. Al cargar la página con el ejemplo anterior:
+
+<pre>
+Welcome Screen Created
+Welcome Screen Awaked 
+</pre>
+
+Si pulsamos sobre el primer enlace, los eventos son los esperados:
+
+<pre>
+Home Screen Created
+Home Screen Awakened
+Inner Home Screen Created
+Inner Home Screen Awakened 
+</pre>
+
+Pero si pulsmos sobre el segundo enlace:
+
+<pre>
+Home Screen Awakened
+Inner Home Screen Awakened 
+</pre>
+
+Observe que se volverá a llamar al evento *awake* de *home* y de *inner home* sin pasar por sus eventos *sleep*.
+
+Este es un caso particular del ciclo de vida de los *screens*:
+
+> Cuando se modifiquen los parámetros con los que se ha llamado a un Screen, se volverá a llamar a su evento *awake*.
+
+Podemos pasar varios parámetros a un screen de dos formas posibles. La primera es registrando los paths params:
 
 En *welcome.js*:
 
@@ -1780,17 +1899,10 @@ iris.screen(
         self.create = function () {
             console.log("Welcome Screen Created");
             self.tmpl(iris.path.welcome.html); 
+            
             self.screens("screens", [
-                ["home", iris.path.home.js]
+                ["home/:year/:month", iris.path.home.js]
             ]);
-            self.awake= function (params) {
-                console.log("Welcome Screen Awaked");
-                if (self.param(year)) {
-                    self.get("year_parameter").text("The value of the year parameter is: " + self.param(year));
-                } else {
-                    self.get("year_parameter").text("No year");
-                }
-            };
         };
     },
     iris.path.welcome.js
@@ -1803,48 +1915,51 @@ Y en *welcome.html*:
 <div>
     <h1>Welcome Screen</h1>
     <p>This is the initial screen.</p>
-    <a href="#?year=2013/home?year=2013">Click to go to Home Screen (year = 2013)</a>
-    </br>
-    <a href="#?year=2014/home?year=2014">Click to go to Home Screen (year = 2014)</a>
+    <a href="#/home/2014/october">Click to go to Home Screen</a>
     </br> 
-    <div data-id="year_parameter"></div>
-    </br>
     <div data-id="screens">
         Here is where Iris will load all the Screens
-    </div> 	
+    </div>  
 </div>
 ```
 
-Observe que el parámetro *year* se pasa tanto al Screen Welcome como al Screen Home.
+La segunda es utilizando *matrix params*:
 
-> Para pasar un parámetro a un Screen hay que ponerlo después del signo *?* que, a su vez, irá detrás de su hash-URL y antes que sus hijos.
+En *welcome.js*:
 
-> Si se quiere pasar un mismo parámetro a varios Screens hay que repetirlo en cada uno de ellos.
+```js
+iris.screen(
+    function (self) {
+        self.create = function () {
+            console.log("Welcome Screen Created");
+            self.tmpl(iris.path.welcome.html); 
+            
+            self.screens("screens", [
+                ["home", iris.path.home.js]
+            ]);
+        };
+    },
+    iris.path.welcome.js
+);
+```
 
-> Si se quieren pasar varios parámetros a un mismo Screen, se separarán con el símbolo *&*.
+Y en *welcome.html*:
 
-Es importante comprender lo que sucede con los eventos. Al cargar la página con el ejemplo anterior:
+```html
+<div>
+    <h1>Welcome Screen</h1>
+    <p>This is the initial screen.</p>
+    <a href="#/home;year=2014;month=october">Click to go to Home Screen</a>
+    </br> 
+    <div data-id="screens">
+        Here is where Iris will load all the Screens
+    </div>  
+</div>
+```
 
-<pre>
-Welcome Screen Created
-Welcome Screen Awaked 
-</pre>
+Como se puede apreciar, los *matrix params* no se registran ya que su nombre se establece al navegar al screen:
 
-Hasta aquí nada de particular. Pero si pulsamos sobre el primer enlace:
-
-<pre>
-Home Screen Created
-Welcome Screen Awaked
-Home Screen Awakened 
-</pre>
-
-Observe que se volverá a llamar al evento *awake* de welcome sin pasar por su evento *sleep*.
-
-Este es un caso particular del ciclo de vida de los *screens*:
-
-> Cuando se modifiquen los parámetros con los que se ha llamado a un Screen, se volverá a llamar a su evento *awake*.
-
-
+> Los *matrix params* son más adecuados cuando un screen pueda recibir un número de parámetros variable, por contra, los *path param* requieren que el screen reciba siempre los mismos parámetros.
 
 ##<a name="settings"></a>Paso de parámetros con el método *setting*
 
@@ -2258,7 +2373,7 @@ data-jq-prop-xxx == $(element).prop(xxx)
 ```
 
 
-Veamos un en ejemplo.
+Veamos un ejemplo.
 
 En *welcome.html*:
 
@@ -3471,41 +3586,17 @@ En esta sección vamos utilizar Iris para construir una sencilla aplicación que
 
 Puede consultar este y otros ejemplos en: [ejemplo]https://github.com/thegameofcode/iris/tree/master/examples)
 
-Puede descargar la aplicación en el siguiente [enlace](https://github.com/thegameofcode/iris/blob/master/docs/iris-shopping.tar.gz?raw=true). Para probar la aplicación debe descomprimirla y desplegarla en un servidor Web (Apache, Node.js, etc). Si tiene instalado *Grunt* puede, simplemente, situarse en el directorio raíz de la aplicación y ejecutar el comando *grunt*.
+Puede descargar la aplicación en el siguiente [enlace](https://github.com/thegameofcode/iris/raw/dev/docs/todo-list.tar.gz). Para probar la aplicación debe descomprimirla y desplegarla en un servidor Web (Apache, Node.js, etc). Si tiene instalado *Grunt* puede, simplemente, situarse en el directorio raíz de la aplicación y ejecutar el comando *grunt*.
 
-Puede probar el funcionamiento de la aplicación en el siguiente [enlace](http://thegameofcode.github.com/iris/examples/shopping-list/www/index.htm).
+Puede probar el funcionamiento de la aplicación en el siguiente [enlace](http://thegameofcode.github.io/iris/examples/todo-list/index.html).
 
-La aplicación va a permitir realizar la lista de la compra de una serie de productos agrupados en categorías. En las siguientes imágenes presentamos las principales pantallas de la aplicación:
-
-<a name="home_img"></a>*#/home:*
-![home](https://raw.github.com/thegameofcode/iris/master/docs/images/shopping_list/home.png)
-
-<a name="categories_img"></a>*#categories:*
-![categories](https://raw.github.com/thegameofcode/iris/master/docs/images/shopping_list/categories.png)
-
-<a name="products_img"></a>*#products:*
-![products](https://raw.github.com/thegameofcode/iris/master/docs/images/shopping_list/products.png)
-
-<a name="shopping_img"></a>*#shopping:*
-![shopping](https://raw.github.com/thegameofcode/iris/master/docs/images/shopping_list/shopping_list.png)
-
-Además de Iris, se ha utilizado [Twitter Bootstrap](http://twitter.github.com/bootstrap/) para *maquetar* la aplicación y [JQuery DataTables](http://www.datatables.net/) para presentar los productos de la lista de la compra. En esta sección no se va a explicar el uso de estas librerías aunque su conocimiento no es esencial para comprender el funcionamiento de la aplicación.
+La aplicación permite añdir tareas y marcarlas como realizadas y no realizadas al estilo de [TodoMVC](http://todomvc.com/)
 
 ##<a name="directories"></a>Estructura de directorios
 
 En Iris debemos crear un fichero *html* y otro *js* por cada componente. En aplicaciones de tamaño medio/grande, lo normal es que haya decenas e incluso centenares de archivos. Es importante que, desde el principio, definamos una estructura de directorios que nos permita localizar fácilmente cada uno de estos archivos.
 
-Vamos a proponer una estructura determinada aunque cualquier otra que cumpla el propósito anterior será igualmente válida. En nuestro ejemplo, vamos a crear un fichero *shopping* para almacenar los componentes de Iris y fuera de este fichero guardaremos, librerías, estilos, imágenes, etc. que no sean específicos de Iris. En el directorio *shopping* vamos almacenar por separado los componentes de tipo *Screen* de los de tipo *UI*, creando un directorio para cada tipo. Además vamos a crear subdirectorios para almacenar los  componentes que definen un mismo estado de la aplicación.
-
-En la siguiente imagen vemos la estructura de directorios y los archivos que contienen:
-
-![www_directories](https://raw.github.com/thegameofcode/iris/master/docs/images/shopping_list/shopping_directories.png)
-
-Más detalladamente, el contenido del directorio *shopping* será el siguiente:
-
-![shopping_directories](https://raw.github.com/thegameofcode/iris/master/docs/images/shopping_list/www_directories.png)
-
-Observe que, para hacer más sencillo el ejemplo, se ha creado un directorio *json* que permite cargar los productos y las categorías desde el servidor Web sin depender de ninguna tecnología de servidor. En una aplicación real, normalmente los productos estarían almacenados en una base de datos y se recuperarían llamando a un servicio.
+En nuestro caso, como son pocos archivos, vamos tenerlos todos en un directorio llamado *app*.
 
 ##<a name="step_by_step_welcome"></a>*Screen* Welcome
 
@@ -3516,1164 +3607,421 @@ Estos son los ficheros necesarios y su contenido:
 En *index.html*:
 
 ```html
-<!DOCTYPE HTML>
-<html>
-    <head>
-        <title>iris shopping</title>
-
-        <link type="text/css" rel="stylesheet" href="./css/jquery-ui-1.9.2.custom.css">
-        <link type="text/css" rel="stylesheet" href="./css/bootstrap.css">
-        <link type="text/css" rel="stylesheet" href="./css/jquery.dataTables.css">
-        <link type="text/css" rel="stylesheet" href="./css/shopping.css">
-
-        <script type='text/javascript' src='./js/jquery-1.8.3.js'></script>
-        <script type='text/javascript' src='./js/jquery-ui-1.9.2.custom.js'></script>
-        <script type='text/javascript' src='./js/bootstrap.js'></script>
-        <script type='text/javascript' src='./js/jquery.dataTables.js'></script>
-        
-        <script type='text/javascript' src='./js/iris.js'></script>
-        <script type='text/javascript' src='./js/shopping_list.js'></script>
-        
-        <script type='text/javascript' src='./js/init.js'></script>
-
-    </head>
-    <body>
-    </body>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Iris • TodoMVC</title>
+    <link rel="stylesheet" href="css/base.css">
+    <!--[if IE]>
+    <script src="js/ie.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <script src="app/jquery-2.0.3.min.js" type="text/javascript"></script>
+    <script src="app/iris.js" type="text/javascript"></script>
+    <script src="app/init.js" type="text/javascript"></script>
+</body>
 </html>
 ```
 
-Este fichero contiene la estructura clásica de una página *html*. Observe que la etiqueta *head* permite importar las hojas de estilo y las librerías y ficheros de *javascript* necesarios.
+Este fichero contiene la estructura clásica de una página *html*.
 
 Centremos nuestra atención en el fichero *init.js*:
 
 ```js
-$(document).ready(
+// define iris components paths
+iris.path = {
+    welcome : { js: "welcome.js", html: "welcome.html" },
+    todo: { js: "todo.js", html : "todo.html" },
+    resource : "resource.js"
+};
+
+
+$(window.document).ready(
+
     function () {
-        
-        function _setLang() {    
-            var regExp = /[?&]lang=[a-z][a-z][\-_][A-Z][A-Z]/;
-            var lang = window.location.href.match(regExp);
-            if ( lang !== null) {
-                iris.locale(lang[0].substring(lang[0].length - 5, lang[0].length));
-            } else {
-                iris.locale("en_US");
-            }
-        }
-            
-        iris.translations("es_ES", {                
-            ERROR: "Se ha producido el siguiente error",
-            JQUERY : {
-                DATATABLES: {
-                    SEARCH: "Buscar",
-                    NEXT: "Siguiente",
-                    PREVIOUS: "Anterior",
-                    SHOW: "Mostrando _MENU_ líneas"
-                }
-            }
-            
-        });
-            
-        iris.translations("en_US", {                
-            ERROR: "There was an error",
-            JQUERY : {
-                DATATABLES: {
-                    SEARCH: "Search",
-                    NEXT: "Next",
-                    PREVIOUS: "Previous",
-                    SHOW: "Show _MENU_ entries"
-                }
-            }
-        });
-        
-        iris.locale(
-            "en_US", {
-                dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-                monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-                dateFormat: "m/d/Y h:i:s",
-                currency: {
-                    formatPos: "n",
-                    formatNeg: "(n)",
-                    decimal: ".",
-                    thousand: ",",
-                    precision: 2
-                }
-            }
-            );
+        // set the iris components base uri
+        iris.baseUri("app/");
 
-        iris.locale(
-            "es_ES", {
-                dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
-                monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
-                dateFormat: "d/m/Y H:i:s",
-                currency: {
-                    formatPos: "n",
-                    formatNeg: "-n",
-                    decimal: ",",
-                    thousand: ".",
-                    precision: 2
-                }
-            }
-            );
-
-        _setLang();
-        
-        iris.path = {
-            screen: {
-                welcome: {js: "/shopping/screen/welcome.js", html: "/shopping/screen/welcome.html"},
-                home: {js: "/shopping/screen/home.js", html: "/shopping/screen/home.html"},
-                categories: {js: "/shopping/screen/products/categories.js", html: "/shopping/screen/products/categories.html"},
-                products: {js: "/shopping/screen/products/products.js", html: "/shopping/screen/products/products.html"},
-                shopping: {js: "/shopping/screen/list/shopping.js", html: "/shopping/screen/list/shopping.html"}
-            },
-            ui: {
-                category_list_item: {js: "/shopping/ui/products/category_list_item.js", html: "/shopping/ui/products/category_list_item.html"},
-                product_list_item: {js: "/shopping/ui/products/product_list_item.js", html: "/shopping/ui/products/product_list_item.html"},
-                product_shopping_list_item: {js: "/shopping/ui/list/product_shopping_list_item.js", html: "/shopping/ui/list/product_shopping_list_item.html"}
-            },
-            resource: {
-              js: "/shopping/resource.js"  
-            }
-        };
-        
-        iris.baseUri(".");
-        iris.enableLog("localhost");
-        iris.welcome(iris.path.screen.welcome.js);
+        // show the initial screen
+        iris.welcome(iris.path.welcome.js);
     }
-    );
+);
 ```
-Observe que lo primero que hacemos en este *script* es cargar algunas de las traducciones que vamos a necesitar. Hemos decidido que cada fichero de *Javascript* cargue las traducciones que vaya a utilizar. En el caso de *init.js* vamos a cargar las traducciones comunes en toda la aplicación. Una alternativa perfectamente aceptable sería tener un único punto donde definiríamos todas las traducciones de la aplicación. Otra posible solución sería almacenar las traducciones en una base de datos y recuperarlas mediante un objeto *JSON*.
 
-Después, llamamos a la función *_setLang* que nos permite definir el idioma de la aplicación. El idioma se seleccionará a partir del parámetro *lang* que se haya pasado en el *Query String* de la *URL*. Si no se ha pasado este parámetro se seleccionará el idioma por defecto.
-
-Lo siguiente que hacemos es definir el objeto *iris.path* que contiene un *mapeo* de las rutas de acceso a los componentes que vamos a utilizar.
-
-Por último cargamos el *Screen* Welcome.
+Lo primero que hacemos es definir el objeto *iris.path* que contiene un *mapeo* de las rutas de acceso a los componentes que vamos a utilizar. Después cargamos el *Screen* Welcome.
 
 En *welcome.js*:
 
 ```js
-iris.screen(
-    function (self) {	
-        function _ajaxPrepare() {
-            $.ajaxPrefilter(function( options, originalOptions, jqXHR ) {            
-                //self.get("screens").hide();
-                self.get("loading").show();                
-                jqXHR.always(function() {
-                    self.get("loading").hide();
-                //self.get("screens").show();
-                });            
-            });                
-        }
-            
-        function _createScreens() {
-            self.screens("screens", [
-                ["home", iris.path.screen.home.js],
-                ["categories", iris.path.screen.categories.js],
-                ["products", iris.path.screen.products.js],
-                ["shopping", iris.path.screen.shopping.js]
-                ]);
-        }
-        
-        function _changeLang(link) {
-            var regExp = /[?&]lang=[a-z][a-z][\-_][A-Z][A-Z]/;
-            var lang = window.location.href.match(regExp);
-            var url = window.location.href;
-            var hash = window.location.hash;
-            if ( lang === null) {
-                lang = "lang=" + link.data("lang");
-                if (window.location.href.match(/[?]/)) {
-                    lang = "&" + lang;                            
-                } else {
-                    lang = "?" + lang;
-                }
-                url = url.substr(0, url.indexOf(hash));
-                url += lang;
-                url += hash;
-            } else {
-                var first = lang[0].substr(0,6);
-                url = window.location.href.replace(regExp, first + link.data("lang"));                       
-            }
-            window.location.href = url;
-        }
-            
-            
-        iris.translations("es_ES", {    
-            LOADING: "Cargando...",
-            MENU: {
-                WELCOME: "Ejemplo de lista de la compra",
-                HOME: "Incio",
-                PRODUCTS: "Productos",
-                SHOPPING_LIST: "Lista de la compra"
+iris.screen(function(self) {
+
+    var todos = iris.resource(iris.path.resource);
+
+    self.create = function() {
+        self.tmpl(iris.path.welcome.html);
+
+        self.get("new-todo").on("keyup", function (e) {
+            if ( e.keyCode === 13 && this.value.trim() !== "" ) {
+                todos.add(this.value);
+                this.value = "";
             }
         });
-            
-        iris.translations("en_US", {
-            LOADING: "Loading...",
-            MENU: {
-                WELCOME: "Shopping List Example",
-                HOME: "Home",
-                PRODUCTS: "Products",
-                SHOPPING_LIST: "Shopping List"
-            }
+
+        self.get("toggle-all").on("change", function (e) {
+            var completed = self.get("toggle-all").prop("checked");
+            todos.setAll( completed );
         });
-        
-        self.create = function () {
-            
-            self.tmpl(iris.path.screen.welcome.html);
-            
-            _ajaxPrepare();
-            
-            _createScreens();
-            
-            $("[data-lang]").click(
-                function (event) {
-                    _changeLang($(this));
-                    event.preventDefault();
-                }
-                );
-            
-            
-            if ( !document.location.hash ) {                
-                iris.navigate("#/home"); //Default page
+
+        self.get("clear-completed").on("click", todos.removeCompleted);
+
+        // Resource events
+        self.on(todos.CREATE_TODO, function (id) {
+            self.ui("todo-list", iris.path.todo.js, {id: id}).render().show();
+            render();
+        });
+
+        self.on(todos.DESTROY_TODO, render);
+        self.on(todos.CHANGE_TODO, render);
+
+        todos.init();
+        render();
+    };
+
+    self.awake = function () {
+        var filter = self.param("filter");
+        if ( filter ) {
+            todos.setFilter(filter);
+
+            var $footer = self.get("footer");
+            $(".selected", $footer).removeClass("selected");
+            $("a[href='#?filter=" + filter + "']", $footer).addClass("selected");
+
+            var uis = self.ui("todo-list");
+            for (var i = 0; i < uis.length; i++ ) {
+                uis[i].render();
             }
-        };
-    } , iris.path.screen.welcome.js);
+        }
+    };
+
+    function render () {
+        var count = todos.count();
+        self.inflate({
+            completed: "Clear completed (" + count.completed + ")",
+            remaining: {
+                count: count.remaining,
+                text: "item" + (count.remaining !== 1 ? "s " : " ") + "left" 
+            },
+            hasTodos: (count.total !== 0),
+            hasRemainings: (count.completed > 0),
+            noRemainingTodos: (count.remaining === 0)
+        });
+    }
+
+}, iris.path.welcome.js);
 ```
 
 Lo más relevante de este fichero es:
-* La función *_ajaxPrepare* permite poner un texto *cargando...* cada vez que se efectúa una llamada *AJAX*.
-* La función *_createScreens* registra los *screens* de la aplicación.
-* La función *_changeLang* recarga la aplicación añadiendo el código del idioma que se haya seleccionado como un parámetro del *Query String*.
-* Se selecciona el *Hash-URL* *#/home* como página por defecto de la aplicación.
+
+* Almacenamos en una variable llamada *todos* el resource que nos permite acceder a los métodos de dominio como se explica más adelante.
+* En el método *create* gestionamos los eventos de los componentes que trabajan con la lista completa: añadir una tarea, cambiar el estados de todas los tareas, borrar tareas completadas, etc.
+* Añadimos manajadores de eventos que permitan actualizar la vista cuando sea necesario: se borra una tarea, se cambia su estado, se añade una tarea.
+* Cuando se cree una tarea, se creará un UI de tipo *todo.js* pasándole su *id* que se recibirá en la gestión del evento y llamando a su método *render*.
+* Tiene una función *render* que permite actualizar la vista cuando cambie su estado.
+* El método *awake* será llamado cuando pulsemos sobre unos de los filtros de tareas completadas, activas y todas. Este método llamará al *render* de cada uno de los UI que representan las *tareas*.
 
 Finalmente, el fichero *welcome.html* contendrá:
 
 ```html
-<div class="container">
-    <div class="navbar navbar-inverse">
-        <div class="navbar-inner">
-            <div class="container">
-                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </a>
-                <a class="brand" href="#/home">@@MENU.WELCOME@@</a>
-                <div class="nav-collapse collapse">
-                    <ul class="nav">
-                        <li><a href="#/home">@@MENU.HOME@@</a></li>
-                        <li><a href="#/categories">@@MENU.PRODUCTS@@</a></li>
-                        <li><a href="#/shopping">@@MENU.SHOPPING_LIST@@</a></li>
-                    </ul>
-                    <ul class="nav pull-right">
-                        <li><a href="#" data-lang="es_ES"><i class="icon-spain-flag"></i></a></li>
-                        <li><a href="#" data-lang="en_US"><i class="icon-united-kingdom-flag"></i></a></li>
-                    </ul>
-                </div><!--/.nav-collapse -->
-            </div>
-        </div>
-    </div>
-    <div class="divContainer">
-        <div data-id="loading" class="divElement loading">@@LOADING@@</div>
-        <div class="container divElement" data-id="screens"></div>        
-    </div>
-</div>
-```
-
-Observe que en este archivo se definen los menús con *Bootstrap* para acceder a las distintas secciones de la aplicación. En lugar de colocar los textos descriptivos de los menús directamente, se utiliza la sintaxis de Iris para permitir localizarlos en los ficheros de traducción. En la esquina superior derecha, <a href="#/home_img">ver imagen</a>, se sitúan iconos para cambiar el idioma. Por último, hay un contenedor donde se cargarán los *screens* de la aplicación.
-
-##<a name="step_by_step_home"></a>*Screen* Home
-
-El <a href="#/home_img">*Screen* *Home*</a> es una simple página informativa. Estos son sus ficheros:
-
-En *home.js*:
-
-
-```js
-iris.screen(
-    function (self) {
-        
-        iris.translations("es_ES", {                
-            HOME: {
-                TITLE: "Ejemplo de lista de la compra",
-                DESC: "Este es un ejemplo de uso de"
-            }
-        });
-            
-        iris.translations("en_US", {                
-            HOME: {
-                TITLE: "Shopping List Iris Example",
-                DESC: "This a simple example of using"
-            }
-        });
-            
-        self.create = function () {    
-            self.tmpl(iris.path.screen.home.html);
-        };
-        
-    }, iris.path.screen.home.js);
-```
-
-En *home.html*:
-
-```html
 <div>
-    <h1>@@HOME.TITLE@@</h1>
 
-    <p>@@HOME.DESC@@ <a href="https://github.com/thegameofcode">iris.</a></p>
+  <section id="todoapp">
+    <header id="header">
+      <h1>todos</h1>
+      <input id="new-todo" data-id="new-todo" placeholder="What needs to be done?" autofocus>
+    </header>
+    
+    <section id="main">
+      <input id="toggle-all" data-id="toggle-all" type="checkbox" data-jq-toggle="hasTodos" data-jq-prop-checked="noRemainingTodos">
+      <label for="toggle-all">Mark all as complete</label>
+      <ul id="todo-list" data-id="todo-list"></ul>
+    </section>
+
+    <footer id="footer" data-id="footer" data-jq-toggle="hasTodos">
+      <span id="todo-count"><strong data-jq-text="remaining.count"></strong> <span data-jq-text="remaining.text"></span></span>
+      <ul id="filters">
+        <li>
+          <a class="selected" href="#;filter=all">All</a>
+        </li>
+        <li>
+          <a href="#;filter=active">Active</a>
+        </li>
+        <li>
+          <a href="#;filter=completed">Completed</a>
+        </li>
+      </ul>
+      <button id="clear-completed" data-id="clear-completed" data-jq-text="completed" data-jq-toggle="hasRemainings"></button>
+    </footer>
+  </section>
+  <footer id="info">
+    <p>Double-click to edit a todo</p>
+    <p>Created by <a href="http://thegameofcode.github.io/iris" target="_blank">Iris</a></p>
+    <p>Part of <a href="http://todomvc.com" target="_blank">TodoMVC</a></p>
+  </footer>
+
 </div>
 ```
 
-##<a name="step_by_step_model"></a>ShoppingList Model
+Tiene un encabezado que permite añadir tareas, una parte central que muestra la lista de tareas y permite marcarlas como realizadas y borrarlas y un pie que muestra cuantas tareas hay y permite aplicar filtros.
 
-Para mantener los productos en la lista de la compra y para recuperarlos desde el servidor, vamos a crear un pequeño *modelo* en *Javascript* en el fichero *shopping_list.js*:
+##<a name="step_by_step_todoUI"></a>*UI* Todo
+
+El UI Todo contiene cada una de las tareas.
+
+En *todo.js*:
+
 
 ```js
-var model = {}; 
+iris.ui(function (self) {
 
-(function($) {
-    
-    model.initialized = false; 
-    model.categories = {};
-    model.products = {};
-    model.event = {
-        
-        PRODUCTS: {
-            ADD: "shopping:products:add",
-            REMOVE: "shopping:products:remove",
-            REMOVED: "shopping:products:removed"
-        },
-        
-        SHOPPING: {
-            CHECK: "shopping:products:check",
-            UNCHECK: "shopping:products:uncheck",
-            CHANGE_STATE: "shopping:products:change_state",
-            REMOVE_ALL: "shopping:products:remove_all",
-            CHECK_ALL: "shopping:products:check_all",
-            UNCHECK_ALL: "shopping:products:uncheck_all",
-            INVERT_CHECK: "shopping:products:invert_check",
-            REMOVE_CHECKED: "shopping:products:remove_checked"
-        }
-    };
-    
-    
-    function _init (force, next) {
-        if (typeof force  === "function") {
-            next = force;
-            force = false;
-        }
-        if (force || !model.initialized) {
-            model.shoppingList = new model.ShoppingList();
+    self.settings({
+        id : null
+    });
 
-            model.resource = iris.resource(iris.path.resource.js);
+    var todos = iris.resource(iris.path.resource);
 
-            model.resource.app = (function() {
-                return {
-                    getCategories: function(success, error) {
-                        model.resource.load("/json/categories.json", success, error);
-                    },
-                    getProducts: function(idCategory, success, error) {
-                        model.resource.load("/json/products_" + idCategory + ".json", success, error);
-                    } ,
-                    getAllProducts: function(success, error) {
-                        model.resource.load("/json/products.json", success, error);
-                    }
-                };
-
-            })();
-
-
-            iris.on(this.event.PRODUCTS.REMOVE, this.shoppingList.removeShoppingProduct);
-            iris.on(this.event.PRODUCTS.ADD, this.shoppingList.addShoppingProduct);
-            iris.on(this.event.SHOPPING.CHANGE_STATE, this.shoppingList.changeStateShoppingProduct);
-
-            model.resource.app.getCategories(function(categories){
-                model.categories = categories;
-                model.resource.app.getAllProducts(function(products){
-                    model.products = products;
-                    model.initialized = true;
-                    if (next) {
-                        next();
-                    }
-
-                });
-            });
-        } else {
-            if (next) {
-                next();
-            }
-        }
-    }
-    
-    function _destroy () {
-        model.initialized = false;
-        iris.off(this.event.PRODUCTS.REMOVE, this.shoppingList.removeShoppingProduct);
-        iris.off(this.event.PRODUCTS.ADD, this.shoppingList.addShoppingProduct);
-        iris.off(this.event.SHOPPING.CHANGE_STATE, this.shoppingList.changeStateShoppingProduct);
-        this.shoppingList = null;
-        model.categories = {};
-        model.products = {};
-    }
-    
-    model.init = _init;
-    model.destroy = _destroy;
-    
-    
-    model.ShoppingList =  function () {    
-       
-        var _shoppingProducts = [];
-        var _order = 1;
-    
-        function _getShoppingProducts () {
-            return _shoppingProducts;
-        }
-        
-        function _getSortedShoppingProducts() {        
-            var sortedShoppingProducts = [];
-            var index = 0;
-            var posPurchased = 0;
-            
-            for (; index < _shoppingProducts.length; index++) {
-                var product = _shoppingProducts[index];                
-                var purchased = product.purchased === true;
-                var i = 0;
-                var j = posPurchased;
-                if (purchased) {
-                    i = posPurchased;
-                    j = sortedShoppingProducts.length;
-                }
-                
-                while (i < j && sortedShoppingProducts[i].order < product.order) {
-                    i++;
-                }
-                
-                if (i < j) {
-                    sortedShoppingProducts.splice(i, 0, product);                    
-                } else {
-                    if (purchased) {
-                        sortedShoppingProducts.push(product);
-                    } else {
-                        sortedShoppingProducts.splice(posPurchased, 0, product);
-                    }
-                }
-                if (!purchased) {
-                    posPurchased++;
-                }
-            }
-            
-            
-            return sortedShoppingProducts;
-        }
-        
-        function _getShoppingProduct(idProduct) {
-            var i = _getShoppingProductIndex(idProduct);            
-            if (i === -1) {
-                return null;
-            } else {
-                return _shoppingProducts[i];
-            }
-        }
-        
-        function _getShoppingProductIndex(idProduct) {
-            var found = false;
-            var i = 0;
-            while ( !found && i < _shoppingProducts.length ) {
-                if (_shoppingProducts[i].idProduct === idProduct) {
-                    found = true;
-                } else {
-                    i++;
-                }
-            }
-            
-            if (found) {
-                return i;
-            } else {
-                return -1;
-            }
-        }
-        
-        function _addShoppingProduct (product) {
-            if (_getShoppingProduct(product.idProduct) === null) {
-                if (product.order) {
-                    if (product.order > _order) {
-                        _order = product.order;
-                    }
-                }
-                var shoppingProduct = new model.ShoppingProduct(product);
-                shoppingProduct.order = _order;                
-                _order++;
-                _shoppingProducts.push(shoppingProduct);
-                
-            } else {
-                throw "The product is already in the shopping list.";
-            }
-        }
-        
-        
-        function _removeShoppingProduct (idProduct) {
-            var i = _getShoppingProductIndex(idProduct);
-            if (i >= 0) {
-                _shoppingProducts.splice(i, 1);
-            }
-        }
-        
-        function _removeAll () {
-            _order = 1;
-            _shoppingProducts = [];
-        }
-        
-        
-        function _changeStateShoppingProduct(idProduct, purchased) {            
-            var shoppingProduct = _getShoppingProduct(idProduct);
-            if (shoppingProduct !== null) {
-                if (purchased === undefined) {
-                    shoppingProduct.changeState(!shoppingProduct.purchased);
-                } else {               
-                    shoppingProduct.changeState(purchased === true);
-                }
-            }
-        }
-        
-        function _changeStateAllShoppingProducts(purchased) {                    
-            for (var i = 0; i < _shoppingProducts.length; i++) {
-                var product = _shoppingProducts[i];             
-                
-                if (purchased === true || purchased === false) {                   
-                    product.purchased = purchased;
-                } else {
-                    product.purchased = !product.purchased;
-                }
-            }
-        }
-        
-        function _removePurchased() {            
-            var i = 0;
-            while (i < _shoppingProducts.length) {
-                var product = _shoppingProducts[i];                
-                if (product.hasOwnProperty("purchased") && product.purchased === true) {
-                    _shoppingProducts.splice(i, 1);
-                } else {
-                    i++;
-                }
-            }
-        }
-        
-        function _hasProducts(purchased) {
-            var found = false;
-            var i = 0;
-            while ( !found && i < _shoppingProducts.length ) {
-                if (_shoppingProducts[i].purchased === purchased) {
-                    found = true;
-                } else {
-                    i++;
-                }
-            }
-            
-            return found;
-        }
-        
-        function _countProducts(purchased) {
-            var number = 0;
-            for (var i = 0; i < _shoppingProducts.length; i++) {
-                if (_shoppingProducts[i].purchased === purchased) {
-                    number++;
-                }
-            }
-            return number;
-        }
-             
-        model.ShoppingList.prototype.getShoppingProducts = _getShoppingProducts;
-        model.ShoppingList.prototype.getSortedShoppingProducts = _getSortedShoppingProducts;
-        model.ShoppingList.prototype.getShoppingProduct = _getShoppingProduct;
-        model.ShoppingList.prototype.addShoppingProduct = _addShoppingProduct;
-        model.ShoppingList.prototype.removeShoppingProduct = _removeShoppingProduct;
-        model.ShoppingList.prototype.changeStateShoppingProduct = _changeStateShoppingProduct;
-        model.ShoppingList.prototype.removeAll = _removeAll;
-        model.ShoppingList.prototype.checkAll = function() {
-            _changeStateAllShoppingProducts(true);
-        };
-        model.ShoppingList.prototype.uncheckAll = function() {
-            _changeStateAllShoppingProducts(false);
-        };
-        model.ShoppingList.prototype.invertCheck = function() {
-            _changeStateAllShoppingProducts();
-        };
-        model.ShoppingList.prototype.removePurchased = _removePurchased;
-        
-        model.ShoppingList.prototype.hasPurchasedProducts = function() {
-            return _hasProducts(true);
-        };
-        
-        model.ShoppingList.prototype.hasNoPurchasedProducts = function() {            
-            return _hasProducts(false);
-        };
-        
-        model.ShoppingList.prototype.countPurchased = function() {            
-            return _countProducts(true);
-        };
-        
-    };
-    
-    
-    
-    model.ShoppingProduct = function (product) {
-    
-        this.order = -1;
-        this.idProduct = product.idProduct;
-        this.nameProduct = product.nameProduct;
-        this.purchased = product.purchased === true;
-        
-        this.changeState = function(purchased) {
-            this.purchased = purchased === true;
-        };
-        
-    };
-    
-})(jQuery);
-```
-
-Sin entrar en detalle vamos a comentar lo más importante de este fichero:
-
-* Hemos creado una variable global *model* que permite acceder a los métodos públicos definidos.
-* La comunicación con los componentes de *Iris* se realiza a través de *eventos Iris* para lo que se han definido una serie de constantes.
-* Se ha definido un método *model.resource* para acceder a los servicios *REST* que ofrece Iris.
-* Se ha definido un objeto *model.resource.app* que permite recuperar la información de productos y categorías del servidor.
-
-En el fichero *resource.js*, preparamos las funciones que nos permiten acceder a servicios REST.
-
-```js
-iris.resource(function(self){
-    self.load = function (path, success, error) {
-        self.get(iris.baseUri() + path, success, error);
-    };
-}, iris.path.resource.js);
-```
-
-
-##<a name="step_by_step_caterogies"></a>*Screen* Categories
-
-El <a href="#categories_img">*Screen* *Categories*</a> permite cargar las categorías de los productos de la aplicación con los siguientes ficheros:
-
-En *categories.js*:
-
-```js
-iris.screen(
-    function (self) {
-        
-        function _inflate(categories) {
-            $.each(categories,
-                function(index, category) {						
-                    self.ui("list_categories", iris.path.ui.category_list_item.js, {
-                        "category": category
-                    });
-                }
-                );
-        }
-        
-        self.create = function () {
-            self.tmpl(iris.path.screen.categories.html);
-            model.init(false, function(){
-                _inflate(model.categories); 
-            });
-        };
-        
-        
-    }, iris.path.screen.categories.js);
-```
-
-Y en *categories.html*:
-
-```html
-<div class="container">  
-    <div class="row">  
-        <div class="span12">  
-            <ul data-id="list_categories" class="nav nav-tabs nav-stacked">  				
-
-            </ul>  
-        </div>  
-    </div>  
-</div>  
-```
-
-Observe que llamamos al método *model.init* para recuperar las categorías y los productos desde el servidor. Cuando hayamos recuperado las categorías, iterativamente cargamos el *UI* *category_list_item* pasándole cada categoría como parámetro en el contenedor *list_categories*.
-
-El *UI* *category_list_item* tendrá los siguientes ficheros:
-
-En *category_list_item.js*:
-
-```js
-iris.ui(function(self) {	
-    
     self.create = function() {
+        
         self.tmplMode(self.APPEND);
-        var category = self.setting("category");
-        self.tmpl(iris.path.ui.category_list_item.html, category);
-    };	
-    
-}, iris.path.ui.category_list_item.js);
+        self.tmpl(iris.path.todo.html);
+
+        self.get("check").on("click", function () {
+            todos.toggle(self.setting("id"));
+        });
+
+        self.get("destroy").on("click", function () {
+            todos.remove(self.setting("id"));
+        });
+
+        self.get().on("dblclick", function () {
+            self.get().addClass("editing");
+            self.get("text").select();
+        });
+
+        self.get("text").on("blur change", function (e) {
+            if ( !self.get().hasClass("editing") ) {
+                return; 
+            } 
+
+            self.get().removeClass("editing");
+            if ( this.value.trim() !== "" ) {
+                todos.edit(self.setting("id"), this.value);
+            }
+
+        });
+
+        self.on(todos.DESTROY_TODO, function (id) {
+            if (self.setting("id") === id) {
+                self.destroyUI();
+            }
+        });
+
+        self.on(todos.CHANGE_TODO, function (id) {
+            if (self.setting("id") === id) {
+                self.render();
+            }
+        });
+    };
+
+
+
+    self.render = function () {
+        var todo = todos.getTodo(self.setting("id"));
+        self.get().toggleClass("completed", todo.completed);
+        self.inflate({todo: todo});
+        return self;
+    };
+
+    self.show = function () {
+        self.get().hide().fadeIn("slow");
+        return self;
+    };
+
+},iris.path.todo.js);
 ```
 
-En *category_list_item.html*:
+En *todo.html*:
 
 ```html
 <li>
-    <a href="#/products?idCategory=##idCategory##">##nameCategory##</a>
+    <div class="view" data-jq-toggle="todo.visible">
+      <input data-id="check" class="toggle" type="checkbox" data-jq-prop-checked="todo.completed">
+
+      <label data-jq-text="todo.text"></label>
+      
+      <button data-id="destroy" class="destroy"></button>
+    </div>
+
+    <input data-id="text" data-jq-val="todo.text" class="edit">
 </li>
 ```
 
-Y el fichero *categories.json* contendrá la siguiente información:
+* En el método *create* se gestionan los eventos que se pueden realizar con una tarea.
+* El método *render* permite actualizar la visualización de un tarea.
+* El método *show* oculta o visualiza la tarea en función del filtro aplicado.
+* Obsérvese que el método *self.settings* asigna la variable *id* a *null*. Esta variable será pasada en la creación de la tarea. Es una buena práctica asignar, usando *self.settings* y al principio del propio componente, todas las variables que requiera un componente de Iris a un valor por defecto para evitar errores inesperados y como forma de documentar el componente.
 
-```json
-[
-    { "idCategory":1 , "nameCategory":"Vegetables" }, 
-    { "idCategory":2 , "nameCategory":"Fruits" }, 
-    { "idCategory":3 , "nameCategory":"Meat" },
-    { "idCategory":4 , "nameCategory":"Seafood" }
-]
-```
+##<a name="step_by_step_resource"></a>Todo resource
 
-Observe lo siguiente:
-* El método *tmplMode* tiene el valor *APPEND* para que las categorías se añadan y no se reemplacen.
-* La categoría pasada como parámetro desde el *Screen* *Categories* se recupera y se pasa al *template* en el método *tmpl*.
-* En el *template* podemos utilizar las propiedades del objeto *Category* recuperado.
-* Los *UIs* creados contienen un enlace que permite navegar al *Screen* con *Hash-URL* *#/products*.
-* Este *Screen* recibe el parámetro *idCategory* para conocer de qué categoría queremos recuperar los productos.
-
-##<a name="step_by_step_products"></a>*Screen* Products
-
-El <a href="#products_img">*Screen* *Products*</a> permite recuperar del servidor los productos de la categoría seleccionada y añadir los que queramos a la lista de la compra.
-
-Los ficheros de este *Screen* son:
-
-En *products.js*:
+El fichero de recurso *resource.js* contiene la lógica de la aplicación:
 
 ```js
-iris.screen(
-    function (self) {
-        
-        iris.translations("es_ES", {                
-            PRODUCTS: {
-                MISSING_CATEGORY: "Falta el parámetro <i>idCategoria</i>.",
-                CHOOSE_PRODUCTS: "Elige los productos que te interesen"
-            }
-        });
-            
-        iris.translations("en_US", {                
-            PRODUCTS: {
-                MISSING_CATEGORY: "Missing <i>idCategory</i> parameter.",
-                CHOOSE_PRODUCTS: "Choose some products"
-            }
-        });
-        
-        function _inflate(products) {
-            
-            self.get("msg").html(iris.translate("PRODUCTS.CHOOSE_PRODUCTS") + ":"); 
-            $.each(products,
-                function(index, product) {
-                    self.ui("list_products", iris.path.ui.product_list_item.js, {
-                        "product": product
-                    });
-                }
-                );					
-        }
-        
-        
-        self.create = function () { 
-            self.tmpl(iris.path.screen.products.html);
-        };
-       
-        self.awake = function (params) {
-            self.destroyUIs("list_products");
-            model.resource.app.getProducts(params.idCategory, _inflate,
-                function (request, textStatus, error) {
-                    self.get("msg").html(iris.translate("ERROR") + ": <i>" + error + "</i>");
-                }
-                );
+iris.resource(function (self) {
 
-        };
-    }, iris.path.screen.products.js);
-```
+    // Resource Events
+    self.CREATE_TODO = "create-todo";
+    self.DESTROY_TODO = "destroy-todo";
+    self.CHANGE_TODO = "change-todo";
 
-En *products.html*:
+    var todos = {},
+        ids = [],
+        currentFilter = "all",
+        id = 0;
 
-```html
-<div class="container">  
-    <div data-id="msg">Products</div>
-    <div class="row">  
-        <div class="span12">  
-            <form class="form-horizontal">                 
-                <div data-id="list_products" class="controls">  				
-
-                </div>  
-            </form>
-        </div>  
-    </div>  
-</div>  
-```
-
-Los más interesante de estos ficheros lo resumimos en los siguientes puntos:
-
-* A diferencia de lo que hicimos con las categorías, la carga de los productos la realizamos en el método *awake* en vez de en el *create*.
-* El motivo por el que hacemos esto es que necesitamos reutilizar el contenedor *list_products* cuando cambiamos la categoría seleccionada.
-* El método *awake* debe, por lo tanto, destruir los productos que haya en el contenedor antes de cargar los de la categoría seleccionada.
-* La carga de los productos se hace, de forma similar a como lo hicimos con las categorías, en el *UI* *product_list_item*.
-
-
-El *UI* *product_list_item* tendrá los siguientes ficheros:
-
-En *product_list_item.js*:
-
-```js
-iris.ui(function(self) {	
-    var product;
-    self.create = function() {  
-        self.tmplMode(self.APPEND);
-        product = self.setting("product");
-        self.tmpl(iris.path.ui.product_list_item.html, product);
-        self.get("product").change(function (event) {
-            if (this.checked) {
-                iris.notify(model.event.PRODUCTS.ADD, product);
-            } else {
-                iris.notify(model.event.PRODUCTS.REMOVE, product.idProduct);
-            }
-        });
+    self.reset = function() {
+        todos = {};
+        ids = [];
+        currentFilter = "all";
+        localStorage.clear();
+        id = 0;
     };
-    
-    self.awake = function() {
-        var p = model.shoppingList.getShoppingProduct(product.idProduct);
-        if (p) {
-            self.get("product").prop('checked', true);
-        } else {
-            self.get("product").prop('checked', false);
+
+    self.init = function () {
+        console.log("Reading todos from storage... ");
+        var idsSaved = localStorage.getItem("ids");
+        if ( idsSaved ) {
+            ids = idsSaved.split(",");
+        }
+
+        var todoString, todo, f, F;
+        for (f = 0, F = ids.length; f < F; f++) {
+            todoString = localStorage.getItem("todo_" + ids[f]);
+
+            todo = JSON.parse(todoString);
+            todos[todo.id] = todo;
+
+            if(todo.id > id) {
+                id = todo.id;
+            }
+
+            iris.notify(self.CREATE_TODO, todo.id);
         }
     };
-}, iris.path.ui.product_list_item.js);
-```
 
-Y en *product_list_item.html*:
-
-```html
-<label class="checkbox">
-    <input data-id="product" type="checkbox" data-product="##idProduct##">##nameProduct##
-</label> 
-```
-
-El fichero de productos para una categoría cualquiera, por ejemplo *category_2.json*, tendrá la siguiente estructura:
-
-```json
-[
-    { "idProduct":6 , "nameProduct":"Apples" }, 
-    { "idProduct":7 , "nameProduct":"Bananas" }, 
-    { "idProduct":8 , "nameProduct":"Grapes" }, 
-    { "idProduct":9 , "nameProduct":"Kiwis" }, 
-    { "idProduct":10 , "nameProduct":"Lemons" },
-    { "idProduct":11 , "nameProduct":"Melon" },
-    { "idProduct":12 , "nameProduct":"Oranges" },
-    { "idProduct":13 , "nameProduct":"Peaches" },
-    { "idProduct":14 , "nameProduct":"Plums" }
-]
-```
-
-La explicación de estos ficheros es similar a la que realizamos para el *UI* *category_list_item*, pero además:
-
-* Hemos utilizado el método *change* de JQuery para que cuando se pulse sobre algún producto, se añada o se elimine el producto de la lista de la compra.
-* Cuando se pulse sobre algún producto, el método anterior, notificará al modelo de la aplicación lo que ha ocurrido utilizando el modelo de eventos de *Iris*.
-* Observe que en el método *awake* comprobamos si el producto sigue estando o no en la lista de la comprar para marcar o desmarcar su *check*. Esto es necesario ya que desde el Screen *Shopping*, también podemos eliminar productos de la lista y así se mantiene la información sincronizada.
-
-
-##<a name="step_by_step_shopping"></a>*Screen* Shopping
-
-El <a href="#shopping_img">*Screen* *Shopping*</a> permite permite gestionar la cesta de la compra marcando aquellos productos que se han comprado. 
-
-Los ficheros de este *Screen* son:
-
-En *shopping.js*:
-
-```js
-iris.screen(
-    function (self) {
-        iris.translations("es_ES", {                
-            SHOPPING_LIST: {
-                EMPTY: "La cesta está vacía.",
-                REFRESH: "Actualizar",
-                REMOVE_ALL: "Borrar todos",
-                CHECK_ALL: "Marcar todos",
-                UNCHECK_ALL: "Desmarcar todos",
-                INVERT_ALL: "Invertir",
-                REMOVE_PURCHASED: "Borrar marcados",
-                ORDER: "Orden",
-                PRODUCT: "Producto",
-                ACTION: "Acción",
-                BUY: "Cambiar estado",
-                REMOVE: "Borrar"
-            }
-        });
-            
-        iris.translations("en_US", {                
-            SHOPPING_LIST: {
-                EMPTY: "The Shopping list is empty.",
-                REFRESH: "Refresh",
-                REMOVE_ALL: "Remove All",
-                CHECK_ALL: "Check All",
-                UNCHECK_ALL: "Uncheck All",
-                INVERT_ALL: "Invert checks",
-                REMOVE_PURCHASED: "Remove purchased",
-                ORDER: "Order",
-                PRODUCT: "Product",
-                ACTION: "Action",
-                BUY: "Change state",
-                REMOVE: "Remove"
-            }
-        });
-            
-        self.create = function () {
-            
-            self.tmpl(iris.path.screen.shopping.html);
-            self.get("div_shopping").hide();            
-            _asignEvents();
-        };
-                
-        self.awake = function (params) {
-            model.init(false, function(){
-                _inflate(); 
-            });
-        };
+    self.add = function (text) {
+        id++;
+        var todo = {id: String(id), text: text, completed: false};
+        todos[todo.id] = todo;
+        saveTodo(todo);
         
-        function _asignEvents() {
-            iris.on(model.event.PRODUCTS.REMOVE, _changeVisibilityShoppingTable);
-            iris.on(model.event.SHOPPING.CHANGE_STATE, _changeStateButtons);            
-            
-            self.get("btn_refresh").on("click", function () {
-                _inflate();
-            }
-            );
-                
-            self.get("btn_remove_all").on("click", function () {
-                iris.notify(model.event.SHOPPING.REMOVE_ALL);
-                _inflate();
-            }
-            );
-                
-            self.get("btn_check_all").on("click", function () {
-                iris.notify(model.event.SHOPPING.CHECK_ALL);
-                _inflate();
-            }
-            );
-                
-            self.get("btn_uncheck_all").on("click", function () {
-                iris.notify(model.event.SHOPPING.UNCHECK_ALL);
-                _inflate();
-            }
-            );
-                
-            self.get("btn_invert_check").on("click", function () {
-                iris.notify(model.event.SHOPPING.INVERT_CHECK);
-                _inflate();
-            }
-            );
-                
-            self.get("btn_remove_checked").on("click", function () {
-                iris.notify(model.event.SHOPPING.REMOVE_CHECKED);
-                _inflate();
-            }
-            );
-             
-        }
+        ids.push(todo.id);
+        localStorage.setItem("ids" , ids.join(","));
         
-        function _inflate() {
-            self.destroyUIs("shoppingList_products");
-            _destroyShoppingTable();
-            _loadShoppingProducts();
-            _createShoppingTable();
-            _changeVisibilityShoppingTable();
-        }
-                        
-        function _loadShoppingProducts() {
-            var products = model.shoppingList.getSortedShoppingProducts();
-            if (products.length > 0) {                
-                $.each(products,
-                    function(index, product) {
-                        var ui = self.ui("shoppingList_products", iris.path.ui.product_shopping_list_item.js, {
-                            "product": product,
-                            "removeProduct": function() {
-                                var idProduct = product.idProduct;
-                                var table = self.get("shopping_table");
-                                var row = $(this).closest("tr").get(0);
-                                table.fnDeleteRow(table.fnGetPosition(row));
-                                self.destroyUI(ui);
-                                iris.notify(model.event.PRODUCTS.REMOVE, idProduct);
-                            },
-                            "buyProduct": function() {
-                                var idProduct = product.idProduct;
-                                iris.notify(model.event.SHOPPING.CHANGE_STATE, idProduct);
-                            }
-                        });
-                    }
-                    );
-            }
-        }
-        
-        function _destroyShoppingTable() {
-            var table = self.get("shopping_table");
-            if (table.hasOwnProperty("fnClearTable")) {
-                table.fnClearTable();
-                table.fnDestroy();
-            }
-        }
-        
-        function _createShoppingTable() {
-            var table = self.get("shopping_table");            
-            table.dataTable(
-            {
-                "bPaginate": true,
-                "bInfo" : false,
-                "bAutoWidth": false,
-                "oLanguage": {
-                    "sSearch": iris.translate("JQUERY.DATATABLES.SEARCH") + ":",
-                    "sZeroRecords": iris.translate("SHOPPING_LIST.EMPTY"),
-                    "sLengthMenu": iris.translate("JQUERY.DATATABLES.SHOW"),
-                    "oPaginate": {
-                        "sNext": iris.translate("JQUERY.DATATABLES.NEXT"),
-                        "sPrevious": iris.translate("JQUERY.DATATABLES.PREVIOUS")
-                    }
-                },
-                "aoColumnDefs": [
-                {
-                    "bSortable": false, 
-                    "aTargets": [ 2 ]
-                },
-                {
-                    "sType": "html" , 
-                    "aTargets": [0]
-                }
-                ],
-                "aaSorting": []
-            }   
-            );
-        }
-        
-        function _changeVisibilityShoppingTable() {
-            var products = model.shoppingList.getSortedShoppingProducts();
-            if (products.length > 0) {
-                self.get("div_shopping").show();
-                self.get("msg").hide();
-                _changeStateButtons();
-            } else {
-                self.get("div_shopping").hide();
-                self.get("msg").show();
-            }
-        }
-        
-        function _changeStateButtons() {            
-            self.get("btn_check_all").toggleClass("disabled", !model.shoppingList.hasNoPurchasedProducts()).prop("disabled", !model.shoppingList.hasNoPurchasedProducts());
-            self.get("btn_uncheck_all").toggleClass("disabled", !model.shoppingList.hasPurchasedProducts()).prop("disabled", !model.shoppingList.hasPurchasedProducts());
-            self.get("btn_remove_checked").toggleClass("disabled", !model.shoppingList.hasPurchasedProducts()).prop("disabled", !model.shoppingList.hasPurchasedProducts());
-        }
-    
-        self.destroy = function () {
-            iris.off(model.event.PRODUCTS.REMOVE, _changeVisibilityShoppingTable);
-            iris.off(model.event.SHOPPING.CHANGE_STATE, _changeStateButtons);                
-        };
-        
-    }, iris.path.screen.shopping.js);
-```
-
-Y en *shopping.html*:
-
-```html
-<div class="container">  
-    <div data-id="msg">@@SHOPPING_LIST.EMPTY@@</div>
-    <div data-id="div_shopping">
-        <div class="control-group">  
-            <form class="well">
-                <button type="button" class="btn" data-id="btn_refresh"><i class="icon-refresh"></i>@@SHOPPING_LIST.REFRESH@@</button>
-                <button type="button" class="btn btn-danger" data-id="btn_remove_all"><i class="icon-trash icon-white"></i>@@SHOPPING_LIST.REMOVE_ALL@@</button>
-                <button type="button" class="btn btn-success" data-id="btn_check_all"><i class="icon-shopping-cart icon-white"></i>@@SHOPPING_LIST.CHECK_ALL@@</button>
-                <button type="button" class="btn btn-info" data-id="btn_uncheck_all"><i class="icon-shopping-cart-remove"></i>@@SHOPPING_LIST.UNCHECK_ALL@@</button>
-                <button type="button" class="btn btn-primary" data-id="btn_invert_check"><i class="icon-shopping-cart-invert"></i>@@SHOPPING_LIST.INVERT_ALL@@</button>
-                <button type="button" class="btn btn-warning" data-id="btn_remove_checked"><i class="icon-shopping-cart-remove-checked"></i>@@SHOPPING_LIST.REMOVE_PURCHASED@@</button>
-            </form>
-        </div>
-        <table class="table table-striped table-bordered"  data-id="shopping_table">
-            <thead>
-                <tr>            
-                    <th>@@SHOPPING_LIST.ORDER@@</th>
-                    <th>@@SHOPPING_LIST.PRODUCT@@</th>
-                    <th>@@SHOPPING_LIST.ACTION@@</th>            
-                </tr>
-            </thead>
-            <tbody data-id="shoppingList_products">
-
-            </tbody>
-        </table>
-    </div>
-</div>
-```
-
-Estos son los puntos más relevantes de estos ficheros:
-
-* La función *_asignEvents* asigna la pulsación de los botones del *screen* a eventos de Iris para actuar sobre el modelo. También registra eventos de Iris lanzados desde el modelo.
-* La función *_loadShoppingProducts* carga en el *tbody* de la tabla *shopping_table* los productos de la lista de la compra a través del UI *product_shopping_list_item*. Los productos que no se hayan comprado todavía aparecen primero ordenados por su *idProduct*. Con cada producto se pueden realizar dos acciones: comprar y borrar de la lista. Al cada UI de tipo *product_shopping_list_item* se le pasa como parámetro sendas funciones que permiten realizar estas acciones.
-* El paso de funciones como parámetros entre componentes o la notificación de eventos, permite reducir el acoplamiento de componentes al mínimo.
-* La función *_destroyShoppingTable* elimina la tabla de la lista de la compra.
-* La función *_createShoppingTable* determina las columnas que se van a mostrar en la tabla de la lista de la compra, el sistema de *paginación* y las columnas por las que se puede realizar ordenación.
-* La función *_changeVisibilityShoppingTable* oculta la tabla de la lista de la compra cuando no hay ningún producto.
-* La función *_changeStateButtons* habilita o deshabilita los botones del encabezado de la tabla de la lista de la compra en función de que se puedan o no pulsar.
-
-Por último el *ui* *product_shopping_list_item* contiene los productos de la lista de la compra que se van a cargar en la tabla anterior. Los ficheros utilizados son los siguientes:
-
-En *product_shopping_list_item.js*:
-
-```js
-iris.ui(function(self) {	
-    self.create = function() {
-        self.tmplMode(self.APPEND);
-        var product = self.setting("product");                
-        self.tmpl(iris.path.ui.product_shopping_list_item.html, product);
-        if (product.purchased === true) {
-            self.get("order").addClass("purchased");
-            self.get("nameProduct").addClass("purchased");
-            self.get("icon-shopping-cart").removeClass("icon-shopping-cart").addClass("icon-shopping-cart-remove");
-        }
-        self.get("remove").on("click", self.setting("removeProduct"));
-        self.get("buy").on("click",
-            function () {
-                (self.setting("buyProduct"))();
-                self.get("order").toggleClass("purchased");
-                self.get("nameProduct").toggleClass("purchased");
-                self.get("icon-shopping-cart").toggleClass("icon-shopping-cart icon-shopping-cart-remove");
-            }
-            );
+        iris.notify(self.CREATE_TODO, todo.id);
+        return todo.id;
     };
-    
-    self.destroy = function () {
-        self.get("remove").off("click");
-        self.get("buy").off("click");
+
+    self.getTodo = function (id) {
+        var todo = todos[id];
+        todo.visible = currentFilter === "all" || 
+        (todo.completed && currentFilter === "completed") ||
+        (!todo.completed && currentFilter === "active");
+        return $.extend({}, todo);
     };
-}, iris.path.ui.product_shopping_list_item.js);
+
+    self.remove = function (id) {
+        removeTodo(todos[id]);
+        iris.notify(self.DESTROY_TODO, id);
+    };
+
+    self.toggle = function (id) {
+        var todo = todos[id];
+        todo.completed = !todo.completed;
+        saveTodo(todo);
+
+        iris.notify(self.CHANGE_TODO, todo.id);
+    };
+
+    self.removeCompleted = function () {
+        for (var id in todos ) {
+            var todo = todos[id];
+            if (todo.completed) {
+                removeTodo(todo);
+                iris.notify(self.DESTROY_TODO, todo.id);
+            }
+        }
+    };
+
+    self.setAll = function (completed) {
+        for (var id in todos ) {
+            var todo = todos[id];
+            if ( todo.completed !== completed ) {
+                todo.completed = completed;
+                saveTodo(todo);
+                iris.notify(self.CHANGE_TODO, todo.id);
+            }
+        }
+    };
+
+    self.edit = function (id, text) {
+        var todo = todos[id];
+        todo.text = text;
+        saveTodo(todo);
+        iris.notify(self.CHANGE_TODO, todo.id);
+    };
+
+    self.setFilter = function (filter) {
+        console.log("Set filter = " + filter);
+        currentFilter = filter;
+    };
+
+    self.count = function () {
+        var remaining = 0;
+        var total = ids.length;
+
+        for ( var id in todos ) {
+            if ( !todos[id].completed ) {
+                remaining++;
+            }
+        }
+        return { remaining: remaining, total: total, completed: total - remaining };
+    };
+
+    function saveTodo (todo) {
+        console.log("Saving todo name[" + todo.text + "]");
+        localStorage.setItem("todo_" + todo.id, JSON.stringify(todo));
+    }
+
+    function removeTodo (todo) {
+        delete todos[todo.id];
+
+        var key = "todo_" + todo.id;
+        localStorage.removeItem(key);
+
+        ids.splice(ids.indexOf(todo.id), 1);
+        localStorage.setItem("ids" , ids.join(","));
+    }
+
+}, iris.path.resource);
 ```
 
-Y en *product_shopping_list_item.html*:
+* Tiene métodos que permiten realizar las acciones previstas: añadir, borrar, modificar, etc.
+* La información se almacena en un objeto llamado *todos*.
+* No contiene elementos de la interfaz de usuario y se comunica con esta a través de eventos de Iris y de métodos.
+* Al ser una aplicación de ejemplo, usa el objeto *localStorage* del navegador en lugar de una base de datos.
 
-```html
-<tr>  	
-    <td>
-        <span data-id="order">##order##</span>
-    </td>
-    <td>
-        <span data-id="nameProduct">##nameProduct##</span>
-    </td>
-    <td>
-        <button type="button" class="btn" data-id="buy" title="@@SHOPPING_LIST.BUY@@"><i data-id="icon-shopping-cart" class="icon-shopping-cart"></i></button>
-        <button type="button" class="btn" data-id="remove" title="@@SHOPPING_LIST.REMOVE@@"><i class="icon-trash"></i></button>		
-    </td>
-</tr>
-```
-
-Lo más relevante de estos ficheros es:
-
-* Se asignan estilos en función de si el producto está o no comprado.
-* Se capturan los eventos de pulsación sobre los botones para cambiar sus estilos y llamar a las funciones que ha recibido el UI en el método *self.setting*.
 
 ##<a name="step_by_step_qunit"></a>Pruebas unitarias con *QUnit*
 
@@ -4681,277 +4029,170 @@ Lo más relevante de estos ficheros es:
 
 Con *QUnit* podemos realizar tanto pruebas síncronas como asíncronas así como probar eventos de la interfaz de usuario.
 
-*QUnit* permite agrupar las pruebas en módulos. En nuestro ejemplo vamos a crear un único módulo para probar el modelo, en el ejercicio posterior se incorporará un segundo módulo para probar la interfaz de usuario.
+*QUnit* permite agrupar las pruebas en módulos. En nuestro ejemplo no vamos a utilizar módulos pero en aplicaciones grandes esto es muy conveniente.
 
 Las pruebas de unidad deben ser atómicas, es decir, que una prueba no debe depender de los resultados o de las acciones realizadas en otra prueba de unidad. Para facilitar esto, *QUnit* tiene la posibilidad de asociar a cada módulo las funciones *setup* y *teardown* y en ellas definir lo que queremos que se haga antes y después de cada test, respectivamente.
 
-Previamente creamos una página Web que cargue todas las librerías necesarias y la llamamos, por ejemplo, *test.html*:
+Previamente creamos una página Web que cargue todas las librerías necesarias y la llamamos, por ejemplo, *index.html*:
 
 ```html
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Iris Shooping List Test</title>
-        <script src="../js/jquery-1.8.3.js"></script>
+<head>
+<link href="../css/qunit-1.13.0.css" rel="stylesheet" type="text/css" />
+<script src="../app/qunit-1.13.0.js"></script>
+<script src="../app/jquery-2.0.3.min.js"></script>
+<script src="../app/iris.js" type="text/javascript"></script>
+<script>
+    QUnit.config.autostart = false;
 
-        <!-- Load local QUnit (grunt requires v1.0.0 or newer). -->
-        <link rel="stylesheet" href="qunit/qunit.css" media="screen">
-        <script src="qunit/qunit.js"></script>
+    // define iris components paths
+    iris.path = {
+        welcome : { js: "welcome.js", html: "welcome.html" },
+        todo: { js: "todo.js", html : "todo.html" },
+        resource : "resource.js"
+    };
 
-        <script src="../js/iris.js"></script>
-        
-        <script type='text/javascript' src='../js/bootstrap.js'></script>
-        <script type='text/javascript' src='../js/jquery.dataTables.js'></script>      
-        <script type='text/javascript' src='../js/shopping_list.js'></script>
-        
-        <script src="model_test.js"></script>
-        
-    </head>
-    <body>
-        <h1 id="qunit-header">Iris Test Suite</h1>
-        <h2 id="qunit-banner"></h2>
-        <div id="qunit-testrunner-toolbar"></div>
-        <h2 id="qunit-userAgent"></h2>
-        <ol id="qunit-tests"></ol>
-        <div id="qunit-fixture">
-            <span>lame test markup</span>
-            <span>normal test markup</span>
-            <span>awesome test markup</span>
-        </div>
-        <span id="start_iris"></span>
-    </body>
+    $(window.document).ready(
+
+        function () {
+            // set the iris components base uri
+            iris.baseUri("../app/");
+
+            // show the initial screen
+            iris.welcome(iris.path.welcome.js);
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                todos = iris.resource(iris.path.resource);
+                QUnit.start();
+            });
+
+        }
+    );
+
+</script>
+<script src="./js/todo.js"></script>
+<meta name="description" content="Todo List" />
+<meta charset='utf-8' />
+<title>Todo List</title>
+</head>
+<body>
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+</body>
 </html>
 ```
 
-El módulo para probar el modelo lo almacenamos en el fichero *model_test.js*:
 
-Nota: No se ha realizado una prueba exhaustiva sino que se trata de un simple ejemplo para comprender el funcionamiento de *QUnit*.
-
-```js
-(function($) {
-
- 
-    function init() {
-        iris.baseUri("..");
-        iris.cache(false);
-        iris.enableLog("localhost");
-    
-        iris.path = {
-            screen: {
-                welcome: {
-                    js: "/shopping/screen/welcome.js", 
-                    html: "/shopping/screen/welcome.html"
-                },
-                home: {
-                    js: "/shopping/screen/home.js", 
-                    html: "/shopping/screen/home.html"
-                },
-                categories: {
-                    js: "/shopping/screen/products/categories.js", 
-                    html: "/shopping/screen/products/categories.html"
-                },
-                products: {
-                    js: "/shopping/screen/products/products.js", 
-                    html: "/shopping/screen/products/products.html"
-                },
-                shopping: {
-                    js: "/shopping/screen/list/shopping.js", 
-                    html: "/shopping/screen/list/shopping.html"
-                }
-            },
-            ui: {
-                category_list_item: {
-                    js: "/shopping/ui/products/category_list_item.js", 
-                    html: "/shopping/ui/products/category_list_item.html"
-                },
-                product_list_item: {
-                    js: "/shopping/ui/products/product_list_item.js", 
-                    html: "/shopping/ui/products/product_list_item.html"
-                },
-                product_shopping_list_item: {
-                    js: "/shopping/ui/list/product_shopping_list_item.js", 
-                    html: "/shopping/ui/list/product_shopping_list_item.html"
-                }
-            },
-            resource: {
-                js: "/shopping/resource.js"  
-            }
-        };
-    }
-    
-    function clearBody() {
-        var irisGeneratedCode = $("#start_iris").nextAll();
-        if (irisGeneratedCode !== undefined) {
-            irisGeneratedCode.remove();
-        }
-    }
-    
-    module( "Model Test", {
-        setup: function() {
-            iris.notify("iris-reset");
-            init();
-            iris.welcome(iris.path.screen.welcome.js);
-        },
-        teardown: function () {
-            model.destroy();
-            clearBody();
-        }
-    });
-    
-        asyncTest("Test addShoppingProduct() method", function() {
-        window.expect(1);
-        
-        iris.on(iris.AFTER_NAVIGATION, function() {
-            iris.off(iris.AFTER_NAVIGATION);
-            model.init( function () {
-                
-                model.shoppingList.addShoppingProduct({
-                    "idProduct":1 , 
-                    "nameProduct":"Carrots"
-                });
-                model.shoppingList.addShoppingProduct({
-                    "idProduct":15 , 
-                    "nameProduct":"Bacon"
-                });
-                window.ok(model.shoppingList.getShoppingProducts().length === 2, "Two Prodcuts added to the Shopping List");
-                window.start();
-            });
-        });
-        
-    }
-    );
-    
-    asyncTest("Test removeShoppingProduct() method", function() {
-        window.expect(1);
-        
-        iris.on(iris.AFTER_NAVIGATION, function() {
-            iris.off(iris.AFTER_NAVIGATION);
-            model.init( function () {
-                model.shoppingList.addShoppingProduct({
-                    "idProduct":1 , 
-                    "nameProduct":"Carrots"
-                });
-                model.shoppingList.addShoppingProduct({
-                    "idProduct":15 , 
-                    "nameProduct":"Bacon"
-                });
-        
-                model.shoppingList.removeShoppingProduct(1);
-                model.shoppingList.removeShoppingProduct(20);
-        
-                window.ok(model.shoppingList.getShoppingProducts().length === 1, "One product removed from the Shopping List");
-                window.start();
-            });
-        });
-        
-    }
-    );
-    
-    
-    asyncTest("Test getShoppingProduct() method", function() {
-        window.expect(2);
-        
-        iris.on(iris.AFTER_NAVIGATION, function() {
-            iris.off(iris.AFTER_NAVIGATION);
-            model.init(function() {
-                model.shoppingList.addShoppingProduct({
-                    "idProduct":1 , 
-                    "nameProduct":"Carrots"
-                });
-                model.shoppingList.addShoppingProduct({
-                    "idProduct":15 , 
-                    "nameProduct":"Bacon"
-                });
-        
-        
-                window.ok(model.shoppingList.getShoppingProduct(15).nameProduct === "Bacon", "Bacon product retrieved from the Shoppiing List");
-                window.ok(model.shoppingList.getShoppingProduct(20) === null, "The idProduct 20 is not in the Shopping List");
-                window.start();
-            });
-        });
-        
-    }
-    );
-        
-        
-    asyncTest("Test changeStateShoppingProduct() method", function() {
-        window.expect(2);
-        
-        iris.on(iris.AFTER_NAVIGATION, function() {
-            iris.off(iris.AFTER_NAVIGATION);
-            model.init(function () {
-                model.shoppingList.addShoppingProduct({
-                    "idProduct":1 , 
-                    "nameProduct":"Carrots"
-                });
-                model.shoppingList.addShoppingProduct({
-                    "idProduct":15 , 
-                    "nameProduct":"Bacon"
-                });
-        
-                model.shoppingList.changeStateShoppingProduct(15);
-        
-                window.ok(model.shoppingList.getShoppingProduct(15).purchased === true, "Bacon has been purchased");
-        
-                model.shoppingList.changeStateShoppingProduct(15);
-        
-                window.ok(model.shoppingList.getShoppingProduct(15).purchased === false, "Bacon has not been purchased");
-                window.start();
-            });
-        });
-        
-    }
-    );
-        
-    
-
-    asyncTest("Test getCategories() Method", function() {
-        window.expect(1);
-        iris.on(iris.AFTER_NAVIGATION, function() {
-            iris.off(iris.AFTER_NAVIGATION);
-            model.init(function () {
-                model.resource.app.getCategories(
-                    function(categories) {
-                        window.ok(categories.length === 4, "Categories retrieved");
-                        window.start();
-                    }
-                    );
-            });
-        }
-        );
-    });
-        
-    asyncTest("Test getProducts() Method", function() {
-        window.expect(1);
-        iris.on(iris.AFTER_NAVIGATION, function() {
-            iris.off(iris.AFTER_NAVIGATION);
-            model.init( function() {
-                model.resource.app.getAllProducts(
-                    function(products) {
-                        window.ok(products.length === 28, "Products retrieved");
-                        window.start();
-                    }
-                    );
-            });
-        }
-        );
-    });
-
-    
-}(jQuery));
-```
-En QUnit, para realizar un test síncrono hay que llamar a la función *test* de *QUnit* y, de forma similar, a la función *asyncTest* cuando el test sea asíncrono. Los casos de prueba del ejemplo deben ser asíncronos ya que debemos navegar al Screen Welcome para que se cargue el fichero de recursos definido en la variable *iris.path*. Los test asíncronos no comienzan a ejecutarse hasta que no se llame a la función *start*. La función *expect* indica el número de tests que se deben pasar exitosamente para que *QUnit* considere el caso de prueba como positivo.
-
-Observe que en el método *setup* hemos incluido una llamada a:
+Vamos a crear un fichero *todos.js* que permita probar las funciones contenidas en el resource *resource.js*.
 
 ```js
-iris.notify("iris-reset");
+//in todos.js
+QUnit.testStart(function() {
+    todos.reset();
+    todos.add("Go to the class");
+    todos.add("Go to the doctor");
+});
+
+test("addTodo Test", function() {
+    var count = todos.count();
+    todos.add("Do my homework");
+    ok(todos.count().total === count.total + 1, "Added one todo");
+    ok(todos.count().remaining === count.remaining + 1, "Added one remaining todo");
+    ok(todos.count().completed === count.completed, "The completed todos stay the same");
+});
+
+test("getTodo Test", function() {
+    var id = todos.add("Go to the cinema");
+    ok(todos.getTodo(id).id === id, "Todo retrieved"); 
+});
+
+test("delTodo Test", function() {
+    var id = todos.add("Go to the class");
+    var count = todos.count();
+    var todo = todos.getTodo(id);
+    todos.remove(id);
+    window.throws(function() {
+        todos.getTodo(id);
+    }, "Todo has been deleted");
+    ok(todos.count().total === count.total - 1, "Deleted one todo");
+    ok(todos.count().remaining === count.remaining - 1, "Deleted one remaining todo");
+    ok(todos.count().completed === count.completed, "The completed todos stay the same");
+    
+});
+
+
+test("updateTodo Test", function() {
+    var id = todos.add("Go to the class");
+    ok(todos.getTodo(id).text === "Go to the class", "Before: Todo has the correct text");
+    todos.edit(id, "Snap");
+    ok(todos.getTodo(id).text === "Snap", "After: Todo has the correct text");
+});
+
+test("checkTodo Test", function() {
+    var id = todos.add("Go to the class");
+    var count = todos.count();
+    ok(todos.getTodo(id).completed === false, "Before: Todo has not been completed");
+    todos.toggle(id);
+    ok(todos.getTodo(id).completed === true, "After: Todo has been completed");
+    ok(todos.count().total === count.total, "The todos number stay the same");
+    ok(todos.count().remaining === count.remaining - 1, "There is one remaining todo less");
+    ok(todos.count().completed === count.completed + 1, "There is one completed todo more");
+    todos.toggle(id);
+    ok(todos.getTodo(id).completed === false, "After: Todo has not been completed");
+    ok(todos.count().total === count.total, "The todos number stay the same");
+    ok(todos.count().remaining === count.remaining, "There is one remaining todo more");
+    ok(todos.count().completed === count.completed, "There is one completed todo less");
+});
+
+test("checkAll Test", function() {
+    var id = todos.add("Go to the class");
+    var count = todos.count();
+    ok(todos.getTodo(id).completed === false, "Before: Todo has not been completed");
+    todos.setAll(true);
+    ok(todos.getTodo(id).completed === true, "After: Todo has been completed");
+    ok(todos.count().total === count.total, "The todos number stay the same");
+    ok(todos.count().remaining === 0, "There are no remaining todos");
+    ok(todos.count().completed === todos.count().total, "All todos are completed");
+});
+
+test("delChecked Test", function() {
+    var id = todos.add("Go to the class");
+    var id2 = todos.add("Go to the doctor");
+    var count = todos.count();
+    todos.toggle(id2);
+    todos.removeCompleted();
+    window.throws(function() {
+        todos.getTodo(id2);
+    }, "Todo has been deleted");
+    ok(todos.count().total === count.total - 1, "There is one todo less");
+    ok(todos.count().remaining === todos.count().total, "All todos are pending");
+    ok(todos.count().completed === 0, "There are no completed todos");
+});
+
+
+test("filterTodos Test", function() {
+    var id = todos.add("Go to the class");
+    todos.setFilter('all');
+    ok(todos.getTodo(id).visible === true, "Filter all: Any todo is visible");
+    todos.toggle(id);
+    ok(todos.getTodo(id).visible === true, "Filter all: Any todo is visible");
+    todos.setFilter('completed');
+    ok(todos.getTodo(id).visible === true, "Filter completed: Completed todos are visible");
+    todos.toggle(id);
+    ok(todos.getTodo(id).visible === false, "Filter completed: Remaining todos are invisible");
+    todos.setFilter('active');
+    ok(todos.getTodo(id).visible === true, "Filter active: Remaining todos are visible");
+    todos.toggle(id);
+    ok(todos.getTodo(id).visible === false, "Filter completed: Completed todos are invisible"); 
+    todos.setFilter('bad');
+    ok(todos.getTodo(id).visible === false, "Filter bad: All todos are invisible");
+    todos.toggle(id);
+    ok(todos.getTodo(id).visible === false, "Filter bad: All todos are invisible");
+});
 ```
-Se ha utilizado el evento *iris.AFTER_NAVIGATION* para saber cuando Iris ha terminado de realizar la navegación.
 
-Esta llamada permite que Iris reinicie su estado y su uso está indicando únicamente cuando se realizan test.
-
+En QUnit, para realizar un test síncrono hay que llamar a la función *test* de *QUnit* y, de forma similar, a la función *asyncTest* cuando el test sea asíncrono. Los test asíncronos no comienzan a ejecutarse hasta que no se llame a la función *start*. La función *expect* indica el número de tests que se deben pasar exitosamente para que *QUnit* considere el caso de prueba como positivo.
 
 ##<a name="step_by_step_grunt"></a>Automatizando procesos con *Grunt*
 
@@ -4965,12 +4206,40 @@ npm install -g grunt
 
 Los ficheros de configuración de *Grunt* de la aplicación son:
 
-En *iris.json* podemos definir las variables que queramos que use *Grunt*:
+En *package.json* definimos la aplicación que estamos creando y sus dependencias:
 
 ```js
 {
-  "name": "ShoppingList",
-  "title": "ShoppingList Example",
+  "name": "todo-list",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thegameofcode/iris.git"
+  },
+  "scripts": {
+    "test": "grunt"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-watch": "~0.3.1",
+    "grunt-contrib-jshint": "~0.4.3",
+    "grunt-contrib-qunit": "~0.2.1",
+    "grunt-http-server": "~0.0.4"
+  }
+}
+```
+
+Para instalar las dependencias, nos situamos el en directorio en el que se encuentre el fichero *package.json* y ejecutamos:
+
+```
+npm install
+```
+
+En *todo.json* podemos definir las variables que queramos que use *Grunt*:
+
+```js
+{
+  "name": "todo-list",
+  "title": "Todo List",
   "description": "This is a simple example of using Iris.",
   "version": "0.0.1-SNAPSHOT",
   "homepage": "http://localhost:8080",
@@ -4992,13 +4261,14 @@ En *iris.json* podemos definir las variables que queramos que use *Grunt*:
     }
   ],
   "dependencies": {
+    "iris": "0.5.6",
     "jquery": "1.5.1"
   },
   "keywords": []
 }
 ```
 
-Y en *grunt.js* definimos y configuramos las tareas que queramos automatizar:
+Y en *Gruntfile.js* definimos y configuramos las tareas que queramos automatizar:
 
 ```js
 /*global module:false*/
@@ -5006,7 +4276,7 @@ module.exports = function(grunt) {
 
     // Project configuration.
     grunt.initConfig({
-        pkg: '<json:iris.json>',
+        pkg: '<json:todo.json>',
         meta: {
             banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
         '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
@@ -5014,392 +4284,97 @@ module.exports = function(grunt) {
         '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
         ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */'
         },
-        concat: {
-            dist: {
-                src: ['<banner:meta.banner>', '<file_strip_banner:src/<%= pkg.name %>.js>'],
-                dest: 'dist/<%= pkg.name %>.js'
-            }
-        },
-        min: {
-            dist: {
-                src: ['<banner:meta.banner>', '<config:concat.dist.dest>'],
-                dest: 'dist/<%= pkg.name %>.min.js'
-            }
-        },
         qunit: {
-            files: ['www/test/**/*.html']
-        },
-        lint: {
-            files: ['grunt.js', ' www/js/iris.js', 'www/js/init.js', 'www/js/shopping_list.js', 'www/shopping/**/*.js', 'www/test/modet_test.js']
-        },
-        watch: {
-            files: '<config:lint.files>',
-            tasks: 'lint qunit'
+          all: {
+            options: {
+              urls: [
+                'http://127.0.0.1:8080/test/index.html'
+              ]
+            }
+          }
         },
         jshint: {
-            options: {
-                curly: true,
-                eqeqeq: true,
-                immed: true,
-                latedef: true,
-                newcap: true,
-                noarg: true,
-                sub: true,
-                undef: true,
-                boss: true,
-                eqnull: true,
-                browser: true
-            },
+          uses_defaults: ['Gruntfile.js', 'app/init.js', 'app/todo.js', 'app/resource.js', 'app/welcome.js', 'test/js/*.js'],
+          options: {
+            curly: true,
+            eqeqeq: true,
+            immed: true,
+            latedef: true,
+            newcap: true,
+            noarg: true,
+            sub: true,
+            undef: true,
+            boss: true,
+            eqnull: true,
+            browser: true,
             globals: {
-                jQuery: true,
-                iris: true,
-                $: true,
-                model: true
+              jQuery: true,
+              iris: true,
+              $: true,
+              ok: true,
+              todos: true,
+              test: true,
+              console: true,
+              QUnit: true,
+              stop: true,
+              start: true
             }
+          }
         },
-        uglify: {},
-        server: {
-            port:8080,
-            base: "./"
+        'http-server': {
+            'test': {
+                    root: ".",
+                    port: 8080,
+                    host: "127.0.0.1",
+                    showDir : true,
+                    autoIndex: true,
+                    defaultExt: "html",
+                    runInBackground: true
+            },
+            'default': {
+                    root: ".",
+                    port: 8080,
+                    host: "127.0.0.1",
+                    showDir : true,
+                    autoIndex: true,
+                    defaultExt: "html",
+                    runInBackground: false
+            }
         }
     });
 
     // Default task.    
-    grunt.registerTask('default', 'lint server watch');
+    grunt.registerTask('test', ['jshint', 'http-server:test', 'qunit']);
 
-    grunt.registerTask('test', 'lint qunit');
+    grunt.registerTask('default', ['jshint', 'http-server:default']);
+
+    // Loading dependencies
+    for (var key in grunt.file.readJSON("package.json").devDependencies) {
+        if (key !== "grunt" && key.indexOf("grunt") === 0) {
+          grunt.loadNpmTasks(key);
+        }
+    }
 };
 ```
 
-Si queremos validar el código, debemos abrir un terminal y, estando en el directorio al que pertenece *grunt.js*, ejecutar:
+Si queremos validar el código, debemos abrir un terminal y, estando en el directorio en el que está *Gruntfile.js*, ejecutar:
 
 ```
-grunt lint
+grunt jshint
 ```
 
 Para desplegar nuestra aplicación en un servidor de *Node.js* debemos asegurarnos que lo tenemos instalado en el sistema y ejecutar:
 
 ```
-grunt server watch
-```
-
-Observe que hay una tarea por defecto que nos permite ejecutar las dos anteriores escribiendo simplemente:
-
-```
 grunt
 ```
+
+Para ejecutar la aplicación debemos poner el la barra de direcciones del navegador: [http://localhost:8080](http://localhost:8080)
+
+Para ejecutar los tests debemos poner el la barra de direcciones del navegador: [http://localhost:8080/test](http://localhost:8080/test)
 
 Por último, para realizar las pruebas desde el terminal y no tener que abrir el navegador, debemos instalar primero [PhantomJS](http://phantomjs.org/) y luego ejecutar:
 
 ```
 grunt test
-```
-
-##<a name="step_by_step_exercise"></a>Ejercicio: Modificando la aplicación
-
-En esta sección vamos a discutir que cambios son necesarios en la aplicación para que los productos se seleccionen en la misma pantalla en la que se cargan las categorías tal y como se muestra en la siguiente imagen:
-
-![categories2](https://raw.github.com/surtich/iris/master/docs/images/shopping_list/categories2.png)
-
-El problema que se nos plantea es que, en la aplicación actual, los productos se cargan a través del Screen *#/products* y, sin embargo, cada categoría se carga en el UI *category_list_item* desde la que se navega al Screen *#/products* pasándole el *idCategory* correspondiente. Iris no permite registrar un Screen dentro de un UI por lo que no podremos cargar el Screen *#/products* en el UI *category_list_item*.
-
-Una posible solución consistirá en eliminar el Screen *#/products* y cargar en el UI *category_list_item*, los UIs *product_list_item* que, a su vez, cargan los productos de cada categoría. Lógicamente, el trabajo que se hacía en el Screen *#/products* habrá que hacerlo en otro sitio; en nuestro caso lo repartiremos entre el Screen *#/categories* y los UIs *category_list_item* y *product_list_item*.
-
-Vamos a ver los cambios necesarios para implementar la solución propuesta.
-
-En primer lugar, debemos borrar los ficheros *products.js* y *products.html* del directorio *screen/products*.
-
-Esto conlleva modificar el fichero *init.js* para que la variable *iris.path* no incluya estos ficheros:
-
-```js
-//in init.js
-....
-iris.path = {
-    screen: {
-        welcome: {js: "/shopping/screen/welcome.js", html: "/shopping/screen/welcome.html"},
-        home: {js: "/shopping/screen/home.js", html: "/shopping/screen/home.html"},
-        categories: {js: "/shopping/screen/products/categories.js", html: "/shopping/screen/products/categories.html"},                
-        shopping: {js: "/shopping/screen/list/shopping.js", html: "/shopping/screen/list/shopping.html"}
-    },
-    ui: {
-        category_list_item: {js: "/shopping/ui/products/category_list_item.js", html: "/shopping/ui/products/category_list_item.html"},
-        product_list_item: {js: "/shopping/ui/products/product_list_item.js", html: "/shopping/ui/products/product_list_item.html"},
-        product_shopping_list_item: {js: "/shopping/ui/list/product_shopping_list_item.js", html: "/shopping/ui/list/product_shopping_list_item.html"}
-    },
-    resource: {
-      js: "/shopping/resource.js"  
-    }
-};
-...
-```
-
-En *welcome.js* debemos eliminar el registro de "#/products"; para ello modificamos la función *_createScreens()*:
-
-```js
-function _createScreens() {
-    self.screens("screens", [
-        ["home", iris.path.screen.home.js],
-        ["categories", iris.path.screen.categories.js],
-        ["shopping", iris.path.screen.shopping.js]
-        ]);
-}
-```
-
-En *products.js* cargábamos los productos en el UI *product_list_item*. Esta tarea se la vamos a asignar a *category_list_item.js* que quedará de la siguiente forma:
-
-```js
-iris.ui(function(self) {	
-    
-    function _inflate(category, products) {
-        $.each(products,
-            function(index, product) {
-                if (category.idCategory === product.category) {
-                    self.ui("list_products", iris.path.ui.product_list_item.js, {
-                        "product": product
-                    });
-                }
-            }
-            );
-    }
-    
-    self.create = function() {
-        self.tmplMode(self.APPEND);
-        var category = self.setting("category");
-        self.tmpl(iris.path.ui.category_list_item.html, category);
-        _inflate(category, self.setting("products"));
-    };	
-    
-}, iris.path.ui.category_list_item.js);
-```
-
-Observe que se reciben todos los productos pero sólo se añaden al *template* los que correspondan a la categoría en la que estamos.
-
-Modificamos *categories.js* para que cargue las categorías y los productos.
-
-```js
-iris.screen(
-    function (self) {
-        
-        function _inflate(categories, products) {
-            $.each(categories,
-                function(index, category) {						
-                    self.ui("list_categories", iris.path.ui.category_list_item.js, {
-                        "category": category,
-                        "products": products
-                    });
-                }
-                );
-        }
-        
-        self.create = function () {
-            self.tmpl(iris.path.screen.categories.html);
-            model.init(false, function(){
-                _inflate(model.categories, model.products); 
-            });
-        };
-        
-        
-    }, iris.path.screen.categories.js);
-```
-
-Ahora habría que modificar los ficheros *html* asociados. Se han hecho algunos cambios en su estructura y en los estilos para utilizar el efecto *[accordion](http://twitter.github.com/bootstrap/javascript.html#collapse)* que proporciona *BootStrap*. Este efecto nos permite que sólo se vean los productos de una categoría a la vez, colapsando con una animación los productos de la categoría anterior.
-
-En *categories.html*:
-
-```html
-<div class="accordion" id="accordion_categories" data-id="list_categories">
-</div>
-```
-
-En *category_list_item.html*:
-
-```html
-<div class="accordion-group">
-    <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion_categories" href="#collapse_category_##idCategory##" data-id="category">
-            ##nameCategory##
-        </a>
-    </div>
-    <div id="collapse_category_##idCategory##" class="accordion-body collapse">
-        <div data-id="list_products" class="accordion-inner"></div>
-    </div>
-</div>
-```
-
-Por último, hemos realizado algunos ejemplos de pruebas unitarias para la vista en *view_test.js*:
-
-```js
-(function($) {
-
- 
-     function init() {
-        iris.baseUri("..");
-        iris.cache(false);
-        iris.enableLog("localhost");
-    
-        iris.path = {
-            screen: {
-                welcome: {
-                    js: "/shopping/screen/welcome.js", 
-                    html: "/shopping/screen/welcome.html"
-                },
-                home: {
-                    js: "/shopping/screen/home.js", 
-                    html: "/shopping/screen/home.html"
-                },
-                categories: {
-                    js: "/shopping/screen/products/categories.js", 
-                    html: "/shopping/screen/products/categories.html"
-                },
-                shopping: {
-                    js: "/shopping/screen/list/shopping.js", 
-                    html: "/shopping/screen/list/shopping.html"
-                }
-            },
-            ui: {
-                category_list_item: {
-                    js: "/shopping/ui/products/category_list_item.js", 
-                    html: "/shopping/ui/products/category_list_item.html"
-                },
-                product_list_item: {
-                    js: "/shopping/ui/products/product_list_item.js", 
-                    html: "/shopping/ui/products/product_list_item.html"
-                },
-                product_shopping_list_item: {
-                    js: "/shopping/ui/list/product_shopping_list_item.js", 
-                    html: "/shopping/ui/list/product_shopping_list_item.html"
-                }
-            },
-            resource: {
-                js: "/shopping/resource.js"  
-            }
-        };
-    }
-    
-    function clearBody() {
-        var irisGeneratedCode = $("#start_iris").nextAll();
-        if (irisGeneratedCode !== undefined) {
-            irisGeneratedCode.remove();
-        }
-    }
-    
-    
-    module( "View Test", {
-        setup: function() {            
-            iris.notify("iris-reset");
-            init();
-            iris.welcome(iris.path.screen.welcome.js);
-        },
-        teardown: function () {
-            model.destroy();
-            //window.location.hash ="";
-            clearBody();
-        }
-    });
-    
-    
-    asyncTest("Test add products to the Shopping List", function() {
-        window.expect(1);
-        iris.on(iris.AFTER_NAVIGATION ,function() {
-            iris.off(iris.AFTER_NAVIGATION);
-            model.init(function(){
-                iris.navigate("#/categories");
-                iris.on(iris.AFTER_NAVIGATION ,function() {
-                    setTimeout(function() {
-                        $("input[type='checkbox']", "[id^='collapse_category']").trigger('click');
-                        window.ok(model.shoppingList.getShoppingProducts().length === model.products.length, "All products are selected");
-                        window.start();
-                    },1000);
-                
-                });
-            });
-            
-        });
-    });
-        
-    asyncTest("Test remove purchased products", function() {
-        window.expect(1);
-        iris.on(iris.AFTER_NAVIGATION ,function() {
-            iris.off(iris.AFTER_NAVIGATION);
-            model.init(function(){                    
-                iris.navigate("#/categories");
-                iris.on(iris.AFTER_NAVIGATION ,function() {
-                    iris.off(iris.AFTER_NAVIGATION);
-                    setTimeout(function() {
-                        $("input[type='checkbox']", "[id^='collapse_category']").trigger('click');
-                        iris.navigate("#/shopping");
-                        iris.on(iris.AFTER_NAVIGATION ,function() {
-                            iris.off(iris.AFTER_NAVIGATION);
-                            $("button[data-id='buy']").first().trigger("click");
-                            //$("button[data-id='btn_remove_checked']").trigger("click");
-                            model.ShoppingList.prototype.removePurchased();
-                            window.ok(model.shoppingList.getShoppingProducts().length === model.products.length - 1, "Removed 1 purchased product");
-                            window.start();
-                        });
-                    },1000);
-                });
-                
-            });
-            
-        });
-    }
-    );
-        
-}(jQuery));
-```
-
-Observe que se ha utilizado el evento método *window.setTimeout* para dar tiempo a que se llame a los servicios.
-
-Puede descargar la aplicación modificada en el siguiente [enlace](https://github.com/surtich/iris/blob/master/docs/iris-shopping2.tar.gz?raw=true).
-
-##<a name="step_by_step_exercise2"></a>Ejercicio: Integrando Knockout
-
-[Knockout](http://knockoutjs.com/) es una librería de Javascript que implementa el patrón Model-View-View-Model.
-
-La ventaja que aportan *frameworks* como Knockout es que permiten un vínculo, *binging*, bidireccional entre la vista y el modelo de datos del cliente; automatizando el proceso mostrar y actualizar datos, ya que cuando cambia el modelo, la vista se refresca para mostrar la nueva información y, viceversa, cuando se introduce información en un formulario de la vista, es el modelo el que recibe los cambios.
-
-Esto se traduce en una gran reducción del código en *Javascript* que es necesario para mostrar los datos del modelo.
-
-Puede descargar la aplicación integrada con Knockout en el siguiente [enlace](https://github.com/surtich/iris/blob/master/docs/iris-shopping-knockout.tar.gz?raw=true).
-
-Vamos a explicar el resultado de la integración del UI Products.
-
-En *products.js*:
-
-```js
-iris.ui(function(self) {	
-    self.create = function() {  
-        self.tmplMode(self.APPEND);
-        self.tmpl("/shopping/ui/products/products.html");
-    };
-}, "/shopping/ui/products/products.js");
-```
-
-En *products.html*
-
-```html
-<div class="accordion-inner" data-bind="foreach: $root.products">
-    <!-- ko if: $data.category == $parent.idCategory -->
-        <label class="checkbox">
-            <input type="checkbox" data-bind="attr: { 'data-product':$data.idProduct }, click: function (data, event) {return $root.shoppingList.addOrRemoveShoppingProduct(data, event.target.checked);}, checked: $root.shoppingList.getShoppingProduct($data.idProduct) !== null">
-            <!--ko text: $data.nameProduct--><!--/ko-->
-        </label> 
-    <!-- /ko -->
-
-</div>
-```
-
-Observe que desde el *presenter* lo único que hacemos es cargar el *template* y, que en el *template*, iteramos por los productos y asociamos con *data-bind* las etiquetas *HTML* a datos o a métodos del modelo.
-
-Un inconveniente que tiene esta solución es que el *template* es más complejo ya que tiene elementos que no son puramente código HTML. Para paliar este problema, se puede desplazar la asociación del *template* al *presenter*. 
-
-Por ejemplo,
-
-El si al *input* le hubiéramos asignado el atributo *data-id='product'*, podríamos realizar el vínculo del evento *click* en el controlador de esta manera:
-
-```js
-//Alternative to data-bind in products.html
-$("[data-id='product']").live("click", function(event) {
-    return model.shoppingList.addOrRemoveShoppingProduct(ko.dataFor(this), event.target.checked);
-});
 ```

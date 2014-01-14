@@ -15,13 +15,13 @@ module.exports = function(grunt) {
           all: {
             options: {
               urls: [
-                'http://localhost:8080/test/index.html'
+                'http://127.0.0.1:8080/test/index.html'
               ]
             }
           }
         },
         jshint: {
-          uses_defaults: ['grunt.js', 'app/**/*.js', 'test/js/*.js'],
+          uses_defaults: ['Gruntfile.js', 'app/init.js', 'app/todo.js', 'app/resource.js', 'app/welcome.js', 'test/js/*.js'],
           options: {
             curly: true,
             eqeqeq: true,
@@ -49,7 +49,7 @@ module.exports = function(grunt) {
           }
         },
         'http-server': {
-            test: {
+            'test': {
                     root: ".",
                     port: 8080,
                     host: "127.0.0.1",
@@ -58,7 +58,7 @@ module.exports = function(grunt) {
                     defaultExt: "html",
                     runInBackground: true
             },
-            default: {
+            'default': {
                     root: ".",
                     port: 8080,
                     host: "127.0.0.1",
@@ -77,6 +77,8 @@ module.exports = function(grunt) {
 
     // Loading dependencies
     for (var key in grunt.file.readJSON("package.json").devDependencies) {
-        if (key !== "grunt" && key.indexOf("grunt") === 0) grunt.loadNpmTasks(key);
+        if (key !== "grunt" && key.indexOf("grunt") === 0) {
+          grunt.loadNpmTasks(key);
+        }
     }
 };

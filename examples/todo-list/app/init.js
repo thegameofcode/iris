@@ -14,8 +14,5 @@ $(window.document).ready(
 
 		// show the initial screen
         iris.welcome(iris.path.welcome.js);
-        iris.on(iris.AFTER_NAVIGATION, function () {
-			iris.resource(iris.path.resource).init();
-		});
     }
 );
