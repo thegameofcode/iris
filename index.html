@@ -1,115 +1,678 @@
 <!DOCTYPE html>
 <html>
 
-  <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Iris : Client-side optimization techniques for easily building fast and scalable web applications" />
+<head>
+  <meta charset='utf-8' />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+  <meta name="description" content="Iris : Client-side optimization techniques for easily building fast and scalable web applications" />
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="css/base.css">
+  <link rel="stylesheet" type="text/css" href="css/github.css">
 
-    <title>Iris</title>
-  </head>
+  <script src="js/jquery-2.0.3.min.js" type="text/javascript"></script>
+  <script src="js/bootstrap.min.js" type="text/javascript"></script>
+  <script src="js/highlight.pack.js" type="text/javascript"></script>
+  <script>
 
-  <body>
+    $(document).ready(function () {
+      $('pre').each(function(i, e) {hljs.highlightBlock(e)});
+      $('.example-tooltip').popover({container: 'body'});
+    })
+  </script>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/thegameofcode/iris/">View on GitHub</a>
+  <title>Iris</title>
 
-          <div id="project_title" style='width:450px;height:400px'>
-            <img src='images/iris-logo.png' style='border:none;box-shadow:none;vertical-align:bottom;' width='450' height='400' />
-          </div>
+</head>
 
-          <!-- h2 id="project_tagline">Client-side optimization techniques for easily building fast and scalable web applications</h2 -->
+<body>
 
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/thegameofcode/iris/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/thegameofcode/iris/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
+  <div id="fb-root"></div>
+  <script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/es_ES/all.js#xfbml=1&appId=632223203467893";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));</script>
+
+  <div class='header'>
+    <div class="contentWrapper">
+      <img src='images/iris-logo-small.png' />
+      <div style='float:right;'>
+
+        <iframe src="http://ghbtns.com/github-btn.html?user=thegameofcode&repo=iris&type=fork&count=true"
+    allowtransparency="true" frameborder="0" scrolling="0" width="95" height="20"></iframe>
+
+        <iframe class="github-btn" src="http://ghbtns.com/github-btn.html?user=thegameofcode&repo=iris&type=watch&count=true" frameborder="0" scrolling="0" width="100" height="20" title="Star on GitHub"></iframe>
+      </div>
     </div>
+  </div>
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-	  <p>
-	  	<b><strong>Iris</strong> is not only another framework. It's a methodology that will help you to build structured and organized Web applications:</b>
-	  </p>
-	  <p>
-	  
-		<h2>Features</h2>
-		<ul>
-			<li>Strong object oriented coding and file system organization</li>
-			<li>Presenter-View-Resource pattern</li>
-			<li>Easy and fast templating engine</li>
-			<li>One page navigation using <a href='http://en.wikipedia.org/wiki/Fragment_identifier'>Hash-URL</a></li>
-			<li>100% Client multilanguage support</li>
-			<li>Crossbrowser: Chrome, Firefox e Internet Explorer</li>
-			<li>Light and fast: 16 KB</li>
-			<li>Open source: New BSD License</li>
-		</ul>
-	  </p>
+  <div class='main-row'>
+    <div class="contentWrapper">
+      <img src='images/iris-logo-big.png' />
+      <div class='text'>
+        <h2>Iris is not only another framework</h2>
+        <p>
+        Iris helps with structuring and organizing jQuery applications. It provides different client-side optimization techniques for front construction:
+        </p>
+        <ul>
+          <li>Mandatory file system organization</li>
+          <li>Reusable components</li>
+          <li>Fast templating engine</li>
+          <li>Client-side navigation with hashbang urls</li>
+          <li>Easy i18n support</li>
+        </ul>
+        <div class='download-box'>
+          <a class="btn btn-default btn-lg" href="https://github.com/thegameofcode/iris/zipball/master">
+            <img src="/images/blacktocat.png" style='margin-right:5px;'> View on Github
+          </a>
+          <a class="btn btn-primary btn-lg" href="https://github.com/thegameofcode/iris/zipball/master">
+            <span class="glyphicon glyphicon-download"></span> Download zip
+          </a>
+          <div style='margin-top: 20px;'>
+            <a href="http://thegameofcode.github.io/iris/dist/iris.min.js">Minified</a> | <a href="http://thegameofcode.github.io/iris/dist/iris.js">Uncompressed</a>
+          </div>
+        </div>
+      </div>
+      <div class='clearB'></div>
+      <div class='share-box'>
 
-	<h2>Documentation</h2>
-	<p>Take a look at the <a href="https://github.com/thegameofcode/iris/blob/master/docs/toc.md">documentation table of contents</a> for all the things.</p>
+        <div class='share-box-sep'>
+          <div class="fb-like" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button_count" data-action="like" data-show-faces="true" data-share="false"></div>
+        </div>
+        
+        <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+        <g:plusone></g:plusone>
 
-	<h2>User Guide</h2>
-	<p>Iris guide <a href="https://github.com/thegameofcode/iris/blob/master/docs/es/README.md">Spanish</a></p>
+        <div class='share-box-sep'>
+          <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">Tweet</a>
+  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
+        
+      </div>
+    </div>
+  </div>
 
- <h2>Tutorials</h2>
- <ul>
-  <li>
-   Making a Todo App using Iris: <a target="_blank" href="http://thegameofcode.github.io/iris/tutorials/todo/index.html">Presentation</a>
-  </li>
-  <li>
-   Making a Todo App using Iris: <a target="_blank" href="http://www.youtube.com/watch?feature=player_detailpage&v=6evSeCDXjSQ">Video (spanish)</a>
-  </li>
- </ul>
+
+  <div class='dark-row'>
+    <div class="contentWrapper">
+      <div class='link-box'>
+        <h3><span class="glyphicon glyphicon-screenshot"></span> Getting Started</h3>
+        <p>This tutorial will teach you to build a complete application from scratch using Iris.</p>
+        <a class="btn btn-default" href="http://thegameofcode.github.io/iris/tutorials/todo/index.html" target='_blank'>
+          <span class="glyphicon glyphicon-new-window"></span> Open tutorial
+        </a>
+      </div>
+      <div class='link-box'>
+        <h3><span class="glyphicon glyphicon-book"></span> API Reference</h3>
+        <p>The following is a list of code-level reference documentation you'll likely need in developing an Iris app.</p>
+        <a class="btn btn-default" href="https://github.com/thegameofcode/iris/blob/master/docs/api.md" target='_blank'>
+          <span class="glyphicon glyphicon-new-window"></span> View API Reference
+        </a>
+      </div>
+      <div class='link-box'>
+        <h3><span class="glyphicon glyphicon-tags"></span> Issues</h3>
+        <p>Found a bug in iris? We use GitHub's issue tracker to manage our issues.</p>
+        <a class="btn btn-default" href="https://github.com/thegameofcode/iris/issues?state=open" target='_blank'>
+          <span class="glyphicon glyphicon-new-window"></span> Access on Github
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class='blank-row'>
+    <div class="contentWrapper">
+
+      <div class='blank-box'>
+        <img src="images/home/folder.png">
+        <h3>Mandatory file system organization</h3>
+        <p>All our JS code is split into small files providing scalability & maintainability. Don't worry about the large number of files created because you can concatenate them using <a href="https://github.com/angelsanchez/iris-cli">iris-cli</a>, thus avoiding a large number of HTTP requests.</p>
+      </div>
+      
+      <div class='blank-box blank-box-middle'>
+        <img src="images/home/reusable.png">
+        <h3>Reusable components</h3>
+        <p>Iris gives structure to web applications by providing templates, UI components, screens and resources. All visual components have templates that are written in HTML files. These are stored in separate *.html files, therefore a layout designer can edit them easily.</p>
+      </div>
+
+      <div class='blank-box'>
+        <img src="images/home/nav.png">
+        <h3>Complete client-side navigation</h3>
+        <p>Screens are navigable elements, bound to a unique hash fragment (#screen), and are stored in separate *.js files. Screens use a template to add functionality and manage events like UI does. You can also instantiate UI objects within screens.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class='dark-row'>
+    <div class="contentWrapper">
+      <h2>Mandatory file system organization</h2>
+    </div>
+  </div>
+  <div class='example-row'>
+    <div class="contentWrapper">
+      <div class='example-tabs'>
+
+        <div class='example-code'>
+
+          <!-- Nav tabs -->
+          <ul class="nav nav-tabs">
+            <li class='active'><a href="#hello_indexhtml" data-toggle="tab">index.html</a></li>
+            <li><a href="#hello_welcomejs" data-toggle="tab">screen/welcome.js</a></li>
+            <li><a href="#hello_welcomehtml" data-toggle="tab">screen/welcome.html</a></li>
+          </ul>
+
+
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div class="tab-pane active xml" id="hello_indexhtml">
+              <pre>&lt;!doctype html&gt;
+&lt;html&gt;
+&lt;head&gt;
+ &lt;script src="js/jquery-2.0.3.min.js" type="text/javascript"&gt;&lt;/script&gt;
+ &lt;script src="js/iris-0.5.5.min.js" type="text/javascript"&gt;&lt;/script&gt;
+ &lt;script type="text/javascript"&gt;
+    <span class="example-tooltip" data-html="true" data-trigger='hover' data-toggle="tooltip" data-content="Define all iris component paths. Iris loads it when iris.welcome() is called.">iris.path</span> = {
+      screen: { 
+        welcome: {html: "screen/welcome.html", js: "screen/welcome.js"} 
+      }
+    };
+
+    $(document).ready(function () {
+      <span class="example-tooltip" data-toggle="tooltip" data-trigger='hover' data-html='true' data-content="Set the base URL applied to load Iris components like screens, UIs and resources.<br>This will prepend './' to all paths.">iris.baseUri</span>('./');
+      <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='The welcome screen is the root of all screens. You must define always the welcome screen in your initial script. This function establishes the welcome screen and navigates to it.'>iris.welcome</span>(iris.path.screen.welcome.js);
+    });
+ &lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;&lt;/body&gt;
+&lt;/html&gt;</pre>
+            </div>
+            <div class="tab-pane javascript" id="hello_welcomejs">
+              <pre><code><span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Defines a Screen component.'>iris.screen</span>(function (self) {
+
+  <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Called once when the component is created'>self.create</span> = function() {
+    <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Loads the template of the component into the DOM.'>self.tmpl</span>(iris.path.screen.welcome.html);
+
+    <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Gets the JQuery object whose data-id matches with the param. If no data-id is passed, the JQuery root DOM node will be returned.'>self.get</span>('name').on('keyup', function () {
+      <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Writes text, change the visibility, change attributes values, etc... in template elements using data-jq-* attributes.<br>The data-jq-* attributes invoke jQuery functions:<br><ul><li>data-jq-html == $(element).html()</li><li>data-jq-text == $(element).text()</li><li>data-jq-val == $(element).val()</li><li>data-jq-toggle == $(element).toggle()</li><li>data-jq-attr-xxx == $(element).attr(xxx)</li><li>data-jq-prop-xxx == $(element).prop(xxx)</li></ul>'>self.inflate</span>({ name : <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Gets the JQuery object whose data-id matches with the param. If no data-id is passed, the JQuery root DOM node will be returned.'>self.get</span>('name').val() });
+    });
+  };
+
+},iris.path.screen.welcome.js);</code></pre>
+            </div>
+            <div class="tab-pane" id="hello_welcomehtml">
+              <pre class="xml"><code>&lt;div&gt;
+  &lt;label&gt;Name:&lt;/label&gt;
+  &lt;input type="text" data-id='name'&gt;
+  &lt;h1&gt;Hello &lt;span data-jq-text='name'&gt;&lt;/span&gt;!&lt;/h1&gt;
+&lt;/div&gt;</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class='example-live'>
+          <iframe src="examples/hello_world/index.html"></iframe>
+        </div>
+      </div>    
+    </div>
+  </div>
+
+  <div class='dark-row'>
+    <div class="contentWrapper">
+      <h2>Reusable components</h2>
+    </div>
+  </div>
+  <div class='example-row'>
+    <div class="contentWrapper">
+
+      <div class='example-tabs'>
+
+        <div class='example-code'>
+
+          <!-- Nav tabs -->
+          <ul class="nav nav-tabs">
+            <li class='active'><a href="#todo_indexhtml" data-toggle="tab">index.html</a></li>
+            <li><a href="#todo_welcomejs" data-toggle="tab">screen/welcome.js</a></li>
+            <li><a href="#todo_welcomehtml" data-toggle="tab">screen/welcome.html</a></li>
+            <li><a href="#todo_todojs" data-toggle="tab">ui/todo.js</a></li>
+            <li><a href="#todo_todohtml" data-toggle="tab">ui/todo.html</a></li>
+          </ul>
+
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div class="tab-pane active" id="todo_indexhtml">
+              <pre class="xml"><code>&lt;!doctype html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;link rel="stylesheet" href="css/base.css"&gt;
+
+    &lt;script src="js/jquery-2.0.3.min.js" type="text/javascript"&gt;&lt;/script&gt;
+    &lt;script src="js/iris-0.5.5.min.js" type="text/javascript"&gt;&lt;/script&gt;
+    
+    &lt;script type="text/javascript"&gt;
+      <span class="example-tooltip" data-html="true" data-trigger='hover' data-toggle="tooltip" data-content="Define all iris component paths. Iris loads it when iris.welcome() is called.">iris.path</span> = {
+      "ui": {
+        "todo": { "js": "ui/todo.js", "html": "ui/todo.html" }
+      },
+      "screen": {
+        "welcome": { "html": "screen/welcome.html", "js": "screen/welcome.js" }
+      }
+    }
+
+    $(window.document).ready(function () {
+      <span class="example-tooltip" data-toggle="tooltip" data-trigger='hover' data-html='true' data-content="Set the base URL applied to load Iris components like screens, UIs and resources.<br>This will prepend './' to all paths.">iris.baseUri</span>('./');
+      <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='The welcome screen is the root of all screens. You must define always the welcome screen in your initial script. This function establishes the welcome screen and navigates to it.'>iris.welcome</span>(iris.path.screen.welcome.js);
+    });
+    &lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+            <div class="tab-pane" id="todo_welcomejs">
+              <pre class="javascript"><code><span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Defines a Screen component.'>iris.screen</span>(function(self) {
+
+  self.todos = [
+    { text: 'learn iris', done: true },
+    { text: 'build an iris app', done: false }
+  ];
  
-	<h2>Examples</h2>
-	<ul>
-		<li>
-			<a href="./examples/basic/index.html">Basic</a> explains how to do basic operations with iris.
-		</li>
-		<li>
-			<a href="./examples/todo-list/index.html">Todo-list</a> is a port of the famous backbone todos example app.
-		</li>
-		<li>
-			<a href="./examples/shopping-list/index.html">Shopping-list</a> a completed sample application to manage the shopping list.
-		</li>
-	</ul>
+  <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Called once when the component is created'>self.create</span> = function() {
+    <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Loads the template of the component into the DOM.'>self.tmpl</span>(iris.path.screen.welcome.html);
 
-	<h2>Installation</h2>
+    <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Gets the JQuery object whose data-id matches with the param. If no data-id is passed, the JQuery root DOM node will be returned.'>self.get</span>('archive').on('click', function (e) {
+      for ( var i = self.todos.length - 1; i >= 0; i-- ) {
+        if (self.todos[i].done) self.todos.splice(i, 1);
+      }
+      self.render();
+    });
 
-	<p>Download the lastest version <a href="dist/iris.min.js">here</a></p>
-	<p>Insert into your main page:</p>
+    <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Gets the JQuery object whose data-id matches with the param. If no data-id is passed, the JQuery root DOM node will be returned.'>self.get</span>('add').on('click', function (e) {
+      var todo = { text: <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Gets the JQuery object whose data-id matches with the param. If no data-id is passed, the JQuery root DOM node will be returned.'>self.get</span>('todoText').val(), done: false };
+      self.todos.push(todo);
+      <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Gets the JQuery object whose data-id matches with the param. If no data-id is passed, the JQuery root DOM node will be returned.'>self.get</span>('todoText').val('');
+      self.render();
+    });
 
-	<div class="highlight">
-	<pre><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">'text/javascript'</span> <span class="na">src=</span><span class="s">"dist/iris.min.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
-	</pre>
-	</div>
+    self.render();
+  };
+
+  self.render = function () {
+    self.destroyUIs('list');
+
+    var i, remaining = 0;
+    for ( i = 0; i &lt; self.todos.length; i++ ) {
+      <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Create a new UI Component and replaces or adds it to the container.'>self.ui</span>('list', iris.path.ui.todo.js, { index: i, parent: self }, self.APPEND);
+      remaining += self.todos[i].done ? 0 : 1;
+    }
+
+    <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Writes text, change the visibility, change attributes values, etc... in template elements using data-jq-* attributes.<br>The data-jq-* attributes invoke jQuery functions:<br><ul><li>data-jq-html == $(element).html()</li><li>data-jq-text == $(element).text()</li><li>data-jq-val == $(element).val()</li><li>data-jq-toggle == $(element).toggle()</li><li>data-jq-attr-xxx == $(element).attr(xxx)</li><li>data-jq-prop-xxx == $(element).prop(xxx)</li></ul>'>self.inflate</span>({
+      count: remaining + ' of ' + self.todos.length + ' remaining'
+    });
+  }
+ 
+}, iris.path.screen.welcome.js);</code></pre>
+            </div>
+            <div class="tab-pane" id="todo_welcomehtml">
+              <pre class="xml"><code>&lt;div&gt;
+  &lt;h2&gt;Todo&lt;/h2&gt;
+  &lt;div&gt;
+    &lt;span data-jq-text='count'&gt;&lt;/span&gt;
+    [ &lt;a href="#" data-id="archive"&gt;archive&lt;/a&gt; ]
+    &lt;ul class="unstyled" data-id="list"&gt;&lt;/ul&gt;
+    &lt;input type="text" data-id="todoText"  size="30"
+           placeholder="add new todo here"&gt;
+    &lt;input data-id="add" type="button" value="add"&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+            </div>
+            <div class="tab-pane" id="todo_todojs">
+              <pre class="javascript"><code>iris.ui(function (self) {
+
+  <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Called once when the component is created'>self.create</span> = function() {
+    <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Loads the template of the component into the DOM.'>self.tmpl</span>(iris.path.ui.todo.html);
+
+    var index = self.setting('index');
+    var parent = self.setting('parent');
+    var todo = parent.todos[index];
+
+    <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Writes text, change the visibility, change attributes values, etc... in template elements using data-jq-* attributes.<br>The data-jq-* attributes invoke jQuery functions:<br><ul><li>data-jq-html == $(element).html()</li><li>data-jq-text == $(element).text()</li><li>data-jq-val == $(element).val()</li><li>data-jq-toggle == $(element).toggle()</li><li>data-jq-attr-xxx == $(element).attr(xxx)</li><li>data-jq-prop-xxx == $(element).prop(xxx)</li></ul>'>self.inflate</span>(todo);
+
+    <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Gets the JQuery object whose data-id matches with the param. If no data-id is passed, the JQuery root DOM node will be returned.'>self.get</span>().toggleClass('todo-done', todo.done);
+
+    <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Gets the JQuery object whose data-id matches with the param. If no data-id is passed, the JQuery root DOM node will be returned.'>self.get</span>('check').on('click', function () {
+      todo.done = !todo.done;
+      parent.render();
+    });
+  };
+
+},iris.path.ui.todo.js);</code></pre>
+            </div>
+            <div class="tab-pane" id="todo_todohtml">
+              <pre class="xml"><code>&lt;li&gt;
+  &lt;input data-id="check" type="checkbox" data-jq-prop-checked="done"&gt;
+  &lt;span data-jq-text="text"&gt;&lt;/span&gt;
+&lt;/li&gt;</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class='example-live'>
+          <iframe src="examples/basic_todo/index.html" style='height: 340px;'></iframe>
+        </div>
+      </div>
+    </div>    
+  </div>
+
+  <div class='dark-row'>
+    <div class="contentWrapper">
+      <h2>Complete client-side navigation</h2>
+    </div>
+  </div>
+  <div class='example-row'>
+    <div class="contentWrapper">
+      
+      <div class='example-tabs'>
+        <div class='example-code'>
+
+          <!-- Nav tabs -->
+          <ul class="nav nav-tabs">
+            <li class='active'><a href="#nav_indexhtml" data-toggle="tab">index.html</a></li>
+            <li><a href="#nav_welcomejs" data-toggle="tab">screen/welcome.js</a></li>
+            <li><a href="#nav_welcomehtml" data-toggle="tab">screen/welcome.html</a></li>
+            <li><a href="#nav_homejs" data-toggle="tab">screen/home.js</a></li>
+            <li><a href="#nav_helpjs" data-toggle="tab">screen/help.js</a></li>
+            <li><a href="#nav_templatehtml" data-toggle="tab">screen/template.html</a></li>
+          </ul>
+
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div class="tab-pane active" id="nav_indexhtml">
+              <pre class="xml"><code>&lt;!doctype html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;script src="js/jquery-2.0.3.min.js" type="text/javascript"&gt;&lt;/script&gt;
+    &lt;script src="js/iris-0.5.5.min.js" type="text/javascript"&gt;&lt;/script&gt;
+    
+    &lt;script type="text/javascript"&gt;
+        <span class="example-tooltip" data-html="true" data-trigger='hover' data-toggle="tooltip" data-content="Define all iris component paths. Iris loads it when iris.welcome() is called.">iris.path</span> = {
+            welcome: "screen/welcome.js",
+            welcome_html: "screen/welcome.html",
+            home: "screen/home.js",
+            help: "screen/help.js",
+            template: "screen/template.html"
+        };
+
+        $(window.document).ready(function () {
+            <span class="example-tooltip" data-toggle="tooltip" data-trigger='hover' data-html='true' data-content="Set the base URL applied to load Iris components like screens, UIs and resources.<br>This will prepend './' to all paths.">iris.baseUri</span>('./');
+            <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='The welcome screen is the root of all screens. You must define always the welcome screen in your initial script. This function establishes the welcome screen and navigates to it.'>iris.welcome</span>(iris.path.welcome);
+        });
+    &lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+            <div class="tab-pane" id="nav_welcomejs">
+              <pre class="javascript"><code><span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Defines a Screen component.'>iris.screen</span>(function (self) {
+
+  <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Called once when the component is created'>self.create</span> = function() {
+    <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Loads the template of the component into the DOM.'>self.tmpl</span>(iris.path.welcome_html);
+
+    <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Registers Screens and allows to navigate to them. This method can be called once for each component.'>self.screens</span>('screens',[
+      ['home', iris.path.home],
+      ['help', iris.path.help]
+    ]);
+  };
+
+},iris.path.welcome);</code></pre>
+            </div>
+            <div class="tab-pane" id="nav_welcomehtml">
+              <pre class="xml"><code>&lt;div&gt;
+    &lt;b&gt;Sections:&lt;/b&gt;
+    &lt;ul&gt;
+        &lt;li&gt;&lt;a href='#/home'&gt;Home&lt;/a&gt; (#/home)&lt;/li&gt;
+        &lt;li&gt;&lt;a href='#/help'&gt;Help&lt;/a&gt; (#/help)&lt;/li&gt;
+    &lt;/ul&gt;
+
+    &lt;div data-id='screens'&gt;&lt;/div&gt;
+    
+&lt;/div&gt;</code></pre>
+            </div>
+            <div class="tab-pane" id="nav_homejs">
+              <pre class="javascript"><code><span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Defines a Screen component.'>iris.screen</span>(function (self) {
+
+  <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Called once when the component is created'>self.create</span> = function() {
+    <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Loads the template of the component into the DOM.'>self.tmpl</span>(iris.path.template);
+
+    <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Writes text, change the visibility, change attributes values, etc... in template elements using data-jq-* attributes.<br>The data-jq-* attributes invoke jQuery functions:<br><ul><li>data-jq-html == $(element).html()</li><li>data-jq-text == $(element).text()</li><li>data-jq-val == $(element).val()</li><li>data-jq-toggle == $(element).toggle()</li><li>data-jq-attr-xxx == $(element).attr(xxx)</li><li>data-jq-prop-xxx == $(element).prop(xxx)</li></ul>'>self.inflate</span>({ name : 'home' });
+  };
+
+},iris.path.home);</code></pre>
+            </div>
+            <div class="tab-pane" id="nav_helpjs">
+              <pre class="javascript"><code><span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Defines a Screen component.'>iris.screen</span>(function (self) {
+
+  <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Called once when the component is created'>self.create</span> = function() {
+    <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Loads the template of the component into the DOM.'>self.tmpl</span>(iris.path.template);
+
+    <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Writes text, change the visibility, change attributes values, etc... in template elements using data-jq-* attributes.<br>The data-jq-* attributes invoke jQuery functions:<br><ul><li>data-jq-html == $(element).html()</li><li>data-jq-text == $(element).text()</li><li>data-jq-val == $(element).val()</li><li>data-jq-toggle == $(element).toggle()</li><li>data-jq-attr-xxx == $(element).attr(xxx)</li><li>data-jq-prop-xxx == $(element).prop(xxx)</li></ul>'>self.inflate</span>({ name : 'help' });
+  };
+
+},iris.path.help);</code></pre>
+            </div>
+            <div class="tab-pane" id="nav_templatehtml">
+              <pre class="xml"><code>&lt;div&gt;
+    &lt;b&gt;Current screen is &lt;span data-jq-text='name'&gt;&lt;/span&gt;!&lt;/b&gt;
+&lt;/div&gt;</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class='example-live'>
+          <iframe src="examples/navigation/index.html"></iframe>
+        </div>
+      </div>    
+    </div>
+  </div>
 
 
-	<p>Iris requires <em>JQuery 1.5+</em>:
-	<a href="http://jquery.com/">http://jquery.com/</a></p>
+  <div class='dark-row'>
+    <div class="contentWrapper">
+      <h2>Easy i18n support</h2>
+    </div>
+  </div>
+  <div class='example-row'>
+    <div class="contentWrapper">
+      
+      <div class='example-tabs'>
+        <div class='example-code'>
+
+          <ul class="nav nav-tabs">
+            <li class='active'><a href="#i18n_indexhtml" data-toggle="tab">index.html</a></li>
+            <li><a href="#i18n_welcomejs" data-toggle="tab">screen/welcome.js</a></li>
+            <li><a href="#i18n_welcomehtml" data-toggle="tab">screen/welcome.html</a></li>
+          </ul>
+
+          <div class="tab-content">
+            <div class="tab-pane active" id="i18n_indexhtml">
+              <pre class="xml">&lt;!doctype html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+  &lt;link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"&gt;
+
+  &lt;script src="js/jquery-2.0.3.min.js" type="text/javascript"&gt;&lt;/script&gt;
+  &lt;script src="js/iris-0.5.5.min.js" type="text/javascript"&gt;&lt;/script&gt;
+  
+  &lt;script type="text/javascript"&gt;
+    <span class="example-tooltip" data-html="true" data-trigger='hover' data-toggle="tooltip" data-content="Define all iris component paths. Iris loads it when iris.welcome() is called.">iris.path</span> = {
+      screen: { 
+        welcome: {html: "screen/welcome.html", js: "screen/welcome.js"} 
+      }
+    };
+
+    <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Defines or sets the locale format for currencies, numbers and dates.'>iris.locale</span>(
+      "es_ES", {
+        dayNames:["Domingo", "Lunes", "Martes", "Miércoles", "Jueves",
+                "Viernes", "Sábado"],
+        monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo",
+                "Junio", "Julio", "Agosto", "Septiembre", "Octubre",
+                "Noviembre", "Diciembre"],
+        dateFormat: "d/m/Y H:i:s",
+        currency: {
+          formatPos: "n s", formatNeg: "- n s", decimal: ",", thousand: ".",
+          precision: 2, symbol : "€"
+        },
+        number : {
+          decimal: ",", thousand: ".", precision: 2
+        }
+      }
+    );
+
+    <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Defines or sets the locale format for currencies, numbers and dates.'>iris.locale</span>(
+      "en_US", {
+          dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
+                     "Friday", "Saturday"],
+          monthNames: ["January", "February", "March", "April", "May", "June",
+                       "July", "August", "September", "October", "November",
+                       "December"],
+          dateFormat: "m/d/Y h:i:s",
+          currency: {
+              formatPos: "s n", formatNeg: "(s n)", decimal: ".",
+              thousand: ",", precision: 2, symbol : "$"
+          },
+          number : {
+              decimal: ".", thousand: ",", precision: 2
+          }
+      }
+  );
+
+    $(window.document).ready(function () {
+      <span class="example-tooltip" data-toggle="tooltip" data-trigger='hover' data-html='true' data-content="Set the base URL applied to load Iris components like screens, UIs and resources.<br>This will prepend './' to all paths.">iris.baseUri</span>('./');
+      <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='The welcome screen is the root of all screens. You must define always the welcome screen in your initial script. This function establishes the welcome screen and navigates to it.'>iris.welcome</span>(iris.path.screen.welcome.js);
+    });
+  &lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+            </div>
+            <div class="tab-pane" id="i18n_welcomejs">
+              <pre class="javascript"><span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Defines a Screen component.'>iris.screen</span>(function (self) {
 
 
-	<h2>Iris app scaffolding</h2>
+  <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Called once when the component is created'>self.create</span> = function() {
+    <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Loads the template of the component into the DOM.'>self.tmpl</span>(iris.path.screen.welcome.html);
 
-	<p>You can build the skeleton of an Iris application using <a href="https://github.com/surtich/generator-iris">generator-iris</a>.</p>
+    // No select a value by default
+    self.get('locale_select').prop("selectedIndex", -1);
 
-	
-	  </section>
-	</div>
-	
-	<!-- FOOTER  -->
-	<div id="footer_wrap" class="outer">
-	  <footer class="inner">
-		<p class="copyright">Copyright (c) 2013 Iris</p>
-	  </footer>
-	</div>
+    self.get('locale_select').on('change', function (e) {
+      iris.locale(this.value);
 
-  </body>
+      var params = {
+         price : -1479.59
+        ,date : new Date()
+        ,locale : <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Defines or sets the locale format for currencies, numbers and dates.'>iris.locale</span>()
+      };
+
+      <span class='example-tooltip' data-toggle='tooltip' data-trigger='hover' data-html='true' data-content='Writes text, change the visibility, change attributes values, etc... in template elements using data-jq-* attributes.<br>The data-jq-* attributes invoke jQuery functions:<br><ul><li>data-jq-html == $(element).html()</li><li>data-jq-text == $(element).text()</li><li>data-jq-val == $(element).val()</li><li>data-jq-toggle == $(element).toggle()</li><li>data-jq-attr-xxx == $(element).attr(xxx)</li><li>data-jq-prop-xxx == $(element).prop(xxx)</li></ul>'>self.inflate</span>(params);
+    });
+  };
+
+},iris.path.screen.welcome.js);</pre>
+            </div>
+            <div class="tab-pane" id="i18n_welcomehtml">
+              <pre class="xml">&lt;div&gt;
+  &lt;label&gt;Select a locale: &lt;/label&gt;
+
+  &lt;select data-id='locale_select' class="form-control" style='width:160px;'&gt;
+    &lt;option value="en_US"&gt;English (USA)&lt;/option&gt;
+    &lt;option value="es_ES"&gt;Spanish (Spain)&lt;/option&gt;
+  &lt;/select&gt;
+
+  &lt;div&gt;
+    &lt;h4&gt;Locale code&lt;/h4&gt;
+    &lt;span data-jq-text='locale' class="label label-success"&gt;&lt;/span&gt;
+  &lt;/div&gt;
+
+  &lt;div&gt;
+    &lt;h4&gt;Number&lt;/h4&gt;
+    &lt;span data-jq-text='price' data-jq-text-format='number'
+          class="label label-success"&gt;&lt;/span&gt;
+  &lt;/div&gt;
+  
+  &lt;div&gt;
+    &lt;h4&gt;Currency&lt;/h4&gt;
+    &lt;span data-jq-text='price' data-jq-text-format='currency'
+          class="label label-success"&gt;&lt;/span&gt;
+  &lt;/div&gt;
+  
+  &lt;div&gt;
+    &lt;h4&gt;Date&lt;/h4&gt;
+    &lt;span data-jq-text='date' data-jq-text-format='date'
+          class="label label-success"&gt;&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class='example-live'>
+          <iframe src="examples/i18n/index.html" style='height:350px;'></iframe>
+        </div>
+      </div>    
+    </div>
+  </div>
+
+<!-- Example template
+  <div class='gray-row'>
+    <div class="contentWrapper">
+      
+      <div class='example-tabs'>
+        <h2>Example</h2>
+
+        <div class='example-code'>
+
+          <ul class="nav nav-tabs">
+            <li class='active'><a href="#example_indexhtml" data-toggle="tab">index.html</a></li>
+            <li><a href="#example_welcomejs" data-toggle="tab">screen/welcome.js</a></li>
+            <li><a href="#example_welcomehtml" data-toggle="tab">screen/welcome.html</a></li>
+          </ul>
+
+          <div class="tab-content">
+            <div class="tab-pane active" id="example_indexhtml">
+              <pre class="xml"></pre>
+            </div>
+            <div class="tab-pane" id="example_welcomejs">
+              <pre class="prettyprint linenums lang-js"></pre>
+            </div>
+            <div class="tab-pane" id="example_welcomehtml">
+              <pre class="xml"></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class='example-live'>
+          <iframe src="examples/hello_world/index.html"></iframe>
+        </div>
+      </div>    
+    </div>
+  </div>
+-->
+
+  <footer>
+    <div class="contentWrapper">
+      <div style='float:right;'>
+        <iframe src="http://ghbtns.com/github-btn.html?user=thegameofcode&repo=iris&type=fork&count=true"
+    allowtransparency="true" frameborder="0" scrolling="0" width="95" height="20"></iframe>
+
+        <iframe class="github-btn" src="http://ghbtns.com/github-btn.html?user=thegameofcode&repo=iris&type=watch&count=true" frameborder="0" scrolling="0" width="100" height="20" title="Star on GitHub"></iframe>
+      </div>
+      <p class="copyright">
+        Iris © 2012-2014<br>
+        Code licensed under the The <a href='https://raw.github.com/thegameofcode/iris/master/LICENSE-New-BSD'>New-BSD License</a>.
+      </p>
+    </div>
+  </footer>
+</body>
 </html>

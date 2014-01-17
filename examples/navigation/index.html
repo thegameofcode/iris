@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+    
+    <script src="js/jquery-2.0.3.min.js" type="text/javascript"></script>
+    <script src="js/iris-0.5.5.min.js" type="text/javascript"></script>
+    
+    <script type="text/javascript">
+        iris.path = {
+            welcome: "screen/welcome.js",
+            welcome_html: "screen/welcome.html",
+            home: "screen/home.js",
+            help: "screen/help.js",
+            template: "screen/template.html"
+        };
+
+        $(window.document).ready(function () {
+            iris.baseUri('./');
+            iris.welcome(iris.path.welcome);
+        });
+    </script>
+  </head>
+  <body></body>
+</html>

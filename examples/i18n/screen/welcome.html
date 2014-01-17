@@ -1,0 +1,31 @@
+<div>
+  <label>Select a locale: </label>
+
+  <select data-id='locale_select' class="form-control" style='width:160px;'>
+    <option value="en_US">English (USA)</option>
+    <option value="es_ES">Spanish (Spain)</option>
+  </select>
+
+  <div>
+    <h4>Locale code</h4>
+    <span data-jq-text='locale' class="label label-success"></span>
+  </div>
+
+  <div>
+    <h4>Number</h4>
+    <span data-jq-text='price' data-jq-text-format='number'
+          class="label label-success"></span>
+  </div>
+  
+  <div>
+    <h4>Currency</h4>
+    <span data-jq-text='price' data-jq-text-format='currency'
+          class="label label-success"></span>
+  </div>
+  
+  <div>
+    <h4>Date</h4>
+    <span data-jq-text='date' data-jq-text-format='date'
+          class="label label-success"></span>
+  </div>
+</div>

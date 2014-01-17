@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+  <head>
+  <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+
+  <script src="js/jquery-2.0.3.min.js" type="text/javascript"></script>
+  <script src="js/iris-0.5.5.min.js" type="text/javascript"></script>
+  
+  <script type="text/javascript">
+    iris.path = {
+      screen: { 
+        welcome: {html: "screen/welcome.html", js: "screen/welcome.js"} 
+      }
+    };
+
+    iris.locale(
+      "es_ES", {
+        dayNames:["Domingo", "Lunes", "Martes", "Miércoles", "Jueves",
+                "Viernes", "Sábado"],
+        monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo",
+                "Junio", "Julio", "Agosto", "Septiembre", "Octubre",
+                "Noviembre", "Diciembre"],
+        dateFormat: "d/m/Y H:i:s",
+        currency: {
+          formatPos: "n s", formatNeg: "- n s", decimal: ",", thousand: ".",
+          precision: 2, symbol : "€"
+        },
+        number : {
+          decimal: ",", thousand: ".", precision: 2
+        }
+      }
+    );
+
+    iris.locale(
+      "en_US", {
+          dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
+                     "Friday", "Saturday"],
+          monthNames: ["January", "February", "March", "April", "May", "June",
+                       "July", "August", "September", "October", "November",
+                       "December"],
+          dateFormat: "m/d/Y h:i:s",
+          currency: {
+              formatPos: "s n", formatNeg: "(s n)", decimal: ".",
+              thousand: ",", precision: 2, symbol : "$"
+          },
+          number : {
+              decimal: ".", thousand: ",", precision: 2
+          }
+      }
+  );
+
+    $(window.document).ready(function () {
+      iris.baseUri('./');
+      iris.welcome(iris.path.screen.welcome.js);
+    });
+  </script>
+  </head>
+  <body></body>
+</html>
