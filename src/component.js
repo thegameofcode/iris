@@ -16,26 +16,24 @@
         _navMap,
         _prevNav,
         _prevNavRaw,
-        _screenJsUrl,
-        _screenContainer,
-        _screenHashFragment, 
-        _screenParentNavMap,
-        _jsUrlScreens
+        _jsUrlScreens, // To prevent multiple screen instances
+
+        // _screenMetadata["#parent/hash/:id"] = {
+        //     hashFragment: "hash/:id",
+        //     js:"path.js", // return the js-url associated with hash (#parent/hash/:id)
+        //     container: $element, // return the parent container associated with hash (#parent/hash/:id)
+        //     parentNavMap: {} // Parent node in the navigation tree
+        // }
+        _screenMetadata
         ;
 
-    // Navigation
-    // TODO join _screenHashFragment, _screenParentNavMap, _screenJsUrl, _screenContainer in
-    // _screenMetadata["#parent/hash/:id"] = { hashFragment: "hash/:id", js:"path.js", container: $, parentNavMap: {} }
+    
 
     function _init() {
-        // _screenJsUrl["#hash"] return the js-url associated with #hash
-        _screenJsUrl = {};
-
-        // _screenContainer["#hash"] return the parent container associated with #hash
-        _screenContainer = {};
 
         // _screen["#hash"] return the screen instance
         _screen = {};
+        _screenMetadata = {};
 
         // _jsUrlScreens["/path/to/file.js"] indicates if a js-URL has been used by some screen
         _jsUrlScreens = {};
@@ -45,8 +43,6 @@
 
         // Navigation
         _navMap = {};
-        _screenParentNavMap = {};
-        _screenHashFragment = {};
         _prevNav = [];
         _prevNavRaw = [];
         _gotoCancelled = false;
@@ -72,9 +68,12 @@
             throw "welcome screen already exists";
         }
         _welcomeCreated = true;
-        _screenJsUrl["#"] = p_jsUrl;
-        _screenContainer["#"] = $(document.body);
-        _navMap["#"] = {};
+        _screenMetadata['#'] = {
+            js : p_jsUrl,
+            container : $(document.body),
+            navMap : {}
+        };
+        _navMap['#'] = {};
 
         if ( iris.hasOwnProperty("path") ) {
             _loadPaths(iris.path);
@@ -252,7 +251,6 @@
             screenHash, // e.g.: user/:id
             screenChilds; // used to add the screenHashes of the current deep to search
 
-
         // If a screen cannot sleep, finish navigation
         if ( _gotoCancelled ) {
             _gotoCancelled = false;
@@ -374,8 +372,8 @@
                     // Instantiate the screen if it wasn't created previously
                     if ( !_screen.hasOwnProperty(fullScreenHash) ) {
 
-                        if ( !_screenJsUrl.hasOwnProperty(fullScreenHash) ) {
-                            throw 'Invalid screenPath = ' + fullScreenHash;
+                        if ( !_screenMetadata.hasOwnProperty(fullScreenHash) ) {
+                            throw '"' + fullScreenHash + '" not found';
                         }
 
                         // Instantiate the new screen
@@ -464,26 +462,25 @@
 
     function _destroyScreenByPath(p_screenPath) {
         
-        if(_screen.hasOwnProperty(p_screenPath)) {
+        if ( _screen.hasOwnProperty(p_screenPath) ) {
 
             if ( p_screenPath === "#" ) {
                 throw "Welcome screen cannot be deleted";
             }
 
 
-            var hash = document.location.hash;
+            var hash = document.location.hash || '#'; // if url=http://example.com/#, the document.location.hash="" empty string
 
-            // if url=http://example.com/#, the document.location.hash="" empty string
-            // check if current screen is welcome screen (hash !== "")
+            // check if current screen is welcome screen (hash !== "#")
             // check if the current hash belongs to the path to delete
-            if ( hash !== "#" && hash !== "" && (p_screenPath.indexOf(hash) === 0 || hash.indexOf(p_screenPath) === 0) ) {
+            if ( hash !== "#" && (p_screenPath.indexOf(hash) === 0 || hash.indexOf(p_screenPath) === 0) ) {
                 throw "Cannot delete the current screen or its parents";
             }
 
             _destroyScreen(p_screenPath);
             
         } else {
-            iris.log("Error removing the screen \"" + p_screenPath + "\", path not screenFound.");
+            iris.log('[warning] "' + p_screenPath + '" was not instantiated, nothing to destroy');
         }
     }
 
@@ -491,7 +488,7 @@
 
         var screen = _screen[path];
 
-        // the screen can be register using self.screens() but no instanciated using navigation
+        // the screen can be register using self.screens() but no instantiated using navigation
         if ( screen !== undefined ) {
 
             // destroy child screens
@@ -503,12 +500,16 @@
 
             screen._destroy();
             screen.get().remove();
-            delete _jsUrlScreens[_screenJsUrl[path]];
-            delete _screen[path];
-            delete _screenJsUrl[path];
-            delete _screenContainer[path];
-        }
 
+            // Remove instance
+            delete _screen[path];
+
+            // Remove the screen completely (no reusable)
+            var screenMeta = _screenMetadata[path];
+            delete screenMeta.parentNavMap[ screenMeta.hashFragment ]; // remove from parent's navMap
+            delete _jsUrlScreens[screenMeta.js];
+            delete _screenMetadata[path];
+        }
     }
 
 
@@ -938,7 +939,8 @@
     // SCREEN
     //
     var Screen = function(path) {
-        Component.call(this, path, _screenContainer[path], _screenJsUrl[path]);
+        var screenMeta = _screenMetadata[path];
+        Component.call(this, path, screenMeta.container, screenMeta.js);
 
         this.params = {};
         this.screenConId = null;
@@ -979,39 +981,41 @@
             var $cont = this.get(p_containerId);
             this.screenChilds = [];
 
-            // TODO use screenMetadata isntead of _screenParentNavMap, _screenHashFragment
-            this.navMap =  ( this.id === '#' ) ? _navMap['#'] : _screenParentNavMap[this.id][_screenHashFragment[this.id]];
+            var screenMeta = _screenMetadata[this.id];
 
-            for ( var i=0; i < p_screens.length; i++ ) {
+            this.navMap =  ( this.id === '#' ) ? _navMap['#'] : screenMeta.parentNavMap[screenMeta.hashFragment];
 
-                var screen = p_screens[i];
-                var hashUrl = screen[0];
-                if ( hashUrl.indexOf("#") !== -1 ) {
-                    throw "[" + hashUrl + "] cannot contain #";
-                }
-                hashUrl = this.id + "/" + hashUrl;
+            var newScreen, newScreenHashFragment, newScreenHash, newScreenJs;
+            for ( var i = 0; i < p_screens.length; i++ ) {
 
-                var js = screen[1];
-                if ( _jsUrlScreens.hasOwnProperty(js) ) {
-                    throw "js-URL repeated '" + js + "': " + this.id;
-                }
+                newScreen = p_screens[i];
+                newScreenHashFragment = newScreen[0]; // newScreen[0] == hash fragment
+                newScreenHash = this.id + "/" + newScreenHashFragment; // full hash like #/parent/screen/:id (screen[0] == hash fragment)
 
-                if ( _screenContainer.hasOwnProperty(hashUrl) ) {
-                    throw "hash-URL repeated  '" + hashUrl + "' in " + this.fileJs;
+                newScreenJs = newScreen[1]; // screen js path
+                if ( _jsUrlScreens.hasOwnProperty(newScreenJs) ) {
+                    throw 'Cannot associate "' + newScreenJs + '" to "' + newScreenHash + '", it was previously used in "' + _jsUrlScreens[newScreenJs] + '"';
                 }
 
-                iris.log("Register screen hash[" + hashUrl + "] js[" + js + "]");
+                if ( _screenMetadata.hasOwnProperty(newScreenHash) ) {
+                    throw 'The hash "' + newScreenHash + '" was associated to "' + _screenMetadata[newScreenHash].js + '" previously, cannot associate to "' + newScreenJs + '" again';
+                }
 
-                _screenJsUrl[hashUrl] = js;
-                _screenContainer[hashUrl] = $cont;
-                _jsUrlScreens[js] = true;
 
-                _screenParentNavMap[hashUrl] = this.navMap;
-                _screenHashFragment[hashUrl] = screen[0];
+                _jsUrlScreens[newScreenJs] = newScreenHash; // To prevent future instances of this screen
 
-                this.screenChilds[i] = hashUrl;
+                _screenMetadata[newScreenHash] = {
+                    js : newScreenJs,
+                    parentNavMap : this.navMap,
+                    container : $cont,
+                    hashFragment : newScreenHashFragment
+                };
 
-                this.navMap[screen[0]] = {};
+
+                this.screenChilds[i] = newScreenHash;
+                this.navMap[newScreenHashFragment] = {};
+
+                iris.log("Register screen hash[" + newScreenHash + "] js[" + newScreenJs + "]");
             }
         }
     };
