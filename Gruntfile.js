@@ -2,34 +2,24 @@
 module.exports = function(grunt) {
 
   var browsers = [
-    { browserName: "chrome", platform: "Linux" },
-    { browserName: "chrome", platform: "Windows 7" },
-    { browserName: "chrome", platform: "Windows 8" },
-    { browserName: "chrome", platform: "OS X 10.6" },
+    { browserName: "chrome", platform: "Linux", version: "30" },
+    { browserName: "chrome", platform: "Windows 8", version: "30" },
+    { browserName: "chrome", platform: "OS X 10.9", version: "30" },
 
-    { browserName: "firefox", platform: "Linux" },
-    { browserName: "firefox", platform: "Windows 7" },
-    { browserName: "firefox", platform: "Windows 8" },
-    { browserName: "firefox", platform: "OS X 10.6" },
+    { browserName: "firefox", platform: "Linux", version: "26" },
+    { browserName: "firefox", platform: "Windows 8", version: "26" },
+    { browserName: "firefox", platform: "OS X 10.9", version: "26" },
 
-    { browserName: "internet explorer", platform: "Windows 8" },
     { browserName: "internet explorer", platform: "Windows 7", version: "9" },
+    { browserName: "internet explorer", platform: "Windows 8", version: "10" },
 
-    { browserName: "safari", platform: "OS X 10.9" },
+    { browserName: "safari", platform: "OS X 10.8", version: "6" },
+    { browserName: "safari", platform: "OS X 10.9", version: "7" },
 
-    { browserName: "iphone", platform: "OS X 10.8" },
-    { browserName: "iphone", platform: "OS X 10.9" }
-    /*
-    { browserName: "iphone", platform: "OS X 10.6" },
-    { browserName: "android", platform: "Linux" },
+    { browserName: "iphone", version: "6" },
+    { browserName: "iphone", version: "7" },
 
-    { browserName: "safari", platform: "Windows 7" },
-    { browserName: "internet explorer", platform: "Windows 7", version: "8" },
-    { browserName: "firefox", platform: "Windows XP" },
-    { browserName: "chrome", platform: "Windows XP" },
-    { browserName: "opera", platform: "Linux" },
-    { browserName: "opera", platform: "Windows 7" },
-    */
+    { browserName: "android", version: "4" }
   ];
 
   var banner = '/*! <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %>' +
