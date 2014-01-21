@@ -1,5 +1,10 @@
 (function($) {
 
+    var FORMAT_REG_EXP = /(date|currency|number)(?:\(([^\)]+)\))/,
+        PATH_PARAM_REGEX = /:[\d\w_\-\.]+/g,
+        SCREEN_PARAM_REGEX = '[;?&][^=]+=[^;\/&]+', // Validates matrix & url params: ';param=value' & '?param=value' & '&param=value'
+        HTML_COMMENT_REGEX = /<!--[\s\S]*?-->/g;
+
     var _screen,
         _includes,
         _welcomeCreated,
@@ -8,9 +13,6 @@
         _loadJsCallback,
         _dependencyCount,
         _lastLoadedDependencies,
-        FORMAT_REG_EXP = /(date|currency|number)(?:\(([^\)]+)\))/,
-        PATH_PARAM_REGEX = /:[\d\w_\-\.]+/g,
-        SCREEN_PARAM_REGEX = '[;?&][^=]+=[^;\/&]+', // Validates matrix & url params: ';param=value' & '?param=value' & '&param=value'
         _gotoCancelled,
         _prevNavigationHash, // The hash for the last navigation (finished)
         _navMap,
@@ -173,7 +175,7 @@
     }
 
     function _templateLoaded (data, textStatus, jqXHR) {
-        _includes[this.componentPath] = data;
+        _includes[this.componentPath] = data.replace(HTML_COMMENT_REGEX, ''); // Internet Explorer fails when a template component has a comment 
         _checkLoadFinish();
     }
 
@@ -430,7 +432,7 @@
     //
 
     function _registerTmpl(path, html) {
-        _includes[path] = html;
+        _includes[path] = html.replace(HTML_COMMENT_REGEX, ''); // Internet Explorer fails when a template component has a comment 
     }
 
     function _registerUI(ui, path) {
