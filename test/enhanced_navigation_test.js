@@ -518,5 +518,50 @@
 
     });
 
+    asyncTest("Navigate to an unregistered screen", function() {
+        expect(4);
+
+        iris.welcome(iris.path.welcome); // +1 create, +1 awake
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            var navigationHash = "#/screen_not_defined";
+
+
+            iris.on(iris.SCREEN_NOT_FOUND, function (invalidHash) {
+                strictEqual(invalidHash, navigationHash, 'The invalid hash must be equal to SCREEN_NOT_FOUND event parameter'); // +1
+                strictEqual(window.location.hash, navigationHash, 'The current hash must be equal'); // +1
+                start();
+            });
+            
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                throw "A navigation event has been raises";
+            });
+
+            iris.navigate(navigationHash);
+        });
+
+    });
+
+    asyncTest("Navigate to an unregistered screen whitout initial navigation to welcome screen", function() {
+        expect(4);
+
+        var navigationHash = "#/screen_not_defined";
+        document.location.hash = navigationHash;
+
+        iris.on(iris.SCREEN_NOT_FOUND, function (invalidHash) {
+            strictEqual(invalidHash, navigationHash, 'The invalid hash must be equal to SCREEN_NOT_FOUND event parameter'); // +1
+            strictEqual(window.location.hash, navigationHash, 'The current hash must be equal'); // +1
+            start();
+        });
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            throw "A navigation event has been raises";
+        });
+
+        iris.welcome(iris.path.welcome); // +1 create, +1 awake
+    });
+
 
 }(jQuery));
