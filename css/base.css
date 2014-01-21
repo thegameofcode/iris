@@ -136,8 +136,7 @@ body
 }
 
 footer {
-	background-color:#1d1e1c;
-	background-image:url('../images/header-bg.jpg');
+	background-color:#3B454E;
 	overflow: hidden;
 	padding: 20px;
 }
@@ -164,6 +163,10 @@ footer {
 .example-tabs .example-code {
 	float: left;
 	width: 650px;
+}
+
+.example-live {
+	background-color: #fff;
 }
 
 .example-tabs .example-live {
