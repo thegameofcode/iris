@@ -500,7 +500,9 @@ Fired when a navigation fails.
 ```javascript
 iris.on(iris.SCREEN_NOT_FOUND, function (path) {
 	iris.log("Upss, path[" + path + "] not found");
-	iris.navigate("#/404");
+
+	// Use location.replace instead of iris.navigate or location.hash
+	window.location.replace("#/404"); // navigation without history saving
 });
 ```
 
