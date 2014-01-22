@@ -44,7 +44,7 @@
   test("Get Base URI", function() {
     stop();
 
-    strictEqual(iris.baseUri(), "http://localhost:8080/", "Should get a dev URL");
+    strictEqual(iris.baseUri(), "http://127.0.0.1:8080/", "Should get a dev URL");
 
     start();
   });

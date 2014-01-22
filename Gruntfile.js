@@ -10,7 +10,7 @@ module.exports = function(grunt) {
     { browserName: "firefox", platform: "Windows 8", version: "26" },
     { browserName: "firefox", platform: "OS X 10.9", version: "26" },
 
-    { browserName: "internet explorer", platform: "Windows 7", version: "8" },
+    { browserName: "internet explorer", platform: "Windows 7", version: "9" },
     { browserName: "internet explorer", platform: "Windows 8", version: "10" },
 
     { browserName: "safari", platform: "OS X 10.8", version: "6" },
@@ -55,7 +55,7 @@ module.exports = function(grunt) {
       all: {
         options: {
           urls: [
-            'http://localhost:8080/test/iris.html'
+            'http://127.0.0.1:8080/test/iris.html'
           ]
         }
       }
@@ -88,7 +88,7 @@ module.exports = function(grunt) {
     'saucelabs-qunit': {
         all: {
             options: {
-                urls: ["http://localhost:8080/test/iris.html"],
+                urls: ["http://127.0.0.1:8080/test/iris.html"],
                 tunnelTimeout: 5,
                 build: process.env.TRAVIS_JOB_ID,
                 concurrency: 3,
