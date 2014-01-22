@@ -49,6 +49,10 @@
   </div>
   <span id="start_iris"></span>
   <script>
+  QUnit.done(function(results){
+      window.global_test_results = results;
+  });
+
   $(document)
     .ready(function(){
         $('#qunit-tests').addClass('hidepass');

@@ -81,7 +81,7 @@
   asyncTest("Lang Load Absolute URL Test", function() {
     expect(3);
 
-    iris.translations("fr-FR2", "http://127.0.0.1:8080/test/resource/lang.json", {"success" : onSuccess, "error" : onError });
+    iris.translations("fr-FR2", "http://localhost:8080/test/resource/lang.json", {"success" : onSuccess, "error" : onError });
   });
   
   asyncTest("Lang Load Relative URL Test", function() {

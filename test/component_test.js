@@ -472,7 +472,7 @@
     asyncTest("Test include with absolute path", function() {
         window.expect(1);
 
-        iris.include(["http://127.0.0.1:8080/test/component/resource.js"], function () {
+        iris.include(["http://localhost:8080/test/component/resource.js"], function () {
   
           iris.resource("test/component/resource.js").test();
 
