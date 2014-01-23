@@ -31,6 +31,7 @@ _Remmeber that you can [make suggestions][issues] or [report bugs][issues]!_
 If all goes well, this will generate 'dist/iris.js' and the minified version 'dist/iris.min.js'.
 
 ```javascript
+npm install
 grunt
 ```
 
