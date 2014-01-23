@@ -5,6 +5,9 @@ _Creation date: 2012-01-12_
 [version] date -> authors
   * upd|fix|new|dep|rmv - description
 
+[0.5.7-SNAPSHOT] 2014-XX-XX
+
+
 [0.5.6] 2014-01-23
  * [fix] Internet Explorer fails when a template component has a comment, Closed #159
  * [new] Enhanced navigation system, closed #157 (pretty urls, path & matrix params)
