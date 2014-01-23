@@ -5,10 +5,11 @@ _Creation date: 2012-01-12_
 [version] date -> authors
   * upd|fix|new|dep|rmv - description
 
-[0.5.6] 2014-01-xx
+[0.5.6] 2014-01-23
  * [fix] Internet Explorer fails when a template component has a comment, Closed #159
  * [new] Enhanced navigation system, closed #157 (pretty urls, path & matrix params)
  * [new] Added continuous integration with Travis-cli and SauceLabs
+
 
 [0.5.5] 2013-12-19
 

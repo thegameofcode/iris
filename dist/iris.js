@@ -1,4 +1,4 @@
-/*! iris - v0.5.6-SNAPSHOT - 2014-01-21 (http://thegameofcode.github.io/iris) licensed New-BSD */
+/*! iris - v0.5.6 - 2014-01-23 (http://thegameofcode.github.io/iris) licensed New-BSD */
 
 var iris = {};
 
