@@ -131,7 +131,7 @@ window.iris = iris;
                     iris.off(p_eventName, callbacks[i]);
                 }
 
-                this.events[p_eventName] = {};
+                this.events[p_eventName] = [];
             }
         }
     };
