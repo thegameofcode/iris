@@ -18,13 +18,13 @@ iris.ui(function (self) {
 		var label = self.get("label");
 		window.strictEqual(label.size(), 1, "UI Creation: check self.get");
 
-		self.on("ui_settings", onUISettings);
+		iris.on("ui_settings", onUISettings);
 
 		if ( !self.setting("nested") ) {
-			self.on("nested_ui", self.onNestedUI);
+			iris.on("nested_ui", self.onNestedUI);
 		}
 
-		self.on("self_destroy_ui", destroyUi);
+		iris.on("self_destroy_ui", destroyUi);
 		
 	};
 

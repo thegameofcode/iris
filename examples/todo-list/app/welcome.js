@@ -5,31 +5,13 @@ iris.screen(function(self) {
 	self.create = function() {
 		self.tmpl(iris.path.welcome.html);
 
-		self.get("new-todo").on("keyup", function (e) {
-			if ( e.keyCode === 13 && this.value.trim() !== "" ) {
-				todos.add(this.value);
-				this.value = "";
-			}
-		});
-
-		self.get("toggle-all").on("change", function (e) {
-			var completed = self.get("toggle-all").prop("checked");
-			todos.setAll( completed );
-		});
-
+		self.get("new-todo").on("keyup", newTodoOnKeyUp);
+		self.get("toggle-all").on("change", toggleAllOnChange);
 		self.get("clear-completed").on("click", todos.removeCompleted);
 
-		// Resource events
-		self.on(todos.CREATE_TODO, function (id) {
-			self.ui("todo-list", iris.path.todo.js, {id: id}).render().show();
-			render();
-		});
-
-		self.on(todos.DESTROY_TODO, render);
-		self.on(todos.CHANGE_TODO, render);
-
-		todos.init();
-		render();
+		todos.on('add', addTodo);
+		todos.on('remove', render);
+		todos.on('change', render);
 	};
 
 	self.awake = function () {
@@ -39,14 +21,26 @@ iris.screen(function(self) {
 
 			var $footer = self.get("footer");
 			$(".selected", $footer).removeClass("selected");
-			$("a[href='#?filter=" + filter + "']", $footer).addClass("selected");
-
-			var uis = self.ui("todo-list");
-			for (var i = 0; i < uis.length; i++ ) {
-				uis[i].render();
-			}
+			$("a[href='#;filter=" + filter + "']", $footer).addClass("selected");
 		}
 	};
+
+	function newTodoOnKeyUp (e) {
+		if ( e.keyCode === 13 && this.value.trim() !== "" ) {
+			todos.add(this.value);
+			this.value = "";
+		}
+	}
+
+	function addTodo (todo) {
+		self.ui("todo-list", iris.path.todo.js, {todo: todo}, self.APPEND);
+		render();
+	}
+
+	function toggleAllOnChange (e) {
+		var completed = self.get("toggle-all").prop("checked");
+		todos.setAll( completed );
+	}
 
 	function render () {
 		var count = todos.count();

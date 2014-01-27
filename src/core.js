@@ -1,3 +1,4 @@
+
 (function($) {
 
     var _JQ_MIN_VER = 1.5,
@@ -51,7 +52,7 @@
             }
         }
         return false;
-}
+    }
 
     //
     // Public

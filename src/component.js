@@ -517,6 +517,7 @@
 
     var Component = function(id, $container, fileJs) {
         iris.Settable.call(this);
+        iris.Event.call(this);
 
         this.id = id;
         this.uis = []; // child UIs
@@ -533,7 +534,11 @@
         _includes[fileJs](this);
     };
 
-    iris.inherits(Component, iris.Settable);
+    Component.prototype = $.extend(
+        {},
+        iris.Settable.prototype,
+        iris.Event.prototype
+    );
 
     var pComponent = Component.prototype;
 
@@ -570,14 +575,9 @@
             this.uis[f]._destroy();
         }
 
-        // remove component events
-        for ( var eventName in this.events ) {
-            iris.destroyEvents(eventName, this.events[eventName]);
-        }
         this.destroy();
 
         this.uis = null;
-        this.events = null;
     };
 
     pComponent._tmpl = function(p_htmlUrl, p_mode) {

@@ -1,8 +1,15 @@
 (function() {
 
-    var Resource = function() {};
+    var Resource = function() {
+        iris.Settable.call(this);
+        iris.Event.call(this);
+    };
 
-    Resource.prototype = new iris.Settable();
+    Resource.prototype = $.extend(
+        {},
+        iris.Settable.prototype,
+        iris.Event.prototype
+    );
 
     Resource.prototype.ajax = function(p_method, p_path, p_params, f_success, f_error) {
 

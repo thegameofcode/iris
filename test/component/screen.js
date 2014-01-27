@@ -7,17 +7,17 @@ iris.screen(function (self) {
 
 		self.tmpl("test/component/screen.html");
   
-		self.on("create_ui", createUi);
-		self.on("create_ui_tmpl_replace", createUiTmplReplace);
-		self.on("get_ui", getUi);
-		self.on("get_ui_no_instantited", getUiNoInstantiated);
-		self.on("get_ui_tmpl_replace", getUiTmplReplace);
-		self.on("destroy_ui", destroyUi);
-		self.on("destroy_ui_replace", destroyUiReplace);
-		self.on("destroy_ui_check", destroyUiCheck);
-		self.on("ui_repeated_dataid", ui_repeated_dataid);
-		self.on("destroy_multiple_uis", destroy_multiple_uis);
-		self.on("destroy_multiple_uis2", destroy_multiple_uis2);
+		iris.on("create_ui", createUi);
+		iris.on("create_ui_tmpl_replace", createUiTmplReplace);
+		iris.on("get_ui", getUi);
+		iris.on("get_ui_no_instantited", getUiNoInstantiated);
+		iris.on("get_ui_tmpl_replace", getUiTmplReplace);
+		iris.on("destroy_ui", destroyUi);
+		iris.on("destroy_ui_replace", destroyUiReplace);
+		iris.on("destroy_ui_check", destroyUiCheck);
+		iris.on("ui_repeated_dataid", ui_repeated_dataid);
+		iris.on("destroy_multiple_uis", destroy_multiple_uis);
+		iris.on("destroy_multiple_uis2", destroy_multiple_uis2);
 
 		// check screen properties
 		window.strictEqual(self.id, "#/screen", "Compare screen properties: id");

@@ -1,66 +1,51 @@
 iris.ui(function (self) {
 
-	self.settings({
-		id : null
-	});
-
 	var todos = iris.resource(iris.path.resource);
 
 	self.create = function() {
-		
-		self.tmplMode(self.APPEND);
 		self.tmpl(iris.path.todo.html);
 
-		self.get("check").on("click", function () {
-			todos.toggle(self.setting("id"));
-		});
+		self.get('destroy').on('click', destroy);
+		self.get().on('dblclick', startEdition);
+		self.get('text').on('blur change', endEdition);
+		self.get('check').on('click', toggle);
 
-		self.get("destroy").on("click", function () {
-			todos.remove(self.setting("id"));
-		});
+		var todo = self.setting('todo');
+		todo.on('remove', remove);
+		todo.on('change', render);
 
-		self.get().on("dblclick", function () {
-			self.get().addClass("editing");
-			self.get("text").select();
-		});
-
-		self.get("text").on("blur change", function (e) {
-			if ( !self.get().hasClass("editing") ) {
-				return;	
-			} 
-
-			self.get().removeClass("editing");
-			if ( this.value.trim() !== "" ) {
-				todos.edit(self.setting("id"), this.value);
-			}
-
-		});
-
-		self.on(todos.DESTROY_TODO, function (id) {
-			if (self.setting("id") === id) {
-				self.destroyUI();
-			}
-		});
-
-		self.on(todos.CHANGE_TODO, function (id) {
-			if (self.setting("id") === id) {
-				self.render();
-			}
-		});
+		render();
 	};
 
-
-
-	self.render = function () {
-		var todo = todos.getTodo(self.setting("id"));
-		self.get().toggleClass("completed", todo.completed);
+	function render () {
+		var todo = self.setting('todo').get();
+		self.get().toggleClass('completed', todo.completed);
 		self.inflate({todo: todo});
-		return self;
-	};
+	}
 
-	self.show = function () {
-		self.get().hide().fadeIn("slow");
-		return self;
-	};
+	function remove () {
+		self.destroyUI();
+	}
+
+	function destroy () {
+		todos.remove(self.setting('todo'));
+	}
+
+	function startEdition () {
+		self.get().addClass('editing');
+		self.get('text').select();
+	}
+
+	function endEdition () {
+		self.get().removeClass('editing');
+		if ( this.value.trim() !== '' ) {
+			self.setting('todo').set({text : this.value});
+			todos.notify('change');
+		}
+	}
+
+	function toggle () {
+		todos.toggle(self.setting('todo'));
+	}
 
 },iris.path.todo.js);

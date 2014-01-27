@@ -10,8 +10,8 @@ iris.screen(function (self) {
 
 		self.screens("screens",  [["screen", iris.path.screen]]);
 
-		self.on("template_langs", templateLangs);
-		self.on("awake_params", awakeParams);
+		iris.on("template_langs", templateLangs);
+		iris.on("awake_params", awakeParams);
 
 		// check screen properties
 		window.strictEqual(self.id, "#", "Compare welcom screen properties: self.id");

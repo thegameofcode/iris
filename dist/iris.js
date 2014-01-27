@@ -1,96 +1,22 @@
-/*! iris - v0.5.6 - 2014-01-23 (http://thegameofcode.github.io/iris) licensed New-BSD */
-
-var iris = {};
-
-// Expose iris to the global object
-window.iris = iris;
+/*! iris - v0.6.0-SNAPSHOT - 2014-01-27 (http://thegameofcode.github.io/iris) licensed New-BSD */
 
 
 (function ($) {
 
-    // static object to store all app callbacks
-    var _events;
-    
     function _init() {
-
-        _events = {};
+        iris.events = {};
 
         iris.on("iris-reset", _init);
     }
 
-    iris.on = function (p_eventName, f_func) {
-        
-        if ( ! $.isFunction(f_func) ) {
-            throw "invalid function";
-        }
-
-        if ( !_events.hasOwnProperty(p_eventName) ) {
-            _events[p_eventName] = [];
-        }
-
-        var callbacks = _events[p_eventName];
-        var index = $.inArray(f_func, callbacks);
-        if ( index === -1 ) {
-            callbacks.push(f_func);
-        }
-
-    };
-
-    iris.off = function (p_eventName, f_func){
-        if ( _events.hasOwnProperty(p_eventName) ){
-            if (f_func !== undefined) {
-                
-                if ( ! $.isFunction(f_func) ) {
-                    throw "invalid function";
-                }
-
-                var index = $.inArray(f_func, _events[p_eventName]);
-                if ( index !== -1 ) {
-                    _events[p_eventName].splice(index, 1);
-                }
-
-            } else {
-                delete _events[p_eventName];
-            }
-        }
-    };
-
-    iris.notify = function (p_eventName, p_data){
-        if ( p_eventName === undefined ) {
-            throw "event name undefined";
-        }
-        
-        if ( _events[p_eventName] ) {
-            var callbacks = _events[p_eventName];
-            for ( var i=0; i < callbacks.length; i++ ) {
-                callbacks[i](p_data);
-            }
-        }
-    };
-
-    iris.destroyEvents = function (p_eventName, p_callbacks) {
-        // Create an array copy, to prevent concurrent modification of _events[p_eventName] array.
-        // This occur if an event that destroy uis is notified
-        var callbacks = _events[p_eventName].concat([]);
-        for ( var i=0; i < p_callbacks.length; i++ ) {
-            var index = $.inArray(p_callbacks[i], callbacks);
-            if ( index !== -1 ) {
-                callbacks.splice(index, 1);
-            }
-        }
-        _events[p_eventName] = callbacks;
-    };
-
-
-    iris.Event = function () {
-
+    var Event = function () {
         this.events = {}; // { "event1" : [f1, f2], "event2" : [f3, f4, f5, f6] }
-
     };
 
-    var eventPrototype = iris.Event.prototype;
+    var eventPrototype = Event.prototype;
 
     eventPrototype.on = function (p_eventName, f_func) {
+
         if ( ! $.isFunction(f_func) ) {
             throw "invalid function";
         }
@@ -103,7 +29,6 @@ window.iris = iris;
         var index = $.inArray(f_func, callbacks);
         if ( index === -1 ) {
             callbacks.push(f_func);
-            iris.on(p_eventName, f_func);
         }
 
     };
@@ -119,27 +44,42 @@ window.iris = iris;
         if ( callbacks ) {
 
             if (f_func !== undefined) {
-                var index = $.inArray(f_func, callbacks);
 
+                var index = $.inArray(f_func, callbacks);
                 if ( index !== -1 ) {
                     callbacks.splice(index, 1);
-                    iris.off(p_eventName, f_func);
                 }
 
             } else {
-
-                for (var i = 0; i < callbacks.length; i++ ) {
-                    iris.off(p_eventName, callbacks[i]);
-                }
-
-                this.events[p_eventName] = {};
+                delete this.events[p_eventName];
             }
         }
     };
 
-    eventPrototype.notify = function (p_eventName, p_data){
-        iris.notify(p_eventName, p_data);
+    eventPrototype.notify = function (p_eventName, p_data) {
+        if ( p_eventName === undefined ) {
+            throw "event name undefined";
+        }
+        
+        var callbacks = this.events[p_eventName];
+        if ( callbacks ) {
+            for ( var i = 0; i < callbacks.length; i++ ) {
+                callbacks[i].call(this, p_data);
+            }
+        }
     };
+
+
+    var Iris = function() {
+        Event.call(this);
+    };
+    Iris.prototype = new Event();
+    var iris = new Iris();
+
+    //
+    // Public
+    //
+    iris.Event = Event;
 
     //
     // Iris custom events
@@ -148,274 +88,12 @@ window.iris = iris;
     iris.AFTER_NAVIGATION = "iris_after_navigation";
     iris.RESOURCE_ERROR = "iris_resource_error";
     iris.SCREEN_NOT_FOUND = "iris_screen_not_found";
+
+    window.iris = iris;
     
     _init();
 
 })(jQuery);
-
-(function($) {
-
-    var _JQ_MIN_VER = 1.5,
-        _appBaseUri,
-        _cache,
-        _cacheVersion,
-        _log,
-        _logEnabled;
-
-    //
-    // Private
-    //
-    function _init() {
-
-        if ( typeof jQuery === "undefined" ) {
-            throw "jQuery " + _JQ_MIN_VER + "+ previous load required";
-        } else if($().jquery < _JQ_MIN_VER) {
-            throw "jQuery " + $().jquery + " currently loaded, jQuery " + _JQ_MIN_VER + "+ required";
-        }
-
-        var console = window.console;
-        if ( typeof console !== 'undefined' && typeof console.log === 'object' ) {
-            var bind = Function.prototype.bind;
-            if ( bind ) {
-                // Fix IE 9 Problem with console.
-                // http://stackoverflow.com/questions/5538972/console-log-apply-not-working-in-ie9
-                _log = bind.call(console.log, console);
-            } else {
-                // Fix IE 8 Problem with console.
-                // http://patik.com/blog/complete-cross-browser-console-log/
-                _log = function () {
-                    Function.prototype.call.call(console.log, console, Array.prototype.slice.call(arguments));
-                };
-            }
-        } else if ( console && console.log ) {
-            // Modern browser
-            _log = console.log;
-        }
-
-        var isLocalEnv = urlContains("localhost", "127.0.0.1");
-        _logEnabled = isLocalEnv;
-        _cache = !isLocalEnv;
-
-        iris.on("iris-reset", _init);
-    }
-
-    function urlContains () {
-        for(var i = 0 ; i< arguments.length; i++) {
-            if ( document.location.href.indexOf(arguments[i]) > -1 ) {
-                return true;
-            }
-        }
-        return false;
-}
-
-    //
-    // Public
-    //
-    iris.baseUri = function (p_baseUri) {
-        if ( p_baseUri !== undefined ) {
-            _appBaseUri = p_baseUri;
-
-        } else if ( _appBaseUri === undefined ) {
-            var base = document.getElementsByTagName("base");
-            base = base.length > 0 ? base[0].attributes.href.value : "/";
-            _appBaseUri = document.location.protocol + "//" + document.location.host + base;
-        }
-        return _appBaseUri;
-    };
-
-    iris.cache = function (p_value) {
-        if(p_value !== undefined) {
-            _cache = p_value;
-        } else {
-            return _cache;
-        }
-    };
-
-    iris.cacheVersion = function (p_value) {
-        if(p_value !== undefined) {
-            _cacheVersion = p_value;
-        } else {
-            return _cacheVersion;
-        }
-    };
-
-    iris.log = function () {
-        if ( _logEnabled && _log ) {
-            _log.apply(window.console, arguments);
-        }
-    };
-
-    iris.enableLog = function () {
-        if ( typeof arguments[0] === "boolean" ) {
-            _logEnabled = arguments[0];
-
-        } else if ( arguments.length > 0 ) {
-            _logEnabled = urlContains.apply(this, arguments);
-            
-        } else {
-            return _logEnabled;
-        }
-    };
-
-    iris.noCache = function () {
-        if ( arguments.length > 0 ) {
-            _cache = !urlContains.apply(this, arguments);
-        } else {
-            return !_cache;
-        }
-    };
-    
-    
-    _init();
-
-})(jQuery);
-
-(function($) {
-
-    var _translations;
-
-    function _init() {
-        _translations = {};
-    }
-
-    //
-    // Private
-    //
-    function _addTranslations(p_locale, p_data) {
-        iris.log("[translations]", p_locale, p_data);
-
-        if(iris.locale() === undefined) {
-            iris.locale(p_locale);
-        }
-
-        if(!_translations.hasOwnProperty(p_locale)) {
-            _translations[p_locale] = {};
-        }
-
-        $.extend(_translations[p_locale], p_data);
-    }
-
-    function _loadTranslations(p_locale, p_uri, p_settings) {
-        
-        iris.log("[translations]", p_locale, p_uri);
-
-        var ajaxSettings = {
-            url: p_uri,
-            dataType: "json",
-            async: false,
-            cache: iris.cache()
-        };
-
-        if(iris.cache() && iris.cacheVersion()) {
-            ajaxSettings.data = "_=" + iris.cacheVersion();
-        }
-
-        iris.ajax(ajaxSettings)
-        .done(function (p_data) {
-            _addTranslations(p_locale, p_data);
-            iris.log("[translations]", p_data);
-
-            if(p_settings && p_settings.hasOwnProperty("success")) {
-                p_settings.success(p_locale);
-            }
-        })
-        .fail(function(p_err) {
-            if(p_settings && p_settings.hasOwnProperty("error")) {
-                p_settings.error(p_locale);
-            }
-            throw "Error " + p_err.status + " loading lang file[" + p_uri + "]";
-        });
-    }
-
-
-    //
-    // Public
-    //
-    iris.translations = function (p_locale, p_value, p_settings) {
-        if(typeof p_value === "object") {
-            _addTranslations(p_locale, p_value);
-        } else {
-            _loadTranslations(p_locale, p_value, p_settings);
-        }
-    };
-
-    iris.translate = function (p_label, p_locale) {
-        var value;
-        var locale = null;
-        if (p_locale !== undefined) {
-            locale = p_locale;
-        } else {
-            locale = iris.locale();
-        }
-        
-        var logPrefix = "[translate]";
-        if(_translations.hasOwnProperty(locale)) {
-            value = iris.val(_translations[locale], p_label);
-            if(value === undefined) {
-                iris.log(logPrefix + " label '" + p_label + "' not found in Locale '" + locale + "'", _translations[locale]);
-            }
-            if(typeof value === "object") {
-                iris.log(logPrefix + "label '" + p_label + "' is an object but must be a property in Locale '" + locale + "'", _translations[locale]);
-            }
-        } else {
-            iris.log(logPrefix + " locale '" + locale + "' not loaded", this);
-        }
-        return (value !== undefined) ? value : "??" + p_label + "??";
-    };
-    
-    _init();
-
-})(jQuery);
-
-(function() {
-
-    var _locale, _regional;
-    
-    function _init() {
-        _locale = undefined;
-        _regional = {};
-
-        iris.on("iris-reset", _init);
-    }
-
-    iris.locale = function (p_locale, p_regional) {
-        if ( typeof p_regional === "object" ) {
-            if ( !_regional[p_locale] ) {
-                _regional[p_locale] = {};
-            }
-            $.extend(_regional[p_locale], p_regional);
-
-            if ( _locale === undefined ) {
-                _locale = p_locale;
-            }
-
-        } else if ( p_locale !== undefined ) {
-            _locale = p_locale;
-
-        } else {
-            return _locale;
-        }
-    };
-
-    iris.regional = function (p_label) {
-        if(_regional.hasOwnProperty(_locale)) {
-            if(typeof p_label === "undefined") {
-                return _regional[_locale];
-            } else if(_regional[_locale].hasOwnProperty(p_label)) {
-                return _regional[_locale][p_label];
-            } else {
-                return undefined;
-                //throw "[regional] setting '" + p_label + "' not found for locale '" + _locale + "'";
-            }
-        } else {
-            throw "[regional] for locale '" + _locale + "' not found";
-        }
-    };
-    
-    _init();
-    
-
-})();
 
 (function($) {
 
@@ -613,6 +291,296 @@ window.iris = iris;
     };
 
 })(jQuery);
+
+
+(function($) {
+
+    var _JQ_MIN_VER = 1.5,
+        _appBaseUri,
+        _cache,
+        _cacheVersion,
+        _log,
+        _logEnabled;
+
+    //
+    // Private
+    //
+    function _init() {
+
+        if ( typeof jQuery === "undefined" ) {
+            throw "jQuery " + _JQ_MIN_VER + "+ previous load required";
+        } else if($().jquery < _JQ_MIN_VER) {
+            throw "jQuery " + $().jquery + " currently loaded, jQuery " + _JQ_MIN_VER + "+ required";
+        }
+
+        var console = window.console;
+        if ( typeof console !== 'undefined' && typeof console.log === 'object' ) {
+            var bind = Function.prototype.bind;
+            if ( bind ) {
+                // Fix IE 9 Problem with console.
+                // http://stackoverflow.com/questions/5538972/console-log-apply-not-working-in-ie9
+                _log = bind.call(console.log, console);
+            } else {
+                // Fix IE 8 Problem with console.
+                // http://patik.com/blog/complete-cross-browser-console-log/
+                _log = function () {
+                    Function.prototype.call.call(console.log, console, Array.prototype.slice.call(arguments));
+                };
+            }
+        } else if ( console && console.log ) {
+            // Modern browser
+            _log = console.log;
+        }
+
+        var isLocalEnv = urlContains("localhost", "127.0.0.1");
+        _logEnabled = isLocalEnv;
+        _cache = !isLocalEnv;
+
+        iris.on("iris-reset", _init);
+    }
+
+    function urlContains () {
+        for(var i = 0 ; i< arguments.length; i++) {
+            if ( document.location.href.indexOf(arguments[i]) > -1 ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //
+    // Public
+    //
+    iris.baseUri = function (p_baseUri) {
+        if ( p_baseUri !== undefined ) {
+            _appBaseUri = p_baseUri;
+
+        } else if ( _appBaseUri === undefined ) {
+            var base = document.getElementsByTagName("base");
+            base = base.length > 0 ? base[0].attributes.href.value : "/";
+            _appBaseUri = document.location.protocol + "//" + document.location.host + base;
+        }
+        return _appBaseUri;
+    };
+
+    iris.cache = function (p_value) {
+        if(p_value !== undefined) {
+            _cache = p_value;
+        } else {
+            return _cache;
+        }
+    };
+
+    iris.cacheVersion = function (p_value) {
+        if(p_value !== undefined) {
+            _cacheVersion = p_value;
+        } else {
+            return _cacheVersion;
+        }
+    };
+
+    iris.log = function () {
+        if ( _logEnabled && _log ) {
+            _log.apply(window.console, arguments);
+        }
+    };
+
+    iris.enableLog = function () {
+        if ( typeof arguments[0] === "boolean" ) {
+            _logEnabled = arguments[0];
+
+        } else if ( arguments.length > 0 ) {
+            _logEnabled = urlContains.apply(this, arguments);
+            
+        } else {
+            return _logEnabled;
+        }
+    };
+
+    iris.noCache = function () {
+        if ( arguments.length > 0 ) {
+            _cache = !urlContains.apply(this, arguments);
+        } else {
+            return !_cache;
+        }
+    };
+    
+    
+    _init();
+
+})(jQuery);
+
+(function ($) {
+
+    iris.Data = function (p_data) {
+        iris.Event.call(this);
+        this.data = $.extend({}, p_data);
+    };
+
+    iris.inherits(iris.Data, iris.Event);
+
+    var dataProto = iris.Data.prototype;
+
+    dataProto.set = function (p_data) {
+        $.extend(this.data, p_data);
+        this.notify('change');
+    };
+
+    dataProto.get = function (p_fieldName) {
+        if ( p_fieldName === undefined ) {
+            return this.data;
+        }
+        return this.data[p_fieldName];
+    };
+
+})(jQuery);
+
+(function($) {
+
+    var _translations;
+
+    function _init() {
+        _translations = {};
+    }
+
+    //
+    // Private
+    //
+    function _addTranslations(p_locale, p_data) {
+        iris.log("[translations]", p_locale, p_data);
+
+        if(iris.locale() === undefined) {
+            iris.locale(p_locale);
+        }
+
+        if(!_translations.hasOwnProperty(p_locale)) {
+            _translations[p_locale] = {};
+        }
+
+        $.extend(_translations[p_locale], p_data);
+    }
+
+    function _loadTranslations(p_locale, p_uri, p_settings) {
+        
+        iris.log("[translations]", p_locale, p_uri);
+
+        var ajaxSettings = {
+            url: p_uri,
+            dataType: "json",
+            async: false,
+            cache: iris.cache()
+        };
+
+        if(iris.cache() && iris.cacheVersion()) {
+            ajaxSettings.data = "_=" + iris.cacheVersion();
+        }
+
+        iris.ajax(ajaxSettings)
+        .done(function (p_data) {
+            _addTranslations(p_locale, p_data);
+            iris.log("[translations]", p_data);
+
+            if(p_settings && p_settings.hasOwnProperty("success")) {
+                p_settings.success(p_locale);
+            }
+        })
+        .fail(function(p_err) {
+            if(p_settings && p_settings.hasOwnProperty("error")) {
+                p_settings.error(p_locale);
+            }
+            throw "Error " + p_err.status + " loading lang file[" + p_uri + "]";
+        });
+    }
+
+
+    //
+    // Public
+    //
+    iris.translations = function (p_locale, p_value, p_settings) {
+        if(typeof p_value === "object") {
+            _addTranslations(p_locale, p_value);
+        } else {
+            _loadTranslations(p_locale, p_value, p_settings);
+        }
+    };
+
+    iris.translate = function (p_label, p_locale) {
+        var value;
+        var locale = null;
+        if (p_locale !== undefined) {
+            locale = p_locale;
+        } else {
+            locale = iris.locale();
+        }
+        
+        var logPrefix = "[translate]";
+        if(_translations.hasOwnProperty(locale)) {
+            value = iris.val(_translations[locale], p_label);
+            if(value === undefined) {
+                iris.log(logPrefix + " label '" + p_label + "' not found in Locale '" + locale + "'", _translations[locale]);
+            }
+            if(typeof value === "object") {
+                iris.log(logPrefix + "label '" + p_label + "' is an object but must be a property in Locale '" + locale + "'", _translations[locale]);
+            }
+        } else {
+            iris.log(logPrefix + " locale '" + locale + "' not loaded", this);
+        }
+        return (value !== undefined) ? value : "??" + p_label + "??";
+    };
+    
+    _init();
+
+})(jQuery);
+
+(function() {
+
+    var _locale, _regional;
+    
+    function _init() {
+        _locale = undefined;
+        _regional = {};
+
+        iris.on("iris-reset", _init);
+    }
+
+    iris.locale = function (p_locale, p_regional) {
+        if ( typeof p_regional === "object" ) {
+            if ( !_regional[p_locale] ) {
+                _regional[p_locale] = {};
+            }
+            $.extend(_regional[p_locale], p_regional);
+
+            if ( _locale === undefined ) {
+                _locale = p_locale;
+            }
+
+        } else if ( p_locale !== undefined ) {
+            _locale = p_locale;
+
+        } else {
+            return _locale;
+        }
+    };
+
+    iris.regional = function (p_label) {
+        if(_regional.hasOwnProperty(_locale)) {
+            if(typeof p_label === "undefined") {
+                return _regional[_locale];
+            } else if(_regional[_locale].hasOwnProperty(p_label)) {
+                return _regional[_locale][p_label];
+            } else {
+                return undefined;
+                //throw "[regional] setting '" + p_label + "' not found for locale '" + _locale + "'";
+            }
+        } else {
+            throw "[regional] for locale '" + _locale + "' not found";
+        }
+    };
+    
+    _init();
+    
+
+})();
 
 (function($) {
 
@@ -1167,6 +1135,7 @@ window.iris = iris;
 
     var Component = function(id, $container, fileJs) {
         iris.Settable.call(this);
+        iris.Event.call(this);
 
         this.id = id;
         this.uis = []; // child UIs
@@ -1183,7 +1152,11 @@ window.iris = iris;
         _includes[fileJs](this);
     };
 
-    iris.inherits(Component, iris.Settable);
+    Component.prototype = $.extend(
+        {},
+        iris.Settable.prototype,
+        iris.Event.prototype
+    );
 
     var pComponent = Component.prototype;
 
@@ -1220,14 +1193,9 @@ window.iris = iris;
             this.uis[f]._destroy();
         }
 
-        // remove component events
-        for ( var eventName in this.events ) {
-            iris.destroyEvents(eventName, this.events[eventName]);
-        }
         this.destroy();
 
         this.uis = null;
-        this.events = null;
     };
 
     pComponent._tmpl = function(p_htmlUrl, p_mode) {
@@ -1721,9 +1689,16 @@ window.iris = iris;
 
 (function() {
 
-    var Resource = function() {};
+    var Resource = function() {
+        iris.Settable.call(this);
+        iris.Event.call(this);
+    };
 
-    Resource.prototype = new iris.Settable();
+    Resource.prototype = $.extend(
+        {},
+        iris.Settable.prototype,
+        iris.Event.prototype
+    );
 
     Resource.prototype.ajax = function(p_method, p_path, p_params, f_success, f_error) {
 

@@ -3,9 +3,9 @@ iris.screen(function (self) {
 	self.create = function() {
 		self.tmpl(iris.path.welcome_tmpl);
 
-		self.on("test-event", testFunc);
-		self.on("remove-test-event", removeTestFunc);
-		self.on("remove-all-test-event", removeAllTestFunc);
+		iris.on("test-event", testFunc);
+		iris.on("remove-test-event", removeTestFunc);
+		iris.on("remove-all-test-event", removeAllTestFunc);
 	};
 
 	function testFunc () {

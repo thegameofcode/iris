@@ -198,7 +198,7 @@
       }
   });
 
-  asyncTest("Execute self.on event defined whitin screen", function() {
+  /*asyncTest("Execute self.on event defined whitin screen", function() {
     
     expect(1);
 
@@ -238,6 +238,6 @@
 
       start();
     });
-  });
+  });*/
 
 }(jQuery));

@@ -1,137 +1,82 @@
 iris.resource(function (self) {
 
-	// Resource Events
-	self.CREATE_TODO = "create-todo";
-	self.DESTROY_TODO = "destroy-todo";
-	self.CHANGE_TODO = "change-todo";
-
-	var todos = {},
-		ids = [],
-		currentFilter = "all",
-		id = 0;
-
-	self.reset = function() {
-		todos = {};
-		ids = [];
-		currentFilter = "all";
-		localStorage.clear();
-		id = 0;
-	};
-
-	self.init = function () {
-		console.log("Reading todos from storage... ");
-		var idsSaved = localStorage.getItem("ids");
-		if ( idsSaved ) {
-			ids = idsSaved.split(",");
-		}
-
-		var todoString, todo, f, F;
-		for (f = 0, F = ids.length; f < F; f++) {
-			todoString = localStorage.getItem("todo_" + ids[f]);
-
-			todo = JSON.parse(todoString);
-			todos[todo.id] = todo;
-
-			if(todo.id > id) {
-				id = todo.id;
-			}
-
-			iris.notify(self.CREATE_TODO, todo.id);
-		}
-	};
+	var todos = [], currentFilter = 'all';
 
 	self.add = function (text) {
-		id++;
-		var todo = {id: String(id), text: text, completed: false};
-		todos[todo.id] = todo;
-		saveTodo(todo);
-		
-		ids.push(todo.id);
-		localStorage.setItem("ids" , ids.join(","));
-		
-		iris.notify(self.CREATE_TODO, todo.id);
-		return todo.id;
+		var todo = new iris.Data({ text: text, completed: false, visible: true });
+		setVisible(todo);
+		todos.push(todo);
+		self.notify('add', todo);
 	};
 
-	self.getTodo = function (id) {
-		var todo = todos[id];
-		todo.visible = currentFilter === "all" || 
-		(todo.completed && currentFilter === "completed") ||
-		(!todo.completed && currentFilter === "active");
-		return $.extend({}, todo);
-	};
-
-	self.remove = function (id) {
-		removeTodo(todos[id]);
-		iris.notify(self.DESTROY_TODO, id);
-	};
-
-	self.toggle = function (id) {
-		var todo = todos[id];
-		todo.completed = !todo.completed;
-		saveTodo(todo);
-
-		iris.notify(self.CHANGE_TODO, todo.id);
-	};
-
-	self.removeCompleted = function () {
-		for (var id in todos ) {
-			var todo = todos[id];
-			if (todo.completed) {
-				removeTodo(todo);
-				iris.notify(self.DESTROY_TODO, todo.id);
-			}
+	self.remove = function (todo) {
+		var idx = $.inArray(todo, todos);
+		if ( idx !== -1 ) {
+			todos.splice(idx, 1);
+			todo.notify('remove');
+			self.notify('remove');
 		}
-	};
-
-	self.setAll = function (completed) {
-		for (var id in todos ) {
-			var todo = todos[id];
-			if ( todo.completed !== completed ) {
-				todo.completed = completed;
-				saveTodo(todo);
-				iris.notify(self.CHANGE_TODO, todo.id);
-			}
-		}
-	};
-
-	self.edit = function (id, text) {
-		var todo = todos[id];
-		todo.text = text;
-		saveTodo(todo);
-		iris.notify(self.CHANGE_TODO, todo.id);
-	};
-
-	self.setFilter = function (filter) {
-		console.log("Set filter = " + filter);
-		currentFilter = filter;
 	};
 
 	self.count = function () {
-		var remaining = 0;
-		var total = ids.length;
+		var i, remaining = 0, total = todos.length;
 
-		for ( var id in todos ) {
-			if ( !todos[id].completed ) {
-				remaining++;
-			}
+		for ( i = 0; i < total; i++ ) {
+			if ( !todos[i].get().completed ) remaining++;
 		}
+		
 		return { remaining: remaining, total: total, completed: total - remaining };
 	};
 
-	function saveTodo (todo) {
-		console.log("Saving todo name[" + todo.text + "]");
-		localStorage.setItem("todo_" + todo.id, JSON.stringify(todo));
-	}
+	self.removeCompleted = function () {
+		var todo, removed = false;
+		for ( var i = todos.length - 1; i >= 0; i-- ) {
+			todo = todos[i];
+			if ( todo.get('completed') ) {
+				todos.splice(i, 1);
+				removed = true;
+				todo.notify('remove');
+			}
+		}
+		if ( removed ) self.notify('remove');
+	};
 
-	function removeTodo (todo) {
-		delete todos[todo.id];
+	self.setAll = function (completed) {
+		var i, todo, changed = false;
+		for ( i = 0; i < todos.length; i++ ) {
+			todo = todos[i];
+			if ( todo.get('completed') !== completed ) {
+				todo.set({ completed : completed });
+				changed = true;
+			}
+		}
+		if ( changed ) self.notify('change');
+	};
 
-		var key = "todo_" + todo.id;
-		localStorage.removeItem(key);
+	self.setFilter = function (filter) {
+		currentFilter = filter;
 
-		ids.splice(ids.indexOf(todo.id), 1);
-		localStorage.setItem("ids" , ids.join(","));
+		for ( var i = 0; i < todos.length; i++ ) {
+			setVisible(todos[i]);
+		}
+
+		self.notify('change');
+	};
+
+	self.toggle = function (todo) {
+		todo.set({completed : !todo.get('completed')});
+		setVisible(todo);
+		self.notify('change');
+	};
+
+	function setVisible (todo) {
+		var isCompleted = todo.get('completed');
+		var isVisible = todo.get('visible');
+		var newIsVisible = currentFilter === "all" || 
+				(isCompleted && currentFilter === "completed") ||
+				(!isCompleted && currentFilter === "active");
+
+		if ( isVisible !== newIsVisible ) todo.set({visible: newIsVisible});
 	}
 
 }, iris.path.resource);
