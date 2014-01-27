@@ -6,7 +6,7 @@ iris.resource(function (self) {
 		var todo = new iris.Data({ text: text, completed: false, visible: true });
 		setVisible(todo);
 		todos.push(todo);
-		self.notify('add', todo);
+		return todo;
 	};
 
 	self.remove = function (todo) {
@@ -14,7 +14,7 @@ iris.resource(function (self) {
 		if ( idx !== -1 ) {
 			todos.splice(idx, 1);
 			todo.notify('remove');
-			self.notify('remove');
+			self.notify('change');
 		}
 	};
 
@@ -38,7 +38,7 @@ iris.resource(function (self) {
 				todo.notify('remove');
 			}
 		}
-		if ( removed ) self.notify('remove');
+		if ( removed ) self.notify('change');
 	};
 
 	self.setAll = function (completed) {
@@ -66,6 +66,11 @@ iris.resource(function (self) {
 	self.toggle = function (todo) {
 		todo.set({completed : !todo.get('completed')});
 		setVisible(todo);
+		self.notify('change');
+	};
+
+	self.setText = function (todo, newText) {
+		todo.set({text : newText});
 		self.notify('change');
 	};
 

@@ -7,7 +7,7 @@ iris.ui(function (self) {
 
 		self.get('destroy').on('click', destroy);
 		self.get().on('dblclick', startEdition);
-		self.get('text').on('blur change', endEdition);
+		self.get('text').on('blur change', endEdition).on("keyup", cancelEdition);
 		self.get('check').on('click', toggle);
 
 		var todo = self.setting('todo');
@@ -39,8 +39,16 @@ iris.ui(function (self) {
 	function endEdition () {
 		self.get().removeClass('editing');
 		if ( this.value.trim() !== '' ) {
-			self.setting('todo').set({text : this.value});
-			todos.notify('change');
+			todos.setText(self.setting('todo'), this.value);
+		} else {
+			destroy();
+		}
+	}
+
+	function cancelEdition (e) {
+		if ( e.keyCode === 27 ) {
+			self.get().removeClass('editing');
+			render();
 		}
 	}
 

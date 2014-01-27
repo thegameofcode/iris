@@ -9,8 +9,6 @@ iris.screen(function(self) {
 		self.get("toggle-all").on("change", toggleAllOnChange);
 		self.get("clear-completed").on("click", todos.removeCompleted);
 
-		todos.on('add', addTodo);
-		todos.on('remove', render);
 		todos.on('change', render);
 	};
 
@@ -27,8 +25,9 @@ iris.screen(function(self) {
 
 	function newTodoOnKeyUp (e) {
 		if ( e.keyCode === 13 && this.value.trim() !== "" ) {
-			todos.add(this.value);
+			var todo = todos.add(this.value);
 			this.value = "";
+			addTodo(todo);
 		}
 	}
 
