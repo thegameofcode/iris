@@ -47,6 +47,7 @@ iris.resource(function (self) {
 			todo = todos[i];
 			if ( todo.get('completed') !== completed ) {
 				todo.set({ completed : completed });
+				setVisible(todo);
 				changed = true;
 			}
 		}
