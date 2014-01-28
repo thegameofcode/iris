@@ -10,6 +10,7 @@ iris.screen(function(self) {
 		self.get("clear-completed").on("click", todos.removeCompleted);
 
 		todos.on('change', render);
+		render();
 	};
 
 	self.awake = function () {

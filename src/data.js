@@ -1,13 +1,13 @@
 (function ($) {
 
-    iris.Data = function (p_data) {
+    var Data = function (p_data) {
         iris.Event.call(this);
         this.data = $.extend({}, p_data);
     };
 
-    iris.inherits(iris.Data, iris.Event);
+    iris.inherits(Data, iris.Event);
 
-    var dataProto = iris.Data.prototype;
+    var dataProto = Data.prototype;
 
     dataProto.set = function (p_data) {
         $.extend(this.data, p_data);
@@ -19,6 +19,10 @@
             return this.data;
         }
         return this.data[p_fieldName];
+    };
+
+    iris.data = function (p_data) {
+        return new Data(p_data);
     };
 
 })(jQuery);

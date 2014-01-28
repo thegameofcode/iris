@@ -6,8 +6,8 @@ _Creation date: 2012-01-12_
   * upd|fix|new|dep|rmv - description
 
 [0.6.0-SNAPSHOT] 2014-XX-XX
- * [new] iris.Data
- * [new] Resource & Component events
+ * [new] iris.data: Easy way to dispatch events for data.
+ * [new] Resource & Component local events (on, off & notify functions has been added)
  * [upd] self.on, self.off use local events (no backward compability)
 
 

@@ -3,7 +3,7 @@ iris.resource(function (self) {
 	var todos = [], currentFilter = 'all';
 
 	self.add = function (text) {
-		var todo = new iris.Data({ text: text, completed: false, visible: true });
+		var todo = iris.data({ text: text, completed: false, visible: true });
 		setVisible(todo);
 		todos.push(todo);
 		return todo;
