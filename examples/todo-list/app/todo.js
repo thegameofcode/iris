@@ -1,6 +1,6 @@
 iris.ui(function (self) {
 
-	var todos = iris.resource(iris.path.resource);
+	var todos = iris.resource(iris.path.todoResource);
 
 	self.create = function() {
 		self.tmpl(iris.path.todo.html);
