@@ -1,15 +1,16 @@
 iris.screen(function(self) {
 
-	var todos = iris.resource(iris.path.resource);
+	var todos = iris.resource(iris.path.todoResource);
 
 	self.create = function() {
 		self.tmpl(iris.path.welcome.html);
 
 		self.get("new-todo").on("keyup", newTodoOnKeyUp);
 		self.get("toggle-all").on("change", toggleAllOnChange);
-		self.get("clear-completed").on("click", todos.removeCompleted);
+		self.get("clear-completed").on("click", clearCompletedOnClick);
 
 		todos.on('change', render);
+		todos.on('add', addTodo);
 		render();
 	};
 
@@ -28,7 +29,6 @@ iris.screen(function(self) {
 		if ( e.keyCode === 13 && this.value.trim() !== "" ) {
 			var todo = todos.add(this.value);
 			this.value = "";
-			addTodo(todo);
 		}
 	}
 
@@ -40,6 +40,10 @@ iris.screen(function(self) {
 	function toggleAllOnChange (e) {
 		var completed = self.get("toggle-all").prop("checked");
 		todos.setAll( completed );
+	}
+
+	function clearCompletedOnClick() {
+		todos.removeCompleted();
 	}
 
 	function render () {

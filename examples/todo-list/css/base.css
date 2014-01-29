@@ -409,6 +409,10 @@ label[for='toggle-all'] {
 	}
 }
 
-.hidden{
+.hidden {
 	display:none;
+}
+
+input[type=checkbox] {
+	outline: 0;
 }

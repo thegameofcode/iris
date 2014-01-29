@@ -2,10 +2,11 @@ iris.resource(function (self) {
 
 	var todos = [], currentFilter = 'all';
 
-	self.add = function (text) {
-		var todo = iris.data({ text: text, completed: false, visible: true });
+	self.add = function (text, completed) {
+		var todo = iris.data({ text: text, completed : completed !== undefined ? completed : false, visible: true });
 		setVisible(todo);
 		todos.push(todo);
+		self.notify('add', todo);
 		return todo;
 	};
 
@@ -85,4 +86,15 @@ iris.resource(function (self) {
 		if ( isVisible !== newIsVisible ) todo.set({visible: newIsVisible});
 	}
 
-}, iris.path.resource);
+	function toJSON() {
+        var jsonTodos = [];
+        for (var i = 0; i < todos.length; i++) {
+            var todo = todos[i];
+            jsonTodos[i] = todo.data;
+        }
+        return jsonTodos;
+	}
+
+	self.toJSON = toJSON;
+
+}, iris.path.todoResource);
