@@ -2,8 +2,10 @@ iris.resource(function (self) {
 
 	var todos = [], currentFilter = 'all';
 
-	self.add = function (text) {
-		var todo = iris.data({ text: text, completed: false, visible: true });
+	self.add = function (text, completed, visible) {
+		completed = (completed === undefined) ? false : completed;
+		visible = (visible === undefined) ? true : visible;
+		var todo = iris.data({ text: text, completed: completed, visible: visible });
 		setVisible(todo);
 		todos.push(todo);
 		self.notify('add', todo);

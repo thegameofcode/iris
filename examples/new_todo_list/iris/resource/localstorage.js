@@ -6,13 +6,16 @@ iris.resource(function (self) {
 			var savedTodos = localStorage.getItem('todos');
 			if ( savedTodos ) {
 				savedTodos = JSON.parse(savedTodos);
+				var todo;
 				for ( var i = 0; i < savedTodos.length; i++ ) {
-					todos.notify('add', iris.data(savedTodos[i]));
+					todo = savedTodos[i];
+					todos.add(todo.text, todo.completed, todo.visible);
 				}
 			}
 
 			todos.on('change', saveTodos);
 			todos.on('add', saveTodos);
+			todos.on('remove', saveTodos);
 		}
 	};
 
