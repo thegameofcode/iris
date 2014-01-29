@@ -1,0 +1,37 @@
+<div>
+
+  <section id="todoapp">
+    <header id="header">
+      <h1>todos</h1>
+      <input id="new-todo" data-id="new-todo" placeholder="What needs to be done?" autofocus>
+    </header>
+    
+    <section id="main">
+      <input id="toggle-all" data-id="toggle-all" type="checkbox" data-jq-toggle="hasTodos" data-jq-prop-checked="noRemainingTodos">
+      <label for="toggle-all">Mark all as complete</label>
+      <ul id="todo-list" data-id="todo-list"></ul>
+    </section>
+
+    <footer id="footer" data-id="footer" data-jq-toggle="hasTodos">
+      <span id="todo-count"><strong data-jq-text="remaining.count"></strong> <span data-jq-text="remaining.text"></span></span>
+      <ul id="filters">
+        <li>
+          <a class="selected" href="#;filter=all">All</a>
+        </li>
+        <li>
+          <a href="#;filter=active">Active</a>
+        </li>
+        <li>
+          <a href="#;filter=completed">Completed</a>
+        </li>
+      </ul>
+      <button id="clear-completed" data-id="clear-completed" data-jq-text="completed" data-jq-toggle="hasRemainings"></button>
+    </footer>
+  </section>
+  <footer id="info">
+    <p>Double-click to edit a todo</p>
+    <p>Created by <a href="http://thegameofcode.github.io/iris" target="_blank">Iris</a></p>
+    <p>Part of <a href="http://todomvc.com" target="_blank">TodoMVC</a></p>
+  </footer>
+
+</div>
