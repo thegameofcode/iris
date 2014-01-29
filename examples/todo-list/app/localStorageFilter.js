@@ -1,9 +1,9 @@
 iris.resource(function (self) {
 
     var todoResource = iris.resource(iris.path.todoResource);
-    var decoratorService = iris.resource(iris.path.decoratorService);
-
-    function localStorageDecorator() {
+    
+    function localStorageFilter(chain) {
+		chain.doFilter();
         localStorage.todos = JSON.stringify(todoResource.toJSON());
     }
 
@@ -19,19 +19,17 @@ iris.resource(function (self) {
     }
 
 
-    function addLocalStorageDecorator() {
-        decoratorService.decoreFunctions(todoResource, [
-            'add', 'remove', 'removeCompleted', 'setAll', 'toggle', 'setText'
-        ], {post: localStorageDecorator});
+    function addLocalStorageFilter() {
+		iris.addFilter(todoResource, ['add', 'remove', 'removeCompleted', 'setAll', 'toggle', 'setText'], localStorageFilter);
     }
     
 
     self.init = function () {
         if (window.localStorage) {
             load();
-            addLocalStorageDecorator();
+            addLocalStorageFilter();
         }
-    }
+    };
     
 	
-}, iris.path.localStorageDecorator);
+}, iris.path.localStorageFilter);

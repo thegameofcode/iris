@@ -1,4 +1,4 @@
-iris.ui(function (self) {
+iris.ui(function(self) {
 
 	var todos = iris.resource(iris.path.todoResource);
 
@@ -17,42 +17,46 @@ iris.ui(function (self) {
 		render();
 	};
 
-	function render () {
+	function render() {
 		var todo = self.setting('todo').get();
 		self.get().toggleClass('completed', todo.completed);
 		self.inflate({todo: todo});
 	}
 
-	function remove () {
+	function remove() {
 		self.destroyUI();
 	}
 
-	function destroy () {
+	function destroy() {
 		todos.remove(self.setting('todo'));
 	}
 
-	function startEdition () {
+	function startEdition() {
 		self.get().addClass('editing');
 		self.get('text').select();
 	}
 
-	function endEdition () {
-		self.get().removeClass('editing');
-		if ( this.value.trim() !== '' ) {
-			todos.setText(self.setting('todo'), this.value);
+	function endEdition() {
+		if (self.get().hasClass('editing')) {
+			self.get().removeClass('editing');
+			if (this.value.trim() !== '') {
+				todos.setText(this.value, self.setting('todo'));
+			} else {
+				destroy();
+			}
 		} else {
-			destroy();
+			render();
 		}
 	}
 
-	function endEditionOnEscape (e) {
-		if ( e.keyCode === 27 ) {
+	function endEditionOnEscape(e) {
+		if (e.keyCode === 27) {
 			self.get().removeClass('editing');
 		}
 	}
 
-	function toggle () {
+	function toggle() {
 		todos.toggle(self.setting('todo'));
 	}
 
-},iris.path.todo.js);
+}, iris.path.todo.js);

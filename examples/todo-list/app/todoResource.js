@@ -71,7 +71,7 @@ iris.resource(function (self) {
 		self.notify('change');
 	};
 
-	self.setText = function (todo, newText) {
+	self.setText = function (newText, todo) {
 		todo.set({text : newText});
 		self.notify('change');
 	};
