@@ -2,6 +2,25 @@ iris.resource(function (self) {
 
 	var todos = [], currentFilter = 'all';
 
+	self.init = function () {
+		if ( localStorage ) {
+
+			var savedTodos = localStorage.getItem('todos');
+			if ( savedTodos ) {
+				savedTodos = JSON.parse(savedTodos);
+				var todo;
+				for ( var i = 0; i < savedTodos.length; i++ ) {
+					todo = savedTodos[i];
+					self.add(todo.text, todo.completed, todo.visible);
+				}
+			}
+
+			self.on('change', saveTodos);
+			self.on('add', saveTodos);
+			self.on('remove', saveTodos);
+		}
+	};
+
 	self.add = function (text, completed, visible) {
 		completed = (completed === undefined) ? false : completed;
 		visible = (visible === undefined) ? true : visible;
@@ -97,6 +116,10 @@ iris.resource(function (self) {
 				(!isCompleted && currentFilter === "active");
 
 		if ( isVisible !== newIsVisible ) todo.set({visible: newIsVisible});
+	}
+
+	function saveTodos () {
+		localStorage.setItem('todos', self.toJson());
 	}
 
 }, iris.path.resource.todo.js);

@@ -11,6 +11,8 @@ iris.screen(function(self) {
 
 		todos.on('change', render);
 		todos.on('add', addTodo);
+		todos.init();
+		
 		render();
 	};
 

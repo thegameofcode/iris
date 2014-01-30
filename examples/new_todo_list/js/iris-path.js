@@ -1,8 +1,5 @@
 iris.path = {
   "resource": {
-    "localstorage": {
-      "js": "resource/localstorage.js"
-    },
     "todo": {
       "js": "resource/todo.js"
     }
