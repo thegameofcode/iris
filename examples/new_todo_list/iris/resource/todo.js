@@ -8,10 +8,8 @@ iris.resource(function (self) {
 			var savedTodos = localStorage.getItem('todos');
 			if ( savedTodos ) {
 				savedTodos = JSON.parse(savedTodos);
-				var todo;
 				for ( var i = 0; i < savedTodos.length; i++ ) {
-					todo = savedTodos[i];
-					self.add(todo.text, todo.completed, todo.visible);
+					self.add( savedTodos[i] );
 				}
 			}
 
@@ -21,11 +19,8 @@ iris.resource(function (self) {
 		}
 	};
 
-	self.add = function (text, completed, visible) {
-		completed = (completed === undefined) ? false : completed;
-		visible = (visible === undefined) ? true : visible;
-		var todo = iris.data({ text: text, completed: completed, visible: visible });
-		setVisible(todo);
+	self.add = function (data) {
+		var todo = iris.model(iris.path.model.todo.js).newTodo(data);
 		todos.push(todo);
 		self.notify('add', todo);
 	};
@@ -63,63 +58,40 @@ iris.resource(function (self) {
 	};
 
 	self.setAll = function (completed) {
-		var i, todo, changed = false;
-		for ( i = 0; i < todos.length; i++ ) {
-			todo = todos[i];
-			if ( todo.get('completed') !== completed ) {
-				todo.set({ completed : completed });
-				setVisible(todo);
-				changed = true;
-			}
+		for ( var i = 0; i < todos.length; i++ ) {
+			todos[i].setCompleted(completed);
 		}
-		if ( changed ) self.notify('change');
+		self.notify('change');
 	};
 
 	self.setFilter = function (filter) {
 		currentFilter = filter;
 
 		for ( var i = 0; i < todos.length; i++ ) {
-			setVisible(todos[i]);
+			todos[i].setVisible();
 		}
-
 		self.notify('change');
 	};
 
+	self.getFilter = function () {
+		return currentFilter;
+	}
+
 	self.toggle = function (todo) {
-		todo.set({completed : !todo.get('completed')});
-		setVisible(todo);
+		todo.toggle();
 		self.notify('change');
 	};
 
 	self.setText = function (todo, newText) {
 		todo.set({text : newText});
-		self.notify('change');
 	};
 
-	self.toArray = function () {
+	function saveTodos () {
 		var todoArray = [];
 		for ( var i = 0; i < todos.length; i++ ) {
 			todoArray.push(todos[i].data);
 		};
-		return todoArray;
-	};
-
-	self.toJson = function () {
-		return JSON.stringify( self.toArray() );
-	};
-
-	function setVisible (todo) {
-		var isCompleted = todo.get('completed');
-		var isVisible = todo.get('visible');
-		var newIsVisible = currentFilter === "all" || 
-				(isCompleted && currentFilter === "completed") ||
-				(!isCompleted && currentFilter === "active");
-
-		if ( isVisible !== newIsVisible ) todo.set({visible: newIsVisible});
-	}
-
-	function saveTodos () {
-		localStorage.setItem('todos', self.toJson());
+		localStorage.setItem( 'todos', JSON.stringify(todoArray) );
 	}
 
 }, iris.path.resource.todo.js);

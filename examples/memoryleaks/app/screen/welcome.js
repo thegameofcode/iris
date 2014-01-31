@@ -22,6 +22,9 @@ iris.screen(function(self) {
 
 	}
 
+	function testListener () {
+		console.log('test');
+	}
 	
 	function createUIs() {
 		var init = new Date().getTime();
@@ -30,7 +33,7 @@ iris.screen(function(self) {
 		for(var f=0, num_uis; f<num_uis; f++) {
 			self.ui("uis", "ui/example.js", {
 				"count" : self.uis.length
-			});
+			}).on('test', testListener);
 		}
 		var total = new Date().getTime() - init;
 		var avg = total / num_uis;

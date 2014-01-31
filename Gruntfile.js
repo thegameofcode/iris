@@ -37,7 +37,7 @@ module.exports = function(grunt) {
         banner: banner
       },
       dist: {
-        src: ['<banner:meta.banner>', 'src/event.js', 'src/util.js', 'src/core.js', 'src/data.js', 'src/lang.js', 'src/regional.js', 'src/settable.js', 'src/component.js', 'src/resource.js'],
+        src: ['<banner:meta.banner>', 'src/event.js', 'src/util.js', 'src/core.js', 'src/model.js', 'src/lang.js', 'src/regional.js', 'src/settable.js', 'src/component.js', 'src/resource.js'],
         dest: 'dist/iris.js'
       }
     },

@@ -1,4 +1,9 @@
 iris.path = {
+  "model": {
+    "todo": {
+      "js": "model/todo.js"
+    }
+  },
   "resource": {
     "todo": {
       "js": "resource/todo.js"

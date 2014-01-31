@@ -37,6 +37,9 @@ iris.ui(function (self) {
 	}
 
 	function endEdition () {
+		var $this = self.get();
+		if ( !$this.hasClass('editing') ) return;
+
 		self.get().removeClass('editing');
 		if ( this.value.trim() !== '' ) {
 			todos.setText(self.setting('todo'), this.value);

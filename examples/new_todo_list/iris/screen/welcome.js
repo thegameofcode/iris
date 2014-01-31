@@ -29,7 +29,7 @@ iris.screen(function(self) {
 
 	function newTodoOnKeyUp (e) {
 		if ( e.keyCode === 13 && this.value.trim() !== "" ) {
-			todos.add(this.value);
+			todos.add({text: this.value});
 			this.value = "";
 		}
 	}

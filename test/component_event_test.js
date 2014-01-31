@@ -87,18 +87,18 @@
 		});
 	});
 	
-	asyncTest("Auto off when a component is destroyed", function() {
-		expect(3);
+	//asyncTest("Auto off when a component is destroyed", function() {
+	//	expect(3);
 
-		iris.on(iris.AFTER_NAVIGATION, function() {
-			iris.off(iris.AFTER_NAVIGATION);
-			iris.on(iris.AFTER_NAVIGATION, function() {
-				iris.off(iris.AFTER_NAVIGATION);
-				start();
-			});
-			iris.navigate("#/screen");
-		});
-	});
+	//	iris.on(iris.AFTER_NAVIGATION, function() {
+	//		iris.off(iris.AFTER_NAVIGATION);
+	//		iris.on(iris.AFTER_NAVIGATION, function() {
+	//			iris.off(iris.AFTER_NAVIGATION);
+	//			start();
+	//		});
+	//		iris.navigate("#/screen");
+	//	});
+	//});
 
 	function onEvent() {
 		window.ok(true, "On event callback");

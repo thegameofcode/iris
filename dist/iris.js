@@ -1,4 +1,4 @@
-/*! iris - v0.6.0-SNAPSHOT - 2014-01-28 (http://thegameofcode.github.io/iris) licensed New-BSD */
+/*! iris - v0.6.0-SNAPSHOT - 2014-01-31 (http://thegameofcode.github.io/iris) licensed New-BSD */
 
 
 (function ($) {
@@ -412,30 +412,58 @@
 
 (function ($) {
 
-    var Data = function (p_data) {
+    //
+    // ModelFactory
+    //
+    var ModelFactory = function () {
+        this.defaults = {};
+        this.functions = {};
+    };
+
+    var modelFactoryProto = ModelFactory.prototype;
+
+    modelFactoryProto.create = function (p_data) {
+        var data = $.extend({}, this.defaults, p_data);
+        var instance = new iris.Model(data);
+        $.extend(instance, this.functions);
+        return instance;
+    };
+
+
+    //
+    // Model
+    //
+    var Model = function (p_data) {
         iris.Event.call(this);
         this.data = $.extend({}, p_data);
     };
 
-    iris.inherits(Data, iris.Event);
+    iris.inherits(Model, iris.Event);
 
-    var dataProto = Data.prototype;
+    var modelProto = Model.prototype;
 
-    dataProto.set = function (p_data) {
+    modelProto.set = function (p_data) {
+        // TODO notify change event by field
         $.extend(this.data, p_data);
         this.notify('change');
     };
 
-    dataProto.get = function (p_fieldName) {
+    modelProto.get = function (p_fieldName) {
         if ( p_fieldName === undefined ) {
             return this.data;
         }
         return this.data[p_fieldName];
     };
 
-    iris.data = function (p_data) {
-        return new Data(p_data);
+    modelProto.toJson = function () {
+        return JSON.stringify(this.data);
     };
+
+    //
+    // Public
+    //
+    iris.Model = Model;
+    iris.ModelFactory = ModelFactory;
 
 })(jQuery);
 
@@ -1654,7 +1682,7 @@
         if ( typeof resourceOrPath === "string" ) {
             // resourceOrPath == path
             if ( !_includes.hasOwnProperty(resourceOrPath) ) {
-                throw "add service[" + resourceOrPath + "] to iris.path";
+                throw "add service[" + resourceOrPath + "] to iris.path before";
             }
             return _includes[resourceOrPath];
 
@@ -1669,6 +1697,25 @@
         }
 
     }
+
+    function _registerModel (modelOrPath, path) {
+
+        if ( typeof modelOrPath === "string" ) {
+            // modelOrPath == path
+            if ( !_includes.hasOwnProperty(modelOrPath) ) {
+                throw "add model[" + modelOrPath + "] to iris.path before";
+            }
+            return _includes[modelOrPath];
+
+        } else {
+            // modelOrPath == model
+            var modelFactory = new iris.ModelFactory();
+            modelOrPath(modelFactory);
+
+            _setInclude(modelFactory, path, "model");
+        }
+
+    }
     
     iris.screen = _registerScreen;
     iris.destroyScreen = _destroyScreenByPath;
@@ -1677,6 +1724,7 @@
     iris.ui = _registerUI;
     iris.tmpl = _registerTmpl;
     iris.resource = _registerRes;
+    iris.model = _registerModel;
     iris.include = _load;
 
     //

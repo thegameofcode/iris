@@ -1032,7 +1032,7 @@
         if ( typeof resourceOrPath === "string" ) {
             // resourceOrPath == path
             if ( !_includes.hasOwnProperty(resourceOrPath) ) {
-                throw "add service[" + resourceOrPath + "] to iris.path";
+                throw "add service[" + resourceOrPath + "] to iris.path before";
             }
             return _includes[resourceOrPath];
 
@@ -1047,6 +1047,25 @@
         }
 
     }
+
+    function _registerModel (modelOrPath, path) {
+
+        if ( typeof modelOrPath === "string" ) {
+            // modelOrPath == path
+            if ( !_includes.hasOwnProperty(modelOrPath) ) {
+                throw "add model[" + modelOrPath + "] to iris.path before";
+            }
+            return _includes[modelOrPath];
+
+        } else {
+            // modelOrPath == model
+            var modelFactory = new iris.ModelFactory();
+            modelOrPath(modelFactory);
+
+            _setInclude(modelFactory, path, "model");
+        }
+
+    }
     
     iris.screen = _registerScreen;
     iris.destroyScreen = _destroyScreenByPath;
@@ -1055,6 +1074,7 @@
     iris.ui = _registerUI;
     iris.tmpl = _registerTmpl;
     iris.resource = _registerRes;
+    iris.model = _registerModel;
     iris.include = _load;
 
     //
