@@ -892,6 +892,10 @@
         return this.con;
     };
 
+    pComponent.model = function() {
+        return this.setting('model');
+    };
+
     //
     // To override functions
     //
