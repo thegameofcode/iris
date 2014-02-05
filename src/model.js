@@ -171,10 +171,10 @@
     collectionProto.save = function () {
         switch ( this.storage ) {
             case 'localStorage':
-                if ( localStorage ) localStorage.setItem( this.name, this.toJson() );
+                if ( localStorage ) { localStorage.setItem( this.name, this.toJson() );}
             break;
             default:
-                console.log('invalid storage: ' + this.storage);
+                //console.log('invalid storage: ' + this.storage);
         }
     };
 
@@ -192,10 +192,10 @@
                 }
             break;
             default:
-                console.log('invalid storage: ' + this.storage);
+                //console.log('invalid storage: ' + this.storage);
         }
         
-    }
+    };
 
     //
     // Public
