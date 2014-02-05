@@ -10,7 +10,10 @@ iris.screen(function (self) {
 
 		self.screens("screens", [
 			["screen1", iris.path.screen1],
-			["screen2", iris.path.screen2]
+			["screen2", iris.path.screen2],
+			["screen3/:param/:param2", iris.path.screen3],
+			["screen4/:param/:param2", iris.path.screen4],
+			["screen5/:param/:param2", iris.path.screen5]
 		]);
 
 	};

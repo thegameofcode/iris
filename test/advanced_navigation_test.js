@@ -41,6 +41,9 @@
                 screen2 : "test/advanced_navigation/screen2.js",
                 screen2_1 : "test/advanced_navigation/screen2_1.js",
                 screen2_2 : "test/advanced_navigation/screen2_2.js",
+                screen3 : "test/advanced_navigation/screen3.js",
+                screen4 : "test/advanced_navigation/screen4.js",
+                screen5 : "test/advanced_navigation/screen5.js",
                 ui : "test/advanced_navigation/ui.js",
                 ui_tmpl : "test/advanced_navigation/ui.html",
                 empty_tmpl : "test/advanced_navigation/empty.html"
@@ -198,7 +201,7 @@
         iris.on(iris.AFTER_NAVIGATION, function () {
             iris.off(iris.AFTER_NAVIGATION);
 
-            var navigationHash = "#/screen1/screen1_1?canSleep=false/screen1_1_1";
+            var navigationHash = "#/screen1/screen1_1;canSleep=false/screen1_1_1";
 
             // this will make an async call
             iris.navigate(navigationHash); // +3 create, +3 awake
@@ -302,7 +305,7 @@
         iris.on(iris.AFTER_NAVIGATION, function () {
             iris.off(iris.AFTER_NAVIGATION);
 
-            iris.navigate("#?param=value&param2=value2"); // +1 awake, +1 params
+            iris.navigate("#;param=value;param2=value2"); // +1 awake, +1 params
 
             iris.on(iris.AFTER_NAVIGATION, function () {
                 iris.off(iris.AFTER_NAVIGATION);
@@ -324,7 +327,7 @@
             iris.off(iris.AFTER_NAVIGATION);
 
             // this will make an async call
-            iris.navigate("#/screen1?param=value&param2=value2"); // +1 create, +1 awake, +1 param
+            iris.navigate("#/screen1;param=value;param2=value2"); // +1 create, +1 awake, +1 param
 
             iris.on(iris.AFTER_NAVIGATION, function () {
                 iris.off(iris.AFTER_NAVIGATION);
@@ -347,7 +350,7 @@
             iris.off(iris.AFTER_NAVIGATION);
 
             // this will make an async call
-            iris.navigate("#?param=valueWelcome&param2=valueWelcome-2/screen1?param=valueS1&param2=valueS1-2/screen1_1?param=valueS1_1&param2=valueS1_1-2"); // +2 create, +3 awake, +3 param
+            iris.navigate("#;param=valueWelcome;param2=valueWelcome-2/screen1;param=valueS1;param2=valueS1-2/screen1_1;param=valueS1_1;param2=valueS1_1-2"); // +2 create, +3 awake, +3 param
 
             iris.on(iris.AFTER_NAVIGATION, function () {
                 iris.off(iris.AFTER_NAVIGATION);
@@ -450,6 +453,86 @@
 
             });
         });
+    });
+
+    asyncTest("Create welcome screen and navigate to it passing path parameters", function() {
+
+        expect(5);
+
+        iris.welcome(iris.path.welcome); // +1 create, +1 awake
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            iris.navigate("#/screen3/value/value2"); // +1 awake, +1 params
+
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.off(iris.AFTER_NAVIGATION);
+
+                strictEqual(window.navigations.join(","), "[create] #,[awake] #,[awake] #/screen3/:param/:param2,[params] #/screen3/:param/:param2 param[value] param2[value2]", "The navigation map is correct"); // +1
+                start();
+            });
+        });
+
+    });
+
+    asyncTest("Create welcome screen and navigate to it passing path parameters and retrieved with self.params", function() {
+
+        expect(5);
+
+        iris.welcome(iris.path.welcome); // +1 create, +1 awake
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            iris.navigate("#/screen4/value/value2"); // +1 awake, +1 params
+
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.off(iris.AFTER_NAVIGATION);
+
+                strictEqual(window.navigations.join(","), "[create] #,[awake] #,[awake] #/screen4/:param/:param2,[params] #/screen4/:param/:param2 self.param('param') = 'value' self.param('param2') = 'value2'", "The navigation map is correct"); // +1
+                start();
+            });
+        });
+
+    });
+
+    asyncTest("Create welcome screen and navigate to it passing path parameters and retrieved with self.params", function() {
+
+        expect(9);
+
+        iris.welcome(iris.path.welcome); // +1 create, +1 awake
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            iris.navigate("#/screen5/value/value2"); // +1 awake, +1 params
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+
+                iris.off(iris.AFTER_NAVIGATION);
+                
+                iris.navigate("#/screen4/value/value2"); // +1 awake, +1 params
+
+                iris.on(iris.AFTER_NAVIGATION, function () {
+                    iris.off(iris.AFTER_NAVIGATION);
+
+                    iris.navigate("#/screen5/value/value2"); // +1 awake, +1 params
+
+                    iris.on(iris.AFTER_NAVIGATION, function () {
+                        iris.off(iris.AFTER_NAVIGATION);
+                        strictEqual(window.navigations.join(","), "[create] #,[awake] #,[awake] #/screen5/:param/:param2,[params] #/screen5/:param/:param2 self.param('param') = 'value' self.param('param2') = 'value2',[awake] #/screen4/:param/:param2,[params] #/screen4/:param/:param2 self.param('param') = 'value' self.param('param2') = 'value2',[awake] #/screen5/:param/:param2,[params] #/screen5/:param/:param2 self.param('param') = 'value' self.param('param2') = 'value2'", "The navigation map is correct"); // +1
+                        start();
+                    });
+                });
+            });
+
+            //
+
+        });
+
     });
 
 }(jQuery));
