@@ -5,13 +5,12 @@ iris.model(function (self) {
 		completed: false
 	};
 
-	self.functions = {
-		toggle : function () {
-			this.set({completed : !this.get('completed')});
-		},
-		setCompleted : function (value) {
-			if ( value !== this.get('completed') ) this.toggle();
-		}
+	self.toggle = function () {
+		self.set({completed : !self.get('completed')});
+	};
+	
+	self.setCompleted = function (value) {
+		if ( value !== self.get('completed') ) self.toggle();
 	};
 	
 }, iris.path.model.todo.js);

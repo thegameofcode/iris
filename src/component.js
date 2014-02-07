@@ -892,8 +892,17 @@
         return this.con;
     };
 
-    pComponent.model = function() {
-        return this.setting('model');
+    pComponent.model = function(p_path) {
+        if ( typeof p_path !== 'string' ) {
+            throw 'path must be string';
+        }
+        
+        var model = this.setting('model');
+        
+        if ( !model || model.path !== p_path ) {
+            throw 'model[' + p_path + '] not found';
+        }
+        return model;
     };
 
     //
@@ -1052,25 +1061,33 @@
 
     }
 
-    function _registerModel (modelOrPath, path) {
-
-        if ( typeof modelOrPath === "string" ) {
-            // modelOrPath == path
-            if ( !_includes.hasOwnProperty(modelOrPath) ) {
-                throw "add model[" + modelOrPath + "] to iris.path before";
-            }
-            return _includes[modelOrPath];
-
+    function _registerOrCreateModel (modelOrPath, pathOrData) {
+        if ( typeof modelOrPath === "function" ) {
+            // Add to includes the new model constructor
+            _registerModel(modelOrPath, pathOrData);
         } else {
-            // modelOrPath == model
-            var modelFactory = new iris.ModelFactory();
-            modelOrPath(modelFactory);
+            // Create a new model instance
+            return _createModel(modelOrPath, pathOrData);
+        }
+    }
 
-            _setInclude(modelFactory, path, "model");
+    function _registerModel (model, path) {
+        _setInclude(model, path, "model");
+    }
+
+    function _createModel (path, data) {
+        if ( !_includes.hasOwnProperty(path) ) {
+            throw "add model[" + path + "] to iris.path before";
         }
 
+        var instance = new iris.Model();
+        instance.path = path;
+        _includes[path](instance);
+        instance.data = $.extend({}, instance.defaults, data);
+
+        return instance;
     }
-    
+
     iris.screen = _registerScreen;
     iris.destroyScreen = _destroyScreenByPath;
     iris.welcome = _welcome;
@@ -1078,7 +1095,7 @@
     iris.ui = _registerUI;
     iris.tmpl = _registerTmpl;
     iris.resource = _registerRes;
-    iris.model = _registerModel;
+    iris.model = _registerOrCreateModel;
     iris.include = _load;
 
     //

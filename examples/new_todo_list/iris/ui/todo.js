@@ -1,5 +1,8 @@
 iris.ui(function (self) {
 
+	var todos = iris.resource(iris.path.resource.todo.js);
+	var model;
+
 	self.create = function() {
 		self.tmpl(iris.path.ui.todo.html);
 
@@ -8,25 +11,25 @@ iris.ui(function (self) {
 		self.get('text').on('blur change', endEdition).on('keyup', endEditionOnEscape);
 		self.get('check').on('click', toggle);
 
-		var model = self.model();
+		model = self.model(iris.path.model.todo.js);
 		model.on('change', render);
-		model.on('remove', destroy);
+		model.on('remove', finishDestroy);
 
 		render();
 	};
 
 	function render () {
-		var modelData = self.model().get();
+		var modelData = model.get();
 		self.get().toggleClass('completed', modelData.completed);
 		self.inflate({todo: modelData});
 	}
 
-	function destroy () {
-		self.destroyUI();
+	function initDestroy (e) {
+		todos.remove(model);
 	}
 
-	function initDestroy (e) {
-		self.model().notify('remove', self.model());
+	function finishDestroy () {
+		self.destroyUI();
 	}
 
 	function startEdition (e) {
@@ -35,23 +38,26 @@ iris.ui(function (self) {
 	}
 
 	function endEdition (e) {
-		var $this = self.get();
-		if ( !$this.hasClass('editing') ) return;
-
-		self.get().removeClass('editing');
-		if ( this.value.trim() !== '' ) {
-			self.model().set({text : this.value});
-		} else {
-			destroy();
+		if ( self.get().hasClass('editing') ) {
+			self.get().removeClass('editing');
+			
+			var newText = this.value.trim();
+			if ( newText !== '' ) {
+				model.set({ text : newText });
+			} else {
+				destroy();
+			}
 		}
 	}
 
 	function endEditionOnEscape (e) {
-		if ( e.keyCode === 27 ) self.get().removeClass('editing');
+		if ( e.keyCode === 27 ) {
+			self.get().removeClass('editing');
+		}
 	}
 
 	function toggle (e) {
-		self.model().toggle();
+		todos.toggle(model);
 	}
 
 },iris.path.ui.todo.js);
