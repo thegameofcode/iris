@@ -38,8 +38,12 @@ iris.screen(function(self) {
 	}
 
 	function addTodo (todo) {
-		self.ui("todo-list", iris.path.ui.todo.js, {model: todo}, self.APPEND);
+		var todoUI = self.ui("todo-list", iris.path.ui.todo.js, {model: todo}, self.APPEND);
 		render();
+		setVisible(todoUI);
+		todoUI.on('toggle', function() {
+			setVisible(todoUI);
+		});
 	}
 
 	function toggleAllOnChange (e) {
@@ -61,13 +65,13 @@ iris.screen(function(self) {
 		});
 	}
 
-	function setVisible (todo) {
-		var model = todo.model(iris.path.model.todo.js);
+	function setVisible (todoUI) {
+		var model = todoUI.model(iris.path.model.todo.js);
 		var isCompleted = model.get('completed');
 		var isVisible = currentFilter === 'all' || 
 				(isCompleted && currentFilter === 'completed') ||
 				(!isCompleted && currentFilter === 'active');
-		todo.get().toggleClass('hidden', !isVisible);
+		todoUI.get().toggleClass('hidden', !isVisible);
 	}
 
 },iris.path.screen.welcome.js);

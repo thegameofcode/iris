@@ -58,6 +58,7 @@ iris.ui(function (self) {
 
 	function toggle (e) {
 		todos.toggle(model);
+		self.notify('toggle');
 	}
 
 },iris.path.ui.todo.js);
