@@ -255,13 +255,13 @@ label[for='toggle-all'] {
 	text-decoration: line-through;
 }
 
-#todo-list li .destroy {
+#todo-list li .destroy, #todo-list li .tags {
+	outline: 0;
 	display: none;
 	position: absolute;
 	top: 0;
-	right: 10px;
 	bottom: 0;
-	width: 40px;
+	width: 50px;
 	height: 40px;
 	margin: auto 0;
 	font-size: 22px;
@@ -273,7 +273,15 @@ label[for='toggle-all'] {
 	transition: all 0.2s;
 }
 
-#todo-list li .destroy:hover {
+#todo-list li .destroy{
+	right: 5px;
+}
+
+#todo-list li .tags{
+	right: 50px;
+}
+
+#todo-list li .destroy:hover, #todo-list li .tags:hover {
 	text-shadow: 0 0 1px #000,
 				 0 0 10px rgba(199, 107, 107, 0.8);
 	-webkit-transform: scale(1.3);
@@ -287,7 +295,11 @@ label[for='toggle-all'] {
 	content: '✖';
 }
 
-#todo-list li:hover .destroy {
+#todo-list li .tags:after {
+	content: 'tags';
+}
+
+#todo-list li:hover .destroy, #todo-list li:hover .tags {
 	display: block;
 }
 
@@ -354,6 +366,11 @@ label[for='toggle-all'] {
 	font-weight: bold;
 }
 
+#tagcloud div span a.selected {
+	color: black;
+	font-weight: bold;
+}
+
 #clear-completed {
 	float: right;
 	position: relative;
@@ -411,4 +428,9 @@ label[for='toggle-all'] {
 
 .hidden{
 	display:none;
+}
+
+
+input[type=checkbox] {
+	outline: 0;
 }
