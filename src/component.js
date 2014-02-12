@@ -1072,12 +1072,8 @@
                 style.type = 'text/css';
                 style.id = 'iris-debug-css';
                 style.innerHTML = 
-                    '.iris-debug-info { font-family: sans-serif; font-size: 14px; color: white; padding: 4px; }' +
-                    '.iris-debug-info b { color: white; }' +
-                    '.iris-debug-ui { outline: 3px dotted blue; box-shadow: 0px 0px 30px rgba(0, 0, 255, 0.5); }' +
-                    '.iris-debug-ui-info { background-color: blue; }' +
+                    '.iris-debug-ui { outline: 1px dotted blue; box-shadow: 0px 0px 30px rgba(0, 0, 255, 0.5); }' +
                     '.iris-debug-screen { outline: 3px dotted red; box-shadow: 0px 0px 30px rgba(255, 0, 0, 0.5); }' +
-                    '.iris-debug-screen-info { background-color: red; }';
                 _head.appendChild(style);
             }
 
@@ -1112,13 +1108,19 @@
 
     function _applyDebugMode (component) {
         component.template.toggleClass('iris-debug-' + component.type, _debugMode);
-        
+
         if ( _debugMode ) {
-            // Add debug info label
+            // Add debug info label, styles in line to override inheritance
+            var color = ( component.type === 'screen' ) ? 'red' : 'blue';
+            var idType = ( component.type === 'screen' ) ? 'Hash' : 'Data-id';
+            var styleInfo = {'font-family': 'sans-serif', 'font-size': '14px', 'color': 'white',
+                'padding': '4px', 'white-space': 'nowrap', 'background-color': color };
+            var tooltip = 'Type: ' + component.type + '\n' + idType + ': ' + component.id + '\nPresenter: ' + component.fileJs + '\nTemplate: ' + component.fileTmpl;
+            
             component.debugElement = $(
-                '<span class="iris-debug-info iris-debug-' + component.type + '-info">' +
+                '<span title="' + tooltip + '">' +
                    '<b>' + component.id + '</b>  [' + component.fileJs + ']' +
-                '</span>').prependTo(component.template);
+                '</span>').css(styleInfo).prependTo(component.template);
         } else {
             // Remove debug info label if exists
             if ( component.debugElement ) {
