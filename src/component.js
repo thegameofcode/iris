@@ -60,6 +60,11 @@
         // By default debug is disabled
         _debugMode = false;
 
+        // If environment is local enable debug
+        if ( iris.isLocalhost() ) {
+            _debug(true);
+        }
+
         iris.on("iris-reset", function () {
             $(window).off("hashchange");
             document.location.hash = "#";
@@ -1061,16 +1066,20 @@
         if ( enabled ) {
             $doc.on('keydown', _debugModeOnKeyDown);
 
-            var style = document.createElement('style');
-            style.type = 'text/css';
-            style.innerHTML = 
-             '.iris-debug-ui { outline: 2px dotted blue; }' +
-             '.iris-debug-ui-info { font-size: 12px; color: white; background-color: blue; }' +
-
-             '.iris-debug-screen { outline: 2px dotted red; }' +
-             '.iris-debug-screen-info { font-size: 12px; color: white; background-color: red; }';
-
-            document.getElementsByTagName('head')[0].appendChild(style);
+            var style = document.getElementById('iris-debug-css');
+            if ( !style ) {
+                style = document.createElement('style');
+                style.type = 'text/css';
+                style.id = 'iris-debug-css';
+                style.innerHTML = 
+                    '.iris-debug-info { font-family: sans-serif; font-size: 14px; color: white; padding: 4px; }' +
+                    '.iris-debug-info b { color: white; }' +
+                    '.iris-debug-ui { outline: 3px dotted blue; box-shadow: 0px 0px 30px rgba(0, 0, 255, 0.5); }' +
+                    '.iris-debug-ui-info { background-color: blue; }' +
+                    '.iris-debug-screen { outline: 3px dotted red; box-shadow: 0px 0px 30px rgba(255, 0, 0, 0.5); }' +
+                    '.iris-debug-screen-info { background-color: red; }';
+                _head.appendChild(style);
+            }
 
         } else {
             $doc.off('keydown', _debugModeOnKeyDown);
@@ -1084,16 +1093,20 @@
 
             _debugMode = !_debugMode;
 
-            var screen;
-            for ( var key in _screen ) {
+            var key, screen;
+            for ( key in _screen ) {
                 screen = _screen[key];
-
                 _applyDebugMode(screen);
-                
-                for ( var f = 0, F = screen.uis.length; f < F; f++ ) {
-                    _applyDebugMode( screen.uis[f] );
-                }
+                _applyDebugToUIs(screen.uis);
             }
+        }
+    }
+
+    // Recursive
+    function _applyDebugToUIs (uis) {
+        for ( var f = 0, F = uis.length; f < F; f++ ) {
+            _applyDebugMode( uis[f] );
+            _applyDebugToUIs( uis[f].uis );
         }
     }
 
@@ -1103,12 +1116,14 @@
         if ( _debugMode ) {
             // Add debug info label
             component.debugElement = $(
-                '<span class="iris-debug-' + component.type + '-info">' +
-                   component.id + ' [' + component.fileJs + ',' + component.fileTmpl + ']' +
+                '<span class="iris-debug-info iris-debug-' + component.type + '-info">' +
+                   '<b>' + component.id + '</b>  [' + component.fileJs + ']' +
                 '</span>').prependTo(component.template);
         } else {
-            // Remove debug info label
-            component.debugElement.remove();
+            // Remove debug info label if exists
+            if ( component.debugElement ) {
+                component.debugElement.remove();
+            }
         }
     }
     

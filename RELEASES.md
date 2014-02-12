@@ -7,6 +7,7 @@ _Creation date: 2012-01-12_
 
 [0.5.7-SNAPSHOT] 2014-XX-XX
  * [new] Iris debug mode, Closed #169
+ * [new] iris.isLocalhost
 
 
 [0.5.6] 2014-01-23
