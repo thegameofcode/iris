@@ -51,7 +51,7 @@ var mimeType = {
 , ".ico"  : "image/vnd.microsoft.icon"
 }
 
-var port = 8080;
+var port = 8081;
 
 var fs   = require('fs');
 var url  = require("url");

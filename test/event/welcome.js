@@ -6,6 +6,7 @@ iris.screen(function (self) {
 		iris.on("test-event", testFunc);
 		iris.on("remove-test-event", removeTestFunc);
 		iris.on("remove-all-test-event", removeAllTestFunc);
+		iris.on("remove-all-test-event-then-add-event", removeAllTestFuncThenAddEvent);
 	};
 
 	function testFunc () {
@@ -22,6 +23,16 @@ iris.screen(function (self) {
 		window.ok(true, 'Executed remove-all-test-event callback once');
 		self.off("remove-all-test-event");
 		self.notify("remove-all-test-event"); // No callbacks after self.off
+	}
+
+	function removeAllTestFuncThenAddEvent () {
+		window.ok(true, 'Executed remove-all-test-event-then-add-event callback once');
+		self.off("remove-all-test-event-then-add-event");
+		self.notify("remove-all-test-event-then-add-event"); // No callbacks after self.off
+		self.on("remove-all-test-event-then-add-event", function() {
+			window.ok(true, 'Executed remove-all-test-event-then-add-event callback once');
+		});
+		self.notify("remove-all-test-event-then-add-event");
 	}
 
 },iris.path.welcome);

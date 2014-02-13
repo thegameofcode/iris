@@ -26,7 +26,8 @@
         //     container: $element, // return the parent container associated with hash (#parent/hash/:id)
         //     parentNavMap: {} // Parent node in the navigation tree
         // }
-        _screenMetadata
+        _screenMetadata,
+        _debugMode
         ;
 
     
@@ -55,6 +56,14 @@
         _lastLoadedDependencies = [];
 
         _paths = [];
+
+        // By default debug is disabled
+        _debugMode = false;
+
+        // If environment is local enable debug
+        if ( iris.isLocalhost() ) {
+            _debug(true);
+        }
 
         iris.on("iris-reset", function () {
             $(window).off("hashchange");
@@ -515,10 +524,11 @@
     }
 
 
-    var Component = function(id, $container, fileJs) {
+    var Component = function(id, $container, fileJs, type) {
         iris.Settable.call(this);
         iris.Event.call(this);
 
+        this.type = type;
         this.id = id;
         this.uis = []; // child UIs
         this.uisMap = {}; // UIs sorted by id
@@ -921,7 +931,7 @@
     // UI
     //
     var UI = function($container, id, fileJs, settings, tmplMode, parentUI) {
-        Component.call(this, id, $container, fileJs);
+        Component.call(this, id, $container, fileJs, 'ui');
 
         var jqToHash = _jqToHash($container);
 
@@ -955,7 +965,7 @@
     //
     var Screen = function(path) {
         var screenMeta = _screenMetadata[path];
-        Component.call(this, path, screenMeta.container, screenMeta.js);
+        Component.call(this, path, screenMeta.container, screenMeta.js, 'screen');
 
         this.params = {};
         this.screenConId = null;
@@ -1061,6 +1071,10 @@
 
     }
 
+
+    //
+    // Model
+    //
     function _registerOrCreateModel (modelOrPath, pathOrData) {
         if ( typeof modelOrPath === "function" ) {
             // Add to includes the new model constructor
@@ -1088,6 +1102,79 @@
         return instance;
     }
 
+
+    //
+    // Debug mode
+    //
+    function _debug (enabled) {
+        var $doc = $(window.document);
+        if ( enabled ) {
+            $doc.on('keydown', _debugModeOnKeyDown);
+
+            var style = document.getElementById('iris-debug-css');
+            if ( !style ) {
+                style = document.createElement('style');
+                style.type = 'text/css';
+                style.id = 'iris-debug-css';
+                style.innerHTML = 
+                    '.iris-debug-ui { outline: 1px dotted blue; box-shadow: 0px 0px 30px rgba(0, 0, 255, 0.5); }' +
+                    '.iris-debug-screen { outline: 3px dotted red; box-shadow: 0px 0px 30px rgba(255, 0, 0, 0.5); }' +
+                _head.appendChild(style);
+            }
+
+        } else {
+            $doc.off('keydown', _debugModeOnKeyDown);
+        }
+    }
+
+    function _debugModeOnKeyDown (e) {
+        // Control + Shift + Alt + D
+        if ( e.shiftKey && e.ctrlKey && e.altKey &&
+             e.keyCode !== 16 && e.keyCode === 68 ) {
+
+            _debugMode = !_debugMode;
+
+            var key, screen;
+            for ( key in _screen ) {
+                screen = _screen[key];
+                _applyDebugMode(screen);
+                _applyDebugToUIs(screen.uis);
+            }
+        }
+    }
+
+    // Recursive
+    function _applyDebugToUIs (uis) {
+        for ( var f = 0, F = uis.length; f < F; f++ ) {
+            _applyDebugMode( uis[f] );
+            _applyDebugToUIs( uis[f].uis );
+        }
+    }
+
+    function _applyDebugMode (component) {
+        component.template.toggleClass('iris-debug-' + component.type, _debugMode);
+
+        if ( _debugMode ) {
+            // Add debug info label, styles in line to override inheritance
+            var color = ( component.type === 'screen' ) ? 'red' : 'blue';
+            var idType = ( component.type === 'screen' ) ? 'Hash' : 'Data-id';
+            var styleInfo = {'font-family': 'sans-serif', 'font-size': '14px', 'color': 'white',
+                'padding': '4px', 'white-space': 'nowrap', 'background-color': color };
+            var tooltip = 'Type: ' + component.type + '\n' + idType + ': ' + component.id + '\nPresenter: ' + component.fileJs + '\nTemplate: ' + component.fileTmpl;
+            
+            component.debugElement = $(
+                '<span title="' + tooltip + '">' +
+                   '<b>' + component.id + '</b>  [' + component.fileJs + ']' +
+                '</span>').css(styleInfo).prependTo(component.template);
+        } else {
+            // Remove debug info label if exists
+            if ( component.debugElement ) {
+                component.debugElement.remove();
+            }
+        }
+    }
+    
+
     iris.screen = _registerScreen;
     iris.destroyScreen = _destroyScreenByPath;
     iris.welcome = _welcome;
@@ -1097,6 +1184,7 @@
     iris.resource = _registerRes;
     iris.model = _registerOrCreateModel;
     iris.include = _load;
+    iris.debug = _debug;
 
     //
     // Classes

@@ -240,4 +240,18 @@
     });
   });*/
 
+  asyncTest("Execute self.off event and then self.on on the same event defined within screen", function() {
+    
+    expect(2);
+
+    iris.welcome(iris.path.welcome);
+
+    iris.on(iris.AFTER_NAVIGATION, function () {
+      iris.off(iris.AFTER_NAVIGATION);
+      iris.notify('remove-all-test-event-then-add-event');
+
+      start();
+    });
+  });
+
 }(jQuery));

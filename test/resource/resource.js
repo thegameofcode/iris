@@ -1,6 +1,6 @@
 iris.resource(function(self){
 
-    self.settings({path : "http://localhost:8080/"});
+    self.settings({path : "http://localhost:8081/"});
 
     self.load = function (id, success, error) {
       self.get("test/resource/" + id, success, error);

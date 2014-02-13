@@ -6,7 +6,8 @@
         _cache,
         _cacheVersion,
         _log,
-        _logEnabled;
+        _logEnabled,
+        _isLocalEnv;
 
     //
     // Private
@@ -38,9 +39,9 @@
             _log = console.log;
         }
 
-        var isLocalEnv = urlContains("localhost", "127.0.0.1");
-        _logEnabled = isLocalEnv;
-        _cache = !isLocalEnv;
+        _isLocalEnv = urlContains("localhost", "127.0.0.1");
+        _logEnabled = _isLocalEnv;
+        _cache = !_isLocalEnv;
 
         iris.on("iris-reset", _init);
     }
@@ -110,7 +111,10 @@
             return !_cache;
         }
     };
-    
+
+    iris.isLocalhost = function () {
+        return _isLocalEnv;
+    };
     
     _init();
 

@@ -5,10 +5,16 @@ _Creation date: 2012-01-12_
 [version] date -> authors
   * upd|fix|new|dep|rmv - description
 
+
 [0.6.0-SNAPSHOT] 2014-XX-XX
  * [new] iris.data: Easy way to dispatch events for data.
  * [new] Resource & Component local events (on, off & notify functions has been added)
  * [upd] self.on, self.off use local events (no backward compability)
+
+
+[0.5.7-SNAPSHOT] 2014-XX-XX
+ * [new] Iris debug mode, Closed #169
+ * [new] iris.isLocalhost
 
 
 [0.5.6] 2014-01-23
