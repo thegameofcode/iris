@@ -1745,26 +1745,26 @@
     //
     function _debug (enabled) {
         var $doc = $(window.document);
-        if ( enabled ) {
+        var style = document.getElementById('iris-debug-css');
+        
+        if ( enabled && !style ) {
+            $('<style type="text/css" id="iris-debug-css">' +
+                    '.iris-debug-ui { outline: 3px dotted blue; }' +
+                    '.iris-debug-ui:hover { outline: 3px solid blue; box-shadow: 0px 0px 40px rgba(0, 0, 255, 0.5); }' +
+                    '.iris-debug-screen { outline: 3px dotted red; }' +
+                    '.iris-debug-screen:hover { outline: 3px solid red; box-shadow: 0px 0px 40px rgba(255, 0, 0, 0.5); }' +
+              '</style>').appendTo(_head);
+            
             $doc.on('keydown', _debugModeOnKeyDown);
 
-            var style = document.getElementById('iris-debug-css');
-            if ( !style ) {
-                style = document.createElement('style');
-                style.type = 'text/css';
-                style.id = 'iris-debug-css';
-                style.innerHTML = 
-                    '.iris-debug-ui { outline: 1px dotted blue; box-shadow: 0px 0px 30px rgba(0, 0, 255, 0.5); }' +
-                    '.iris-debug-screen { outline: 3px dotted red; box-shadow: 0px 0px 30px rgba(255, 0, 0, 0.5); }' +
-                _head.appendChild(style);
-            }
-
-        } else {
+        } else if ( !enabled && style ) {
             $doc.off('keydown', _debugModeOnKeyDown);
+            $(style).remove();
         }
     }
 
     function _debugModeOnKeyDown (e) {
+
         // Control + Shift + Alt + D
         if ( e.shiftKey && e.ctrlKey && e.altKey &&
              e.keyCode !== 16 && e.keyCode === 68 ) {
@@ -1801,7 +1801,7 @@
             
             component.debugElement = $(
                 '<span title="' + tooltip + '">' +
-                   '<b>' + component.id + '</b>  [' + component.fileJs + ']' +
+                   '<b style="color:white;">' + component.id + '</b>  [' + component.fileJs + ']' +
                 '</span>').css(styleInfo).prependTo(component.template);
         } else {
             // Remove debug info label if exists
