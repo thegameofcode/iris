@@ -588,6 +588,7 @@
         this.destroy();
 
         this.uis = null;
+        this.notify('destroy');
     };
 
     pComponent._tmpl = function(p_htmlUrl, p_mode) {
@@ -1057,16 +1058,23 @@
             if ( !_includes.hasOwnProperty(resourceOrPath) ) {
                 throw "add service[" + resourceOrPath + "] to iris.path before";
             }
+
+            if ( _includes[resourceOrPath].res ) {
+
+                // _includes[resourceOrPath] has a field called 'res' because it has not been called
+                var serv = new iris.Resource();
+                serv.cfg = {};
+                serv.settings({ type: "json", path: "" });
+                _includes[resourceOrPath](serv);
+                serv.create();
+                _includes[resourceOrPath] = serv;
+            }
+
             return _includes[resourceOrPath];
 
         } else {
             // resourceOrPath == resource
-            var serv = new iris.Resource();
-            serv.cfg = {};
-            serv.settings({ type: "json", path: "" });
-            resourceOrPath(serv);
-
-            _setInclude(serv, path, "resource");
+            _setInclude({res: resourceOrPath}, path, "resource");
         }
 
     }
@@ -1098,6 +1106,7 @@
         instance.path = path;
         _includes[path](instance);
         instance.data = $.extend({}, instance.defaults, data);
+        instance.create();
 
         return instance;
     }
