@@ -1,29 +1,35 @@
 iris.screen(function(self) {
 	
 	var inputMaxUIs, inputMaxScreens, screenCount, screenInter, val, uiResults;
+
+	var model = iris.model(iris.path.model, {test:'test'});
 	
 	self.create = function() {
 		self.tmpl(iris.path.welcome_html);
 
 		self.get("btn_create_uis").click(createUIs);
 		self.get("btn_destroy_all_uis").click(destroyAllUIs);
-
-/*
-		self.get("btn_create_screens").click(createScreens);
-		self.get("btn_destroy_all_screens").click(destroyAllScreens);
-*/		
+	
 		self.get("btn_run_ui_tests").click(runUITests);
 		uiResults = self.get("ui_results");
 
 		self.get("btn_reset_iris").on("click", onResetIris);
 		
 		inputMaxUIs = self.get("ui_max");
-//		inputMaxScreens = self.get("screen_max");
+
+
+		self.get('btn_notify_mevent').click(notifyMEvent);
+		self.get('btn_destroy_model').click(destroyModel);
 
 	}
 
-	function testListener () {
-		console.log('test');
+	function notifyMEvent () {
+		model.notify('change');
+	}
+
+	function destroyModel () {
+		model.destroy();
+		model = null;
 	}
 	
 	function createUIs() {
@@ -32,9 +38,11 @@ iris.screen(function(self) {
 		
 		for(var f=0, num_uis; f<num_uis; f++) {
 			self.ui("uis", "ui/example.js", {
-				"count" : self.uis.length
-			}).on('test', testListener);
+				count: self.uis.length,
+				model: model
+			});
 		}
+
 		var total = new Date().getTime() - init;
 		var avg = total / num_uis;
 		uiResults.append("<li style='color:green;'>Creating " + num_uis + " UIs ... " + total + " ms (" + avg + " ms/object)</li>");
@@ -62,42 +70,4 @@ iris.screen(function(self) {
 		uiResults.append("<li style='color:green;'>Iris reset</li>");
 	}
 	
-	/*
-		Since 0.5.0 version a screen js cannot be reused
-
-	function createScreens() {
-		var init = new Date().getTime();
-		iris.log("Creating screens and navigating...");
-		
-		screenCount = inputMaxScreens.val();
-		
-		var f = 0, id;
-		screenInterval = setInterval(function(){
-			if ( f == screenCount ) {
-				clearInterval(screenInterval);
-			}
-			else {
-				id = "#screen_" + f++;
-				self.AddScreen("screens", id, "screen/example_instance.js");
-				iris.navigate(id);
-				
-				iris.log("   Added screen=",id)
-			}
-		},500);
-		
-		iris.log("    Finished at " + (new Date().getTime() - init) + " ms");
-	}
-	
-	function destroyAllScreens() {
-		screenInterval = setInterval(function(){
-			if ( screenCount-- == 0 ) {
-				clearInterval(screenInterval);
-			}
-			else {
-				var id = "#screen_" + screenCount;
-				iris.screen.Destroy(id);
-				iris.log("   Removed screen=",id)
-			}
-		},500);
-	}*/
 }, iris.path.welcome);

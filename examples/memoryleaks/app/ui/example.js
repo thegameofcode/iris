@@ -5,11 +5,12 @@ iris.ui(function (self) {
 		self.tmplMode(self.APPEND);
 		self.tmpl(iris.path.ui_html);
 
-		// self.on('test-event', funcExample);
+		var model = self.model(iris.path.model);
+		self.listen(model, 'change', onModelEvent);
 	};
 
-	// function funcExample () {
-	// 	console.log('Example function!')
-	// }
+	function onModelEvent () {
+		console.log('onModelEvent listener ' + self.setting('count'), self);
+	};
 
 }, iris.path.ui);
