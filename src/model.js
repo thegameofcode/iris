@@ -5,6 +5,7 @@
     //
     var Model = function () {
         iris.Event.call(this);
+        this.events('change');
     };
 
     iris.inherits(Model, iris.Event);
@@ -15,7 +16,6 @@
     modelProto.set = function (p_data) {
         $.extend(this.data, p_data);
         this.notify('change');
-        // TODO notify change event by field
     };
 
     modelProto.get = function (p_fieldName) {
@@ -29,6 +29,13 @@
     modelProto.toJson = function () {
         return JSON.stringify(this.data);
     };
+
+    modelProto.destroy = function () {
+        this.notify('destroy');
+    };
+
+    // To override
+    modelProto.create = function () {};
 
 
     //
