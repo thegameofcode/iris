@@ -48,6 +48,11 @@
         return this.ajax("POST", p_path, p_params, f_success, f_error);
     };
 
+    //
+    // To override
+    //
+    Resource.prototype.create = function() {};
+
     iris.Resource = Resource;
 
 })();
