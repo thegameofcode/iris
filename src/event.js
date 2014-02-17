@@ -40,7 +40,7 @@
         this.listeners = [];
 
         // Array with all registered targets
-        this.targets = [];
+        this.eventTargets = [];
 
         // Register the essential destroy event
         this.events('destroy');
@@ -60,12 +60,14 @@
         }
     };
 
+    // Check if eventName has been registered, otherwise throw exception
     eventPrototype.checkEvent = function (p_eventName) {
         if ( !this.eventMap.hasOwnProperty(p_eventName) ) {
             throw 'event[' + p_eventName + '] is not registered, use self.events';
         }
     };
 
+    // Add a event listener (warning: this may cause memory leaks)
     eventPrototype.on = function (p_eventName, f_func) {
 
         this.checkEvent(p_eventName);
@@ -86,6 +88,7 @@
 
     };
 
+    // Remove an event listener
     eventPrototype.off = function (p_eventName, f_func) {
 
         this.checkEvent(p_eventName);
@@ -111,6 +114,7 @@
         }
     };
 
+    // Notify a new event
     eventPrototype.notify = function (p_eventName, p_data) {
 
         if ( this.silent ) {
@@ -131,33 +135,36 @@
         }
     };
 
+    // Enable notifications (this.notify will trigger events)
     eventPrototype.notifyOn = function () {
         this.silent = true;
     };
 
+    // Disable notifications (this.notify wont trigger events)
     eventPrototype.notifyOff = function () {
         this.silent = false;
     };
     
+    // Add event listener (in safe way) that can be paused or automatically destroyed whitout generate memory leaks
     eventPrototype.listen = function (target, eventName, listener) {
 
         // Add listener to target
         target.on(eventName, listener);
 
         // Register listener to remove on destroy
-        this.listeners.push({target: target, eventName: eventName, fn: listener});
+        this.listeners.push({target: target, eventName: eventName, fn: listener, pausable: true, active: true});
         
         // If target is unregistered
         var observer = this;
-        if ( $.inArray(target, observer.targets) === -1 ) {
+        if ( $.inArray(target, observer.eventTargets) === -1 ) {
 
-            observer.targets.push(target); // Register target
+            observer.eventTargets.push(target); // Register target
 
             // When the target is destroyed, remove all references in the observer
             var onTargetDestroy = function () {
 
                 // Unregister target
-                observer.targets.splice($.inArray(target, observer.targets), 1);
+                observer.eventTargets.splice($.inArray(target, observer.eventTargets), 1);
                 
                 // Remove target listeners from observer
                 var i, observerListener;
@@ -174,7 +181,7 @@
             target.on('destroy', onTargetDestroy);
             
             // Register listener to remove on destroy
-            this.listeners.push({target: target, eventName: 'destroy', fn: onTargetDestroy});
+            this.listeners.push({target: target, eventName: 'destroy', fn: onTargetDestroy, pausable: false, active: true});
         }
 
     };
@@ -188,13 +195,47 @@
         }
 
         this.listeners = [];
-        this.targets = [];
+        this.eventTargets = [];
     };
 
+    // Pause all listeners, this will remove the listeners from targets.
+    // Use resumeListeners to add them again.
+    eventPrototype.pauseListeners = function () {
+        var i, listener;
+        for (i = 0; i < this.listeners.length; i++) {
+            listener = this.listeners[i];
+
+            if ( listener.pausable && listener.active ) {
+                listener.target.off(listener.eventName, listener.fn);
+                listener.active = false;
+            }
+        }
+    };
+
+    // Resume all paused listeners, this will add again the listeners to targets.
+    // Use pauseListeners to remove them from targets.
+    eventPrototype.resumeListeners = function () {
+        var i, listener;
+        for (i = 0; i < this.listeners.length; i++) {
+            listener = this.listeners[i];
+
+            if ( listener.pausable && !listener.active ) {
+                listener.target.on(listener.eventName, listener.fn);
+                listener.active = true;
+            }
+        }
+    };
+
+
+
+    //
+    // Iris class
+    //
     var Iris = function() {
         Event.call(this);
     };
     Iris.prototype = new Event(); // iris.inherits() is undefined
+
     
     _init();
 
