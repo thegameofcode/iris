@@ -118,14 +118,10 @@
     // Notify a new event
     eventPrototype.notify = function (p_eventName, p_data) {
 
-        if ( this.silent ) {
-            return false;
-        }
-        
         this.checkEvent(p_eventName);
 
-        if ( p_eventName === undefined ) {
-            throw 'event name undefined';
+        if ( this.silent ) {
+            return false;
         }
         
         var callbacks = this.eventMap[p_eventName];
