@@ -2,21 +2,51 @@
 (function ($) {
 
     function _init() {
-        iris.eventMap = {};
-        iris.events(iris.BEFORE_NAVIGATION, iris.AFTER_NAVIGATION, iris.RESOURCE_ERROR, iris.SCREEN_NOT_FOUND, 'iris-reset');
 
-        iris.on("iris-reset", _init);
+        var iris = new Iris();
+
+        //
+        // Public
+        //
+        iris.Event = Event;
+
+        //
+        // Iris custom events
+        //
+        iris.BEFORE_NAVIGATION = 'iris_before_navigation';
+        iris.AFTER_NAVIGATION = 'iris_after_navigation';
+        iris.RESOURCE_ERROR = 'iris_resource_error';
+        iris.SCREEN_NOT_FOUND = 'iris_screen_not_found';
+
+        // Register global iris events
+        iris.events(iris.BEFORE_NAVIGATION, iris.AFTER_NAVIGATION, 
+            iris.RESOURCE_ERROR, iris.SCREEN_NOT_FOUND, 'iris-reset');
+
+        // Expose iris object
+        window.iris = iris;
+
+        iris.on('iris-reset', _init);
     }
 
     var Event = function () {
-        this.eventMap = {}; // { "event1" : [f1, f2], "event2" : [f3, f4, f5, f6] }
-        this.eventNames = {};
+        // keys are event names, values are arrays with listeners
+        // { 'event1' : [f1, f2], 'event2' : [f3, f4, f5, f6] }
+        this.eventMap = {};
+
+        // When this.silent is true, notify will not trigger any event
         this.silent = false;
+
+        // Array of objects like: {target: target, eventName: eventName, fn: listener}
         this.listeners = [];
+
+        // Array with all registered targets
         this.targets = [];
 
+        // Register the essential destroy event
         this.events('destroy');
-        this.on('destroy', this.destroyEvents);
+
+        // When the object is destroyed, calls to this.removeListeners
+        this.on('destroy', this.removeListeners);
     };
 
     var eventPrototype = Event.prototype;
@@ -24,13 +54,15 @@
     // Define allowed events
     eventPrototype.events = function () {
         for (var i = 0; i < arguments.length; i++) {
-            this.eventNames[arguments[i]] = true;
+            if ( !this.eventMap.hasOwnProperty(arguments[i]) ) {
+                this.eventMap[arguments[i]] = [];
+            }
         }
     };
 
     eventPrototype.checkEvent = function (p_eventName) {
-        if ( !this.eventNames.hasOwnProperty(p_eventName) ) {
-            throw 'event[' + p_eventName + '] is not registered';
+        if ( !this.eventMap.hasOwnProperty(p_eventName) ) {
+            throw 'event[' + p_eventName + '] is not registered, use self.events';
         }
     };
 
@@ -39,7 +71,7 @@
         this.checkEvent(p_eventName);
         
         if ( ! $.isFunction(f_func) ) {
-            throw "invalid function";
+            throw 'invalid function';
         }
 
         if ( !this.eventMap.hasOwnProperty(p_eventName) ) {
@@ -60,7 +92,7 @@
         
         // if f_func is undefined removes all callbacks
         if ( f_func !== undefined && ! $.isFunction(f_func) ) {
-            throw "invalid function";
+            throw 'invalid function';
         }
 
         var callbacks = this.eventMap[p_eventName];
@@ -88,7 +120,7 @@
         this.checkEvent(p_eventName);
 
         if ( p_eventName === undefined ) {
-            throw "event name undefined";
+            throw 'event name undefined';
         }
         
         var callbacks = this.eventMap[p_eventName];
@@ -108,82 +140,61 @@
     };
     
     eventPrototype.listen = function (target, eventName, listener) {
-window.console.log('Adding listener...', target, eventName, listener);
 
         // Add listener to target
         target.on(eventName, listener);
 
-        var targetRegistered = false;
-        for (var i = 0; i < this.targets.length; i++) {
-            if ( this.targets[i] === target ) {
-                targetRegistered = true;
-                break;
-            }
-        }
+        // Register listener to remove on destroy
+        this.listeners.push({target: target, eventName: eventName, fn: listener});
+        
+        // If target is unregistered
+        var observer = this;
+        if ( $.inArray(target, observer.targets) === -1 ) {
 
-        if ( !targetRegistered ) {
-            this.targets.push(target);
+            observer.targets.push(target); // Register target
 
-            var self = this;
-            target.on('destroy', function () {
-window.console.log('The target listened is destroyed, removing its reference from this.targets...');
-                self.targets.splice(self.targets.indexOf(target), 1);
+            // When the target is destroyed, remove all references in the observer
+            var onTargetDestroy = function () {
 
-window.console.log('    Removing listeners associated with the target destroyed');
-                var lis;
-                for (i = self.listeners.length - 1; i >= 0; i--) {
-                    lis = self.listeners[i];
-                    if ( lis.target === target ) {
-window.console.log('            removing a listener from self.listeners...', lis.target, lis.e, lis.fn);
-                        self.listeners.splice(i, 1);
+                // Unregister target
+                observer.targets.splice($.inArray(target, observer.targets), 1);
+                
+                // Remove target listeners from observer
+                var i, observerListener;
+                for (i = observer.listeners.length - 1; i >= 0; i--) {
+                    observerListener = observer.listeners[i];
+                    if ( observerListener.target === target ) {
+                        observer.listeners.splice(i, 1);
                     }
                 }
-            });
+
+            };
+
+            // Only one destroy callback per target
+            target.on('destroy', onTargetDestroy);
+            
+            // Register listener to remove on destroy
+            this.listeners.push({target: target, eventName: 'destroy', fn: onTargetDestroy});
         }
 
-        // Register listener to remove on destroy
-        this.listeners.push({target: target, e: eventName, fn: listener});
     };
 
+    // Remove all listeners from targets
     eventPrototype.removeListeners = function () {
-        var i, lis;
+        var i, listener;
         for (i = 0; i < this.listeners.length; i++) {
-            lis = this.listeners[i];
-window.console.log('       removing listener created in target = ', lis.target, lis.e, lis.fn);
-            lis.target.off(lis.e, lis.fn);
+            listener = this.listeners[i];
+            listener.target.off(listener.eventName, listener.fn);
         }
 
         this.listeners = [];
         this.targets = [];
     };
-    
-    eventPrototype.destroyEvents = function () {
-window.console.log('An event object has been destroyed', this);
-        this.removeListeners();
-        delete this.eventMap;
-        delete this.eventName;
-    };
 
     var Iris = function() {
         Event.call(this);
     };
-    Iris.prototype = new Event();
-    var iris = new Iris();
-
-    //
-    // Public
-    //
-    iris.Event = Event;
-
-    //
-    // Iris custom events
-    //
-    iris.BEFORE_NAVIGATION = "iris_before_navigation";
-    iris.AFTER_NAVIGATION = "iris_after_navigation";
-    iris.RESOURCE_ERROR = "iris_resource_error";
-    iris.SCREEN_NOT_FOUND = "iris_screen_not_found";
-
-    window.iris = iris;
+    Iris.prototype = new Event(); // iris.inherits() is undefined
     
     _init();
 
