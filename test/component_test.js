@@ -51,6 +51,11 @@
             };
             iris.cache(false);
             iris.enableLog(false);
+			
+			iris.events('template_langs', 'awake_params', 'create_ui', 'create_ui_tmpl_replace',
+			'get_ui', 'get_ui_no_instantited', 'get_ui_tmpl_replace', 'destroy_ui', 'destroy_ui_replace', 'destroy_ui_check', 'ui_repeated_dataid',
+			'destroy_multiple_uis', 'destroy_multiple_uis2', 'ui_settings', 'nested_ui', 'self_destroy_ui');
+			
         },
         teardown: function () {
             clearBody();
@@ -459,11 +464,14 @@
     });
 
     asyncTest("Test include", function() {
-        window.expect(1);
+        window.expect(2);
+		
 
         iris.include(["test/component/resource.js"], function () {
-  
-          iris.resource("test/component/resource.js").test();
+          iris.resource("test/component/resource.js").test(); // +1
+          iris.resource("test/component/resource.js").test(); // +1
+
+          window.start();
 
         });
     
@@ -475,6 +483,7 @@
         iris.include(["http://localhost:8081/test/component/resource.js"], function () {
   
           iris.resource("test/component/resource.js").test();
+          window.start();
 
         });
     

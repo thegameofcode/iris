@@ -1065,7 +1065,8 @@
                 var serv = new iris.Resource();
                 serv.cfg = {};
                 serv.settings({ type: "json", path: "" });
-                _includes[resourceOrPath](serv);
+                _includes[resourceOrPath].res(serv);
+				delete _includes[resourceOrPath].res;
                 serv.create();
                 _includes[resourceOrPath] = serv;
             }

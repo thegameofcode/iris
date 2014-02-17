@@ -34,6 +34,7 @@
       setup: function() {
           iris.notify("iris-reset");
           iris.enableLog(false);
+          iris.events('test-event', 'event-type-1', 'event-type-2', 'duplicated-event', 'off-all-functions', 'test');
       },
       teardown: function () {
           clearBody();
@@ -111,7 +112,7 @@
   
   test("Off all functions Test", function () {
       expect(3);
-      
+
       iris.on("off-all-functions", onEvent);
       iris.on("off-all-functions", onEvent2);
 
@@ -192,13 +193,14 @@
               welcome_tmpl : "test/event/welcome.html"
           };
           iris.enableLog(false);
+          iris.events('test-event', 'remove-test-event', 'remove-all-test-event', 'remove-all-test-event-then-add-event');
       },
       teardown: function () {
           clearBody();
       }
   });
 
-  /*asyncTest("Execute self.on event defined whitin screen", function() {
+  asyncTest("Execute self.on event defined whitin screen", function() {
     
     expect(1);
 
@@ -238,7 +240,7 @@
 
       start();
     });
-  });*/
+  });
 
   asyncTest("Execute self.off event and then self.on on the same event defined within screen", function() {
     

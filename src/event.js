@@ -1,30 +1,17 @@
 
 (function ($) {
-
+	
+	
     function _init() {
-
-        var iris = new Iris();
-
-        //
-        // Public
-        //
-        iris.Event = Event;
-
-        //
-        // Iris custom events
-        //
-        iris.BEFORE_NAVIGATION = 'iris_before_navigation';
-        iris.AFTER_NAVIGATION = 'iris_after_navigation';
-        iris.RESOURCE_ERROR = 'iris_resource_error';
-        iris.SCREEN_NOT_FOUND = 'iris_screen_not_found';
-
+		
+		
+		Event.call(iris);
+		
         // Register global iris events
         iris.events(iris.BEFORE_NAVIGATION, iris.AFTER_NAVIGATION, 
             iris.RESOURCE_ERROR, iris.SCREEN_NOT_FOUND, 'iris-reset');
 
-        // Expose iris object
-        window.iris = iris;
-
+        
         iris.on('iris-reset', _init);
     }
 
@@ -110,7 +97,7 @@
                 }
 
             } else {
-                delete this.eventMap[p_eventName];
+                this.eventMap[p_eventName] = [];
             }
         }
     };
@@ -229,10 +216,27 @@
     // Iris class
     //
     var Iris = function() {
-        Event.call(this);
     };
+	
     Iris.prototype = new Event(); // iris.inherits() is undefined
+	
+	var iris = new Iris();
+	
+	//
+	// Public
+	//
+	iris.Event = Event;
 
+	//
+	// Iris custom events
+	//
+	iris.BEFORE_NAVIGATION = 'iris_before_navigation';
+	iris.AFTER_NAVIGATION = 'iris_after_navigation';
+	iris.RESOURCE_ERROR = 'iris_resource_error';
+	iris.SCREEN_NOT_FOUND = 'iris_screen_not_found';
+	
+	// Expose iris object
+    window.iris = iris;
     
     _init();
 
