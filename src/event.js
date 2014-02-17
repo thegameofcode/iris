@@ -36,7 +36,8 @@
         // When this.silent is true, notify will not trigger any event
         this.silent = false;
 
-        // Array of objects like: {target: target, eventName: eventName, fn: listener}
+        // Array of objects like:
+        // {target: <iris-component>, eventName: <string>, fn: <function>, pausable: <bool>, active: <bool>}
         this.listeners = [];
 
         // Array with all registered targets
@@ -137,12 +138,12 @@
 
     // Enable notifications (this.notify will trigger events)
     eventPrototype.notifyOn = function () {
-        this.silent = true;
+        this.silent = false;
     };
 
-    // Disable notifications (this.notify wont trigger events)
+    // Disable notifications (this.notify will not trigger any event)
     eventPrototype.notifyOff = function () {
-        this.silent = false;
+        this.silent = true;
     };
     
     // Add event listener (in safe way) that can be paused or automatically destroyed whitout generate memory leaks
