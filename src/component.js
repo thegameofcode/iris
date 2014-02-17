@@ -1067,6 +1067,7 @@
         
         if ( enabled && !style ) {
             $('<style type="text/css" id="iris-debug-css">' +
+                    '.iris-debug { position: relative; z-index: 9999; }' +
                     '.iris-debug-ui { outline: 3px dotted blue; }' +
                     '.iris-debug-ui:hover { outline: 3px solid blue; box-shadow: 0px 0px 40px rgba(0, 0, 255, 0.5); }' +
                     '.iris-debug-screen { outline: 3px dotted red; }' +
@@ -1107,15 +1108,24 @@
     }
 
     function _applyDebugMode (component) {
-        component.template.toggleClass('iris-debug-' + component.type, _debugMode);
+        component.template.toggleClass('iris-debug iris-debug-' + component.type, _debugMode);
 
         if ( _debugMode ) {
-            // Add debug info label, styles in line to override inheritance
-            var color = ( component.type === 'screen' ) ? 'red' : 'blue';
-            var idType = ( component.type === 'screen' ) ? 'Hash' : 'Data-id';
+
+            // Add debug info label. Styles are in line to override inheritance
+            var color, idType;
+            if ( component.type === 'screen' ) {
+                color = 'red';
+                idType = 'Hash';
+            } else {
+                color = 'blue';
+                idType = 'Data-id';
+            }
+
             var styleInfo = {'font-family': 'sans-serif', 'font-size': '14px', 'color': 'white',
                 'padding': '4px', 'white-space': 'nowrap', 'background-color': color };
-            var tooltip = 'Type: ' + component.type + '\n' + idType + ': ' + component.id + '\nPresenter: ' + component.fileJs + '\nTemplate: ' + component.fileTmpl;
+            var tooltip = 'Type: ' + component.type + '\n' + idType + ': ' + component.id +
+                        '\nPresenter: ' + component.fileJs + '\nTemplate: ' + component.fileTmpl;
             
             component.debugElement = $(
                 '<span title="' + tooltip + '">' +
