@@ -43,7 +43,6 @@
         _logEnabled = _isLocalEnv;
         _cache = !_isLocalEnv;
 
-        iris.on("iris-reset", _init);
     }
 
     function urlContains () {
@@ -54,6 +53,7 @@
         }
         return false;
     }
+
 
     //
     // Public
@@ -115,7 +115,7 @@
     iris.isLocalhost = function () {
         return _isLocalEnv;
     };
-    
+
     _init();
 
 })(jQuery);

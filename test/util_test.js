@@ -24,7 +24,7 @@
 
   module('Module Util', {
       setup: function() {
-          iris.notify("iris-reset");
+          iris._reset();
           iris.enableLog(false);
           createLocales();
       },

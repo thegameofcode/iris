@@ -24,7 +24,7 @@
 
   module('Module Lang', {
       setup: function() {
-          iris.notify("iris-reset");
+          iris._reset();
           iris.enableLog(false);
       },
       teardown: function () {

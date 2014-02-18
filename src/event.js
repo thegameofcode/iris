@@ -1,18 +1,22 @@
 
 (function ($) {
-	
+
+
+    var _resetFunctions = [];
+
 	
     function _init() {
 		
-		
+        // Reset all iris event properties
 		Event.call(iris);
 		
         // Register global iris events
-        iris.events(iris.BEFORE_NAVIGATION, iris.AFTER_NAVIGATION, 
-            iris.RESOURCE_ERROR, iris.SCREEN_NOT_FOUND, 'iris-reset');
-
-        
-        iris.on('iris-reset', _init);
+        iris.events(
+            iris.BEFORE_NAVIGATION,
+            iris.AFTER_NAVIGATION, 
+            iris.RESOURCE_ERROR,
+            iris.SCREEN_NOT_FOUND
+        );
     }
 
     var Event = function () {
@@ -24,7 +28,8 @@
         this.silent = false;
 
         // Array of objects like:
-        // {target: <iris-component>, eventName: <string>, fn: <function>, pausable: <bool>, active: <bool>}
+        // {target: <iris-component>, eventName: <string>,
+        //  fn: <function>, pausable: <bool>, active: <bool>}
         this.listeners = [];
 
         // Array with all registered targets
@@ -210,34 +215,46 @@
         }
     };
 
+    // Iris instance will inherit Event
+    var Iris = function () {};
+    Iris.prototype = new Event();
+    var iris = new Iris();
 
-
-    //
-    // Iris class
-    //
-    var Iris = function() {
-    };
-	
-    Iris.prototype = new Event(); // iris.inherits() is undefined
-	
-	var iris = new Iris();
-	
-	//
-	// Public
-	//
-	iris.Event = Event;
-
-	//
-	// Iris custom events
-	//
-	iris.BEFORE_NAVIGATION = 'iris_before_navigation';
-	iris.AFTER_NAVIGATION = 'iris_after_navigation';
-	iris.RESOURCE_ERROR = 'iris_resource_error';
-	iris.SCREEN_NOT_FOUND = 'iris_screen_not_found';
-	
-	// Expose iris object
+    // Expose iris object
     window.iris = iris;
-    
-    _init();
+
+
+    //
+    // Public
+    //
+    iris.Event = Event;
+
+    iris._reset = function (fn) {
+        if ( fn === undefined ) {
+
+            // Call to all registered reset functions
+            for (var i = 0; i < _resetFunctions.length; i++) {
+                _resetFunctions[i]();
+            }
+
+        } else {
+
+            // Register reset function
+            _resetFunctions.push(fn);
+            fn();
+        }
+    };
+
+    //
+    // Iris global events
+    //
+    iris.BEFORE_NAVIGATION = 'iris_before_navigation';
+    iris.AFTER_NAVIGATION = 'iris_after_navigation';
+    iris.RESOURCE_ERROR = 'iris_resource_error';
+    iris.SCREEN_NOT_FOUND = 'iris_screen_not_found';
+
+	
+    // Register module reset function
+    iris._reset(_init);
 
 })(jQuery);

@@ -5,8 +5,6 @@
     function _init() {
         _locale = undefined;
         _regional = {};
-
-        iris.on("iris-reset", _init);
     }
 
     iris.locale = function (p_locale, p_regional) {
@@ -43,7 +41,7 @@
         }
     };
     
-    _init();
-    
+    // Register module reset function
+    iris._reset(_init);
 
 })();

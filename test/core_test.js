@@ -24,7 +24,7 @@
 
   module('Module Core', {
       setup: function() {
-          iris.notify("iris-reset");
+          iris._reset();
           iris.cache(false);
           iris.enableLog(false);
       },

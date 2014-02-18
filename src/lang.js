@@ -91,6 +91,7 @@
         return (value !== undefined) ? value : "??" + p_label + "??";
     };
     
-    _init();
+    // Register module reset function
+    iris._reset(_init);
 
 })(jQuery);

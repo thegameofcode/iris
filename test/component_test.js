@@ -34,7 +34,7 @@
 
     module('Module Component', {
         setup: function() {
-            iris.notify("iris-reset");
+            iris._reset();
             iris.path = {
                 welcome : "test/component/welcome.js",
                 welcome_tmpl : "test/component/welcome.html",

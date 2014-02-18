@@ -1,23 +1,46 @@
-/*! iris - v0.6.0-SNAPSHOT - 2014-02-14 (http://thegameofcode.github.io/iris) licensed New-BSD */
+/*! iris - v0.6.0-SNAPSHOT - 2014-02-18 (http://thegameofcode.github.io/iris) licensed New-BSD */
 
 (function ($) {
 
-    function _init() {
-        iris.eventMap = {};
-        iris.events(iris.BEFORE_NAVIGATION, iris.AFTER_NAVIGATION, iris.RESOURCE_ERROR, iris.SCREEN_NOT_FOUND, 'iris-reset');
 
-        iris.on("iris-reset", _init);
+    var _resetFunctions = [];
+
+	
+    function _init() {
+		
+        // Reset all iris event properties
+		Event.call(iris);
+		
+        // Register global iris events
+        iris.events(
+            iris.BEFORE_NAVIGATION,
+            iris.AFTER_NAVIGATION, 
+            iris.RESOURCE_ERROR,
+            iris.SCREEN_NOT_FOUND
+        );
     }
 
     var Event = function () {
-        this.eventMap = {}; // { "event1" : [f1, f2], "event2" : [f3, f4, f5, f6] }
-        this.eventNames = {};
-        this.silent = false;
-        this.listeners = [];
-        this.targets = [];
+        // keys are event names, values are arrays with listeners
+        // { 'event1' : [f1, f2], 'event2' : [f3, f4, f5, f6] }
+        this.eventMap = {};
 
+        // When this.silent is true, notify will not trigger any event
+        this.silent = false;
+
+        // Array of objects like:
+        // {target: <iris-component>, eventName: <string>,
+        //  fn: <function>, pausable: <bool>, active: <bool>}
+        this.listeners = [];
+
+        // Array with all registered targets
+        this.eventTargets = [];
+
+        // Register the essential destroy event
         this.events('destroy');
-        this.on('destroy', this.destroyEvents);
+
+        // When the object is destroyed, calls to this.removeListeners
+        this.on('destroy', this.removeListeners);
     };
 
     var eventPrototype = Event.prototype;
@@ -25,22 +48,26 @@
     // Define allowed events
     eventPrototype.events = function () {
         for (var i = 0; i < arguments.length; i++) {
-            this.eventNames[arguments[i]] = true;
+            if ( !this.eventMap.hasOwnProperty(arguments[i]) ) {
+                this.eventMap[arguments[i]] = [];
+            }
         }
     };
 
+    // Check if eventName has been registered, otherwise throw exception
     eventPrototype.checkEvent = function (p_eventName) {
-        if ( !this.eventNames.hasOwnProperty(p_eventName) ) {
-            throw 'event[' + p_eventName + '] is not registered';
+        if ( !this.eventMap.hasOwnProperty(p_eventName) ) {
+            throw 'event[' + p_eventName + '] is not registered, use self.events';
         }
     };
 
+    // Add a event listener (warning: this may cause memory leaks)
     eventPrototype.on = function (p_eventName, f_func) {
 
         this.checkEvent(p_eventName);
         
         if ( ! $.isFunction(f_func) ) {
-            throw "invalid function";
+            throw 'invalid function';
         }
 
         if ( !this.eventMap.hasOwnProperty(p_eventName) ) {
@@ -55,13 +82,14 @@
 
     };
 
+    // Remove an event listener
     eventPrototype.off = function (p_eventName, f_func) {
 
         this.checkEvent(p_eventName);
         
         // if f_func is undefined removes all callbacks
         if ( f_func !== undefined && ! $.isFunction(f_func) ) {
-            throw "invalid function";
+            throw 'invalid function';
         }
 
         var callbacks = this.eventMap[p_eventName];
@@ -75,21 +103,18 @@
                 }
 
             } else {
-                delete this.eventMap[p_eventName];
+                this.eventMap[p_eventName] = [];
             }
         }
     };
 
+    // Notify a new event
     eventPrototype.notify = function (p_eventName, p_data) {
+
+        this.checkEvent(p_eventName);
 
         if ( this.silent ) {
             return false;
-        }
-        
-        this.checkEvent(p_eventName);
-
-        if ( p_eventName === undefined ) {
-            throw "event name undefined";
         }
         
         var callbacks = this.eventMap[p_eventName];
@@ -100,92 +125,259 @@
         }
     };
 
+    // Enable notifications (this.notify will trigger events)
     eventPrototype.notifyOn = function () {
-        this.silent = true;
-    };
-
-    eventPrototype.notifyOff = function () {
         this.silent = false;
     };
+
+    // Disable notifications (this.notify will not trigger any event)
+    eventPrototype.notifyOff = function () {
+        this.silent = true;
+    };
     
+    // Add event listener (in safe way) that can be paused or automatically destroyed whitout generate memory leaks
     eventPrototype.listen = function (target, eventName, listener) {
-window.console.log('Adding listener...', target, eventName, listener);
 
         // Add listener to target
         target.on(eventName, listener);
 
-        var targetRegistered = false;
-        for (var i = 0; i < this.targets.length; i++) {
-            if ( this.targets[i] === target ) {
-                targetRegistered = true;
-                break;
-            }
-        }
+        // Register listener to remove on destroy
+        this.listeners.push({target: target, eventName: eventName, fn: listener, pausable: true, active: true});
+        
+        // If target is unregistered
+        var observer = this;
+        if ( $.inArray(target, observer.eventTargets) === -1 ) {
 
-        if ( !targetRegistered ) {
-            this.targets.push(target);
+            observer.eventTargets.push(target); // Register target
 
-            var self = this;
-            target.on('destroy', function () {
-window.console.log('The target listened is destroyed, removing its reference from this.targets...');
-                self.targets.splice(self.targets.indexOf(target), 1);
+            // When the target is destroyed, remove all references in the observer
+            var onTargetDestroy = function () {
 
-window.console.log('    Removing listeners associated with the target destroyed');
-                var lis;
-                for (i = self.listeners.length - 1; i >= 0; i--) {
-                    lis = self.listeners[i];
-                    if ( lis.target === target ) {
-window.console.log('            removing a listener from self.listeners...', lis.target, lis.e, lis.fn);
-                        self.listeners.splice(i, 1);
+                // Unregister target
+                observer.eventTargets.splice($.inArray(target, observer.eventTargets), 1);
+                
+                // Remove target listeners from observer
+                var i, observerListener;
+                for (i = observer.listeners.length - 1; i >= 0; i--) {
+                    observerListener = observer.listeners[i];
+                    if ( observerListener.target === target ) {
+                        observer.listeners.splice(i, 1);
                     }
                 }
-            });
+
+            };
+
+            // Only one destroy callback per target
+            target.on('destroy', onTargetDestroy);
+            
+            // Register listener to remove on destroy
+            this.listeners.push({target: target, eventName: 'destroy', fn: onTargetDestroy, pausable: false, active: true});
         }
 
-        // Register listener to remove on destroy
-        this.listeners.push({target: target, e: eventName, fn: listener});
     };
 
+    // Remove all listeners from targets
     eventPrototype.removeListeners = function () {
-        var i, lis;
+        var i, listener;
         for (i = 0; i < this.listeners.length; i++) {
-            lis = this.listeners[i];
-window.console.log('       removing listener created in target = ', lis.target, lis.e, lis.fn);
-            lis.target.off(lis.e, lis.fn);
+            listener = this.listeners[i];
+            listener.target.off(listener.eventName, listener.fn);
         }
 
         this.listeners = [];
-        this.targets = [];
-    };
-    
-    eventPrototype.destroyEvents = function () {
-window.console.log('An event object has been destroyed', this);
-        this.removeListeners();
-        delete this.eventMap;
-        delete this.eventName;
+        this.eventTargets = [];
     };
 
-    var Iris = function() {
-        Event.call(this);
+    // Pause all listeners, this will remove the listeners from targets.
+    // Use resumeListeners to add them again.
+    eventPrototype.pauseListeners = function () {
+        var i, listener;
+        for (i = 0; i < this.listeners.length; i++) {
+            listener = this.listeners[i];
+
+            if ( listener.pausable && listener.active ) {
+                listener.target.off(listener.eventName, listener.fn);
+                listener.active = false;
+            }
+        }
     };
+
+    // Resume all paused listeners, this will add again the listeners to targets.
+    // Use pauseListeners to remove them from targets.
+    eventPrototype.resumeListeners = function () {
+        var i, listener;
+        for (i = 0; i < this.listeners.length; i++) {
+            listener = this.listeners[i];
+
+            if ( listener.pausable && !listener.active ) {
+                listener.target.on(listener.eventName, listener.fn);
+                listener.active = true;
+            }
+        }
+    };
+
+    // Iris instance will inherit Event
+    var Iris = function () {};
     Iris.prototype = new Event();
     var iris = new Iris();
+
+    // Expose iris object
+    window.iris = iris;
+
 
     //
     // Public
     //
     iris.Event = Event;
 
-    //
-    // Iris custom events
-    //
-    iris.BEFORE_NAVIGATION = "iris_before_navigation";
-    iris.AFTER_NAVIGATION = "iris_after_navigation";
-    iris.RESOURCE_ERROR = "iris_resource_error";
-    iris.SCREEN_NOT_FOUND = "iris_screen_not_found";
+    iris._reset = function (fn) {
+        if ( fn === undefined ) {
 
-    window.iris = iris;
-    
+            // Call to all registered reset functions
+            for (var i = 0; i < _resetFunctions.length; i++) {
+                _resetFunctions[i]();
+            }
+
+        } else {
+
+            // Register reset function
+            _resetFunctions.push(fn);
+            fn();
+        }
+    };
+
+    //
+    // Iris global events
+    //
+    iris.BEFORE_NAVIGATION = 'iris_before_navigation';
+    iris.AFTER_NAVIGATION = 'iris_after_navigation';
+    iris.RESOURCE_ERROR = 'iris_resource_error';
+    iris.SCREEN_NOT_FOUND = 'iris_screen_not_found';
+
+	
+    // Register module reset function
+    iris._reset(_init);
+
+})(jQuery);
+
+
+(function($) {
+
+    var _JQ_MIN_VER = 1.5,
+        _appBaseUri,
+        _cache,
+        _cacheVersion,
+        _log,
+        _logEnabled,
+        _isLocalEnv;
+
+    //
+    // Private
+    //
+    function _init() {
+
+        if ( typeof jQuery === "undefined" ) {
+            throw "jQuery " + _JQ_MIN_VER + "+ previous load required";
+        } else if($().jquery < _JQ_MIN_VER) {
+            throw "jQuery " + $().jquery + " currently loaded, jQuery " + _JQ_MIN_VER + "+ required";
+        }
+
+        var console = window.console;
+        if ( typeof console !== 'undefined' && typeof console.log === 'object' ) {
+            var bind = Function.prototype.bind;
+            if ( bind ) {
+                // Fix IE 9 Problem with console.
+                // http://stackoverflow.com/questions/5538972/console-log-apply-not-working-in-ie9
+                _log = bind.call(console.log, console);
+            } else {
+                // Fix IE 8 Problem with console.
+                // http://patik.com/blog/complete-cross-browser-console-log/
+                _log = function () {
+                    Function.prototype.call.call(console.log, console, Array.prototype.slice.call(arguments));
+                };
+            }
+        } else if ( console && console.log ) {
+            // Modern browser
+            _log = console.log;
+        }
+
+        _isLocalEnv = urlContains("localhost", "127.0.0.1");
+        _logEnabled = _isLocalEnv;
+        _cache = !_isLocalEnv;
+
+    }
+
+    function urlContains () {
+        for(var i = 0 ; i< arguments.length; i++) {
+            if ( document.location.href.indexOf(arguments[i]) > -1 ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    //
+    // Public
+    //
+    iris.baseUri = function (p_baseUri) {
+        if ( p_baseUri !== undefined ) {
+            _appBaseUri = p_baseUri;
+
+        } else if ( _appBaseUri === undefined ) {
+            var base = document.getElementsByTagName("base");
+            base = base.length > 0 ? base[0].attributes.href.value : "/";
+            _appBaseUri = document.location.protocol + "//" + document.location.host + base;
+        }
+        return _appBaseUri;
+    };
+
+    iris.cache = function (p_value) {
+        if(p_value !== undefined) {
+            _cache = p_value;
+        } else {
+            return _cache;
+        }
+    };
+
+    iris.cacheVersion = function (p_value) {
+        if(p_value !== undefined) {
+            _cacheVersion = p_value;
+        } else {
+            return _cacheVersion;
+        }
+    };
+
+    iris.log = function () {
+        if ( _logEnabled && _log ) {
+            _log.apply(window.console, arguments);
+        }
+    };
+
+    iris.enableLog = function () {
+        if ( typeof arguments[0] === "boolean" ) {
+            _logEnabled = arguments[0];
+
+        } else if ( arguments.length > 0 ) {
+            _logEnabled = urlContains.apply(this, arguments);
+            
+        } else {
+            return _logEnabled;
+        }
+    };
+
+    iris.noCache = function () {
+        if ( arguments.length > 0 ) {
+            _cache = !urlContains.apply(this, arguments);
+        } else {
+            return !_cache;
+        }
+    };
+
+    iris.isLocalhost = function () {
+        return _isLocalEnv;
+    };
+
     _init();
 
 })(jQuery);
@@ -387,176 +579,6 @@ window.console.log('An event object has been destroyed', this);
 
 })(jQuery);
 
-
-(function($) {
-
-    var _JQ_MIN_VER = 1.5,
-        _appBaseUri,
-        _cache,
-        _cacheVersion,
-        _log,
-        _logEnabled,
-        _isLocalEnv;
-
-    //
-    // Private
-    //
-    function _init() {
-
-        if ( typeof jQuery === "undefined" ) {
-            throw "jQuery " + _JQ_MIN_VER + "+ previous load required";
-        } else if($().jquery < _JQ_MIN_VER) {
-            throw "jQuery " + $().jquery + " currently loaded, jQuery " + _JQ_MIN_VER + "+ required";
-        }
-
-        var console = window.console;
-        if ( typeof console !== 'undefined' && typeof console.log === 'object' ) {
-            var bind = Function.prototype.bind;
-            if ( bind ) {
-                // Fix IE 9 Problem with console.
-                // http://stackoverflow.com/questions/5538972/console-log-apply-not-working-in-ie9
-                _log = bind.call(console.log, console);
-            } else {
-                // Fix IE 8 Problem with console.
-                // http://patik.com/blog/complete-cross-browser-console-log/
-                _log = function () {
-                    Function.prototype.call.call(console.log, console, Array.prototype.slice.call(arguments));
-                };
-            }
-        } else if ( console && console.log ) {
-            // Modern browser
-            _log = console.log;
-        }
-
-        _isLocalEnv = urlContains("localhost", "127.0.0.1");
-        _logEnabled = _isLocalEnv;
-        _cache = !_isLocalEnv;
-
-        iris.on("iris-reset", _init);
-    }
-
-    function urlContains () {
-        for(var i = 0 ; i< arguments.length; i++) {
-            if ( document.location.href.indexOf(arguments[i]) > -1 ) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    //
-    // Public
-    //
-    iris.baseUri = function (p_baseUri) {
-        if ( p_baseUri !== undefined ) {
-            _appBaseUri = p_baseUri;
-
-        } else if ( _appBaseUri === undefined ) {
-            var base = document.getElementsByTagName("base");
-            base = base.length > 0 ? base[0].attributes.href.value : "/";
-            _appBaseUri = document.location.protocol + "//" + document.location.host + base;
-        }
-        return _appBaseUri;
-    };
-
-    iris.cache = function (p_value) {
-        if(p_value !== undefined) {
-            _cache = p_value;
-        } else {
-            return _cache;
-        }
-    };
-
-    iris.cacheVersion = function (p_value) {
-        if(p_value !== undefined) {
-            _cacheVersion = p_value;
-        } else {
-            return _cacheVersion;
-        }
-    };
-
-    iris.log = function () {
-        if ( _logEnabled && _log ) {
-            _log.apply(window.console, arguments);
-        }
-    };
-
-    iris.enableLog = function () {
-        if ( typeof arguments[0] === "boolean" ) {
-            _logEnabled = arguments[0];
-
-        } else if ( arguments.length > 0 ) {
-            _logEnabled = urlContains.apply(this, arguments);
-            
-        } else {
-            return _logEnabled;
-        }
-    };
-
-    iris.noCache = function () {
-        if ( arguments.length > 0 ) {
-            _cache = !urlContains.apply(this, arguments);
-        } else {
-            return !_cache;
-        }
-    };
-
-    iris.isLocalhost = function () {
-        return _isLocalEnv;
-    };
-    
-    _init();
-
-})(jQuery);
-
-(function ($) {
-
-    //
-    // Model
-    //
-    var Model = function () {
-        iris.Event.call(this);
-        this.events('change', 'destroy');
-    };
-
-    iris.inherits(Model, iris.Event);
-
-    var modelProto = Model.prototype;
-
-    // Data
-    modelProto.set = function (p_data) {
-        $.extend(this.data, p_data);
-        this.notify('change');
-    };
-
-    modelProto.get = function (p_fieldName) {
-        if ( p_fieldName === undefined ) {
-            return this.data;
-        }
-        return this.data[p_fieldName];
-    };
-
-    // Conversion
-    modelProto.toJson = function () {
-        return JSON.stringify(this.data);
-    };
-
-    modelProto.destroy = function () {
-        this.notify('destroy');
-    };
-
-    // To override
-    modelProto.create = function () {};
-
-
-
-    //
-    // Public
-    //
-    iris.Model = Model;
-
-})(jQuery);
-
 (function($) {
 
     var _translations;
@@ -650,7 +672,8 @@ window.console.log('An event object has been destroyed', this);
         return (value !== undefined) ? value : "??" + p_label + "??";
     };
     
-    _init();
+    // Register module reset function
+    iris._reset(_init);
 
 })(jQuery);
 
@@ -661,8 +684,6 @@ window.console.log('An event object has been destroyed', this);
     function _init() {
         _locale = undefined;
         _regional = {};
-
-        iris.on("iris-reset", _init);
     }
 
     iris.locale = function (p_locale, p_regional) {
@@ -699,10 +720,57 @@ window.console.log('An event object has been destroyed', this);
         }
     };
     
-    _init();
-    
+    // Register module reset function
+    iris._reset(_init);
 
 })();
+
+(function ($) {
+
+    //
+    // Model
+    //
+    var Model = function () {
+        iris.Event.call(this);
+        this.events('change');
+    };
+
+    iris.inherits(Model, iris.Event);
+
+    var modelProto = Model.prototype;
+
+    // Data
+    modelProto.set = function (p_data) {
+        $.extend(this.data, p_data);
+        this.notify('change');
+    };
+
+    modelProto.get = function (p_fieldName) {
+        if ( p_fieldName === undefined ) {
+            return this.data;
+        }
+        return this.data[p_fieldName];
+    };
+
+    // Conversion
+    modelProto.toJson = function () {
+        return JSON.stringify(this.data);
+    };
+
+    modelProto.destroy = function () {
+        this.notify('destroy');
+    };
+
+    // To override
+    modelProto.create = function () {};
+
+
+    //
+    // Public
+    //
+    iris.Model = Model;
+
+})(jQuery);
 
 (function($) {
 
@@ -774,6 +842,9 @@ window.console.log('An event object has been destroyed', this);
 
     function _init() {
 
+        $(window).off("hashchange");
+        document.location.hash = "#";
+
         // _screen["#hash"] return the screen instance
         _screen = {};
         _screenMetadata = {};
@@ -804,13 +875,6 @@ window.console.log('An event object has been destroyed', this);
         if ( iris.isLocalhost() ) {
             _debug(true);
         }
-
-        iris.on("iris-reset", function () {
-            $(window).off("hashchange");
-            document.location.hash = "#";
-
-            _init();
-        });
     }
 
 
@@ -1805,7 +1869,7 @@ window.console.log('An event object has been destroyed', this);
                 var serv = new iris.Resource();
                 serv.cfg = {};
                 serv.settings({ type: "json", path: "" });
-                _includes[resourceOrPath](serv);
+                _includes[resourceOrPath].res(serv);
                 serv.create();
                 _includes[resourceOrPath] = serv;
             }
@@ -1942,7 +2006,8 @@ window.console.log('An event object has been destroyed', this);
     iris.UI = UI;
     iris.Screen = Screen;
 
-    _init();
+    // Register module reset function
+    iris._reset(_init);
 
 
 })(jQuery);

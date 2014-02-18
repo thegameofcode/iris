@@ -34,6 +34,9 @@
 
     function _init() {
 
+        $(window).off("hashchange");
+        document.location.hash = "#";
+
         // _screen["#hash"] return the screen instance
         _screen = {};
         _screenMetadata = {};
@@ -64,13 +67,6 @@
         if ( iris.isLocalhost() ) {
             _debug(true);
         }
-
-        iris.on("iris-reset", function () {
-            $(window).off("hashchange");
-            document.location.hash = "#";
-
-            _init();
-        });
     }
 
 
@@ -1066,7 +1062,6 @@
                 serv.cfg = {};
                 serv.settings({ type: "json", path: "" });
                 _includes[resourceOrPath].res(serv);
-				delete _includes[resourceOrPath].res;
                 serv.create();
                 _includes[resourceOrPath] = serv;
             }
@@ -1203,7 +1198,8 @@
     iris.UI = UI;
     iris.Screen = Screen;
 
-    _init();
+    // Register module reset function
+    iris._reset(_init);
 
 
 })(jQuery);

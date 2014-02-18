@@ -33,7 +33,7 @@
     module( "UI replacement", {
         setup: function() {
             clearBody();
-            iris.notify("iris-reset");
+            iris._reset();
             iris.path = {
               welcome : "test/ui_replacement/welcome.js",
               welcome_tmpl : "test/ui_replacement/welcome.html",
