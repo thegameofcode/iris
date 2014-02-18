@@ -21,10 +21,7 @@ _Remmeber that you can [make suggestions][issues] or [report bugs][issues]!_
 
 ## Links
  * [Web page](http://thegameofcode.github.io/iris/)
- * [API Reference](docs/api.md)
- * [Developer Guide (Spanish)](docs/es/README.md)
- * [Tutorial (Spanish)](http://thegameofcode.github.io/iris/tutorials/todo/index.html)
- * [Video-tutorial (Spanish)](http://www.youtube.com/watch?feature=player_detailpage&v=6evSeCDXjSQ)
+ * [Documentation](docs/toc.md)
 
 ## Building Iris
 

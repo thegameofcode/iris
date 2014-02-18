@@ -1,3 +1,5 @@
+[Iris homepage](https://github.com/thegameofcode/iris) | [Documentation table of contents](toc.md)
+
 # The iris API
 
 Iris exposes all of its methods and properties on the `iris` object:

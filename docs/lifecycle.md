@@ -12,4 +12,4 @@ There are four methods almost all screens will implement:
 
 * <code>destroy()</code> is where you will perform operations after screen dying.
 
-![Iris Life Cycle](http://thegameofcode.github.com/iris/images/iris-lifecycle-diagram.png)
+![Iris Life Cycle](images/iris-lifecycle-diagram.png)
