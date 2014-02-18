@@ -7,6 +7,8 @@ iris.screen(function(self) {
 	self.create = function() {
 		self.tmpl(iris.path.welcome_html);
 
+		self.events('welcome-event');
+
 		self.get("btn_create_uis").click(createUIs);
 		self.get("btn_destroy_all_uis").click(destroyAllUIs);
 	
@@ -21,6 +23,11 @@ iris.screen(function(self) {
 		self.get('btn_notify_mevent').click(notifyMEvent);
 		self.get('btn_destroy_model').click(destroyModel);
 
+		self.get('btn_notify_we').click(notifyWE);
+	}
+
+	function notifyWE () {
+		self.notify('welcome-event');
 	}
 
 	function notifyMEvent () {
@@ -39,7 +46,8 @@ iris.screen(function(self) {
 		for(var f=0, num_uis; f<num_uis; f++) {
 			self.ui("uis", "ui/example.js", {
 				count: self.uis.length,
-				model: model
+				model: model,
+				welcome: self
 			});
 		}
 
