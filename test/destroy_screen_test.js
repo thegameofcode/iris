@@ -24,7 +24,7 @@
     
     module( "Module Destroy Screen", {
         setup: function() {
-            iris._reset();
+            window.resetIris();
             iris.path = {
                 welcome : "test/destroy_screen/welcome.js",
                 welcome_tmpl : "test/destroy_screen/welcome.html",

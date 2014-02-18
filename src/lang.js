@@ -92,6 +92,10 @@
     };
     
     // Register module reset function
-    iris._reset(_init);
+    if ( window.testMode ) {
+        window.addIrisReset(_init);
+    }
+
+    _init();
 
 })(jQuery);

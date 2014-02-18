@@ -24,7 +24,7 @@
 
     module('Module Enhanced Navigation', {
         setup: function() {
-            iris._reset();
+            window.resetIris();
             window.navigations = [];
             iris.path = {
                 welcome : "test/enhanced_navigation/welcome.js",

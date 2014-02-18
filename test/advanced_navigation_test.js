@@ -52,7 +52,7 @@
             iris.enableLog(false);
         },
         teardown: function () {
-            iris._reset();
+            window.resetIris();
             clearBody();
         }
     });

@@ -116,6 +116,11 @@
         return _isLocalEnv;
     };
 
+    // Register module reset function
+    if ( window.testMode ) {
+        window.addIrisReset(_init);
+    }
+
     _init();
 
 })(jQuery);

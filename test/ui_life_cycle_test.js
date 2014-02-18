@@ -32,7 +32,7 @@
     
     module( "UI Life Cycle", {
         setup: function() {
-            iris._reset();
+            window.resetIris();
             iris.path = {
                 welcome : "test/ui_life_cycle/welcome.js",
                 welcome_tmpl : "test/ui_life_cycle/welcome.html",

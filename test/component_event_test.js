@@ -5,7 +5,7 @@
 
 	module('Module Component Event', {
 		setup: function() {
-			iris._reset();
+			window.resetIris();
 			iris.path = {
 				resource: "test/component_event/resource.js",
 				welcome_tmpl: "test/component_event/welcome.html",

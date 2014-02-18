@@ -24,7 +24,7 @@
 
   module('Module Regional', {
       setup: function() {
-          iris._reset();
+          window.resetIris();
           iris.enableLog(false);
       },
       teardown: function () {

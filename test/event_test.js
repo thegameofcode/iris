@@ -32,7 +32,7 @@
 
   module('Module Event', {
       setup: function() {
-          iris._reset();
+          window.resetIris();
           iris.enableLog(false);
           iris.events('test-event', 'event-type-1', 'event-type-2', 'duplicated-event', 'off-all-functions', 'test');
       },
@@ -187,7 +187,7 @@
 
   module('Module Event in Components', {
       setup: function() {
-          iris._reset();
+          window.resetIris();
           iris.path = {
               welcome : "test/event/welcome.js",
               welcome_tmpl : "test/event/welcome.html"

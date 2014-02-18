@@ -5,7 +5,7 @@
 
   module('Module Resource', {
       setup: function() {
-          iris._reset();
+          window.resetIris();
           iris.path = {
             resource : "test/resource/resource.js",
             empty_tmpl : "test/resource/empty.html",

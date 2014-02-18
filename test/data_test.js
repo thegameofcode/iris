@@ -5,7 +5,7 @@
 
 	module('Module Data', {
 		setup: function() {
-			iris._reset();
+			window.resetIris();
 			iris.enableLog(false);
 		},
 		teardown: function() {

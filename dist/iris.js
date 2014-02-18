@@ -2,10 +2,6 @@
 
 (function ($) {
 
-
-    var _resetFunctions = [];
-
-	
     function _init() {
 		
         // Reset all iris event properties
@@ -230,22 +226,6 @@
     //
     iris.Event = Event;
 
-    iris._reset = function (fn) {
-        if ( fn === undefined ) {
-
-            // Call to all registered reset functions
-            for (var i = 0; i < _resetFunctions.length; i++) {
-                _resetFunctions[i]();
-            }
-
-        } else {
-
-            // Register reset function
-            _resetFunctions.push(fn);
-            fn();
-        }
-    };
-
     //
     // Iris global events
     //
@@ -256,7 +236,11 @@
 
 	
     // Register module reset function
-    iris._reset(_init);
+    if ( window.testMode ) {
+        window.addIrisReset(_init);
+    }
+
+    _init();
 
 })(jQuery);
 
@@ -377,6 +361,11 @@
     iris.isLocalhost = function () {
         return _isLocalEnv;
     };
+
+    // Register module reset function
+    if ( window.testMode ) {
+        window.addIrisReset(_init);
+    }
 
     _init();
 
@@ -673,7 +662,11 @@
     };
     
     // Register module reset function
-    iris._reset(_init);
+    if ( window.testMode ) {
+        window.addIrisReset(_init);
+    }
+
+    _init();
 
 })(jQuery);
 
@@ -721,7 +714,11 @@
     };
     
     // Register module reset function
-    iris._reset(_init);
+    if ( window.testMode ) {
+        window.addIrisReset(_init);
+    }
+
+    _init();
 
 })();
 
@@ -2007,8 +2004,11 @@
     iris.Screen = Screen;
 
     // Register module reset function
-    iris._reset(_init);
+    if ( window.testMode ) {
+        window.addIrisReset(_init);
+    }
 
+    _init();
 
 })(jQuery);
 

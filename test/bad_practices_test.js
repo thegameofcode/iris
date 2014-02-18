@@ -32,7 +32,7 @@
     
     module( "Module Bad Practices", {
         setup: function() {
-            iris._reset();
+            window.resetIris();
             iris.path = {
                 welcome : "test/bad_practices/welcome.js",
                 welcome_tmpl : "test/bad_practices/welcome.html",
