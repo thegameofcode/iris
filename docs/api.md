@@ -21,10 +21,6 @@ Iris exposes all of its methods and properties on the `iris` object:
 	- [iris.browser()](#irisbrowser)
 	- [iris.inherits(subClass, superClass)](#irisinheritssubclass-superclass)
 - [Event](#event)
-	- [iris.notify(eventId[, params])](#irisnotifyeventid-params)
-	- [iris.on(eventId, listener)](#irisoneventid-listener)
-	- [iris.off(eventId[, listener])](#irisoffeventid-listener)
-	- [iris.destroyEvents(eventId, listeners)](#irisdestroyeventseventid-listeners)
 	- [iris.Event class](#irisevent-class)
 		 - [iris.Event.events(args)](#iriseventeventsargs)
 		 - [iris.Event.checkEvent(eventName)](#iriseventcheckeventeventname)
@@ -33,10 +29,10 @@ Iris exposes all of its methods and properties on the `iris` object:
 		 - [iris.Event.notify(eventName[, parameter])](#iriseventnotifyeventname-parameter)
 		 - [iris.Event.notifyOn()](#iriseventnotifyon)
 		 - [iris.Event.notifyOff()](#iriseventnotifyoff)
-		 - [iris.Event.listen(target, eventName, listener)](#iriseventlistentarget-eventName-listener)
+		 - [iris.Event.listen(target, eventName, listener)](#iriseventlistentarget-eventname-listener)
 		 - [iris.Event.pauseListeners()](#iriseventpauselisteners)
-		 - [iris.Event.resumeListeners()](#iriseventresumeListeners)
-		 - [iris.Event.removeListeners()](#iriseventremoveListeners)
+		 - [iris.Event.resumeListeners()](#iriseventresumelisteners)
+		 - [iris.Event.removeListeners()](#iriseventremovelisteners)
 	- [Iris Events](#iris-events)
 		- [iris.BEFORE_NAVIGATION](#irisbefore_navigation)
 		- [iris.AFTER_NAVIGATION](#irisafter_navigation)
@@ -402,57 +398,91 @@ kitty.sayName(); // [Mammal Kitty]
 
 
 ## Event
+*Since*: `v0.6.0`
 
-### iris.notify(eventId[, params])
-*Since*: `v0.5.0`
+The global `iris` object and the classes `iris.UI`, `iris.Screen`, `iris.Model` and `iris.Resource` inherits methods and properties from [iris.Event](#irisevent-class) class.
 
-Triggers an event.
-See `iris.on` and `iris.off` for more details.
 
 ```javascript
-iris.notify("my-event", {param : value});
+// UIs can trigger events
+iris.ui(function (self) {
 
-iris.notify("my-event");
+    self.events('example-event');
+
+	self.create = function() {
+		self.notify('example-event');
+	}
+
+}, iris.path.ui.example.js);
+
+// Add or remove event listener to UIs
+var myUi = self.ui('container-data-id', iris.path.ui.example.js);
+myUi.on('example-event', fn);
+myUi.off('example-event', fn);
+
+
+
+// Screens can trigger events
+iris.screen(function (self) {
+
+    self.events('example-event');
+
+	self.create = function() {
+		self.notify('example-event');
+	}
+
+}, iris.path.screen.example.js);
+
+// Add or remove event listener to screens
+// Notes that screens can not be instantiated
+var myScreen = self.setting('myScreen');
+myScreen.on('example-event', fn);
+myScreen.off('example-event', fn);
+
+
+
+// Models can trigger events
+iris.model(function (self) {
+
+    self.events('example-event');
+
+	self.create = function() {
+		self.notify('example-event');
+	}
+
+}, iris.path.model.example.js);
+
+// Add or remove event listener to models
+var myModel = iris.model(iris.path.model.example.js, data);
+myModel.on('example-event', fn);
+myModel.off('example-event', fn);
+
+
+
+// Resources can trigger events
+iris.resource(function (self) {
+
+    self.events('example-event');
+
+	self.create = function() {
+		self.notify('example-event');
+	}
+
+}, iris.path.resource.example.js);
+
+// Add or remove event listener to resources
+var myResource = iris.resource(iris.path.resource.example.js);
+myResource.on('example-event', fn);
+myResource.off('example-event', fn);
 ```
 
-### iris.on(eventId, listener)
-*Since*: `v0.5.0`
-
-Adds an event listener.
-See `iris.notify` and `iris.off` for more details.
-
-```javascript
-iris.on("my-event", listener);
-```
-
-### iris.off(eventId[, listener])
-*Since*: `v0.5.0`
-
-Removes an event listener.
-See `iris.notify` and `iris.on` for more details.
-If listener is not specified, all listeners are removed.
-
-```javascript
-iris.off("my-event", listener);
-
-iris.off("my-event"); // remove all listeners
-```
-
-### iris.destroyEvents(eventId, listeners)
-*Since*: `v0.5.0`
-
-Removes a collection of event listeners.
-
-```javascript
-iris.destroyEvents("my-event", [listener1, listener2]);
-```
 
 ### iris.Event class
 
 #### iris.Event.events(args)
 *Since*: `v0.6.0`
 
-Define allowed events. This a way to indicate what events can manage an object. When iris.Event.on, iris.Event.off or iris.Event.notify are called, the first thing is to check if the event name is allowed, otherwise it raises an exception. Explicit registration of events is a good practice that helps developers to control component events.
+Define allowed events. This a way to indicate what events can manage an object. When [iris.Event.on(eventName, listener)](#iriseventoneventname-listener), [iris.Event.off(eventName[, listener])](#iriseventoffeventname-listener) or iris.Event.notify are called, the first thing is to check if the event name is allowed, otherwise it raises an exception. Explicit registration of events is a good practice that helps developers to control component events.
 
 ```javascript
 // First off, create a sample UI
@@ -482,7 +512,7 @@ iris.screen(function(self) {
 #### iris.Event.checkEvent(eventName)
 *Since*: `v0.6.0`
 
-Checks if the event name has been registered previously, otherwise throws an exception. Use iris.Event.events to register the component's allowed events before to notify them. This function is called from iris.Event.on, iris.Event.off and iris.Event.notify.
+Checks if the event name has been registered previously, otherwise throws an exception. Use [iris.Event.events(args)](#iriseventeventsargs) to register the component's allowed events before to notify them. This function is called from [iris.Event.on(eventName, listener)](#iriseventoneventname-listener), [iris.Event.off(eventName[, listener])](#iriseventoffeventname-listener) and [iris.Event.notify(eventName[, parameter])](#iriseventnotifyeventname-parameter).
 
 ```javascript
 iris.model(function (self) {
@@ -514,14 +544,14 @@ iris.ui(function(self) {
 *Since*: `v0.6.0`
 
 Add an event listener. __Warning__: you must be careful this may cause memory leaks.
-Remember register before the event name in the target using [iris.Event.events](#iriseventeventseventName-listener).
+Remember register before the event name in the target using [iris.Event.events(args)](#iriseventeventsargs).
 
 A common case of memory leaks:
 - Create an UI and suscribe it to a model event
 - Destroy the created UI (the listener is still subscribed to the model)
 - If you dont remove the listener before destroy it, the UI cannot be removed by the garbage collector
 
-To prevent memory leaks use the iris.Event.listen instead of.
+To prevent memory leaks use the iris.Event.listen instead of iris.Event.on.
 
 ```javascript
 
@@ -589,7 +619,7 @@ target.off('refresh'); // Remove callback1 and callback2
 #### iris.Event.notify(eventName[, parameter])
 *Since*: `v0.6.0`
 
-Trigger added callbacks for the given `eventName`. To add callbacks use iris.Event.on or iris.Event.listen. The `parameter` object will be passed along to the event callbacks. Use iris.Event.notifyOn or iris.Event.notifyOff to enable or disable this function.
+Trigger added callbacks for the given `eventName`. To add callbacks use [iris.Event.on(eventName, listener)](#iriseventoneventname-listener) or iris.Event.listen. The `parameter` object will be passed along to the event callbacks. Use [iris.Event.notifyOn()](#iriseventnotifyon) or [iris.Event.notifyOff()](#iriseventnotifyoff) to enable or disable this function.
 
 ```javascript
 
@@ -683,7 +713,7 @@ iris.ui(function(self) {
 
 
 The current object listen to a particular event (`eventName`) on the `target` object.
-The advantage of using this form, instead of iris.Event.on, is that `listen` adds the event listener in a safe way to prevent memory leaks and you can remove or pause or resume all listeners at once later on.
+The advantage of using this form, instead of [iris.Event.on(eventName, listener)](#iriseventoneventname-listener), is that `listen` adds the event listener in a safe way to prevent memory leaks and you can remove or pause or resume all listeners at once later on.
 
 
 When the `target` is destroyed the listener is removed automatically and when the current object is destroyed, all registered listeners are removed on the targets.

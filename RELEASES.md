@@ -7,9 +7,13 @@ _Creation date: 2012-01-12_
 
 
 [0.6.0-SNAPSHOT] 2014-XX-XX
- * [new] iris.data: Easy way to dispatch events for data.
- * [new] Resource & Component local events (on, off & notify functions has been added)
- * [upd] self.on, self.off use local events (no backward compability)
+ * WARNING: Not backward compatibility with functions iris.Event.on, iris.Event.off and iris.Event.notify
+
+ * [new] iris.model: Easy way to dispatch events for data.
+ * [new] iris.Event new functions: events, checkEvents, notifyOff, notifyOn, 
+         listen, pauseListeners, resumeListeners, removeListeners.
+ * [new] iris object, screens, UIs, resources and models inherits iris.Event
+ * [upd] self.on, self.off use local events instead of global events (not backward compability)
 
 
 [0.5.7-SNAPSHOT] 2014-XX-XX
