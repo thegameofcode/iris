@@ -26,9 +26,17 @@ Iris exposes all of its methods and properties on the `iris` object:
 	- [iris.off(eventId[, listener])](#irisoffeventid-listener)
 	- [iris.destroyEvents(eventId, listeners)](#irisdestroyeventseventid-listeners)
 	- [iris.Event class](#irisevent-class)
-		- [self.on(eventId, listener)](#selfoneventid-listener)
-		- [self.off(eventId[, listener])](#selfoffeventid-listener)
-		- [self.notify(eventId[, params])](#selfnotifyeventid-params)
+		 - [iris.Event.events(args)](#iriseventeventsargs)
+		 - [iris.Event.checkEvent(eventName)](#iriseventcheckeventeventname)
+		 - [iris.Event.on(eventName, listener)](#iriseventoneventname-listener)
+		 - [iris.Event.off(eventName[, listener])](#iriseventoffeventname-listener)
+		 - [iris.Event.notify(eventName[, parameter])](#iriseventnotifyeventname-parameter)
+		 - [iris.Event.notifyOn()](#iriseventnotifyon)
+		 - [iris.Event.notifyOff()](#iriseventnotifyoff)
+		 - [iris.Event.listen(target, eventName, listener)](#iriseventlistentarget-eventName-listener)
+		 - [iris.Event.pauseListeners()](#iriseventpauselisteners)
+		 - [iris.Event.resumeListeners()](#iriseventresumeListeners)
+		 - [iris.Event.removeListeners()](#iriseventremoveListeners)
 	- [Iris Events](#iris-events)
 		- [iris.BEFORE_NAVIGATION](#irisbefore_navigation)
 		- [iris.AFTER_NAVIGATION](#irisafter_navigation)
@@ -441,36 +449,433 @@ iris.destroyEvents("my-event", [listener1, listener2]);
 
 ### iris.Event class
 
-#### self.on(eventId, listener)
-*Since*: `v0.5.0`
+#### iris.Event.events(args)
+*Since*: `v0.6.0`
 
-Adds an event listener associated with a component. When the component is destroyed, the listener will be deleted.
-
-For more details, see `iris.on`.
+Define allowed events. This a way to indicate what events can manage an object. When iris.Event.on, iris.Event.off or iris.Event.notify are called, the first thing is to check if the event name is allowed, otherwise it raises an exception. Explicit registration of events is a good practice that helps developers to control component events.
 
 ```javascript
-self.on("my-event", listener);
+// First off, create a sample UI
+iris.ui(function (self) {
+
+	// This UI can trigger only events with these names
+    self.events('update', 'change', 'refresh');
+
+}, iris.path.ui.example.js);
+
+
+// In another place, in a screen for example
+iris.screen(function(self) {
+
+	self.create = function() {
+		...
+
+		self.ui(iris.path.ui.example.js).on('refresh', onUpdate); // 'refresh' event is allowed
+
+		self.ui(iris.path.ui.example.js).on('not_defined_event', onNotDefinedEvent); // throws an exception
+	};
+
+
+},iris.path.screen.welcome.js);
 ```
 
-#### self.off(eventId[, listener])
-*Since*: `v0.5.0`
+#### iris.Event.checkEvent(eventName)
+*Since*: `v0.6.0`
 
-Removes an event listener.
-Updated in `v0.5.5`, listener are not required. If listener is `undefined`, all component's listeners for `eventId` will be removed.
+Checks if the event name has been registered previously, otherwise throws an exception. Use iris.Event.events to register the component's allowed events before to notify them. This function is called from iris.Event.on, iris.Event.off and iris.Event.notify.
 
 ```javascript
-self.off(iris.BEFORE_NAVIGATION, onBeforeNavigation); // Unsubscribe one listener
+iris.model(function (self) {
 
-// Since v0.5.5
-self.off(iris.BEFORE_NAVIGATION); // Remove all listeners
+	// Allowed methods
+    self.events('toggle', 'change_title');
+
+}, iris.path.model.example.js);
+
+
+// In another place, in a UI for example
+iris.ui(function(self) {
+
+	self.create = function() {
+		...
+
+		var model = self.model(iris.path.model.example.js, {title: 'example'});
+
+		model.checkEvent('change_title'); // 'change_title' event is allowed
+
+		model.checkEvent('not_registered_event'); // throws an exception
+	};
+
+
+},iris.path.ui.example.js);
+```
+
+#### iris.Event.on(eventName, listener)
+*Since*: `v0.6.0`
+
+Add an event listener. __Warning__: you must be careful this may cause memory leaks.
+Remember register before the event name in the target using [iris.Event.events](#iriseventeventseventName-listener).
+
+A common case of memory leaks:
+- Create an UI and suscribe it to a model event
+- Destroy the created UI (the listener is still subscribed to the model)
+- If you dont remove the listener before destroy it, the UI cannot be removed by the garbage collector
+
+To prevent memory leaks use the iris.Event.listen instead of.
+
+```javascript
+
+iris.model(function (self) {
+
+	// Allowed methods
+    self.events('complete');
+
+}, iris.path.model.example.js);
+
+
+// In another place, in a screen for example
+iris.screen(function(self) {
+
+	function onModelComplete () {
+		console.log('the model is complete!');
+	}
+
+	self.create = function() {
+		...
+
+		var model = self.model(iris.path.model.example.js, {title: 'example'});
+
+		model.on('complete', onModelComplete);
+
+	};
+
+	self.destroy = function() {
+		// Remember remove the listener in order to prevent memory leaks
+		// We recommend use iris.Event.listen instead of iris.Event.on
+		model.off('complete', onModelComplete);
+	}
+
+
+}, iris.path.screen.welcome.js);
+
+```
+
+#### iris.Event.off(eventName[, listener])
+*Since*: `v0.6.0`
+
+Removes an event listener. If the `listener` is omitted, all component's listeners for `eventName` will be removed.
+
+```javascript
+
+// Iris event
+iris.off(iris.BEFORE_NAVIGATION, onBeforeNavigation); // Unsubscribe one listener
+iris.off(iris.BEFORE_NAVIGATION); // Remove all listeners
+
+// Local event
+iris.model(function (self) {
+
+	self.events('refresh');
+
+}, iris.path.model.example.js);
+
+var target = iris.model(iris.path.model.example.js, {text:'example'});
+target.on('refresh', callback1);
+target.on('refresh', callback2);
+target.off('refresh'); // Remove callback1 and callback2
+
 ```
 
 
-#### self.notify(eventId[, params])
-*Since*: `v0.5.0`
+#### iris.Event.notify(eventName[, parameter])
+*Since*: `v0.6.0`
 
-Removes an event listener.
-See `iris.notify` for more details.
+Trigger added callbacks for the given `eventName`. To add callbacks use iris.Event.on or iris.Event.listen. The `parameter` object will be passed along to the event callbacks. Use iris.Event.notifyOn or iris.Event.notifyOff to enable or disable this function.
+
+```javascript
+
+iris.ui(function(self) {
+
+	self.create = function() {
+		...
+		// Remember register the event before
+		self.events('user_cancel');
+
+		// Without parameters
+		self.notify('user_cancel');
+
+		// With parameters
+		var params = { userName: model.get('name'), location: _getLocation() };
+		self.notify('user_cancel', params);
+	};
+
+
+}, iris.path.ui.example.js);
+```
+
+
+
+#### iris.Event.notifyOn()
+*Since*: `v0.6.0`
+
+Enable notification of events. The property `self.silent` will be `false`.
+By default notifications are enabled.
+
+```javascript
+
+iris.ui(function(self) {
+
+	self.create = function() {
+		...
+		// Remember register the event before
+		self.events('test_event');
+
+		// Now this UI is silent
+		self.notifyOff();
+
+		// The event is not emitted
+		self.notify('test_event');
+
+		// Enable notifications again
+		self.notifyOn();
+
+		// The event is emitted
+		self.notify('test_event');
+	};
+
+
+}, iris.path.ui.example.js);
+```
+
+
+
+#### iris.Event.notifyOff()
+*Since*: `v0.6.0`
+
+Disable notification of events. The property `self.silent` will be `true`.
+By default notifications are enabled.
+
+```javascript
+
+iris.ui(function(self) {
+
+	self.create = function() {
+		...
+		// Remember register the event before
+		self.events('test_event');
+
+		// Trigger event
+		self.notify('test_event');
+
+		// Now this UI is silent
+		self.notifyOff();
+
+		// The event is not emitted
+		self.notify('test_event');
+	};
+
+
+}, iris.path.ui.example.js);
+```
+
+
+#### iris.Event.listen(target, eventName, listener)
+*Since*: `v0.6.0`
+
+
+The current object listen to a particular event (`eventName`) on the `target` object.
+The advantage of using this form, instead of iris.Event.on, is that `listen` adds the event listener in a safe way to prevent memory leaks and you can remove or pause or resume all listeners at once later on.
+
+
+When the `target` is destroyed the listener is removed automatically and when the current object is destroyed, all registered listeners are removed on the targets.
+
+
+You can use iris.Event.removeListeners, iris.Event.pauseListeners or iris.Event.resumeListeners to manage them.
+
+```javascript
+
+iris.model(function (self) {
+
+	// Allowed methods
+    self.events('complete');
+
+}, iris.path.model.example.js);
+
+
+// In another place, in a UI for example
+iris.ui(function(self) {
+
+	function onModelComplete () {
+		console.log('the model is complete!');
+	}
+
+	self.create = function() {
+		...
+
+		var model = self.model(iris.path.model.example.js, {title: 'example'});
+
+		// When this UI is destroyed, Iris will call to model.off('complete', onModelComplete)
+		// And if model is destroyed, Iris will remove the listener too
+		self.listen(model, 'complete', onModelComplete);
+
+	};
+
+	self.awake = function () {
+		// This may be useful in some cases
+		self.resumeListeners();
+	};
+
+	self.sleep = function () {
+		// When the UI is asleep, the listeners will not called
+		self.pauseListeners();
+	};
+
+
+}, iris.path.ui.example.js);
+
+```
+
+
+#### iris.Event.pauseListeners()
+*Since*: `v0.6.0`
+
+Pause all listeners added using iris.Event.listen, this will remove the listeners from targets. Use iris.Event.resumeListeners to add them again.
+
+```javascript
+
+iris.model(function (self) {
+
+	// Allowed methods
+    self.events('complete');
+
+}, iris.path.model.example.js);
+
+
+// In another place, in a UI for example
+iris.ui(function(self) {
+
+	function onModelComplete () {
+		console.log('the model is complete!');
+	}
+
+	self.create = function() {
+		...
+
+		var model = self.model(iris.path.model.example.js, {title: 'example'});
+
+		// When this UI is destroyed, Iris will call to model.off('complete', onModelComplete)
+		// And if model is destroyed, Iris will remove the listener too
+		self.listen(model, 'complete', onModelComplete);
+
+	};
+
+	self.awake = function () {
+		// This may be useful in some cases
+		self.resumeListeners();
+	};
+
+	self.sleep = function () {
+		// When the UI is asleep, the listeners will not called
+		self.pauseListeners();
+	};
+
+
+}, iris.path.ui.example.js);
+
+```
+
+
+#### iris.Event.resumeListeners()
+*Since*: `v0.6.0`
+
+Resume all paused listeners, this will add again the listeners to targets. Use iris.Event.pauseListeners to remove them from targets.
+
+```javascript
+
+iris.model(function (self) {
+
+	// Allowed methods
+    self.events('complete');
+
+}, iris.path.model.example.js);
+
+
+// In another place, in a UI for example
+iris.ui(function(self) {
+
+	function onModelComplete () {
+		console.log('the model is complete!');
+	}
+
+	self.create = function() {
+		...
+
+		var model = self.model(iris.path.model.example.js, {title: 'example'});
+
+		// When this UI is destroyed, Iris will call to model.off('complete', onModelComplete)
+		// And if model is destroyed, Iris will remove the listener too
+		self.listen(model, 'complete', onModelComplete);
+
+	};
+
+	self.awake = function () {
+		// This may be useful in some cases
+		self.resumeListeners();
+	};
+
+	self.sleep = function () {
+		// When the UI is asleep, the listeners will not called
+		self.pauseListeners();
+	};
+
+
+}, iris.path.ui.example.js);
+
+```
+
+
+#### iris.Event.removeListeners()
+*Since*: `v0.6.0`
+
+This remove all listeners from targets. It is automatically called when the current object is destroyed.
+
+```javascript
+
+iris.model(function (self) {
+
+	// Allowed methods
+    self.events('complete', 'change_title');
+
+}, iris.path.model.example.js);
+
+
+// In another place, in a UI for example
+iris.ui(function(self) {
+
+	function onModelComplete () {
+		console.log('the model is complete!');
+	}
+
+	function onModelChangeTitle () {
+		console.log('the title is changed!');
+	}
+
+	self.create = function() {
+		...
+
+		var model = self.model(iris.path.model.example.js, {title: 'example'});
+
+		self.listen(model, 'complete', onModelComplete);
+		self.listen(model, 'change_title', onModelChangeTitle);
+
+		// The listeners onModelComplete and onModelChangeTitle are removed from model
+		self.removeListeners();
+
+	};
+
+}, iris.path.ui.example.js);
+
+```
+
 
 ### Iris Events
 
