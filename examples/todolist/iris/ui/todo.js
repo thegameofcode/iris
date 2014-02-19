@@ -1,20 +1,11 @@
 iris.ui(function(self) {
 	
-	
-	/*
-	 * Notifies:
-	 *				self.notify("change:tags")
-	 */
-
-
-	/*
-	 * Observes:
-	 *				todo.on('change');
-	 *				todo.on('remove')
-	 */
-
 	var todos = iris.resource(iris.path.resource.todo.js);
 	var model;
+	var filter = {
+		completed: 'all',
+		tag: 'all'
+	};
 
 	self.create = function() {
 		self.tmpl(iris.path.ui.todo.html);
@@ -29,17 +20,31 @@ iris.ui(function(self) {
 		self.get('check').on('click', toggle);
 		self.get('tags').on('click', showTags);
 
-
-		model.on('change', render);
-		model.on('remove', finishDestroy);
+		self.listen(model, 'change', render);
+		self.listen(model, 'destroy', finishDestroy);
+		
+		self.listen(self.parentUI, 'filter', setVisible);
 
 		render();
+		setVisible();
 	};
 
 	function render() {
 		var modelData = model.get();
 		self.get().toggleClass('completed', modelData.completed);
 		self.inflate({todo: modelData});
+	}
+	
+	
+	function setVisible (currentFilter) {
+		if (currentFilter) filter = currentFilter;
+		var isCompleted = model.get('completed');
+		var isVisible = filter.completed === 'all' || 
+				(isCompleted && filter.completed === 'completed') ||
+				(!isCompleted && filter.completed === 'active');
+		
+		isVisible = isVisible && (filter.tag === 'all' || model.get('tags')[filter.tag]);
+		self.get().toggleClass('hidden', !isVisible);
 	}
 
 	function initDestroy(e) {
@@ -63,7 +68,7 @@ iris.ui(function(self) {
 			if (newText !== '') {
 				model.set({text: newText});
 			} else {
-				destroy();
+				initDestroy();
 			}
 		}
 	}
@@ -76,13 +81,14 @@ iris.ui(function(self) {
 
 	function toggle(e) {
 		todos.toggle(model);
+		setVisible();
 	}
 
 	function showTags() {
 		$.fancybox(self.get('tags-dialog'), {
 			title: model.data.text,
 			afterClose: function() {
-				self.notify("change:tags");
+				setVisible();
 			},
 			afterShow: function() {
 				self.get('tags-dialog').find('input').last().focus();

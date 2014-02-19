@@ -1,15 +1,5 @@
 iris.model(function (self) {
 	
-	
-	/*
-	 * Notifies:
-	 */
-
-
-	/*
-	 * Observes:
-	 */
-
 	self.defaults = {
 		title: '',
 		todos: []

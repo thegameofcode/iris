@@ -34,7 +34,7 @@
       setup: function() {
           window.resetIris();
           iris.enableLog(false);
-          iris.events('test-event', 'event-type-1', 'event-type-2', 'duplicated-event', 'off-all-functions', 'test');
+          iris.events('test-event', 'event-type-1', 'event-type-2', 'duplicated-event', 'off-all-functions', 'test', 'silent');
       },
       teardown: function () {
           clearBody();
@@ -124,6 +124,23 @@
 
       iris.on("off-all-functions", onEvent);
       iris.notify("off-all-functions"); // +1
+  });
+  
+  test("notifyOff/notiffyOn Test", function () {
+      expect(4);
+
+      iris.on("silent", onEvent);
+      iris.on("silent", onEvent2);
+
+      iris.notify("silent"); // +2
+
+      iris.notifyOff();
+
+      iris.notify("silent"); // 0
+
+      iris.notifyOn();
+
+      iris.notify("silent"); // +2
   });
 
   test("Invalid functions", function () {

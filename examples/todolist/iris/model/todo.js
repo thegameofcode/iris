@@ -1,21 +1,12 @@
 iris.model(function (self) {
 	
-	
-	/*
-	 * Notifies:
-	 *				self.notify('toggle')
-	 */
-
-
-	/*
-	 * Observes:
-	 */
-
 	self.defaults = {
 		title: '',
 		completed: false,
 		tags: {}
 	};
+	
+	self.events('toggle');
 
 	self.toggle = function () {
 		self.set({completed : !self.get('completed')});

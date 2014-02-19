@@ -8,6 +8,7 @@
 			window.resetIris();
 			iris.path = {
 				resource: "test/component_event/resource.js",
+				model: "test/component_event/model.js",
 				welcome_tmpl: "test/component_event/welcome.html",
 				welcome: "test/component_event/welcome.js",
 				screen_tmpl: "test/component_event/screen.html",
@@ -36,7 +37,7 @@
 
 		iris.on(iris.AFTER_NAVIGATION, function() {
 			iris.off(iris.AFTER_NAVIGATION);
-			
+
 			var resource = iris.resource(iris.path.resource);
 
 			resource.on('test-event', function(msg) {
@@ -55,7 +56,7 @@
 
 		iris.on(iris.AFTER_NAVIGATION, function() {
 			iris.off(iris.AFTER_NAVIGATION);
-			
+
 			var resource = iris.resource(iris.path.resource);
 
 			resource.on("test-event", onEvent);
@@ -71,7 +72,7 @@
 
 		iris.on(iris.AFTER_NAVIGATION, function() {
 			iris.off(iris.AFTER_NAVIGATION);
-			
+
 			var resource = iris.resource(iris.path.resource);
 
 			resource.on("off-all-functions", onEvent);
@@ -86,7 +87,141 @@
 			start();
 		});
 	});
+
+	asyncTest("Silent Test", function() {
+		expect(4);
+
+		iris.on(iris.AFTER_NAVIGATION, function() {
+			iris.off(iris.AFTER_NAVIGATION);
+
+			var resource = iris.resource(iris.path.resource);
+			
+			resource.on("silent", onEvent);
+			resource.on("silent", onEvent2);
+
+			resource.notify("silent"); // +2
+
+			resource.notifyOff();
+
+			resource.notify("silent"); // 0
+			
+			resource.notifyOn();
+
+			resource.notify("silent"); // +2
+			start();
+		});
+	});
 	
+	asyncTest("Listen Test", function() {
+		expect(6);
+
+		iris.events('listen-iris');
+		iris.on(iris.AFTER_NAVIGATION, function() {
+			iris.off(iris.AFTER_NAVIGATION);
+
+			var resource = iris.resource(iris.path.resource);
+
+			resource.listen(iris, "listen-iris", onEvent);
+			resource.listen(iris, "listen-iris", onEvent2);
+			
+			iris.notify("listen-iris"); // +2
+			
+			resource.pauseListeners();
+			
+			iris.notify("listen-iris"); // 0
+			
+			resource.resumeListeners();
+			
+			iris.notify("listen-iris"); // +2
+			
+			resource.removeListeners();
+			
+			iris.notify("listen-iris"); // 0
+			
+			resource.resumeListeners();
+			
+			iris.notify("listen-iris"); // 0			
+			
+			resource.listen(iris, "listen-iris", onEvent);
+			resource.listen(iris, "listen-iris", onEvent2);
+			
+			iris.notify("listen-iris"); // +2
+			
+			start();
+		});
+	});
+	
+	asyncTest("Destroy Observable Test (listen)", function() {
+		expect(3);
+
+		iris.on(iris.AFTER_NAVIGATION, function() {
+			iris.off(iris.AFTER_NAVIGATION);
+
+			var model = iris.model(iris.path.model);
+
+			iris.listen(model, "listen-model", onEvent);
+			iris.listen(model, "listen-model", onEvent2);
+			
+			model.notify("listen-model"); // +2
+			
+			model.on('destroy', onEvent);
+			
+			model.destroy(); // +1
+			
+			start();
+		});
+	});
+	
+	
+	asyncTest("Destroy Observer Test (listen)", function() {
+		expect(3);
+		
+		iris.events('listen-iris');
+
+		iris.on(iris.AFTER_NAVIGATION, function() {
+			iris.off(iris.AFTER_NAVIGATION);
+
+			var model = iris.model(iris.path.model);
+
+			model.listen(iris, "listen-iris", onEvent);
+			model.listen(iris, "listen-iris", onEvent2);
+			
+			iris.notify("listen-iris"); // +2
+			
+			model.on('destroy', onEvent);
+			
+			model.destroy(); // +1
+			
+			iris.notify("listen-iris"); // 0
+			
+			start();
+		});
+	});
+	
+	
+	asyncTest("Destroy Observable Test (on)", function() {
+		expect(3);
+		
+		iris.on(iris.AFTER_NAVIGATION, function() {
+			iris.off(iris.AFTER_NAVIGATION);
+
+			var model = iris.model(iris.path.model);
+			
+			model.on("listen-model", onEvent);
+			model.on("listen-model", onEvent2);
+			
+			model.notify("listen-model"); // +2
+			
+			model.on('destroy', onEvent);
+			
+			model.destroy(); // +1
+			
+			start();
+		});
+	});
+	
+
+
 	//asyncTest("Auto off when a component is destroyed", function() {
 	//	expect(3);
 

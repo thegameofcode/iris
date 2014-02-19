@@ -1,16 +1,4 @@
 iris.ui(function(self) {
-	
-	
-	
-	/*
-	 * Notifies:
-	 */
-
-
-	/*
-	 * Observes:
-	 */
-
 
 	var todos = iris.resource(iris.path.resource.todo.js);
 	var model;
@@ -19,8 +7,7 @@ iris.ui(function(self) {
 		self.tmpl(iris.path.ui.tags.html);
 
 		model = self.model(iris.path.model.todo.js);
-
-
+		
 		init();
 	};
 

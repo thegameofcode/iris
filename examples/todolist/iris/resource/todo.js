@@ -1,25 +1,11 @@
 iris.resource(function(self) {
 
-	/*
-	 * Notifies:
-	 *				self.notify('add'), 
-	 *				self.notify('change:tags')
-	 *				self.notify('change')
-	 *				todo.notify('remove')
-	 *				todo.notify('change:tags')
-	 */
-
-	/*
-	 * Observes:
-	 *				self.on('change')
-	 *				self.on('add')
-	 *				self.on('change:tags')
-	 */
-
 	var tags = {};
 	var todos = [];
 
 	self.tags = tags;
+	
+	self.events('change', 'add', 'change:tags');
 
 	self.init = function() {
 		if (localStorage) {
@@ -46,9 +32,11 @@ iris.resource(function(self) {
 		});
 		todos.push(todo);
 		if (data.tags) {
+			self.notifyOff();
 			data.tags.forEach(function(tag) {
-				self.addTag(tag, todo, true);
+				self.addTag(tag, todo);
 			});
+			self.notifyOn();
 		}
 		self.notify('add', todo);
 	};
@@ -58,8 +46,8 @@ iris.resource(function(self) {
 		if (idx !== -1) {
 			todos.splice(idx, 1);
 			removeAllTags(todo);
+			todo.destroy();
 			self.notify('change:tags');
-			todo.notify('remove');
 			self.notify('change');
 		}
 	};
@@ -83,7 +71,7 @@ iris.resource(function(self) {
 				removeAllTags(todo);
 				todos.splice(i, 1);
 				removed = true;
-				todo.notify('remove');
+				todo.destroy();
 			}
 		}
 		if (removed) {
@@ -108,21 +96,19 @@ iris.resource(function(self) {
 		todo.set({text: newText});
 	};
 
-	self.addTag = function(tag, todo, silent) {
+	self.addTag = function(tag, todo) {
 		if (!tags[tag]) {
 			tags[tag] = iris.model(iris.path.model.tag.js, {title: tag});
 		}
 
 		tags[tag].get('todos').push(todo);
 		todo.addTag(tags[tag]);
-
-		if (!silent) {
-			self.notify('change:tags');
-		}
+		
+		self.notify('change:tags');
 
 	};
 
-	self.removeTag = function(tag, todo, silent) {
+	self.removeTag = function(tag, todo) {
 		if (tags[tag]) {
 			var todos = tags[tag].get('todos');
 			todos.splice(todos.indexOf(todo), 1);
@@ -131,16 +117,16 @@ iris.resource(function(self) {
 				delete tags[tag];
 			}
 		}
-
-		if (!silent) {
-			self.notify('change:tags');
-		}
+		
+		self.notify('change:tags');
 	};
 
 	function removeAllTags(todo) {
+		self.notifyOff();
 		for (var tag in todo.get('tags')) {
-			self.removeTag(tag, todo, true);
+			self.removeTag(tag, todo);
 		}
+		self.notifyOn();
 	}
 	;
 

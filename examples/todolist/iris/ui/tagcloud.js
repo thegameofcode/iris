@@ -1,23 +1,12 @@
 iris.ui(function(self) {
 	
-	/*
-	 * Notifies:
-	 */
-
-
-	/*
-	 * Observes:
-	 *				todos.on('change:tabs')
-	 */
-
-
 	var todos = iris.resource(iris.path.resource.todo.js);
 	
 	var tagFilter;
 
 	self.create = function() {
 		self.tmpl(iris.path.ui.tagcloud.html);
-		todos.on('change:tags', self.render);
+		self.listen(todos, 'change:tags', self.render);
 	};
 
 	self.render = function() {
@@ -30,12 +19,13 @@ iris.ui(function(self) {
 				link: "#;tag=" + tags[tag].get('title')
 			});
 		}
-
+		
 		self.get('tagcloud').empty().jQCloud(tagcloud_array);
 		self.selectTag();
 	};
 
 	self.selectTag = function(tag) {
+		self.get('tagcloud').find('span > a').removeClass('selected');
 		if (tag) {
 			tagFilter = tag;
 		}
