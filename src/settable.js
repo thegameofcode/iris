@@ -4,12 +4,8 @@
    * Settable class to manage object configurations.
    */
   var Settable = function() {
-      iris.Event.call(this);
-
       this.cfg = {};
   };
-
-  iris.inherits(Settable, iris.Event);
 
   var pSettable = Settable.prototype;
 
