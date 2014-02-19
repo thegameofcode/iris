@@ -74,7 +74,7 @@ Iris exposes all of its methods and properties on the `iris` object:
 		- [self.post(path, params, success, error)](#selfpostpath-params-success-error)
 		- [self.put(path, params, success, error)](#selfputpath-params-success-error)
 		- [self.del(path, success, error)](#selfdelpath-success-error)
-
+	- [iris.Model Class](#irismodel-class)
 
 ## Core
 
@@ -1263,6 +1263,33 @@ If the the combination of keys is detected, the application prints/hide a visual
 iris.debug(false);
 ```
 
+### iris.model(function(self){...}, path)
+*Since*: `v0.6.0`
+
+Defines or creates a Model Component.
+
+```javascript
+//To define
+iris.model(function(self){
+
+		self.defaults = {user: 'unkown'};
+
+		self.create = function () {
+			//Called when the model is created
+		};
+
+		self.destroy = function () {
+			//Called when the model is destroyed. A 'destroy' event is notified
+		};
+
+}, iris.path.model.js);
+```
+
+```javascript
+//To create
+var model = iris.model(iris.path.model.js);
+```
+
 ## Classes
 
 ### iris.Settable Class
@@ -1701,4 +1728,45 @@ Returns a jQuery [jqXHR](http://api.jquery.com/Types/#jqXHR) object.
 }).fail(function() {
 	alert("fail");
 });
+```
+
+### iris.Model Class
+Inherit methods from Settable class
+
+#### self.defaults = object
+*Since*: `v0.6.0`
+
+Sets default attributes values.
+
+```javascript
+self.defaults({ state: 'completed', tags: [] });
+```
+
+#### self.set({attributes})
+*Since*: `v0.6.0`
+
+Sets and adds one or more value attributes.
+
+```javascript
+self.set({ state: 'pending', tags: ['important', 'mandatory'], user: 'root' });
+```
+
+When the method is called, a 'change' event is notified.
+
+#### self.get(key)
+*Since*: `v0.6.0`
+
+Returns the value associated with the key from the model attributes.
+
+```javascript
+var user = self.get('user');
+```
+
+#### self.toJson()
+*Since*: `v0.6.0`
+
+Returns the JSON representation of the model attributes
+
+```javascript
+var string = self.toJson();
 ```
