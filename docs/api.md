@@ -72,20 +72,24 @@ Iris exposes all of its methods and properties on the `iris` object:
 		- [self.destroyUI([ui_component])](#selfdestroyuiui_component)
 		- [self.destroyUIs(container_id)](#selfdestroyuiscontainer_id)
 	- [iris.UI Class](#irisui-class)
+		- [UI life cycle](#ui-life-cycle)
 		- [self.tmplMode(mode)](#selftmplmodemode)
 	- [iris.Screen Class](#irisscreen-class)
+		- [Screen life cycle](#screen-life-cycle)
 		- [self.param(name)](#selfparamname)
 		- [self.screens(container_id, screens)](#selfscreenscontainer_id-screens)
 	- [iris.Resource Class](#irisresource-class)
+		- [Resource life cycle](#resource-life-cycle)
 		- [self.get(path, success, error)](#selfgetpath-success-error)
 		- [self.post(path, params, success, error)](#selfpostpath-params-success-error)
 		- [self.put(path, params, success, error)](#selfputpath-params-success-error)
 		- [self.del(path, success, error)](#selfdelpath-success-error)
 	- [iris.Model Class](#irismodel-class)
+		- [Model life cycle](#model-life-cycle)
 		- [iris.Model.defaults(attributes)](#irismodeldefaultsattributes)
 		- [iris.Model.get(key)](#irismodelgetkey)
-		- [iris.Model.set(attributes)](#irismodelsetattributes)
-		- [iris.Model.toJson()](#irismodeltojson)
+		- [iris.Model.set(attributes)](#irismodelsetkeyorhash-value)
+		- [iris.Model.unset(key)](#irismodelunsetkey)
 
 
 ## Core
@@ -683,7 +687,7 @@ function loginFail () {
 }
 
 ```
-Since `v0.5.2`, you can load external JS files (before only relative paths), e.g.:
+You can load external JS files, e.g.:
 
 ```js
 iris.include(["http://www.example.com/js/file.js", "http://www.example.com/js/file2.js"], function(){
@@ -713,7 +717,7 @@ Iris looks for the target screen using the hash URL (`path` parameter) and wakes
 
 The [iris.BEFORE_NAVIGATION](#irisbefore_navigation) event is triggered on new navigation. When the navigation finished [iris.AFTER_NAVIGATION](#irisafter_navigation) is triggered. If the screen is not found the [iris.SCREEN_NOT_FOUND](#irisscreen_not_found) event is notified.
 
-Since `v0.5.6`, you can use the matrix paramaters (`;name=value;name2=value2...`) to send them data, e.g.: `#;param0=value0/screen1;param1=value1;param2=value2/screen2`
+You can use the matrix paramaters (`;name=value;name2=value2...`) to send them data, e.g.: `#;param0=value0/screen1;param1=value1;param2=value2/screen2`
 In this example the welcome screen receives `param0`, screen1 receives `param1` & `param2`, the screen2 doesn't receive any parameter. Use [self.param(name)](#selfparamname) inside the screen to retrieve parameter values.
 
 ```javascript
@@ -748,8 +752,6 @@ iris.navigate('#/user/me/friends;filter=all;show=nearest');
 
 ```
 
-__Before v0.5.6 (Deprecated, use matrix params instead of)__: To send parameters to screen use this format (query params): `/screen?param1=value1&param2=value2`. You can get the value of this parameters in the `self.awake(params)` function.
-
 ### iris.screen(function(self){...}, path)
 *Since*: `v0.5.0`
 
@@ -775,7 +777,7 @@ iris.screen(
 	 ...
 	};
 
-	//Called before hiding component.
+	//Called before sleep()
 	//If the method returns false, the navigation is interrupted and not hidden nor self.seelp method is called
 	//This method only is applied to the Screens components
 	self.canSleep = function () {
@@ -858,7 +860,7 @@ iris.resource(iris.path.resource.js);
 *Since*: `v0.5.7`
 
 Enables or disables the iris debug mode.
-When iris debug mode is enabled, the application is listening for the combination of keys: `Ctrl + Alt + Shift + D` to show or hide the debug information layer. By default it is enabled in local enviroments (`127.0.0.1` and `localhost`).
+When iris debug mode is enabled, the application is listening for the combination of keys: <kbd>Ctrl + Alt + Shift + D</kbd> to show or hide the debug information layer. By default it is enabled in local enviroments (`127.0.0.1` and `localhost`).
 If the the combination of keys is detected, the application prints/hide a visual lines to highlight the components (screens and UIs) and prints information about its presenter and template paths, hash-URL or data-id.
 
 ```javascript
@@ -1595,6 +1597,44 @@ self.destroyUIs("ui_container");
 Inherits methods from [iris.Component](#iriscomponent-class), [iris.Settable](#irissettable-class) & [iris.Event](#irisevent-class) classes. See [Iris Class Map](#iris-class-map) for more details.
 
 
+#### UI life cycle
+
+UIs can implement four life cycle methods:
+
+* `create()` is where you initialize your UI. Most importantly, here you must call to `self.tmpl()` with a template resource defining in the iris.path, and you can use `self.get()` to retrieve the components in that UI that you need to interact with programmatically.
+
+* `awake()` is where you can add event listeners, execute intervals or initialize heavyweight tasks as play sound or video.
+
+* `sleep()` is where you deal with the user leaving your screen. Most importantly, remove event listeners or stop heavyweight tasks.
+
+* `destroy()` is where you will perform operations after UI dying.
+
+
+
+```javascript
+iris.ui(function (self) {
+
+	self.create = function() {
+		console.log('create');
+		self.tmpl(iris.path.ui.example.html);
+	};
+
+	self.awake = function (params) {
+		console.log('awake');
+	};
+
+	self.sleep = function () {
+		console.log('sleep');
+	};
+
+	self.destroy = function () {
+		console.log('destroy');
+	};
+
+}, iris.path.ui.example.js);
+```
+
+
 #### self.tmplMode(mode)
 *Since*: `v0.5.0`
 
@@ -1609,15 +1649,19 @@ The possible values ​​are:
 
 ### iris.Screen Class
 
-Inherits methods from [iris.Component](#iriscomponent-class), [iris.Settable](#irissettable-class) & [iris.Event](#irisevent-class) classes. See [Iris Class Map](#iris-class-map) for more details.
+Inherits methods from [iris.Component](#iriscomponent-class), [iris.Settable](#irissettable-class) and [iris.Event](#irisevent-class) classes. See [Iris Class Map](#iris-class-map) for more details.
 
-### Screen Life Cycle
+#### Screen life cycle
 
 There are four methods almost all screens will implement:
 
 * `create()` is where you initialize your screen. Most importantly, here you will usually call <code>self.tmpl()</code> with a template resource defining your UI, and using <code>self.get()</code> to retrieve the components in that UI that you need to interact with programmatically.
 
 * `awake()` is where you can add event listeners, execute intervals or initialize heavyweight tasks as play sound or video.
+
+* `canSleep()` is called before self.sleep() function. If this returns `false`, the navigation is interrupted and the self.sleep() mehod is not called.
+
+If the method returns false, the navigation is interrupted and not hidden nor self.seelp method is called
 
 * `sleep()` is where you deal with the user leaving your screen. Most importantly, remove event listeners or stop heavyweight tasks.
 
@@ -1626,13 +1670,42 @@ There are four methods almost all screens will implement:
 ![Iris Life Cycle](images/screen_life_cycle.png)
 
 
+```javascript
+iris.screen(function (self) {
+
+	self.create = function() {
+		console.log('create');
+		self.tmpl(iris.path.screen.example.html);
+	};
+
+	self.awake = function (params) {
+		console.log('awake');
+	};
+
+	self.sleep = function () {
+		console.log('sleep');
+	};
+
+	self.canSleep = function () {
+		console.log('canSleep');
+		return true;
+	};
+
+	self.destroy = function () {
+		console.log('destroy');
+	};
+
+}, iris.path.screen.example.js);
+```
+
+
 #### self.param(name)
-*Since*: `v0.5.2`
+*Since*: `v0.5.6`
 
 Retrieve the parameter value using the parameter name.
-Since `v0.5.6` you can define pretty URLs using path & matrix parameters.
+You can define pretty URLs using path & matrix parameters.
 
-E.g. (Since `v0.5.6`): navigate to the welcome screen with matrix params (`#;paramName=paramValue`):
+E.g. navigate to the welcome screen with matrix params (`#;paramName=paramValue`):
 
 ```js
 // Welcome screen
@@ -1645,7 +1718,7 @@ iris.screen(function (self) {
 }, iris.path.screen.welcome.js);
 ```
 
-E.g. (Since `v0.5.6`): navigate to a example screen with path params (`#/user/1234`):
+E.g. navigate to a example screen with path params (`#/user/1234`):
 
 ```js
 
@@ -1670,35 +1743,6 @@ iris.screen(function (self) {
 }, iris.path.screen.example.js);
 ```
 
-Old style (__Before v0.5.6__), path & matrix params are not allowed, you can only get query params (`#?paramName=paramValue`):
-```js
-iris.screen(function (self) {
-	self.awake = function () {
-	...
-		var value = self.param("paramName"); // value == "paramValue"
-	...
-	}
-});
-```
-
-
-Old style (__Before v0.5.2__), the only way to get query parameters is using the awake function parameter, e.g.: (`#?paramName=paramValue`)
-
-```js
-iris.screen(function (self) {
-	var value;
-
-	self.awake = function (params) {
-		if ( params && param.hasOwnProperty("paramName") ) {
-			value = param.paramName;
-		}
-	}
-
-	function example () {
-		console.log(value); // value is equal to "paramValue"
-	}
-});
-```
 
 #### self.screens(container_id, screens)
 *Since*: `v0.5.0`
@@ -1715,7 +1759,7 @@ self.screens("screens", [
 //The first parameter is the data-id attribute of the container
 ```
 
-Since `v0.5.6`, "pretty URLs" are allowed, you can register screens with path params and the `/` character is also allowed, e.g.:
+You can register screens with path params and the `/` character is also allowed, e.g.:
 
 ```javascript
 // Welcome screen
@@ -1746,6 +1790,29 @@ iris.screen(function (self) {
 ### iris.Resource Class
 
 Inherits methods from [iris.Settable](#irissettable-class) class. See [Iris Class Map](#iris-class-map) for more details.
+
+#### Resource life cycle
+
+Resources have only one life cycle method:
+
+* `create()` contains the initialization code of the resource. Usually it is where the init data is retrieved from a RESTful service or from the Localstorage object. The resources are singleton components. The `create()` method will be called the first time the `iris.resouce()` method is called.
+
+```javascript
+iris.resouce(function (self) {
+
+   self.create = function() {
+       console.log('create');
+       if (localStorage) {
+           var data = localStorage.getItem('data');
+       }
+   };
+
+}, iris.path.to.resource);
+
+//On first reference, create method will be called
+iris.resource(iris.path.to.resource);
+```
+
 
 #### self.get(path, success, error)
 *Since*: `v0.5.0`
@@ -1806,6 +1873,28 @@ Returns a jQuery [jqXHR](http://api.jquery.com/Types/#jqXHR) object.
 ### iris.Model Class
 
 Inherits methods from [iris.Event](#irisevent-class) class. See [Iris Class Map](#iris-class-map) for more details.
+
+
+#### Model life cycle
+
+Models have two life cycle methods:
+
+* `create()` this method will be called when a new model is created. This method can be useful to assign initial values ​​to the model or to overwrite the default values​​.
+
+* `destroy()` notifies the 'destroy' event to the observers of the component. If you overwrite this method, the event 'destroy' will not be called. Include the destroy notification in the new method if you want to keep the original behavior.
+
+```javascript
+iris.model(function (self) {
+
+   self.defaults = { user: unkown };
+
+   self.create = function() {
+       console.log('create');
+       self.set({user: 'root'})
+   };
+
+}, iris.path.to.model);
+```
 
 
 #### iris.Model.defaults(attributes)
@@ -1877,7 +1966,7 @@ iris.screen(function(self) {
 #### iris.Model.set(attributes)
 *Since*: `v0.6.0`
 
-Set a hash of attributes on the model. If some property changes its value, a `change` event will be triggered on the model.
+Set a hash of attributes on the model. If some property changes its value, a `change` event will be triggered on the model. You may also pass individual keys and values.
 
 ```javascript
 iris.model(function (self) {
@@ -1902,35 +1991,50 @@ iris.screen(function(self) {
 
 		model = iris.model(iris.path.model.example.js, {user: 'root'});
 
-		model.set({ tags: ['important', 'mandatory'] }); // Trigger 'change' event
+		// Single setting
+		model.set('state', 'completed'); // Trigger 'change' event
+		model.set('state', 'completed'); // Don't trigger 'change' event
+
+		// Multiple setting
+		model.set({ user: 'John', tags: ['important', 'mandatory'] }); // Trigger 'change' event
 	};
 
 }, iris.path.screen.welcome.js);
 ```
 
-
-#### iris.Model.toJson()
+#### iris.Model.unset(key)
 *Since*: `v0.6.0`
 
-Returns a JSON string of the model's attributes. This usually can be used for persistence or for send to the server. Uses the JavaScript API `JSON.stringify()` to generate the string.
+Removes an attribute by deleting it from the internal `self.data` property. Notifies a `change` event when the key was deleted.
 
 ```javascript
 iris.model(function (self) {
 	
 	// Set the default values
 	self.defaults = {
-		state: 'new'
+		user: 'unknow'
 	};
 	
 }, iris.path.model.example.js);
 
 
-// In another place, a resource for example
-iris.resource(function(self) {
+// In another place, a UI for example
+iris.ui(function(self) {
 
-	self.saveModel = function(model) {
-		localStorage.setItem('model', model.toJson());
+	var model;
+
+	self.create = function() {
+		...
+
+		model = iris.model(iris.path.model.example.js, {user: 'root'});
+		
+		model.get('user'); // return 'root'
+
+		model.unset('user'); // Notify 'change' event
+		model.unset('user'); // Don't notify 'change' event
+
+		model.get('user'); // return 'undefined'
 	};
 
-}, iris.path.resource.example.js);
+}, iris.path.ui.example.js);
 ```
