@@ -5,7 +5,6 @@
 ## Getting started
 
 * [The iris API](api.md) - Complete API documentation here!
-* [Iris Life Cycle](lifecycle.md) - Iris lifecycle.
 
 ## Development
 

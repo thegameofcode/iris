@@ -21,6 +21,12 @@ Iris exposes all of its methods and properties on the `iris` object:
 	- [iris.browser()](#irisbrowser)
 	- [iris.inherits(subClass, superClass)](#irisinheritssubclass-superclass)
 - [Event](#event)
+	- [Iris events examples](#iris-events-examples)
+		- [Iris object example](#iris-object-example)
+		- [UI example](#ui-example)
+		- [Screen example](#screen-example)
+		- [Model example](#model-example)
+		- [Resource example](#resource-example)
 	- [Iris Events](#iris-events)
 		- [iris.BEFORE_NAVIGATION](#irisbefore_navigation)
 		- [iris.AFTER_NAVIGATION](#irisafter_navigation)
@@ -42,6 +48,7 @@ Iris exposes all of its methods and properties on the `iris` object:
 	- [iris.resource(function(self){...}, path)](#irisresourcefunctionself-path)
 	- [iris.debug(enabled)](#irisdebugenabled)
 - [Classes](#classes)
+	- [Iris Class Map](#iris-class-map)
 	- [iris.Settable Class](#irissettable-class)
 		- [self.setting(label[, value])](#selfsettinglabel-value)
 		- [self.settings(params)](#selfsettingsparams)
@@ -405,9 +412,20 @@ kitty.sayName(); // [Mammal Kitty]
 ## Event
 *Since*: `v0.6.0`
 
-The global `iris` object and the classes [iris.UI](#irisui-class), [iris.Screen](#irisscreen-class), [iris.Model](#irismodel-class) and [iris.Resource](#irisresource-class) inherits methods and properties from [iris.Event](#irisevent-class) class.
+The global `iris` object and the classes [iris.UI](#irisui-class), [iris.Screen](#irisscreen-class), [iris.Model](#irismodel-class) and [iris.Resource](#irisresource-class) inherits methods and properties from [iris.Event](#irisevent-class) class.  See [Iris Class Map](#iris-class-map) for more details.
 
-### UI example
+### Iris events examples
+
+#### iris object example
+
+```javascript
+// The global iris object inherits iris.Event methods and properties
+iris.on(iris.BEFORE_NAVIGATION, function () {
+	iris.log("before navigation : " + document.location.hash)
+});
+```
+
+#### UI example
 
 ```javascript
 // UIs can trigger events
@@ -428,7 +446,7 @@ myUi.off('example-event', fn);
 ```
 
 
-### Screen example
+#### Screen example
 
 ```javascript
 // Screens can trigger events
@@ -450,7 +468,7 @@ myScreen.off('example-event', fn);
 ```
 
 
-### Model example
+#### Model example
 
 ```javascript
 // Models can trigger events
@@ -471,7 +489,7 @@ myModel.off('example-event', fn);
 ```
 
 
-### Resource example
+#### Resource example
 
 ```javascript
 // Resources can trigger events
@@ -878,11 +896,19 @@ var model = iris.model(iris.path.model.js);
 
 ## Classes
 
+
+### Iris Class Map
+
 The iris object exposes multiple classes. The following image shows how the Iris classes are related:
 
 ![Iris Class Map](images/iris_class_map.png)
 
+
+
 ### iris.Settable Class
+
+_iris.Settable_ is superclass of [iris.Component](#iriscomponent-class) and [iris.Resource](#irisresource-class). See [Iris Class Map](#iris-class-map) for more details.
+
 
 #### self.setting(label[, value])
 *Since*: `v0.5.0`
@@ -915,10 +941,12 @@ var attribute_value = self.setting("person.name");
 
 ### iris.Event class
 
+_iris.Event_ is superclass of [iris.Component](#iriscomponent-class), [iris.Model](#irismodel-class) and [iris.Resource](#irisresource-class) classes. See [Iris Class Map](#iris-class-map) for more details.
+
 #### iris.Event.events(args)
 *Since*: `v0.6.0`
 
-Define allowed events. This a way to indicate what events can manage an object. When [iris.Event.on(eventName, listener)](#iriseventoneventname-listener), [iris.Event.off(eventName[, listener])](#iriseventoffeventname-listener) or iris.Event.notify are called, the first thing is to check if the event name is allowed, otherwise it raises an exception. Explicit registration of events is a good practice that helps developers to control component events.
+Define allowed events. This a way to indicate what events can manage an object. When [iris.Event.on(eventName, listener)](#iriseventoneventname-listener), [iris.Event.off(eventName[, listener])](#iriseventoffeventname-listener) or [iris.Event.notify(eventName[, parameter])](#iriseventnotifyeventname-parameter) are called, the first thing is to check if the event name is allowed, otherwise it raises an exception. Explicit registration of events is a good practice that helps developers to control component events.
 
 ```javascript
 // First off, create a sample UI
@@ -987,7 +1015,7 @@ A common case of memory leaks:
 - Destroy the created UI (the listener is still subscribed to the model)
 - If you dont remove the listener before destroy it, the UI cannot be removed by the garbage collector
 
-To prevent memory leaks use the iris.Event.listen instead of iris.Event.on.
+To prevent memory leaks use the [iris.Event.listen(target, eventName, listener)](#iriseventlistentarget-eventname-listener) instead of _iris.Event.on(eventName, listener)_.
 
 ```javascript
 
@@ -1055,7 +1083,7 @@ target.off('refresh'); // Remove callback1 and callback2
 #### iris.Event.notify(eventName[, parameter])
 *Since*: `v0.6.0`
 
-Trigger added callbacks for the given `eventName`. To add callbacks use [iris.Event.on(eventName, listener)](#iriseventoneventname-listener) or iris.Event.listen. The `parameter` object will be passed along to the event callbacks. Use [iris.Event.notifyOn()](#iriseventnotifyon) or [iris.Event.notifyOff()](#iriseventnotifyoff) to enable or disable this function.
+Trigger added callbacks for the given `eventName`. To add callbacks use [iris.Event.on(eventName, listener)](#iriseventoneventname-listener) or [iris.Event.listen(target, eventName, listener)](#iriseventlistentarget-eventname-listener). The `parameter` object will be passed along to the event callbacks. Use [iris.Event.notifyOn()](#iriseventnotifyon) or [iris.Event.notifyOff()](#iriseventnotifyoff) to enable or disable this function.
 
 ```javascript
 
@@ -1084,7 +1112,7 @@ iris.ui(function(self) {
 *Since*: `v0.6.0`
 
 Enable notification of events. The property `self.silent` will be `false`.
-By default notifications are enabled.
+By default notifications are enabled. Use [iris.Event.notifyOff()](#iriseventnotifyoff) to disable them.
 
 ```javascript
 
@@ -1118,7 +1146,7 @@ iris.ui(function(self) {
 *Since*: `v0.6.0`
 
 Disable notification of events. The property `self.silent` will be `true`.
-By default notifications are enabled.
+By default notifications are enabled. Use [iris.Event.notifyOn()](#iriseventnotifyon) to enable them.
 
 ```javascript
 
@@ -1155,7 +1183,7 @@ The advantage of using this form, instead of [iris.Event.on(eventName, listener)
 When the `target` is destroyed the listener is removed automatically and when the current object is destroyed, all registered listeners are removed on the targets.
 
 
-You can use iris.Event.removeListeners, iris.Event.pauseListeners or iris.Event.resumeListeners to manage them.
+You can use [iris.Event.removeListeners()](#iriseventremovelisteners), [iris.Event.pauseListeners()](#iriseventpauselisteners) or [iris.Event.resumeListeners()](#iriseventresumelisteners) to manage them.
 
 ```javascript
 
@@ -1204,7 +1232,7 @@ iris.ui(function(self) {
 #### iris.Event.pauseListeners()
 *Since*: `v0.6.0`
 
-Pause all listeners added using iris.Event.listen, this will remove the listeners from targets. Use iris.Event.resumeListeners to add them again.
+Pause all listeners added using [iris.Event.listen(target, eventName, listener)](#iriseventlistentarget-eventname-listener), this will remove the listeners from targets. Use [iris.Event.resumeListeners()](#iriseventresumelisteners) to add them again.
 
 ```javascript
 
@@ -1253,7 +1281,7 @@ iris.ui(function(self) {
 #### iris.Event.resumeListeners()
 *Since*: `v0.6.0`
 
-Resume all paused listeners, this will add again the listeners to targets. Use iris.Event.pauseListeners to remove them from targets.
+Resume all paused listeners, this will add again the listeners to targets. Use [iris.Event.pauseListeners()](#iriseventpauselisteners) to remove them from targets.
 
 ```javascript
 
@@ -1346,6 +1374,8 @@ iris.ui(function(self) {
 
 ### iris.Component Class
 
+Inherits methods from [iris.Settable](#irissettable-class) and [iris.Event](#irisevent-class) classes. See [Iris Class Map](#iris-class-map) for more details.
+
 #### self.tmpl(path)
 *Since*: `v0.5.0`
 
@@ -1393,6 +1423,7 @@ Gets the JQuery object whose *data-id* matches with the param. If no *data-id* i
 ```html
 <p data-id="paragraph">The name is John</p>
 ```
+
 ```javascript
 self.get("paragraph").text("Anna");
 ```
@@ -1560,7 +1591,9 @@ self.destroyUIs("ui_container");
 
 
 ### iris.UI Class
-Inherit methods from Component, Settable & Event classes
+
+Inherits methods from [iris.Component](#iriscomponent-class), [iris.Settable](#irissettable-class) & [iris.Event](#irisevent-class) classes. See [Iris Class Map](#iris-class-map) for more details.
+
 
 #### self.tmplMode(mode)
 *Since*: `v0.5.0`
@@ -1575,7 +1608,23 @@ The possible values ​​are:
 
 
 ### iris.Screen Class
-Inherit methods from Component, Settable & Event classes
+
+Inherits methods from [iris.Component](#iriscomponent-class), [iris.Settable](#irissettable-class) & [iris.Event](#irisevent-class) classes. See [Iris Class Map](#iris-class-map) for more details.
+
+### Screen Life Cycle
+
+There are four methods almost all screens will implement:
+
+* `create()` is where you initialize your screen. Most importantly, here you will usually call <code>self.tmpl()</code> with a template resource defining your UI, and using <code>self.get()</code> to retrieve the components in that UI that you need to interact with programmatically.
+
+* `awake()` is where you can add event listeners, execute intervals or initialize heavyweight tasks as play sound or video.
+
+* `sleep()` is where you deal with the user leaving your screen. Most importantly, remove event listeners or stop heavyweight tasks.
+
+* `destroy()` is where you will perform operations after screen dying.
+
+![Iris Life Cycle](images/screen_life_cycle.png)
+
 
 #### self.param(name)
 *Since*: `v0.5.2`
@@ -1595,6 +1644,7 @@ iris.screen(function (self) {
 	}
 }, iris.path.screen.welcome.js);
 ```
+
 E.g. (Since `v0.5.6`): navigate to a example screen with path params (`#/user/1234`):
 
 ```js
@@ -1633,10 +1683,9 @@ iris.screen(function (self) {
 
 
 Old style (__Before v0.5.2__), the only way to get query parameters is using the awake function parameter, e.g.: (`#?paramName=paramValue`)
+
 ```js
 iris.screen(function (self) {
-	...
-
 	var value;
 
 	self.awake = function (params) {
@@ -1646,10 +1695,8 @@ iris.screen(function (self) {
 	}
 
 	function example () {
-		console.log(value); // value == "paramValue"
+		console.log(value); // value is equal to "paramValue"
 	}
-
-	...
 });
 ```
 
@@ -1697,7 +1744,8 @@ iris.screen(function (self) {
 ```
 
 ### iris.Resource Class
-Inherit methods from Settable class
+
+Inherits methods from [iris.Settable](#irissettable-class) class. See [Iris Class Map](#iris-class-map) for more details.
 
 #### self.get(path, success, error)
 *Since*: `v0.5.0`
@@ -1757,7 +1805,7 @@ Returns a jQuery [jqXHR](http://api.jquery.com/Types/#jqXHR) object.
 
 ### iris.Model Class
 
-Inherit methods from [iris.Event class](#irisevent-class).
+Inherits methods from [iris.Event](#irisevent-class) class. See [Iris Class Map](#iris-class-map) for more details.
 
 
 #### iris.Model.defaults(attributes)
