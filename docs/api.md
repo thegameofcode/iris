@@ -405,8 +405,9 @@ kitty.sayName(); // [Mammal Kitty]
 ## Event
 *Since*: `v0.6.0`
 
-The global `iris` object and the classes `iris.UI`, `iris.Screen`, `iris.Model` and `iris.Resource` inherits methods and properties from [iris.Event](#irisevent-class) class.
+The global `iris` object and the classes [iris.UI](#irisui-class), [iris.Screen](#irisscreen-class), [iris.Model](#irismodel-class) and [iris.Resource](#irisresource-class) inherits methods and properties from [iris.Event](#irisevent-class) class.
 
+### UI example
 
 ```javascript
 // UIs can trigger events
@@ -424,9 +425,12 @@ iris.ui(function (self) {
 var myUi = self.ui('container-data-id', iris.path.ui.example.js);
 myUi.on('example-event', fn);
 myUi.off('example-event', fn);
+```
 
 
+### Screen example
 
+```javascript
 // Screens can trigger events
 iris.screen(function (self) {
 
@@ -443,9 +447,12 @@ iris.screen(function (self) {
 var myScreen = self.setting('myScreen');
 myScreen.on('example-event', fn);
 myScreen.off('example-event', fn);
+```
 
 
+### Model example
 
+```javascript
 // Models can trigger events
 iris.model(function (self) {
 
@@ -461,9 +468,12 @@ iris.model(function (self) {
 var myModel = iris.model(iris.path.model.example.js, data);
 myModel.on('example-event', fn);
 myModel.off('example-event', fn);
+```
 
 
+### Resource example
 
+```javascript
 // Resources can trigger events
 iris.resource(function (self) {
 
@@ -483,12 +493,12 @@ myResource.off('example-event', fn);
 
 
 
-### Iris Events
+### Global Iris Events
 
 #### iris.BEFORE_NAVIGATION
 *Since*: `v0.5.0`
 
-Fired before do a navigation.
+Triggered before do a navigation.
 
 ```javascript
 iris.on(iris.BEFORE_NAVIGATION, function () {
@@ -499,7 +509,7 @@ iris.on(iris.BEFORE_NAVIGATION, function () {
 #### iris.AFTER_NAVIGATION
 *Since*: `v0.5.0`
 
-Fired after do a navigation.
+Triggered after do a navigation.
 
 ```javascript
 iris.on(iris.AFTER_NAVIGATION, function () {
@@ -510,7 +520,7 @@ iris.on(iris.AFTER_NAVIGATION, function () {
 #### iris.RESOURCE_ERROR
 *Since*: `v0.5.0`
 
-Fired when a resource ajax call fails.
+Triggered when a resource ajax call fails.
 
 ```javascript
 iris.on(iris.RESOURCE_ERROR, function (request, textStatus, errorThrown) {
@@ -521,7 +531,7 @@ iris.on(iris.RESOURCE_ERROR, function (request, textStatus, errorThrown) {
 #### iris.SCREEN_NOT_FOUND
 *Since*: `v0.5.2`
 
-Fired when a navigation fails.
+Triggered when a navigation fails.
 
 ```javascript
 iris.on(iris.SCREEN_NOT_FOUND, function (path) {
@@ -867,6 +877,10 @@ var model = iris.model(iris.path.model.js);
 ```
 
 ## Classes
+
+The iris object exposes multiple classes. The following image shows how the Iris classes are related:
+
+![Iris Class Map](images/iris_class_map.png)
 
 ### iris.Settable Class
 
