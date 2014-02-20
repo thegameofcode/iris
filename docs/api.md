@@ -21,18 +21,6 @@ Iris exposes all of its methods and properties on the `iris` object:
 	- [iris.browser()](#irisbrowser)
 	- [iris.inherits(subClass, superClass)](#irisinheritssubclass-superclass)
 - [Event](#event)
-	- [iris.Event class](#irisevent-class)
-		 - [iris.Event.events(args)](#iriseventeventsargs)
-		 - [iris.Event.checkEvent(eventName)](#iriseventcheckeventeventname)
-		 - [iris.Event.on(eventName, listener)](#iriseventoneventname-listener)
-		 - [iris.Event.off(eventName[, listener])](#iriseventoffeventname-listener)
-		 - [iris.Event.notify(eventName[, parameter])](#iriseventnotifyeventname-parameter)
-		 - [iris.Event.notifyOn()](#iriseventnotifyon)
-		 - [iris.Event.notifyOff()](#iriseventnotifyoff)
-		 - [iris.Event.listen(target, eventName, listener)](#iriseventlistentarget-eventname-listener)
-		 - [iris.Event.pauseListeners()](#iriseventpauselisteners)
-		 - [iris.Event.resumeListeners()](#iriseventresumelisteners)
-		 - [iris.Event.removeListeners()](#iriseventremovelisteners)
 	- [Iris Events](#iris-events)
 		- [iris.BEFORE_NAVIGATION](#irisbefore_navigation)
 		- [iris.AFTER_NAVIGATION](#irisafter_navigation)
@@ -57,6 +45,18 @@ Iris exposes all of its methods and properties on the `iris` object:
 	- [iris.Settable Class](#irissettable-class)
 		- [self.setting(label[, value])](#selfsettinglabel-value)
 		- [self.settings(params)](#selfsettingsparams)
+	- [iris.Event class](#irisevent-class)
+		- [iris.Event.events(args)](#iriseventeventsargs)
+		- [iris.Event.checkEvent(eventName)](#iriseventcheckeventeventname)
+		- [iris.Event.on(eventName, listener)](#iriseventoneventname-listener)
+		- [iris.Event.off(eventName[, listener])](#iriseventoffeventname-listener)
+		- [iris.Event.notify(eventName[, parameter])](#iriseventnotifyeventname-parameter)
+		- [iris.Event.notifyOn()](#iriseventnotifyon)
+		- [iris.Event.notifyOff()](#iriseventnotifyoff)
+		- [iris.Event.listen(target, eventName, listener)](#iriseventlistentarget-eventname-listener)
+		- [iris.Event.pauseListeners()](#iriseventpauselisteners)
+		- [iris.Event.resumeListeners()](#iriseventresumelisteners)
+		- [iris.Event.removeListeners()](#iriseventremovelisteners)
 	- [iris.Component Class](#iriscomponent-class)
 		- [self.tmpl(path)](#selftmplpath)
 		- [self.get([data-id])](#selfgetdata-id)
@@ -75,6 +75,11 @@ Iris exposes all of its methods and properties on the `iris` object:
 		- [self.put(path, params, success, error)](#selfputpath-params-success-error)
 		- [self.del(path, success, error)](#selfdelpath-success-error)
 	- [iris.Model Class](#irismodel-class)
+		- [iris.Model.defaults(attributes)](#irismodeldefaultsattributes)
+		- [iris.Model.get(key)](#irismodelgetkey)
+		- [iris.Model.set(attributes)](#irismodelsetattributes)
+		- [iris.Model.toJson()](#irismodeltojson)
+
 
 ## Core
 
@@ -475,6 +480,423 @@ var myResource = iris.resource(iris.path.resource.example.js);
 myResource.on('example-event', fn);
 myResource.off('example-event', fn);
 ```
+
+
+
+### Iris Events
+
+#### iris.BEFORE_NAVIGATION
+*Since*: `v0.5.0`
+
+Fired before do a navigation.
+
+```javascript
+iris.on(iris.BEFORE_NAVIGATION, function () {
+		iris.log("before navigation : " + document.location.hash)
+});
+```
+
+#### iris.AFTER_NAVIGATION
+*Since*: `v0.5.0`
+
+Fired after do a navigation.
+
+```javascript
+iris.on(iris.AFTER_NAVIGATION, function () {
+		iris.log("after navigation : " + document.location.hash)
+});
+```
+
+#### iris.RESOURCE_ERROR
+*Since*: `v0.5.0`
+
+Fired when a resource ajax call fails.
+
+```javascript
+iris.on(iris.RESOURCE_ERROR, function (request, textStatus, errorThrown) {
+		iris.log("resource error", request, textStatus, errorThrown);
+});
+```
+
+#### iris.SCREEN_NOT_FOUND
+*Since*: `v0.5.2`
+
+Fired when a navigation fails.
+
+```javascript
+iris.on(iris.SCREEN_NOT_FOUND, function (path) {
+	iris.log("Upss, path[" + path + "] not found");
+
+	// Use location.replace instead of iris.navigate or location.hash
+	window.location.replace("#/404"); // navigation without history saving
+});
+```
+
+## Language & Regional
+### iris.translate(text[, locale])
+*Since*: `v0.5.0`
+
+Translates a text using the locale.
+
+```javascript
+// Add the translations
+iris.translations("es_ES", {GREETING : "Saludos"})
+
+iris.translate("GREETING", "es_ES");
+iris.translate("GREETING"); // Using default locale ( iris.locale() )
+```
+If no locale is passed, Iris will use the default locale.
+
+
+### iris.translations(locale, [terms]|[file, [callbacks]])
+*Since*: `v0.5.0`
+
+Adds translations in a particular language. This method can be called multiple times with the same language.
+
+*terms*: Object containing the definitions in format *text: definition*. It admits a multi level hierarchy. See example.
+
+*file*: Path to a file with the terms definitions in JSON format.
+
+Object with two attributes (*success* and *error*) containing the functions called after retrieve the terms.
+
+```javascript
+iris.translations("en_US", {
+		GREETING: "Hi!",
+		GREETINGS: {
+				MORNING: "Good Morning",
+				AFTERNOON: "Good Afternoon",
+				NIGHT: "Good Night"
+		}
+});
+```
+
+The translations can be in a JSON file. The call is asynchronous.
+
+```javascript
+iris.translations("fr_FR", "./lang_FR.json", {"success" : onFRSuccess, "error" : onFRError });
+```
+
+### iris.locale([locale][, regional])
+*Since*: `v0.5.0`
+
+Defines or gets the locale format.
+You can use the [available locales](../localization).
+
+```javascript
+//Example of regional definition. Sets de locale to "en_US" if locale is not set:
+iris.locale(
+		"en_US", {
+				dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+				monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+				dateFormat: "m/d/Y h:i:s",
+				currency: {
+						formatPos: "s n",
+						formatNeg: "(s n)",
+						decimal: ".",
+						thousand: ",",
+						precision: 2,
+						symbol: "$"
+				},
+				number : {
+						decimal: ".",
+						thousand: ",",
+						precision: 2
+				}
+		}
+);
+```
+
+
+```javascript
+//To set the locale
+iris.locale("en_US");
+
+//To get the current locale
+var locale = iris.locale();
+```
+
+### iris.regional([label])
+*Since*: `v0.5.0`
+
+Gets a regional value according to the setting locale.
+
+If *label* is not passed, returns all the regional definition.
+
+```javascript
+iris.regional("dayNames");
+```
+
+## Components
+
+### iris.include(paths, callback)
+*Since*: `v0.5.1`
+
+Load the components using the `paths` array parameter. When all files are loaded, executes the `callback` function.
+You can load and use iris resources before call to the `iris.welcome` function, eg:
+
+```javascript
+iris.path = {
+	user_resource : "resource/user.js",
+	welcome : "screen/welcome.js"
+};
+
+iris.include([iris.path.user_resource], function () {
+	
+	iris.resource(iris.path.user_resource).checkUserInSession().done(loginDone).fail(loginFail);
+
+});
+
+function loginDone () {
+	iris.welcome(iris.path.welcome);
+}
+
+function loginFail () {
+	alert("forbidden");
+}
+
+```
+Since `v0.5.2`, you can load external JS files (before only relative paths), e.g.:
+
+```js
+iris.include(["http://www.example.com/js/file.js", "http://www.example.com/js/file2.js"], function(){
+  console.log("file.js & file2.js has been loaded.");
+});
+```
+
+### iris.welcome(path)
+*Since*: `v0.5.0`
+
+The welcome screen is the root of all screens.
+You must define always the welcome screen in your initial script.
+This function establishes the welcome screen and navigates to it.
+
+```javascript
+// All Iris applications start in the welcome screen
+// Remember to define iris.path before
+iris.welcome(iris.path.welcome.js);
+```
+
+### iris.navigate(path)
+*Since*: `v0.5.0`
+
+Navigates to a screen changing the hash URL (this function is equivalent to `document.location.hash = path`).
+
+Iris looks for the target screen using the hash URL (`path` parameter) and wakes the target screen and its parents. The previous screens will sleep, if its `canSleep()` functions allows it. The screens are not destroyed, the screens change their status to sleeping. If you want destroy the hidden screens, use [iris.destroyScreen(path)](#irisdestroyscreenpath). Use [self.screens(container_id, screens)](#selfscreenscontainer_id-screens) inside screen to define screen childs. When a parameter value is changed, the screen awake function is called again (the same for its child screens). The welcome screen never can sleep, it is always visible. Show the [lifecycle](lifecycle.md) for more details.
+
+The [iris.BEFORE_NAVIGATION](#irisbefore_navigation) event is triggered on new navigation. When the navigation finished [iris.AFTER_NAVIGATION](#irisafter_navigation) is triggered. If the screen is not found the [iris.SCREEN_NOT_FOUND](#irisscreen_not_found) event is notified.
+
+Since `v0.5.6`, you can use the matrix paramaters (`;name=value;name2=value2...`) to send them data, e.g.: `#;param0=value0/screen1;param1=value1;param2=value2/screen2`
+In this example the welcome screen receives `param0`, screen1 receives `param1` & `param2`, the screen2 doesn't receive any parameter. Use [self.param(name)](#selfparamname) inside the screen to retrieve parameter values.
+
+```javascript
+
+// Navigate without params
+iris.navigate("#/screen1/child_of_screen1");
+
+// Send parameters to the welcome screen
+iris.navigate("#;param=value/screen1/child_of_screen1");
+
+// Send parameters to other screen
+iris.navigate("#/screen1;param=value;param2=value2/child_of_screen1");
+
+// More examples
+
+// To get the param value, use self.param('mode') inside welcome screen
+iris.navigate('#;mode=offline/dashboard');
+
+// If the param is changed, the welcome screen awake function
+// is called (the same for its child screens)
+iris.navigate('#;mode=online/dashboard');
+
+// If you want to navigate to another screen, the dashboard screen
+// will sleep and otherscreen will wake up
+iris.navigate('#;mode=online/otherscreen');
+
+
+// Another examples
+iris.navigate('#/book/17354;show=details');
+
+iris.navigate('#/user/me/friends;filter=all;show=nearest');
+
+```
+
+__Before v0.5.6 (Deprecated, use matrix params instead of)__: To send parameters to screen use this format (query params): `/screen?param1=value1&param2=value2`. You can get the value of this parameters in the `self.awake(params)` function.
+
+### iris.screen(function(self){...}, path)
+*Since*: `v0.5.0`
+
+Defines a Screen component.
+
+```javascript
+iris.screen(
+
+ function (self) {
+
+	//Called once when the Component is created
+	self.create = function () {
+	 self.tmpl(iris.path.screen.example.html);
+	};
+
+	//Called when the Component is showed.
+	self.awake = function () {
+	 ...
+	};
+
+	//Called when the component is hidden because you navigate to another Screen
+	self.sleep = function () {
+	 ...
+	};
+
+	//Called before hiding component.
+	//If the method returns false, the navigation is interrupted and not hidden nor self.seelp method is called
+	//This method only is applied to the Screens components
+	self.canSleep = function () {
+	 ...
+	};
+
+
+	//Called when the component is destroyed
+	self.destroy = function () {
+	 ...
+	};
+
+ }, iris.path.screen.example.js  
+);
+```
+
+### iris.destroyScreen(path)
+*Since*: `v0.5.0`
+
+Destroys a Screen component. Cannot delete the current screen or its parents.
+
+```javascript
+iris.destroyScreen('#/user/help');
+```
+
+### iris.ui(function(self){...}, path)
+*Since*: `v0.5.0`
+
+Defines an UI Component.
+
+```javascript
+iris.ui(function(self){...});
+```
+
+### iris.tmpl(path, html)
+*Since*: `v0.5.0`
+
+Loads the template in memory and associates it to a path.
+
+```javascript
+iris.tmpl("screen/welcome.html","<div>...</div>");
+```
+See `self.tmpl` for more details.
+
+### iris.resource(function(self){...}, path)
+*Since*: `v0.5.0`
+
+Defines or creates a Resource Component.
+
+```javascript
+//To define
+iris.resource(function(self){
+
+		//Some RESTful methods
+		self.load = function (id) {
+			return self.get("service/book/" + id);
+		};
+
+		self.create = function (params) {
+			return self.post("service/book", params);
+		};
+
+		self.update = function (id, params) {
+			return self.put("service/book/" + id, params);
+		};
+
+		self.remove = function (id) {
+			return self.del("service/book/" + id);
+		};
+
+}, iris.path.resource.js);
+```
+
+```javascript
+//To create
+iris.resource(iris.path.resource.js);
+```
+
+### iris.debug(enabled)
+*Since*: `v0.5.7`
+
+Enables or disables the iris debug mode.
+When iris debug mode is enabled, the application is listening for the combination of keys: `Ctrl + Alt + Shift + D` to show or hide the debug information layer. By default it is enabled in local enviroments (`127.0.0.1` and `localhost`).
+If the the combination of keys is detected, the application prints/hide a visual lines to highlight the components (screens and UIs) and prints information about its presenter and template paths, hash-URL or data-id.
+
+```javascript
+// Force to disable iris debug mode
+//('Ctrl + Alt + Shift + D' wont work)
+iris.debug(false);
+```
+
+### iris.model(function(self){...}, path)
+*Since*: `v0.6.0`
+
+Defines or creates a Model Component.
+
+```javascript
+//To define
+iris.model(function(self){
+
+		self.defaults = {user: 'unkown'};
+
+		self.create = function () {
+			//Called when the model is created
+		};
+
+		self.destroy = function () {
+			//Called when the model is destroyed. A 'destroy' event is notified
+		};
+
+}, iris.path.model.js);
+```
+
+```javascript
+//To create
+var model = iris.model(iris.path.model.js);
+```
+
+## Classes
+
+### iris.Settable Class
+
+#### self.setting(label[, value])
+*Since*: `v0.5.0`
+
+Gets o sets a value attribute.
+
+```javascript
+//To set
+self.setting("attribute_name", {...});
+```
+
+```javascript
+//To get
+var attribute_value = self.setting("attribute_name");
+```
+
+#### self.settings(params)
+*Since*: `v0.5.0`
+
+Sets multiples and complex attributes values.
+
+```javascript
+self.settings({ person: { name:"test name"}, money: -67890.678, region: { country: "country test" }});
+var attribute_value = self.setting("person.name");
+```
+
+
+
 
 
 ### iris.Event class
@@ -907,417 +1329,6 @@ iris.ui(function(self) {
 ```
 
 
-### Iris Events
-
-#### iris.BEFORE_NAVIGATION
-*Since*: `v0.5.0`
-
-Fired before do a navigation.
-
-```javascript
-iris.on(iris.BEFORE_NAVIGATION, function () {
-		iris.log("before navigation : " + document.location.hash)
-});
-```
-
-#### iris.AFTER_NAVIGATION
-*Since*: `v0.5.0`
-
-Fired after do a navigation.
-
-```javascript
-iris.on(iris.AFTER_NAVIGATION, function () {
-		iris.log("after navigation : " + document.location.hash)
-});
-```
-
-#### iris.RESOURCE_ERROR
-*Since*: `v0.5.0`
-
-Fired when a resource ajax call fails.
-
-```javascript
-iris.on(iris.RESOURCE_ERROR, function (request, textStatus, errorThrown) {
-		iris.log("resource error", request, textStatus, errorThrown);
-});
-```
-
-#### iris.SCREEN_NOT_FOUND
-*Since*: `v0.5.2`
-
-Fired when a navigation fails.
-
-```javascript
-iris.on(iris.SCREEN_NOT_FOUND, function (path) {
-	iris.log("Upss, path[" + path + "] not found");
-
-	// Use location.replace instead of iris.navigate or location.hash
-	window.location.replace("#/404"); // navigation without history saving
-});
-```
-
-## Language & Regional
-### iris.translate(text[, locale])
-*Since*: `v0.5.0`
-
-Translates a text using the locale.
-
-```javascript
-// Add the translations
-iris.translations("es_ES", {GREETING : "Saludos"})
-
-iris.translate("GREETING", "es_ES");
-iris.translate("GREETING"); // Using default locale ( iris.locale() )
-```
-If no locale is passed, Iris will use the default locale.
-
-
-### iris.translations(locale, [terms]|[file, [callbacks]])
-*Since*: `v0.5.0`
-
-Adds translations in a particular language. This method can be called multiple times with the same language.
-
-*terms*: Object containing the definitions in format *text: definition*. It admits a multi level hierarchy. See example.
-
-*file*: Path to a file with the terms definitions in JSON format.
-
-Object with two attributes (*success* and *error*) containing the functions called after retrieve the terms.
-
-```javascript
-iris.translations("en_US", {
-		GREETING: "Hi!",
-		GREETINGS: {
-				MORNING: "Good Morning",
-				AFTERNOON: "Good Afternoon",
-				NIGHT: "Good Night"
-		}
-});
-```
-
-The translations can be in a JSON file. The call is asynchronous.
-
-```javascript
-iris.translations("fr_FR", "./lang_FR.json", {"success" : onFRSuccess, "error" : onFRError });
-```
-
-### iris.locale([locale][, regional])
-*Since*: `v0.5.0`
-
-Defines or gets the locale format.
-You can use the [available locales](../localization).
-
-```javascript
-//Example of regional definition. Sets de locale to "en_US" if locale is not set:
-iris.locale(
-		"en_US", {
-				dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-				monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-				dateFormat: "m/d/Y h:i:s",
-				currency: {
-						formatPos: "s n",
-						formatNeg: "(s n)",
-						decimal: ".",
-						thousand: ",",
-						precision: 2,
-						symbol: "$"
-				},
-				number : {
-						decimal: ".",
-						thousand: ",",
-						precision: 2
-				}
-		}
-);
-```
-
-
-```javascript
-//To set the locale
-iris.locale("en_US");
-
-//To get the current locale
-var locale = iris.locale();
-```
-
-### iris.regional([label])
-*Since*: `v0.5.0`
-
-Gets a regional value according to the setting locale.
-
-If *label* is not passed, returns all the regional definition.
-
-```javascript
-iris.regional("dayNames");
-```
-
-## Components
-
-### iris.include(paths, callback)
-*Since*: `v0.5.1`
-
-Load the components using the `paths` array parameter. When all files are loaded, executes the `callback` function.
-You can load and use iris resources before call to the `iris.welcome` function, eg:
-
-```javascript
-iris.path = {
-	user_resource : "resource/user.js",
-	welcome : "screen/welcome.js"
-};
-
-iris.include([iris.path.user_resource], function () {
-	
-	iris.resource(iris.path.user_resource).checkUserInSession().done(loginDone).fail(loginFail);
-
-});
-
-function loginDone () {
-	iris.welcome(iris.path.welcome);
-}
-
-function loginFail () {
-	alert("forbidden");
-}
-
-```
-Since `v0.5.2`, you can load external JS files (before only relative paths), e.g.:
-
-```js
-iris.include(["http://www.example.com/js/file.js", "http://www.example.com/js/file2.js"], function(){
-  console.log("file.js & file2.js has been loaded.");
-});
-```
-
-### iris.welcome(path)
-*Since*: `v0.5.0`
-
-The welcome screen is the root of all screens.
-You must define always the welcome screen in your initial script.
-This function establishes the welcome screen and navigates to it.
-
-```javascript
-// All Iris applications start in the welcome screen
-// Remember to define iris.path before
-iris.welcome(iris.path.welcome.js);
-```
-
-### iris.navigate(path)
-*Since*: `v0.5.0`
-
-Navigates to a screen changing the hash URL (this function is equivalent to `document.location.hash = path`).
-
-Iris looks for the target screen using the hash URL (`path` parameter) and wakes the target screen and its parents. The previous screens will sleep, if its `canSleep()` functions allows it. The screens are not destroyed, the screens change their status to sleeping. If you want destroy the hidden screens, use [iris.destroyScreen(path)](#irisdestroyscreenpath). Use [self.screens(container_id, screens)](#selfscreenscontainer_id-screens) inside screen to define screen childs. When a parameter value is changed, the screen awake function is called again (the same for its child screens). The welcome screen never can sleep, it is always visible. Show the [lifecycle](lifecycle.md) for more details.
-
-The [iris.BEFORE_NAVIGATION](#irisbefore_navigation) event is triggered on new navigation. When the navigation finished [iris.AFTER_NAVIGATION](#irisafter_navigation) is triggered. If the screen is not found the [iris.SCREEN_NOT_FOUND](#irisscreen_not_found) event is notified.
-
-Since `v0.5.6`, you can use the matrix paramaters (`;name=value;name2=value2...`) to send them data, e.g.: `#;param0=value0/screen1;param1=value1;param2=value2/screen2`
-In this example the welcome screen receives `param0`, screen1 receives `param1` & `param2`, the screen2 doesn't receive any parameter. Use [self.param(name)](#selfparamname) inside the screen to retrieve parameter values.
-
-```javascript
-
-// Navigate without params
-iris.navigate("#/screen1/child_of_screen1");
-
-// Send parameters to the welcome screen
-iris.navigate("#;param=value/screen1/child_of_screen1");
-
-// Send parameters to other screen
-iris.navigate("#/screen1;param=value;param2=value2/child_of_screen1");
-
-// More examples
-
-// To get the param value, use self.param('mode') inside welcome screen
-iris.navigate('#;mode=offline/dashboard');
-
-// If the param is changed, the welcome screen awake function
-// is called (the same for its child screens)
-iris.navigate('#;mode=online/dashboard');
-
-// If you want to navigate to another screen, the dashboard screen
-// will sleep and otherscreen will wake up
-iris.navigate('#;mode=online/otherscreen');
-
-
-// Another examples
-iris.navigate('#/book/17354;show=details');
-
-iris.navigate('#/user/me/friends;filter=all;show=nearest');
-
-```
-
-__Before v0.5.6 (Deprecated, use matrix params instead of)__: To send parameters to screen use this format (query params): `/screen?param1=value1&param2=value2`. You can get the value of this parameters in the `self.awake(params)` function.
-
-### iris.screen(function(self){...}, path)
-*Since*: `v0.5.0`
-
-Defines a Screen component.
-
-```javascript
-iris.screen(
-
- function (self) {
-
-	//Called once when the Component is created
-	self.create = function () {
-	 self.tmpl(iris.path.screen.example.html);
-	};
-
-	//Called when the Component is showed.
-	self.awake = function () {
-	 ...
-	};
-
-	//Called when the component is hidden because you navigate to another Screen
-	self.sleep = function () {
-	 ...
-	};
-
-	//Called before hiding component.
-	//If the method returns false, the navigation is interrupted and not hidden nor self.seelp method is called
-	//This method only is applied to the Screens components
-	self.canSleep = function () {
-	 ...
-	};
-
-
-	//Called when the component is destroyed
-	self.destroy = function () {
-	 ...
-	};
-
- }, iris.path.screen.example.js  
-);
-```
-
-### iris.destroyScreen(path)
-*Since*: `v0.5.0`
-
-Destroys a Screen component. Cannot delete the current screen or its parents.
-
-```javascript
-iris.destroyScreen('#/user/help');
-```
-
-### iris.ui(function(self){...}, path)
-*Since*: `v0.5.0`
-
-Defines an UI Component.
-
-```javascript
-iris.ui(function(self){...});
-```
-
-### iris.tmpl(path, html)
-*Since*: `v0.5.0`
-
-Loads the template in memory and associates it to a path.
-
-```javascript
-iris.tmpl("screen/welcome.html","<div>...</div>");
-```
-See `self.tmpl` for more details.
-
-### iris.resource(function(self){...}, path)
-*Since*: `v0.5.0`
-
-Defines or creates a Resource Component.
-
-```javascript
-//To define
-iris.resource(function(self){
-
-		//Some RESTful methods
-		self.load = function (id) {
-			return self.get("service/book/" + id);
-		};
-
-		self.create = function (params) {
-			return self.post("service/book", params);
-		};
-
-		self.update = function (id, params) {
-			return self.put("service/book/" + id, params);
-		};
-
-		self.remove = function (id) {
-			return self.del("service/book/" + id);
-		};
-
-}, iris.path.resource.js);
-```
-
-```javascript
-//To create
-iris.resource(iris.path.resource.js);
-```
-
-### iris.debug(enabled)
-*Since*: `v0.5.7`
-
-Enables or disables the iris debug mode.
-When iris debug mode is enabled, the application is listening for the combination of keys: `Ctrl + Alt + Shift + D` to show or hide the debug information layer. By default it is enabled in local enviroments (`127.0.0.1` and `localhost`).
-If the the combination of keys is detected, the application prints/hide a visual lines to highlight the components (screens and UIs) and prints information about its presenter and template paths, hash-URL or data-id.
-
-```javascript
-// Force to disable iris debug mode
-//('Ctrl + Alt + Shift + D' wont work)
-iris.debug(false);
-```
-
-### iris.model(function(self){...}, path)
-*Since*: `v0.6.0`
-
-Defines or creates a Model Component.
-
-```javascript
-//To define
-iris.model(function(self){
-
-		self.defaults = {user: 'unkown'};
-
-		self.create = function () {
-			//Called when the model is created
-		};
-
-		self.destroy = function () {
-			//Called when the model is destroyed. A 'destroy' event is notified
-		};
-
-}, iris.path.model.js);
-```
-
-```javascript
-//To create
-var model = iris.model(iris.path.model.js);
-```
-
-## Classes
-
-### iris.Settable Class
-
-#### self.setting(label[, value])
-*Since*: `v0.5.0`
-
-Gets o sets a value attribute.
-
-```javascript
-//To set
-self.setting("attribute_name", {...});
-```
-
-```javascript
-//To get
-var attribute_value = self.setting("attribute_name");
-```
-
-#### self.settings(params)
-*Since*: `v0.5.0`
-
-Sets multiples and complex attributes values.
-
-```javascript
-self.settings({ person: { name:"test name"}, money: -67890.678, region: { country: "country test" }});
-var attribute_value = self.setting("person.name");
-```
 
 ### iris.Component Class
 
@@ -1731,42 +1742,133 @@ Returns a jQuery [jqXHR](http://api.jquery.com/Types/#jqXHR) object.
 ```
 
 ### iris.Model Class
-Inherit methods from Settable class
 
-#### self.defaults = object
+Inherit methods from [iris.Event class](#irisevent-class).
+
+
+#### iris.Model.defaults(attributes)
 *Since*: `v0.6.0`
 
-Sets default attributes values.
+Use this function to specify the default attributes values of your model.
 
 ```javascript
-self.defaults({ state: 'completed', tags: [] });
+iris.model(function (self) {
+	
+	// Set the default values
+	self.defaults = {
+		title: '',
+		completed: false
+	};
+	
+}, iris.path.model.example.js);
+
+
+// In another place, a screen for example
+iris.screen(function(self) {
+
+	var model;
+
+	self.create = function() {
+		...
+
+		model = iris.model(iris.path.model.example.js, {title:'example'});
+
+		model.get('title'); // returns example
+		model.get('completed'); // returns false
+	};
+
+}, iris.path.screen.welcome.js);
 ```
 
-#### self.set({attributes})
+#### iris.Model.get(key)
 *Since*: `v0.6.0`
 
-Sets and adds one or more value attributes.
+Returns the current value associated with the `key` from the model attributes.
 
 ```javascript
-self.set({ state: 'pending', tags: ['important', 'mandatory'], user: 'root' });
+iris.model(function (self) {
+	
+	// Set the default values
+	self.defaults = {
+		state: 'new'
+	};
+	
+}, iris.path.model.example.js);
+
+
+// In another place, a screen for example
+iris.screen(function(self) {
+
+	var model;
+
+	self.create = function() {
+		...
+
+		model = iris.model(iris.path.model.example.js, {});
+
+		var state = model.get('state'); // Returns 'new'
+	};
+
+}, iris.path.screen.welcome.js);
 ```
 
-When the method is called, a 'change' event is notified.
-
-#### self.get(key)
+#### iris.Model.set(attributes)
 *Since*: `v0.6.0`
 
-Returns the value associated with the key from the model attributes.
+Set a hash of attributes on the model. If some property changes its value, a `change` event will be triggered on the model.
 
 ```javascript
-var user = self.get('user');
+iris.model(function (self) {
+	
+	// Set the default values
+	self.defaults = {
+		state: 'pending',
+		tags: [],
+		user: 'unknow'
+	};
+	
+}, iris.path.model.example.js);
+
+
+// In another place, a screen for example
+iris.screen(function(self) {
+
+	var model;
+
+	self.create = function() {
+		...
+
+		model = iris.model(iris.path.model.example.js, {user: 'root'});
+
+		model.set({ tags: ['important', 'mandatory'] }); // Trigger 'change' event
+	};
+
+}, iris.path.screen.welcome.js);
 ```
 
-#### self.toJson()
+
+#### iris.Model.toJson()
 *Since*: `v0.6.0`
 
-Returns the JSON representation of the model attributes
+Returns a JSON string of the model's attributes. This usually can be used for persistence or for send to the server. Uses the JavaScript API `JSON.stringify()` to generate the string.
 
 ```javascript
-var string = self.toJson();
+iris.model(function (self) {
+	
+	// Set the default values
+	self.defaults = {
+		state: 'new'
+	};
+	
+}, iris.path.model.example.js);
+
+
+// In another place, a resource for example
+iris.resource(function(self) {
+
+	self.saveModel = function(model) {
+		localStorage.setItem('model', model.toJson());
+	};
+
+}, iris.path.resource.example.js);
 ```
