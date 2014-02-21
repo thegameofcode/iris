@@ -27,7 +27,7 @@ Iris exposes all of its methods and properties on the `iris` object:
 		- [Screen example](#screen-example)
 		- [Model example](#model-example)
 		- [Resource example](#resource-example)
-	- [Iris Events](#iris-events)
+	- [Global Iris Events](#global-iris-events)
 		- [iris.BEFORE_NAVIGATION](#irisbefore_navigation)
 		- [iris.AFTER_NAVIGATION](#irisafter_navigation)
 		- [iris.RESOURCE_ERROR](#irisresource_error)
@@ -88,7 +88,7 @@ Iris exposes all of its methods and properties on the `iris` object:
 		- [Model life cycle](#model-life-cycle)
 		- [iris.Model.defaults(attributes)](#irismodeldefaultsattributes)
 		- [iris.Model.get(key)](#irismodelgetkey)
-		- [iris.Model.set(attributes)](#irismodelsetkeyorhash-value)
+		- [iris.Model.set(attributes)](#irismodelsetattributes)
 		- [iris.Model.unset(key)](#irismodelunsetkey)
 
 
@@ -1992,11 +1992,13 @@ iris.screen(function(self) {
 		model = iris.model(iris.path.model.example.js, {user: 'root'});
 
 		// Single setting
-		model.set('state', 'completed'); // Trigger 'change' event
-		model.set('state', 'completed'); // Don't trigger 'change' event
+		model.set('state', 'completed'); // Notify 'change' event
+		model.set('state', 'completed'); // Don't notify 'change' event
 
 		// Multiple setting
-		model.set({ user: 'John', tags: ['important', 'mandatory'] }); // Trigger 'change' event
+		var values = ['important', 'mandatory'];
+		model.set({ user: 'John', tags: values }); // Notify 'change' event
+		model.set({ tags: values }); // Don't notify 'change' event
 	};
 
 }, iris.path.screen.welcome.js);
@@ -2016,6 +2018,7 @@ iris.model(function (self) {
 	};
 	
 }, iris.path.model.example.js);
+
 
 
 // In another place, a UI for example

@@ -8,6 +8,7 @@
 			window.resetIris();
 			iris.path = {
 				model: "test/model/model.js",
+				basic_model: "test/model/basic_model.js",
 				welcome_tmpl: "test/model/welcome.html",
 				welcome: "test/model/welcome.js"
 			};
@@ -72,7 +73,7 @@
 	
 	
 	asyncTest("Model set test", function() {
-		expect(3);
+		expect(4);
 
 		iris.on(iris.AFTER_NAVIGATION, function() {
 			iris.off(iris.AFTER_NAVIGATION);
@@ -84,6 +85,10 @@
 			model.set({'key3': 'value3'});
 			
 			deepEqual({key1: 'value1', key2: 'value2_updated', key3: 'value3'}, model.get()); // +1
+
+			model.set('key3', 'value3_updated');
+
+			deepEqual({key1: 'value1', key2: 'value2_updated', key3: 'value3_updated'}, model.get()); // +1
 
 			start();
 		});
@@ -105,19 +110,70 @@
 		});
 	});
 	
-	asyncTest("Model change Event", function() {
-		expect(2);
+	asyncTest("Model change event: Single setting", function() {
+		expect(3);
 
 		iris.on(iris.AFTER_NAVIGATION, function() {
 			iris.off(iris.AFTER_NAVIGATION);
 
-			var model = iris.model(iris.path.model); // +1
+			var model = iris.model(iris.path.basic_model, {test: 'test'}); // +1 create
 			
 			model.on('change', function() {
 				window.ok(true, "change event callback");
 			});
 			
-			model.set({test: {test2: 'test2'}}); // +1
+			model.set('test', 'test_change'); // +1
+			model.set('test', 'test_change'); // 0
+			model.set('test', 'test_change'); // 0
+
+			model.set('new_prop', 'new'); // +1
+			model.set('new_prop', 'new'); // 0
+			model.set('new_prop', 'new'); // 0
+
+			start();
+		});
+	});
+
+	asyncTest("Model change event: Multiple settings", function() {
+		expect(4);
+
+		iris.on(iris.AFTER_NAVIGATION, function() {
+			iris.off(iris.AFTER_NAVIGATION);
+
+			var model = iris.model(iris.path.basic_model, {test: 'test'}); // +1 Create
+			
+			model.on('change', function() {
+				window.ok(true, "change event callback");
+			});
+			
+			model.set({test: 'test_change', new_field: 'new_field'}); // +1
+			model.set({test: 'test_change'}); // 0
+			model.set({test: 'test_change', new_field: 'new_field_updated'}); // +1
+			model.set({new_field: 'new_field_updated'}); // 0
+
+			var deep = {deep: 'test_change'};
+			model.set({test: deep}); // +1
+			model.set({test: deep}); // 0
+
+			start();
+		});
+	});
+
+	asyncTest("Model unset", function() {
+		expect(4);
+
+		iris.on(iris.AFTER_NAVIGATION, function() {
+			iris.off(iris.AFTER_NAVIGATION);
+
+			var VAL = 'TEST';
+			var model = iris.model(iris.path.basic_model, {test: VAL}); // +1 Create
+			model.on('change', function() {
+				window.ok(true, "change event callback");
+			});
+			
+			window.strictEqual(model.get('test'), VAL); // +1
+			model.unset('test'); // +1 change event
+			window.strictEqual(model.get('test'), undefined); // +1
 
 			start();
 		});
