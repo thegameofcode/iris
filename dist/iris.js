@@ -1,6 +1,7 @@
 /*! iris - v0.6.0-SNAPSHOT - 2014-02-21 (http://thegameofcode.github.io/iris) licensed New-BSD */
 
 (function ($) {
+    "use strict";
 
     function _init() {
 		
@@ -76,6 +77,17 @@
             callbacks.push(f_func);
         }
 
+    };
+
+    eventPrototype.once = function(p_eventName, f_func) {
+        var self = this;
+
+        var listener = function () {
+            f_func.apply(self, arguments);
+            self.off(p_eventName, listener);
+        };
+
+        self.on(p_eventName, listener);
     };
 
     // Remove an event listener

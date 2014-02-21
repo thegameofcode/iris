@@ -217,14 +217,52 @@
       }
   });
 
+  asyncTest("Execute iris.once", function() {
+    
+    expect(1);
+
+    iris.events('test-event-for-once');
+    
+    iris.once('test-event-for-once', function () {
+      window.ok(true, 'Once event listener');
+    });
+
+    iris.notify('test-event-for-once'); // +1
+    iris.notify('test-event-for-once'); // 0
+    iris.notify('test-event-for-once'); // 0
+
+    start();
+  });
+
+  asyncTest("Execute iris.once with params", function() {
+    
+    expect(4);
+
+    var p = {example: 'test', num: 5};
+
+    iris.events('test-event-for-once');
+    
+    iris.once('test-event-for-once', function (params) {
+      window.ok(true, 'Once event listener');
+      window.ok(params, 'Checking parameter');
+      window.equal(params.example, p.example, 'Checking parameter value');
+      window.equal(params.num, p.num, 'Checking parameter value');
+    });
+
+    iris.notify('test-event-for-once', p); // +3
+    iris.notify('test-event-for-once', p); // 0
+    iris.notify('test-event-for-once', p); // 0
+
+    start();
+  });
+
   asyncTest("Execute self.on event defined whitin screen", function() {
     
     expect(1);
 
     iris.welcome(iris.path.welcome);
 
-    iris.on(iris.AFTER_NAVIGATION, function () {
-      iris.off(iris.AFTER_NAVIGATION);
+    iris.once(iris.AFTER_NAVIGATION, function () {
       iris.notify('test-event');
 
       start();
@@ -237,8 +275,7 @@
 
     iris.welcome(iris.path.welcome);
 
-    iris.on(iris.AFTER_NAVIGATION, function () {
-      iris.off(iris.AFTER_NAVIGATION);
+    iris.once(iris.AFTER_NAVIGATION, function () {
       iris.notify('remove-test-event');
 
       start();
@@ -251,8 +288,7 @@
 
     iris.welcome(iris.path.welcome);
 
-    iris.on(iris.AFTER_NAVIGATION, function () {
-      iris.off(iris.AFTER_NAVIGATION);
+    iris.once(iris.AFTER_NAVIGATION, function () {
       iris.notify('remove-all-test-event');
 
       start();
@@ -265,8 +301,7 @@
 
     iris.welcome(iris.path.welcome);
 
-    iris.on(iris.AFTER_NAVIGATION, function () {
-      iris.off(iris.AFTER_NAVIGATION);
+    iris.once(iris.AFTER_NAVIGATION, function () {
       iris.notify('remove-all-test-event-then-add-event');
 
       start();

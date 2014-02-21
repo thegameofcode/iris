@@ -56,6 +56,7 @@ Iris exposes all of its methods and properties on the `iris` object:
 		- [iris.Event.events(args)](#iriseventeventsargs)
 		- [iris.Event.checkEvent(eventName)](#iriseventcheckeventeventname)
 		- [iris.Event.on(eventName, listener)](#iriseventoneventname-listener)
+		- [iris.Event.once(eventName, listener)](#iriseventonceeventname-listener)
 		- [iris.Event.off(eventName[, listener])](#iriseventoffeventname-listener)
 		- [iris.Event.notify(eventName[, parameter])](#iriseventnotifyeventname-parameter)
 		- [iris.Event.notifyOn()](#iriseventnotifyon)
@@ -1055,6 +1056,24 @@ iris.screen(function(self) {
 }, iris.path.screen.welcome.js);
 
 ```
+
+
+#### iris.Event.once(eventName, listener)
+*Since*: `v0.6.0`
+
+Just like [iris.Event.on(eventName, listener)](#iriseventoneventname-listener), but causes the bound listener to only notify once before being removed.
+
+```javascript
+iris.events('test-event-for-once');
+
+iris.once('test-event-for-once', function () {
+	console.log('test-event-for-once');
+});
+
+iris.notify('test-event-for-once'); // Print 'test-event-for-once'
+iris.notify('test-event-for-once'); // Don't print log
+```
+
 
 #### iris.Event.off(eventName[, listener])
 *Since*: `v0.6.0`
