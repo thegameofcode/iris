@@ -1,4 +1,6 @@
-iris.ui(function (self) {
+iris.ui(function(self) {
+
+	var observables = [];
 
 	self.events('test-event-0');
 	self.events('test-event-1');
@@ -20,22 +22,37 @@ iris.ui(function (self) {
 
 	self.create = function() {
 		self.tmpl(iris.path.ui.basic.html);
+		if (self.setting('onNoLeaks')) {
+			self.on('destroy', function() {
+				observables.forEach(function(array) {
+					array[0].off(array[1]);
+				});
+				observables = [];
+			});
+		}
 	};
 
-	self.listener = function () {
-		console.log('listener!!');
+	self.listener = function(showConsole) {
+		if (showConsole) {
+			console.log('listener!!');
+		}
+	};
+
+	self.addObservable = function(observable, event) {
+		observable.on(event, self.listener);
+		observables.push([observable, event]);
 	};
 
 	// self.awake = function () {
-		
+
 	// };
 
 	// self.sleep = function () {
-		
+
 	// };
 
 	// self.destroy = function () {
-		
+
 	// };
 
 }, iris.path.ui.basic.js);

@@ -1,6 +1,15 @@
 <div>
 	<h1>Welcome Screen</h1>
 	<div>
+		<div>
+			<input data-id="listen" type="radio" name="event-type" checked>listen
+			<input data-id="on-leaks" type="radio" name="event-type">on (with memory leaks)
+			<input data-id="on-no-leaks" type="radio" name="event-type">on (without memory leaks)
+		</div>
+		<div>
+			<input data-id="notify" type="checkbox">notify
+			<input data-id="console" type="checkbox" disabled="">show console notifications
+		</div>
 		<input data-id='num_uis' type="text" value='1000'>
 		<button data-id='make_uis'>Make UIS</button>
 	</div>
