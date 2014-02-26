@@ -25,9 +25,9 @@ iris.ui(function(self) {
 		if (self.setting('onNoLeaks')) {
 			self.on('destroy', function() {
 				observables.forEach(function(array) {
-					array[0].off(array[1]);
+					array[0].off(array[1], array[2]);
+					array[0].removeObservable(self);
 				});
-				observables = [];
 			});
 		}
 	};
@@ -40,7 +40,15 @@ iris.ui(function(self) {
 
 	self.addObservable = function(observable, event) {
 		observable.on(event, self.listener);
-		observables.push([observable, event]);
+		observables.push([observable, event, self.listener]);
+	};
+	
+	self.removeObservable = function (observable) {
+		for (var i = observables.length -1; i >= 0; i--) {
+			if (observables[i][0] === observable) {
+				observables.splice(i, 1);
+			}
+		}
 	};
 
 	// self.awake = function () {

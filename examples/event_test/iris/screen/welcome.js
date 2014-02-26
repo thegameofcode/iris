@@ -19,17 +19,17 @@ iris.screen(function(self) {
 			
 			var fn = null, onNoLeaks = false;
 			if (self.get('listen').prop('checked')) {
-				fn = function(observable, observer, event, callback) {
-					observer.listen(observable, event, callback);
+				fn = function(observable, observer, event, handler) {
+					observer.listen(observable, event, handler);
 				};
 			} else {
 				if (self.get('on-leaks').prop('checked')) {
-					fn = function(observable, observer, event, callback) {
-						observable.on(event, callback);
+					fn = function(observable, observer, event, handler) {
+						observable.on(event, handler);
 					};	
 				} else {
 					onNoLeaks = true;
-					fn = function(observable, observer, event, callback) {
+					fn = function(observable, observer, event, handler) {
 						observer.addObservable(observable, event);
 					};
 				}
