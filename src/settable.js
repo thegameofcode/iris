@@ -1,4 +1,6 @@
+
 (function($) {
+  "use strict";
 
   /**
    * Settable class to manage object configurations.

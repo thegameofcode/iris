@@ -1,4 +1,6 @@
+
 (function($) {
+    "use strict";
 
     var FORMAT_REG_EXP = /(date|currency|number)(?:\(([^\)]+)\))/,
         PATH_PARAM_REGEX = /:[\d\w_\-\.]+/g,

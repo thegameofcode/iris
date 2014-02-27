@@ -1,4 +1,6 @@
+
 (function() {
+    "use strict";
 
     var Resource = function() {
         iris.Settable.call(this);

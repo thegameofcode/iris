@@ -16,7 +16,15 @@
         );
     }
 
+    function _clearEvent (instance) {
+        delete instance.eventMap;
+        delete instance.silent;
+        delete instance.listens;
+        delete instance.pubs;
+    }
+
     var Event = function () {
+        
         // keys are event names, values are arrays with listeners
         // { 'event1' : [f1, f2], 'event2' : [f3, f4, f5, f6] }
         this.eventMap = {};
@@ -25,23 +33,26 @@
         this.silent = false;
 
         // Array of objects like:
-        // {target: <iris-component>, eventName: <string>,
-        //  fn: <function>, pausable: <bool>, active: <bool>}
-        this.listeners = [];
+        // {pub: <iris-component>, eventName: <string>,
+        //  listener: <function>, pausable: <bool>, active: <bool>}
+        this.listens = [];
 
         // Array with all registered targets
-        this.eventTargets = [];
+        this.pubs = [];
 
-        // Register the essential destroy event
+        // Define allowed events
         this.events('destroy');
-
-        // When the object is destroyed, calls to this.removeListeners
-        this.on('destroy', this.removeListeners);
+        
+        // On destroy remove all props
+        var self = this;
+        this.on('destroy', function () {
+            _clearEvent(self);
+        });
     };
 
     var eventPrototype = Event.prototype;
 
-    // Define allowed events
+
     eventPrototype.events = function () {
         for (var i = 0; i < arguments.length; i++) {
             if ( !this.eventMap.hasOwnProperty(arguments[i]) ) {
@@ -51,83 +62,83 @@
     };
 
     // Check if eventName has been registered, otherwise throw exception
-    eventPrototype.checkEvent = function (p_eventName) {
-        if ( !this.eventMap.hasOwnProperty(p_eventName) ) {
-            throw 'event[' + p_eventName + '] is not registered, use self.events';
+    eventPrototype.checkEvent = function (eventName) {
+        if ( !this.eventMap.hasOwnProperty(eventName) ) {
+            throw 'event[' + eventName + '] is not registered, use self.events';
         }
     };
 
     // Add a event listener (warning: this may cause memory leaks)
-    eventPrototype.on = function (p_eventName, f_func) {
+    eventPrototype.on = function (eventName, listener) {
 
-        this.checkEvent(p_eventName);
+        this.checkEvent(eventName);
         
-        if ( ! $.isFunction(f_func) ) {
+        if ( ! $.isFunction(listener) ) {
             throw 'invalid function';
         }
 
-        if ( !this.eventMap.hasOwnProperty(p_eventName) ) {
-            this.eventMap[p_eventName] = [];
+        if ( !this.eventMap.hasOwnProperty(eventName) ) {
+            this.eventMap[eventName] = [];
         }
 
-        var callbacks = this.eventMap[p_eventName];
-        var index = $.inArray(f_func, callbacks);
+        var callbacks = this.eventMap[eventName];
+        var index = $.inArray(listener, callbacks);
         if ( index === -1 ) {
-            callbacks.push(f_func);
+            callbacks.push(listener);
         }
 
     };
 
-    eventPrototype.once = function(p_eventName, f_func) {
+    eventPrototype.once = function(eventName, listener) {
         var self = this;
 
-        var listener = function () {
-            f_func.apply(self, arguments);
-            self.off(p_eventName, listener);
+        var onceListener = function () {
+            listener.apply(self, arguments);
+            self.off(eventName, onceListener);
         };
 
-        self.on(p_eventName, listener);
+        self.on(eventName, onceListener);
     };
 
     // Remove an event listener
-    eventPrototype.off = function (p_eventName, f_func) {
+    eventPrototype.off = function (eventName, listener) {
 
-        this.checkEvent(p_eventName);
+        this.checkEvent(eventName);
         
-        // if f_func is undefined removes all callbacks
-        if ( f_func !== undefined && ! $.isFunction(f_func) ) {
+        if ( listener !== undefined && ! $.isFunction(listener) ) {
             throw 'invalid function';
         }
 
-        var callbacks = this.eventMap[p_eventName];
+        var callbacks = this.eventMap[eventName];
         if ( callbacks ) {
 
-            if (f_func !== undefined) {
+            // if listener is undefined removes all callbacks
+            if (listener !== undefined) {
 
-                var index = $.inArray(f_func, callbacks);
+                var index = $.inArray(listener, callbacks);
                 if ( index !== -1 ) {
                     callbacks.splice(index, 1);
                 }
 
             } else {
-                this.eventMap[p_eventName] = [];
+                this.eventMap[eventName] = [];
             }
         }
     };
 
     // Notify a new event
-    eventPrototype.notify = function (p_eventName, p_data) {
+    eventPrototype.notify = function (eventName, data) {
 
-        this.checkEvent(p_eventName);
+        this.checkEvent(eventName);
 
         if ( this.silent ) {
             return false;
         }
         
-        var callbacks = this.eventMap[p_eventName];
+        var callbacks = this.eventMap[eventName];
         if ( callbacks ) {
             for ( var i = 0; i < callbacks.length; i++ ) {
-                callbacks[i].call(this, p_data);
+                callbacks[i].call(this, data);
             }
         }
     };
@@ -143,68 +154,72 @@
     };
     
     // Add event listener (in safe way) that can be paused or automatically destroyed whitout generate memory leaks
-    eventPrototype.listen = function (target, eventName, listener) {
+    eventPrototype.listen = function (pub, eventName, listener, weakReference) {
 
-        // Add listener to target
-        target.on(eventName, listener);
+        if ( weakReference === undefined ) {
+            weakReference = false;
+        }
+
+        // Add listener to pub
+        pub.on(eventName, listener);
 
         // Register listener to remove on destroy
-        this.listeners.push({target: target, eventName: eventName, fn: listener, pausable: true, active: true});
+        this.listens.push({pub: pub, eventName: eventName, listener: listener, pausable: true, active: true});
         
-        // If target is unregistered
-        var observer = this;
-        if ( $.inArray(target, observer.eventTargets) === -1 ) {
+        // If pub is unregistered
+        var subscriber = this;
+        if ( weakReference && $.inArray(pub, subscriber.pubs) === -1 ) {
 
-            observer.eventTargets.push(target); // Register target
+            subscriber.pubs.push(pub); // Register pub
 
-            // When the target is destroyed, remove all references in the observer
-            var onTargetDestroy = function () {
+            // When the pub is destroyed, remove all references in the subscriber
+            var onPubDestroy = function () {
 
-                // Unregister target
-                observer.eventTargets.splice($.inArray(target, observer.eventTargets), 1);
+                // Unregister pub
+                subscriber.pubs.splice($.inArray(pub, subscriber.pubs), 1);
                 
-                // Remove target listeners from observer
-                var i, observerListener;
-                for (i = observer.listeners.length - 1; i >= 0; i--) {
-                    observerListener = observer.listeners[i];
-                    if ( observerListener.target === target ) {
-                        observer.listeners.splice(i, 1);
+                // Remove subscriber listeners from publisher
+                var i, subscriberListen;
+                for (i = subscriber.listens.length - 1; i >= 0; i--) {
+                    subscriberListen = subscriber.listens[i];
+                    if ( subscriberListen.pub === pub ) {
+                        subscriber.listens.splice(i, 1);
                     }
                 }
 
             };
 
-            // Only one destroy callback per target
-            target.on('destroy', onTargetDestroy);
+            // Only one destroy callback per pub
+            pub.on('destroy', onPubDestroy);
             
-            // Register listener to remove on destroy
-            this.listeners.push({target: target, eventName: 'destroy', fn: onTargetDestroy, pausable: false, active: true});
+            // Register it to remove on destroy
+            this.listens.push({pub: pub, eventName: 'destroy', listener: onPubDestroy, pausable: false, active: true});
         }
 
     };
 
     // Remove all listeners from targets
     eventPrototype.removeListeners = function () {
-        var i, listener;
-        for (i = 0; i < this.listeners.length; i++) {
-            listener = this.listeners[i];
-            listener.target.off(listener.eventName, listener.fn);
+        var i, listen;
+        for (i = 0; i < this.listens.length; i++) {
+            listen = this.listens[i];
+            listen.pub.off(listen.eventName, listen.listener);
         }
 
-        this.listeners = [];
-        this.eventTargets = [];
+        this.listens = [];
+        this.pubs = [];
     };
 
     // Pause all listeners, this will remove the listeners from targets.
     // Use resumeListeners to add them again.
     eventPrototype.pauseListeners = function () {
-        var i, listener;
-        for (i = 0; i < this.listeners.length; i++) {
-            listener = this.listeners[i];
+        var i, listen;
+        for (i = 0; i < this.listens.length; i++) {
+            listen = this.listens[i];
 
-            if ( listener.pausable && listener.active ) {
-                listener.target.off(listener.eventName, listener.fn);
-                listener.active = false;
+            if ( listen.pausable && listen.active ) {
+                listen.pub.off(listen.eventName, listen.listener);
+                listen.active = false;
             }
         }
     };
@@ -212,13 +227,13 @@
     // Resume all paused listeners, this will add again the listeners to targets.
     // Use pauseListeners to remove them from targets.
     eventPrototype.resumeListeners = function () {
-        var i, listener;
-        for (i = 0; i < this.listeners.length; i++) {
-            listener = this.listeners[i];
+        var i, listen;
+        for (i = 0; i < this.listens.length; i++) {
+            listen = this.listens[i];
 
-            if ( listener.pausable && !listener.active ) {
-                listener.target.on(listener.eventName, listener.fn);
-                listener.active = true;
+            if ( listen.pausable && !listen.active ) {
+                listen.pub.on(listen.eventName, listen.listener);
+                listen.active = true;
             }
         }
     };

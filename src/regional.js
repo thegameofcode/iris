@@ -1,4 +1,6 @@
+
 (function() {
+    "use strict";
 
     var _locale, _regional;
     

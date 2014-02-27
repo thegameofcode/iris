@@ -1,5 +1,6 @@
 
 (function($) {
+    "use strict";
 
     var _JQ_MIN_VER = 1.5,
         _appBaseUri,

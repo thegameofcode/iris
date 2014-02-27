@@ -172,27 +172,63 @@
 		});
 	});
 	
-	
-	asyncTest("Destroy Observer Test (listen)", function() {
-		expect(3);
-		
-		iris.events('listen-iris');
+	asyncTest("Destroy Observer Test (destroy)", function() {
+		expect(1);
 
-		iris.on(iris.AFTER_NAVIGATION, function() {
-			iris.off(iris.AFTER_NAVIGATION);
+		iris.once(iris.AFTER_NAVIGATION, function() {
 
 			var model = iris.model(iris.path.model);
+			model.events('listen-weakReference');
+			model.on('listen-weakReference', onEvent);
+			model.destroy();
+			
+			try {
+				model.notify("listen-weakReference"); // 0
+			} catch (e) {
+				window.ok(true, 'destroyed pub cannot notify anything'); // +1
+			}
 
-			model.listen(iris, "listen-iris", onEvent);
-			model.listen(iris, "listen-iris", onEvent2);
+			start();
+		});
+	});
+	
+	asyncTest("Destroy Observer Test (listen-weakReference)", function() {
+		expect(3);
+
+		iris.once(iris.AFTER_NAVIGATION, function() {
+
+			var model = iris.model(iris.path.model);
+			model.events('listen-weakReference');
+
+			iris.listen(model, 'listen-weakReference', onEvent, true);
+			iris.listen(model, 'listen-weakReference', onEvent2, true);
+
+			model.notify("listen-weakReference"); // +2
+
+			model.destroy();
+
+			window.equal(0, iris.listens.length, 'the sub has not pub references'); // +1
 			
-			iris.notify("listen-iris"); // +2
-			
-			model.on('destroy', onEvent);
-			
-			model.destroy(); // +1
-			
-			iris.notify("listen-iris"); // 0
+			start();
+		});
+	});
+
+	asyncTest("Destroy Observer Test (listen-no weakReference)", function() {
+		expect(3);
+		
+		iris.once(iris.AFTER_NAVIGATION, function() {
+
+			var model = iris.model(iris.path.model);
+			model.events('listen-weakReference');
+
+			iris.listen(model, 'listen-weakReference', onEvent, false);
+			iris.listen(model, 'listen-weakReference', onEvent2);
+
+			model.notify("listen-weakReference"); // +2
+
+			model.destroy();
+
+			window.equal(2, iris.listens.length, 'the sub has not pub references'); // +1
 			
 			start();
 		});
@@ -219,21 +255,6 @@
 			start();
 		});
 	});
-	
-
-
-	//asyncTest("Auto off when a component is destroyed", function() {
-	//	expect(3);
-
-	//	iris.on(iris.AFTER_NAVIGATION, function() {
-	//		iris.off(iris.AFTER_NAVIGATION);
-	//		iris.on(iris.AFTER_NAVIGATION, function() {
-	//			iris.off(iris.AFTER_NAVIGATION);
-	//			start();
-	//		});
-	//		iris.navigate("#/screen");
-	//	});
-	//});
 
 	function onEvent() {
 		window.ok(true, "On event callback");
