@@ -20,18 +20,19 @@ iris.ui(function(self) {
 	}
 
 	function init() {
-		var tags = '';
+		var tags = [];
 		for (var tag in model.get('tags')) {
-			if (tags !== '') {
-				tags += ',';
-			}
-			tags += tag;
+			tags.push({id: tag, text: tag});
 		}
 
-		self.get('tags').tagsInput({
-			onAddTag: onAddTag,
-			onRemoveTag: onRemoveTag
-		}).importTags(tags);
+		self.get('tags').select2({tags: tags, tokenSeparators: [',', ' ']}).on('change', function(e) {
+			if (e.added) {
+				onAddTag(e.added.text);
+			} else if (e.removed) {
+				onRemoveTag(e.removed.text);
+			}
+		});
+		self.get('tags').select2('data', tags);
 
 	}
 

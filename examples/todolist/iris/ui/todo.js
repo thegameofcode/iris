@@ -20,13 +20,18 @@ iris.ui(function(self) {
 		self.get('check').on('click', toggle);
 		self.get('tags').on('click', showTags);
 
-		self.listen(model, 'change', render);
-		self.listen(model, 'destroy', finishDestroy);
+		self.listen(model, 'change', render, true);
+		self.listen(model, 'destroy', finishDestroy, true);
 		
-		self.listen(self.parentUI, 'filter', setVisible);
+		self.listen(self.parentUI, 'filter', setVisible, true);
 
 		render();
 		setVisible();
+	};
+	
+	self.destroy = function() {
+		self.removeListeners();
+		self.notify('destroy');
 	};
 
 	function render() {

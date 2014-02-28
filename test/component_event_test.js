@@ -192,7 +192,7 @@
 		});
 	});
 	
-	asyncTest("Destroy Observer Test (listen-weakReference)", function() {
+	asyncTest("Destroy Publisher Test (listen-weakReference)", function() {
 		expect(3);
 
 		iris.once(iris.AFTER_NAVIGATION, function() {
@@ -213,7 +213,7 @@
 		});
 	});
 
-	asyncTest("Destroy Observer Test (listen-no weakReference)", function() {
+	asyncTest("Destroy Publisher Test (listen-no weakReference)", function() {
 		expect(3);
 		
 		iris.once(iris.AFTER_NAVIGATION, function() {
@@ -228,7 +228,39 @@
 
 			model.destroy();
 
-			window.equal(2, iris.listens.length, 'the sub has not pub references'); // +1
+			window.equal(2, iris.listens.length, 'the sub has pub references'); // +1
+			
+			start();
+		});
+	});
+	
+	asyncTest("Destroy Publisher Test (removeListeners in Subscriber)", function() {
+		expect(3);
+		
+		iris.once(iris.AFTER_NAVIGATION, function() {
+
+			var modelPub = iris.model(iris.path.model);
+			var modelSub = iris.model(iris.path.model);
+			
+			modelPub.events('listen-weakReference');
+
+			modelSub.listen(modelPub, 'listen-weakReference', onEvent, false);
+			modelSub.listen(modelPub, 'listen-weakReference', onEvent2, false);
+			modelSub.listen(modelPub, 'destroy', function() {
+				modelSub.destroy();
+			});
+			
+			modelSub.destroy = function() {
+				modelSub.removeListeners();
+				modelSub.notify('destroy');
+			};
+
+			modelPub.notify("listen-weakReference"); // +2
+			
+
+			modelPub.destroy();
+
+			window.equal(0, modelSub.listens.length, 'the sub has pub references'); // +1
 			
 			start();
 		});

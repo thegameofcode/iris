@@ -17,10 +17,9 @@
     }
 
     function _clearEvent (instance) {
-        delete instance.eventMap;
-        delete instance.silent;
-        delete instance.listens;
-        delete instance.pubs;
+        instance.silent = false;
+        instance.listens = [];
+        instance.pubs = [];
     }
 
     var Event = function () {
