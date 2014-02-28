@@ -61,7 +61,7 @@ Iris exposes all of its methods and properties on the `iris` object:
 		- [iris.Event.notify(eventName[, parameter])](#iriseventnotifyeventname-parameter)
 		- [iris.Event.notifyOn()](#iriseventnotifyon)
 		- [iris.Event.notifyOff()](#iriseventnotifyoff)
-		- [iris.Event.listen(target, eventName, listener)](#iriseventlistentarget-eventname-listener)
+		- [iris.Event.listen(target, eventName, listener[, weakReference])](#iriseventlistentarget-eventname-listener-weakreference)
 		- [iris.Event.pauseListeners()](#iriseventpauselisteners)
 		- [iris.Event.resumeListeners()](#iriseventresumelisteners)
 		- [iris.Event.removeListeners()](#iriseventremovelisteners)
@@ -1011,14 +1011,14 @@ iris.ui(function(self) {
 *Since*: `v0.6.0`
 
 Add an event listener. __Warning__: you must be careful this may cause memory leaks.
-Remember register before the event name in the target using [iris.Event.events(args)](#iriseventeventsargs).
+Remember register the event name in the target using [iris.Event.events(args)](#iriseventeventsargs).
 
 A common case of memory leaks:
 - Create an UI and suscribe it to a model event
-- Destroy the created UI (the listener is still subscribed to the model)
+- Destroy the created UI (the listener is still referenced in the model)
 - If you dont remove the listener before destroy it, the UI cannot be removed by the garbage collector
 
-To prevent memory leaks use the [iris.Event.listen(target, eventName, listener)](#iriseventlistentarget-eventname-listener) instead of _iris.Event.on(eventName, listener)_.
+To prevent memory leaks use the [iris.Event.listen(target, eventName, listener[, weakReference])](#iriseventlistentarget-eventname-listener-weakreference) instead of _iris.Event.on(eventName, listener)_ and call to [iris.Event.removeListeners()](#iriseventremovelisteners) on destroy.
 
 ```javascript
 
@@ -1104,7 +1104,7 @@ target.off('refresh'); // Remove callback1 and callback2
 #### iris.Event.notify(eventName[, parameter])
 *Since*: `v0.6.0`
 
-Trigger added callbacks for the given `eventName`. To add callbacks use [iris.Event.on(eventName, listener)](#iriseventoneventname-listener) or [iris.Event.listen(target, eventName, listener)](#iriseventlistentarget-eventname-listener). The `parameter` object will be passed along to the event callbacks. Use [iris.Event.notifyOn()](#iriseventnotifyon) or [iris.Event.notifyOff()](#iriseventnotifyoff) to enable or disable this function.
+Trigger added callbacks for the given `eventName`. To add callbacks use [iris.Event.on(eventName, listener)](#iriseventoneventname-listener) or [iris.Event.listen(target, eventName, listener[, weakReference])](#iriseventlistentarget-eventname-listener-weakreference). The `parameter` object will be passed along to the event callbacks. Use [iris.Event.notifyOn()](#iriseventnotifyon) or [iris.Event.notifyOff()](#iriseventnotifyoff) to enable or disable this function.
 
 ```javascript
 
@@ -1193,16 +1193,14 @@ iris.ui(function(self) {
 ```
 
 
-#### iris.Event.listen(target, eventName, listener)
+#### iris.Event.listen(target, eventName, listener[, weakReference])
 *Since*: `v0.6.0`
 
 
 The current object listen to a particular event (`eventName`) on the `target` object.
-The advantage of using this form, instead of [iris.Event.on(eventName, listener)](#iriseventoneventname-listener), is that `listen` adds the event listener in a safe way to prevent memory leaks and you can remove or pause or resume all listeners at once later on.
+The advantage of using this form, instead of [iris.Event.on(eventName, listener)](#iriseventoneventname-listener), is that `listen` helps you to remove or pause/resume all listeners at once later on.
 
-
-When the `target` is destroyed the listener is removed automatically and when the current object is destroyed, all registered listeners are removed on the targets.
-
+`weakReference` by default is false, it's mean the listener is added to the publisher and may cause memory leaks when the publisher is destroyed. If `weakReference` is true, it adds the event listener in a safe way to prevent memory leaks, because it subscribes to the publisher destroy event and remove the publisher reference from subscriber when the publisher is destroyed. Be careful, this behaviour avoid memory leaks, but the performance is decreased when objects are destroyed.
 
 You can use [iris.Event.removeListeners()](#iriseventremovelisteners), [iris.Event.pauseListeners()](#iriseventpauselisteners) or [iris.Event.resumeListeners()](#iriseventresumelisteners) to manage them.
 
@@ -1228,7 +1226,7 @@ iris.ui(function(self) {
 
 		var model = self.model(iris.path.model.example.js, {title: 'example'});
 
-		// When this UI is destroyed, Iris will call to model.off('complete', onModelComplete)
+		
 		// And if model is destroyed, Iris will remove the listener too
 		self.listen(model, 'complete', onModelComplete);
 
@@ -1244,6 +1242,12 @@ iris.ui(function(self) {
 		self.pauseListeners();
 	};
 
+	self.destroy = function () {
+		// When this UI is destroyed, it will call to model.off('complete', onModelComplete)
+		// to prevent memory leaks
+		self.removeListeners();
+	};
+
 
 }, iris.path.ui.example.js);
 
@@ -1253,7 +1257,7 @@ iris.ui(function(self) {
 #### iris.Event.pauseListeners()
 *Since*: `v0.6.0`
 
-Pause all listeners added using [iris.Event.listen(target, eventName, listener)](#iriseventlistentarget-eventname-listener), this will remove the listeners from targets. Use [iris.Event.resumeListeners()](#iriseventresumelisteners) to add them again.
+Pause all listeners added using [iris.Event.listen(target, eventName, listener[, weakReference])](#iriseventlistentarget-eventname-listener-weakreference), this will remove the listeners from targets. Use [iris.Event.resumeListeners()](#iriseventresumelisteners) to add them again.
 
 ```javascript
 
@@ -1351,7 +1355,7 @@ iris.ui(function(self) {
 #### iris.Event.removeListeners()
 *Since*: `v0.6.0`
 
-This remove all listeners from targets. It is automatically called when the current object is destroyed.
+This remove all listeners from publishers. If the publisher has been destroyed, the listen is removed without throw exceptions.
 
 ```javascript
 
