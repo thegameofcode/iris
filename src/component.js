@@ -156,7 +156,7 @@
                         url: path,
                         dataType: "html",
                         async: true,
-                        componentPath: paths[i]
+                        context: paths[i] // set the component path as context
                     })
                     .done(_templateLoaded);
                 } else {
@@ -176,13 +176,16 @@
     }
 
     function onReadyStateChange () {
+        /*jshint validthis:true */
         if ( this.readyState === "loaded" ) {
             _checkLoadFinish();
         }
     }
 
     function _templateLoaded (data, textStatus, jqXHR) {
-        _includes[this.componentPath] = data.replace(HTML_COMMENT_REGEX, ''); // Internet Explorer fails when a template component has a comment 
+        /*jshint validthis:true */
+        // the component path is the context (this), see the ajax call settings
+        _includes[this] = data.replace(HTML_COMMENT_REGEX, ''); // Internet Explorer fails when a template component has a comment 
         _checkLoadFinish();
     }
 
