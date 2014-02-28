@@ -247,20 +247,13 @@
 			modelSub.listen(modelPub, 'listen-weakReference', onEvent, false);
 			modelSub.listen(modelPub, 'listen-weakReference', onEvent2, false);
 			modelSub.listen(modelPub, 'destroy', function() {
-				modelSub.destroy();
-			});
-			
-			modelSub.destroy = function() {
 				modelSub.removeListeners();
-				modelSub.notify('destroy');
-			};
+			});
 
 			modelPub.notify("listen-weakReference"); // +2
-			
+			modelPub.destroy(); // executes modelSub.removeListeners()
 
-			modelPub.destroy();
-
-			window.equal(0, modelSub.listens.length, 'the sub has pub references'); // +1
+			window.equal(0, modelSub.listens.length, 'the sub has not pub references'); // +1
 			
 			start();
 		});

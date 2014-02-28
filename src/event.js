@@ -16,10 +16,12 @@
         );
     }
 
-    function _clearEvent (instance) {
-        instance.silent = false;
-        instance.listens = [];
-        instance.pubs = [];
+    function _destroyEvent (instance) {
+        instance.destroyed = true;
+        delete instance.eventMap;
+        delete instance.silent;
+        delete instance.listens;
+        delete instance.pubs;
     }
 
     var Event = function () {
@@ -45,7 +47,7 @@
         // On destroy remove all props
         var self = this;
         this.on('destroy', function () {
-            _clearEvent(self);
+            _destroyEvent(self); // we can not use .bind() because is not supported for IE 8
         });
     };
 
@@ -202,7 +204,10 @@
         var i, listen;
         for (i = 0; i < this.listens.length; i++) {
             listen = this.listens[i];
-            listen.pub.off(listen.eventName, listen.listener);
+
+            if ( !listen.pub.destroyed ) {
+                listen.pub.off(listen.eventName, listen.listener);
+            }
         }
 
         this.listens = [];
@@ -213,10 +218,13 @@
     // Use resumeListeners to add them again.
     eventPrototype.pauseListeners = function () {
         var i, listen;
-        for (i = 0; i < this.listens.length; i++) {
+        for ( i = this.listens.length - 1; i >= 0; i-- ) {
             listen = this.listens[i];
 
-            if ( listen.pausable && listen.active ) {
+            if ( listen.pub.destroyed ) {
+                this.listens.splice(i, 1);
+                
+            } else if ( listen.pausable && listen.active ) {
                 listen.pub.off(listen.eventName, listen.listener);
                 listen.active = false;
             }
@@ -227,10 +235,13 @@
     // Use pauseListeners to remove them from targets.
     eventPrototype.resumeListeners = function () {
         var i, listen;
-        for (i = 0; i < this.listens.length; i++) {
+        for ( i = this.listens.length - 1; i >= 0; i-- ) {
             listen = this.listens[i];
 
-            if ( listen.pausable && !listen.active ) {
+            if ( listen.pub.destroyed ) {
+                this.listens.splice(i, 1);
+                
+            } else if ( listen.pausable && !listen.active ) {
                 listen.pub.on(listen.eventName, listen.listener);
                 listen.active = true;
             }
