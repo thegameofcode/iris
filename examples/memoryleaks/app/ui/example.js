@@ -11,6 +11,10 @@ iris.ui(function (self) {
 		self.listen(self.setting('welcome'), 'welcome-event', onWelcomeEvent);
 	};
 
+	self.destroy = function () {
+		self.removeListeners();
+	};
+
 	function onWelcomeEvent () {
 		console.log('onWelcomeEvent!');
 	}
