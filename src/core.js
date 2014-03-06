@@ -47,7 +47,7 @@
     }
 
     function urlContains () {
-        for(var i = 0 ; i< arguments.length; i++) {
+        for (var i = 0, len = arguments.length; i < len; i++) {
             if ( document.location.href.indexOf(arguments[i]) > -1 ) {
                 return true;
             }

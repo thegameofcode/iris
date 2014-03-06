@@ -138,7 +138,7 @@
         _loadJsCallback = callback;
 
         var path, script;
-        for (var i = 0; i < paths.length; i++) {
+        for (var i = 0, len = paths.length; i < len; i++) {
             if ( !_includes.hasOwnProperty(paths[i]) ) {
                 _dependencyCount++;
 
@@ -210,13 +210,13 @@
         // Get screen path params
         var params = {};
         var paramsValues = hash.match(hashRegex);
-        var i;
+        var i, len;
         
         if ( paramsValues ) {
             paramsValues = paramsValues.slice(1); // the first item is the whole match
             if ( paramsValues.length > 0 ) {
                 var paramsNames = screenHash.match(PATH_PARAM_REGEX);
-                for ( i = 0; i < paramsValues.length; i++ ) {
+                for ( i = 0, len = paramsValues.length; i < len; i++ ) {
                     params[ paramsNames[i].substr(1) ] = paramsValues[i]; // Remove first ':'
                 }
             }
@@ -229,7 +229,7 @@
             
             var matrixParams = screenHashRaw[0].match(new RegExp(SCREEN_PARAM_REGEX, 'g'));
             var idx;
-            for ( i = 0; i < matrixParams.length; i++ ) {
+            for ( i = 0, len = matrixParams.length; i < len; i++ ) {
                 idx = matrixParams[i].indexOf('=');
                 params[ matrixParams[i].substr(1, idx - 1) ] = matrixParams[i].substr(idx + 1);
             }
@@ -254,6 +254,7 @@
             screenFound,
             deep = 0,
             i,
+            len,
             fullScreenHash = '', // e.g.: #/user/:id/friends
             fullScreenHashRaw = '', // e.g.: #/user/1234/friends;filter=all
             historyNavRaw = [],
@@ -296,7 +297,7 @@
             screenChilds.sort();
             screenChilds.reverse();
 
-            for ( i = 0; i < screenChilds.length; i++ ) {
+            for ( i = 0, len = screenChilds.length; i < len; i++ ) {
 
                 screenHash = screenChilds[i];
                 hashRegex = _getHashRegex(screenHash);
@@ -505,7 +506,7 @@
 
             // destroy child screens
             if ( screen.screenChilds !== undefined ) {
-                for (var i = 0; i < screen.screenChilds.length; i++ ) {
+                for (var i = 0, len = screen.screenChilds.length; i < len; i++ ) {
                     _destroyScreen(screen.screenChilds[i]);
                 }
             }
@@ -1013,7 +1014,7 @@
             this.navMap =  ( this.id === '#' ) ? _navMap['#'] : screenMeta.parentNavMap[screenMeta.hashFragment];
 
             var newScreen, newScreenHashFragment, newScreenHash, newScreenJs;
-            for ( var i = 0; i < p_screens.length; i++ ) {
+            for ( var i = 0, len = p_screens.length; i < len; i++ ) {
 
                 newScreen = p_screens[i];
                 newScreenHashFragment = newScreen[0]; // newScreen[0] == hash fragment

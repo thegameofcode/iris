@@ -55,7 +55,7 @@
 
 
     eventPrototype.events = function () {
-        for (var i = 0; i < arguments.length; i++) {
+        for (var i = 0, len = arguments.length; i < len; i++) {
             if ( !this.eventMap.hasOwnProperty(arguments[i]) ) {
                 this.eventMap[arguments[i]] = [];
             }
@@ -138,7 +138,9 @@
         
         var callbacks = this.eventMap[eventName];
         if ( callbacks ) {
-            for ( var i = 0; i < callbacks.length; i++ ) {
+            // Reverse 'for' to avoid unexpected behaviours when callbacks
+            // are deleted while 'for' is unfinished
+            for ( var i = callbacks.length - 1; i >= 0; i-- ) {
                 callbacks[i].call(this, data);
             }
         }
@@ -201,8 +203,8 @@
 
     // Remove all listeners from targets
     eventPrototype.removeListeners = function () {
-        var i, listen;
-        for (i = 0; i < this.listens.length; i++) {
+        var i, len, listen;
+        for (i = 0, len = this.listens.length; i < len; i++) {
             listen = this.listens[i];
 
             if ( !listen.pub.destroyed ) {
