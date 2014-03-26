@@ -37,7 +37,10 @@
     function _init() {
 
         $(window).off("hashchange");
-        document.location.hash = "#";
+
+        if ( window.testMode ) {
+            document.location.hash = "#";
+        }
 
         // _screen["#hash"] return the screen instance
         _screen = {};

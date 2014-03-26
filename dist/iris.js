@@ -1,4 +1,4 @@
-/*! iris - v0.6.0-SNAPSHOT - 2014-03-06 (http://thegameofcode.github.io/iris) licensed New-BSD */
+/*! iris - v0.6.0-SNAPSHOT - 2014-03-26 (http://thegameofcode.github.io/iris) licensed New-BSD */
 
 (function ($) {
     "use strict";
@@ -922,7 +922,10 @@
     function _init() {
 
         $(window).off("hashchange");
-        document.location.hash = "#";
+
+        if ( window.testMode ) {
+            document.location.hash = "#";
+        }
 
         // _screen["#hash"] return the screen instance
         _screen = {};
