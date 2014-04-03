@@ -1,4 +1,4 @@
-/*! iris - v0.6.0-SNAPSHOT - 2014-03-26 (http://thegameofcode.github.io/iris) licensed New-BSD */
+/*! iris - v0.6.0-SNAPSHOT - 2014-04-03 (http://thegameofcode.github.io/iris) licensed New-BSD */
 
 (function ($) {
     "use strict";
@@ -1686,7 +1686,7 @@
                 }
 
                 if($element === null) {
-                    throw "[data-id=" + p_id + "] not screenFound in '" + this.fileTmpl + "' used by '" + this.fileJs + "'";
+                    throw "[data-id=" + p_id + "] not found in '" + this.fileTmpl + "' used by '" + this.fileJs + "'";
                 } else if($element.size() > 1) {
                     throw "[data-id=" + p_id + "] must be unique in '" + this.fileTmpl + "' used by '" + this.fileJs + "'";
                 }
