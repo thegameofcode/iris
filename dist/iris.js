@@ -1,4 +1,4 @@
-/*! iris - v0.6.0-SNAPSHOT - 2014-04-03 (http://thegameofcode.github.io/iris) licensed New-BSD */
+/*! iris - v0.6.0-SNAPSHOT - 2014-08-27 (http://thegameofcode.github.io/iris) licensed New-BSD */
 
 (function ($) {
     "use strict";
@@ -1460,7 +1460,7 @@
         this.awake(p_params);
         for(var f = 0, F = this.uis.length; f < F; f++) {
             if (this.uis[f].sleeping !== false) {
-                this.uis[f]._awake();
+                this.uis[f]._awake(p_params);
             }
         }
     };
@@ -1701,19 +1701,21 @@
     };
 
     pComponent._ui = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
+        var ui;
+        
         if ( p_jsUrl === undefined ) {
             // Get UI
-
-            var ui = this.uisMap[p_id];
+            ui = this.uisMap[p_id];
             if ( ui === undefined ) {
                 ui = [];
             }
-            return ui;
 
         } else {
             // Create UI
-            return this._createUi(p_id, p_jsUrl, p_uiSettings, p_templateMode);
+            ui = this._createUi(p_id, p_jsUrl, p_uiSettings, p_templateMode);
         }
+        
+        return ui;
     };
 
     pComponent._createUi = function(p_id, p_jsUrl, p_uiSettings, p_templateMode) {
@@ -1832,7 +1834,7 @@
         $.extend(this.cfg, jqToHash, settings || {});
 
         this.create();
-        this._awake();
+        this._awake(parentUI.params);
     };
 
     iris.inherits(UI, Component);

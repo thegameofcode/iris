@@ -26,6 +26,13 @@ iris.screen(function (self) {
 
 	};
 
+	self.awake = function (params) {
+		var param1 = params.param1;
+		if ( param1 ) {
+			window.strictEqual(param1, 'value1', "Check the correct value of param1");
+		}
+	};
+
 	self.destroy = function () {
 		window.ok(true);
 	};
@@ -38,7 +45,6 @@ iris.screen(function (self) {
 	}
 
 	function createUiTmplReplace () {
-
 		ui = self.ui("container", iris.path.ui_replace);
 
 		window.strictEqual(self.uis.length, 1, "Checking uis length after creation");

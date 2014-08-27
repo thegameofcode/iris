@@ -8,6 +8,15 @@ iris.ui(function (self) {
 
 	};
 
+	self.awake = function (params) {
+		if ( params ) {
+			var param1 = params.param1;
+			if ( param1 ) {
+				window.strictEqual(param1, 'value1', "Check the correct value of param1 inside the UI");
+			}
+		}
+	};
+
 	self.destroy = function () {
 		window.ok(true, "The overriden function destroy is called");
 	};

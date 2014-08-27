@@ -21,6 +21,13 @@ iris.screen(function (self) {
 
 	};
 
+	self.awake = function (params) {
+		var param1 = params.param1;
+		if ( param1 ) {
+			window.strictEqual(param1, 'value1', "Check the correct value of param1");
+		}
+	};
+
 	function templateLangs () {
 		window.strictEqual(self.get("lang_values").text(), iris.translate("TEST","test-lang-into-tmpl"));
 	}

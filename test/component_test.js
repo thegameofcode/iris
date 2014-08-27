@@ -249,6 +249,27 @@
     
     });
 
+    asyncTest("Create UI With Params receives from parent screen", function() {
+        expect(14);
+
+        iris.welcome("test/component/welcome.js"); // + 4
+
+        iris.on(iris.AFTER_NAVIGATION, function () {
+            iris.off(iris.AFTER_NAVIGATION);
+
+            // this will make a real async call
+            iris.navigate("#/screen;param1=value1"); // +3 +1 param
+
+            iris.on(iris.AFTER_NAVIGATION, function () {
+                iris.notify("create_ui_tmpl_replace"); // + 3 +1 param
+                iris.notify("get_ui_tmpl_replace"); // + 2
+
+                start();
+            });
+        });
+    
+    });
+
     asyncTest("UI Settings", function() {
 
         expect(14);
@@ -402,14 +423,14 @@
 
     asyncTest("Awake Params", function() {
 
-        expect(7);
+        expect(8);
 
         iris.welcome("test/component/welcome.js"); // + 4
 
         iris.on(iris.AFTER_NAVIGATION, function () {
             iris.off(iris.AFTER_NAVIGATION);
 
-            iris.navigate("#?param1=value1&param2=value2&param3=value3"); // +3
+            iris.navigate("#?param1=value1&param2=value2&param3=value3"); // +3 +1param
 
             iris.on(iris.AFTER_NAVIGATION, function () {
 
