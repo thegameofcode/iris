@@ -1290,6 +1290,7 @@
 
                     // Wake up
                     screenInstance.show();
+                    screenInstance.params = params;
                     screenInstance._awake(params);
                 }
 
