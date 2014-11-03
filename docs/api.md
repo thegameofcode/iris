@@ -9,6 +9,7 @@ Iris exposes all of its methods and properties on the `iris` object:
 	- [iris.noCache(args)](#irisnocacheargs)
 	- [iris.enableLog(args)](#irisenablelogargs)
 	- [iris.log(args)](#irislogargs)
+	- [iris.isLocalhost()](#irisislocalhost)
 - [Util](#util)
 	- [iris.ajax(settings)](#irisajaxsettings)
 	- [iris.val(obj, label)](#irisvalobj-label)
@@ -45,6 +46,7 @@ Iris exposes all of its methods and properties on the `iris` object:
 	- [iris.ui(function(self){...}, path)](#irisuifunctionself-path)
 	- [iris.tmpl(path, html)](#iristmplpath-html)
 	- [iris.resource(function(self){...}, path)](#irisresourcefunctionself-path)
+	- [iris.debug(enabled)](#irisdebugenabled)
 - [Classes](#classes)
 	- [iris.Settable Class](#irissettable-class)
 		- [self.setting(label[, value])](#selfsettinglabel-value)
@@ -173,6 +175,17 @@ iris.log("obj = ", obj, " obj2 = ", obj2);
 iris.enableLog("127.0.1.30");
 
 iris.log("This is only printed in 127.0.1.30");
+```
+
+### iris.isLocalhost()
+*Since*: `v0.5.7`
+
+Returns `true` if `document.location.href` contains `localhost` or `127.0.0.1`.
+
+```javascript
+if ( iris.isLocalhost() ) {
+	// do something
+}
 ```
 
 
@@ -798,6 +811,19 @@ iris.resource(function(self){
 ```javascript
 //To create
 iris.resource(iris.path.resource.js);
+```
+
+### iris.debug(enabled)
+*Since*: `v0.5.7`
+
+Enables or disables the iris debug mode.
+When iris debug mode is enabled, the application is listening for the combination of keys: `Ctrl + Alt + Shift + D` to show or hide the debug information layer. By default it is enabled in local enviroments (`127.0.0.1` and `localhost`).
+If the the combination of keys is detected, the application prints/hide a visual lines to highlight the components (screens and UIs) and prints information about its presenter and template paths, hash-URL or data-id.
+
+```javascript
+// Force to disable iris debug mode
+//('Ctrl + Alt + Shift + D' wont work)
+iris.debug(false);
 ```
 
 ## Classes

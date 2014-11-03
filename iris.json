@@ -2,7 +2,7 @@
   "name": "iris",
   "title": "Iris",
   "description": "This JavaScript library provides different client-side optimization techniques for front construction.",
-  "version": "0.5.6",
+  "version": "0.5.7",
   "homepage": "http://thegameofcode.github.io/iris",
   "author": {
     "name": "Iris",

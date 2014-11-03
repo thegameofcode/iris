@@ -1,4 +1,4 @@
-/*! iris - v0.5.6 - 2014-01-23 (http://thegameofcode.github.io/iris) licensed New-BSD */
+/*! iris - v0.5.7-SNAPSHOT - 2014-02-17 (http://thegameofcode.github.io/iris) licensed New-BSD */
 
 var iris = {};
 
@@ -132,7 +132,7 @@ window.iris = iris;
                     iris.off(p_eventName, callbacks[i]);
                 }
 
-                this.events[p_eventName] = {};
+                this.events[p_eventName] = [];
             }
         }
     };
@@ -160,7 +160,8 @@ window.iris = iris;
         _cache,
         _cacheVersion,
         _log,
-        _logEnabled;
+        _logEnabled,
+        _isLocalEnv;
 
     //
     // Private
@@ -192,9 +193,9 @@ window.iris = iris;
             _log = console.log;
         }
 
-        var isLocalEnv = urlContains("localhost", "127.0.0.1");
-        _logEnabled = isLocalEnv;
-        _cache = !isLocalEnv;
+        _isLocalEnv = urlContains("localhost", "127.0.0.1");
+        _logEnabled = _isLocalEnv;
+        _cache = !_isLocalEnv;
 
         iris.on("iris-reset", _init);
     }
@@ -206,7 +207,7 @@ window.iris = iris;
             }
         }
         return false;
-}
+    }
 
     //
     // Public
@@ -264,7 +265,10 @@ window.iris = iris;
             return !_cache;
         }
     };
-    
+
+    iris.isLocalhost = function () {
+        return _isLocalEnv;
+    };
     
     _init();
 
@@ -676,7 +680,8 @@ window.iris = iris;
         //     container: $element, // return the parent container associated with hash (#parent/hash/:id)
         //     parentNavMap: {} // Parent node in the navigation tree
         // }
-        _screenMetadata
+        _screenMetadata,
+        _debugMode
         ;
 
     
@@ -705,6 +710,14 @@ window.iris = iris;
         _lastLoadedDependencies = [];
 
         _paths = [];
+
+        // By default debug is disabled
+        _debugMode = false;
+
+        // If environment is local enable debug
+        if ( iris.isLocalhost() ) {
+            _debug(true);
+        }
 
         iris.on("iris-reset", function () {
             $(window).off("hashchange");
@@ -1165,9 +1178,10 @@ window.iris = iris;
     }
 
 
-    var Component = function(id, $container, fileJs) {
+    var Component = function(id, $container, fileJs, type) {
         iris.Settable.call(this);
 
+        this.type = type;
         this.id = id;
         this.uis = []; // child UIs
         this.uisMap = {}; // UIs sorted by id
@@ -1558,7 +1572,7 @@ window.iris = iris;
     // UI
     //
     var UI = function($container, id, fileJs, settings, tmplMode, parentUI) {
-        Component.call(this, id, $container, fileJs);
+        Component.call(this, id, $container, fileJs, 'ui');
 
         var jqToHash = _jqToHash($container);
 
@@ -1592,7 +1606,7 @@ window.iris = iris;
     //
     var Screen = function(path) {
         var screenMeta = _screenMetadata[path];
-        Component.call(this, path, screenMeta.container, screenMeta.js);
+        Component.call(this, path, screenMeta.container, screenMeta.js, 'screen');
 
         this.params = {};
         this.screenConId = null;
@@ -1697,6 +1711,87 @@ window.iris = iris;
         }
 
     }
+
+    //
+    // Debug mode
+    //
+    function _debug (enabled) {
+        var $doc = $(window.document);
+        var style = document.getElementById('iris-debug-css');
+        
+        if ( enabled && !style ) {
+            $('<style type="text/css" id="iris-debug-css">' +
+                    '.iris-debug { position: relative; z-index: 9999; }' +
+                    '.iris-debug-ui { outline: 3px dotted blue; }' +
+                    '.iris-debug-ui:hover { outline: 3px solid blue; box-shadow: 0px 0px 40px rgba(0, 0, 255, 0.5); }' +
+                    '.iris-debug-screen { outline: 3px dotted red; }' +
+                    '.iris-debug-screen:hover { outline: 3px solid red; box-shadow: 0px 0px 40px rgba(255, 0, 0, 0.5); }' +
+              '</style>').appendTo(_head);
+            
+            $doc.on('keydown', _debugModeOnKeyDown);
+
+        } else if ( !enabled && style ) {
+            $doc.off('keydown', _debugModeOnKeyDown);
+            $(style).remove();
+        }
+    }
+
+    function _debugModeOnKeyDown (e) {
+
+        // Control + Shift + Alt + D
+        if ( e.shiftKey && e.ctrlKey && e.altKey &&
+             e.keyCode !== 16 && e.keyCode === 68 ) {
+
+            _debugMode = !_debugMode;
+
+            var key, screen;
+            for ( key in _screen ) {
+                screen = _screen[key];
+                _applyDebugMode(screen);
+                _applyDebugToUIs(screen.uis);
+            }
+        }
+    }
+
+    // Recursive
+    function _applyDebugToUIs (uis) {
+        for ( var f = 0, F = uis.length; f < F; f++ ) {
+            _applyDebugMode( uis[f] );
+            _applyDebugToUIs( uis[f].uis );
+        }
+    }
+
+    function _applyDebugMode (component) {
+        component.template.toggleClass('iris-debug iris-debug-' + component.type, _debugMode);
+
+        if ( _debugMode ) {
+
+            // Add debug info label. Styles are in line to override inheritance
+            var color, idType;
+            if ( component.type === 'screen' ) {
+                color = 'red';
+                idType = 'Hash';
+            } else {
+                color = 'blue';
+                idType = 'Data-id';
+            }
+
+            var styleInfo = {'font-family': 'sans-serif', 'font-size': '14px', 'color': 'white',
+                'padding': '4px', 'white-space': 'nowrap', 'background-color': color };
+            var tooltip = 'Type: ' + component.type + '\n' + idType + ': ' + component.id +
+                        '\nPresenter: ' + component.fileJs + '\nTemplate: ' + component.fileTmpl;
+            
+            component.debugElement = $(
+                '<span title="' + tooltip + '">' +
+                   '<b style="color:white;">' + component.id + '</b>  [' + component.fileJs + ']' +
+                '</span>').css(styleInfo).prependTo(component.template);
+        } else {
+            // Remove debug info label if exists
+            if ( component.debugElement ) {
+                component.debugElement.remove();
+            }
+        }
+    }
     
     iris.screen = _registerScreen;
     iris.destroyScreen = _destroyScreenByPath;
@@ -1706,6 +1801,7 @@ window.iris = iris;
     iris.tmpl = _registerTmpl;
     iris.resource = _registerRes;
     iris.include = _load;
+    iris.debug = _debug;
 
     //
     // Classes
