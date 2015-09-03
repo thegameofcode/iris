@@ -54,6 +54,10 @@ module.exports = function(grunt) {
     qunit: {
       all: {
         options: {
+          coverage: {
+            src: ["src/*.js"],
+            lcovReport: "coverage-results/lcov"
+          }
           urls: [
             'http://localhost:8081/test/iris.html'
           ]
@@ -101,8 +105,8 @@ module.exports = function(grunt) {
       options: {
         force: false
       },
-      your_target: {
-        src: 'coverage-results/extra-results-*.info',
+      main_target: {
+        src: 'coverage-results/lcov/lcov.info',
         options: {
         }
       }
