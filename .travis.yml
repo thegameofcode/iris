@@ -11,4 +11,5 @@ cache:
   - node_modules
 after_script:
 - grunt test-saucelabs
+- grunt coveralls
 
