@@ -57,7 +57,7 @@ module.exports = function(grunt) {
           coverage: {
             src: ["src/*.js"],
             lcovReport: "coverage-results/lcov"
-          }
+          },
           urls: [
             'http://localhost:8081/test/iris.html'
           ]
